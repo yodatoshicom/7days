@@ -28,7 +28,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     height: 100vh;
-    overflow: background-clip;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,7 +45,7 @@ body {
 .greeting:hover { opacity: 0.8; transform: scale(1.02); }
 .greeting:active { transform: scale(0.97); }
 
-.dock-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.dock-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 
 .dock-container { pointer-events: auto; padding: 8px; background: var(--glass-bg); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); border-radius: 34px; border: 1px solid var(--glass-border); box-shadow: var(--shadow-soft); display: flex; gap: 6px; }
 
