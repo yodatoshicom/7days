@@ -8,6 +8,15 @@ let currentLon = null;
 let weatherLoaded = false;
 let weatherData = [];
 
+/* ---- ERROR TOOLTIP HELPER ---- */
+function appendCityError(msg) {
+    const display = document.getElementById('city-display');
+    const existing = display.title || '';
+    const timestamp = new Date().toLocaleTimeString();
+    const entry = `[${timestamp}] ${msg}`;
+    display.title = existing ? existing + '\n' + entry : entry;
+}
+
 /* ---- LOCATION DETECTION ---- */
 
 async function startLocationProcess() {
@@ -24,13 +33,13 @@ async function startLocationProcess() {
                         fetchWeather(latitude, longitude);
                     } catch (err) {
                         display.textContent = 'GPS Error';
-                        display.title = `GPS error: ${err.message}`;
+                        appendCityError(`GPS error: ${err.message}`);
                         fetchIPLocation();
                     }
                 },
                 (err) => {
                     display.textContent = 'Trying IP...';
-                    display.title = `GPS denied: ${err.message} (code ${err.code})`;
+                    appendCityError(`GPS denied: ${err.message} (code ${err.code})`);
                     fetchIPLocation();
                 },
                 { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
@@ -40,7 +49,7 @@ async function startLocationProcess() {
         }
     } catch (err) {
         display.textContent = 'Location Error';
-        display.title = `Location error: ${err.message}`;
+        appendCityError(`Location error: ${err.message}`);
         fetchIPLocation();
     }
 }
@@ -56,15 +65,15 @@ async function fetchIPLocation() {
             currentLat = parseFloat(data.latitude);
             currentLon = parseFloat(data.longitude);
             display.textContent = `${data.city} (IP)`;
-            display.title = `${data.city} - IP-Based\nLat: ${currentLat.toFixed(4)}, Lon: ${currentLon.toFixed(4)}`;
+            appendCityError(`ipapi.co OK: ${data.city} (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})`);
             fetchWeather(currentLat, currentLon);
         } else {
-            display.title = `ipapi.co: missing city/coords in response`;
+            appendCityError('ipapi.co: missing city/coords in response');
             fetchIPLocationFallback();
         }
     } catch (err) {
         display.textContent = 'Retrying...';
-        display.title = `ipapi.co failed: ${err.message}`;
+        appendCityError(`ipapi.co failed: ${err.message}`);
         fetchIPLocationFallback();
     }
 }
@@ -79,16 +88,16 @@ async function fetchIPLocationFallback() {
             currentLat = parseFloat(data.lat);
             currentLon = parseFloat(data.lon);
             display.textContent = `${data.city} (IP)`;
-            display.title = `${data.city} - IP-Based\nLat: ${currentLat.toFixed(4)}, Lon: ${currentLon.toFixed(4)}`;
+            appendCityError(`ip-api.com OK: ${data.city} (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})`);
             fetchWeather(currentLat, currentLon);
         } else {
             display.textContent = 'Location Unknown';
-            display.title = `ip-api.com: ${data.message || 'request failed'}`;
+            appendCityError(`ip-api.com: ${data.message || 'request failed'}`);
             showWeatherError();
         }
     } catch (err) {
         display.textContent = 'Location Failed';
-        display.title = `All location APIs failed. Last: ${err.message}`;
+        appendCityError(`ip-api.com failed: ${err.message}`);
         showWeatherError();
     }
 }
@@ -104,9 +113,10 @@ async function reverseGeocode(lat, lon, methodLabel = "GPS") {
         const addr = data.address || {};
         const city = addr.city || addr.town || addr.village || addr.municipality || addr.county || "Location";
         display.textContent = city;
-        display.title = `${city} - ${methodLabel}\nLat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+        appendCityError(`Geocode OK: ${city} (${methodLabel}, ${lat.toFixed(4)}, ${lon.toFixed(4)})`);
     } catch (err) {
         display.textContent = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+        appendCityError(`Geocode failed: ${err.message}`);
     }
 }
 
@@ -128,17 +138,22 @@ async function fetchWeather(lat, lon) {
     try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`Weather API ${response.status}`);
+        if (!response.ok) {
+            const body = await response.text().catch(() => '');
+            throw new Error(`Weather API ${response.status}${body ? ': ' + body.slice(0, 100) : ''}`);
+        }
         const data = await response.json();
         if (data.daily && data.daily.time) {
             renderWeather(data.daily);
             weatherLoaded = true;
             localStorage.setItem('aura_weather_cache', JSON.stringify({ data: data.daily, ts: Date.now() }));
         } else {
+            appendCityError('Weather: no daily data in response');
             showWeatherError();
         }
     } catch (e) {
         console.warn('Weather fetch error:', e.message);
+        appendCityError(`Weather: ${e.message}`);
         if (!weatherLoaded) {
             showWeatherError();
         }
