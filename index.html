@@ -1098,8 +1098,8 @@ body {
         note.id = data.id;
         note.style.left = data.x + 'px';
         note.style.top = data.y + 'px';
-        if (data.w) note.style.width = data.w + 'px';
-        if (data.h) note.style.height = data.h + 'px';
+        if (data.manualResize && data.w) note.style.width = data.w + 'px';
+        if (data.manualResize && data.h) note.style.height = data.h + 'px';
         note.style.zIndex = data.zIndex || topZ;
 
         const content = document.createElement('div');
@@ -1179,9 +1179,11 @@ body {
 
             note.style.height = startH + 'px'; // lock height for resize
 
+            const minW = Math.min(startW, 80);
+            const minH = Math.min(startH, 40);
             const onMove = (me) => {
-                const newW = Math.max(160, startW + (me.clientX - startX));
-                const newH = Math.max(80, startH + (me.clientY - startY));
+                const newW = Math.max(minW, startW + (me.clientX - startX));
+                const newH = Math.max(minH, startH + (me.clientY - startY));
                 note.style.width = newW + 'px';
                 note.style.height = newH + 'px';
             };
@@ -1278,8 +1280,10 @@ body {
             if (d) {
                 d.x = parseInt(el.style.left);
                 d.y = parseInt(el.style.top);
-                d.w = el.offsetWidth;
-                d.h = el.offsetHeight;
+                if (d.manualResize) {
+                    d.w = el.offsetWidth;
+                    d.h = el.offsetHeight;
+                }
                 d.zIndex = el.style.zIndex;
             }
         });
@@ -1309,7 +1313,10 @@ body {
     initDock();
     updateHeader();
     initWeatherPlaceholder();
-    notes.filter(n => !n.archived).forEach(n => createNote(n));
+    notes.filter(n => !n.archived).forEach(n => {
+        if (!n.manualResize) { delete n.w; delete n.h; }
+        createNote(n);
+    });
     setInterval(updateHeader, 10000);
     document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
 
