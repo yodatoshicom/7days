@@ -626,6 +626,35 @@ body {
 .note.dragging {
     cursor: grabbing;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+    transition: transform 0.35s var(--spring-easing), padding 0.3s var(--sf-easing),
+                border-radius 0.3s var(--sf-easing), opacity 0.25s ease;
+}
+
+.note.dragging.near-dock {
+    padding: 6px 14px;
+    border-radius: 16px;
+    opacity: 0.85;
+    pointer-events: none;
+    transform-origin: center center;
+    transition: transform 0.35s var(--spring-easing), padding 0.3s var(--sf-easing),
+                border-radius 0.3s var(--sf-easing), opacity 0.25s ease;
+}
+
+.note.dragging.near-dock .note-content {
+    transition: font-size 0.3s var(--sf-easing), max-height 0.3s var(--sf-easing);
+    font-size: 13px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-height: 1.1em;
+}
+
+.note.dragging.near-dock .note-resize-handle,
+.note.dragging.near-dock .note-close {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* Note close button — top right corner */
@@ -928,6 +957,18 @@ body {
     opacity: 1;
 }
 
+/* DAY CARD DRAG-OVER HIGHLIGHT */
+.day-card.drag-over {
+    background: rgba(0, 122, 255, 0.08);
+    transform: translateY(-4px) scale(1.04);
+    transition: transform 0.2s var(--spring-easing), background 0.2s ease;
+}
+
+.dark-mode .day-card.drag-over {
+    background: rgba(10, 132, 255, 0.12);
+}
+
+
 /* Bottom watermark — Alcove-style fading text */
 .bottom-watermark {
     position: fixed;
@@ -1091,7 +1132,7 @@ body {
                 morning:   `Feliz ${dayName}.`,
                 lateAM:    'Bom dia.',
                 noon:      'Boa tarde.',
-                afternoon: `Bom ${dayName}.`,
+                afternoon: `${dayName}.`,
                 evening:   'Boa noite.',
                 night:     'Boa noite.',
             },
@@ -1251,6 +1292,7 @@ body {
 
         // sub greeting — the funny line
         subEl.textContent = getSubGreeting(slot);
+
     }
 
     /* ============================================================
@@ -1285,6 +1327,17 @@ body {
     /* ============================================================
        NOTES — drag + RESIZE (macOS bottom-right handle)
     ============================================================ */
+    function getDayCardAtPoint(x, y) {
+        const cards = document.querySelectorAll('[data-date]');
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                return { card, dateStr: card.dataset.date };
+            }
+        }
+        return null;
+    }
+
     function createNote(data, autoFocus = false) {
         const note = document.createElement('div');
         note.className = 'note';
@@ -1337,22 +1390,74 @@ body {
             if (e.target.tagName === 'A') return;
 
             e.preventDefault();
-            let ox = e.clientX - note.offsetLeft;
-            let oy = e.clientY - note.offsetTop;
+            const origOx = e.clientX - note.offsetLeft;
+            const origOy = e.clientY - note.offsetTop;
             note.style.zIndex = ++topZ;
             note.classList.add('dragging');
+            let isNearDock = false;
+
+            const dockEl = document.getElementById('dock');
+            const SCALE_MINI = 0.65;
 
             const move = (me) => {
                 me.preventDefault();
-                const tilt = Math.min(Math.max((me.clientX - (note.offsetLeft + ox)) * 0.12, -6), 6);
-                note.style.left = (me.clientX - ox) + 'px';
-                note.style.top = (me.clientY - oy) + 'px';
-                note.style.transform = `scale(1.06) rotate(${tilt}deg)`;
+
+                // Check proximity to dock
+                const dockRect = dockEl.getBoundingClientRect();
+                const pad = 30;
+                const nearDock = me.clientX >= dockRect.left - pad && me.clientX <= dockRect.right + pad &&
+                                 me.clientY >= dockRect.top - pad && me.clientY <= dockRect.bottom + pad;
+
+                if (nearDock && !isNearDock) {
+                    isNearDock = true;
+                    note.classList.add('near-dock');
+                } else if (!nearDock && isNearDock) {
+                    isNearDock = false;
+                    note.classList.remove('near-dock');
+                }
+
+                if (isNearDock) {
+                    // Position so cursor is at the visual center of the scaled note
+                    const w = note.offsetWidth;
+                    const h = note.offsetHeight;
+                    note.style.left = (me.clientX - w / 2) + 'px';
+                    note.style.top = (me.clientY - h / 2) + 'px';
+                    note.style.transform = `scale(${SCALE_MINI})`;
+                } else {
+                    note.style.left = (me.clientX - origOx) + 'px';
+                    note.style.top = (me.clientY - origOy) + 'px';
+                    const tilt = Math.min(Math.max((me.clientX - (note.offsetLeft + origOx)) * 0.12, -6), 6);
+                    note.style.transform = `scale(1.06) rotate(${tilt}deg)`;
+                }
+
+                // Highlight day card under cursor
+                document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+                const hit = getDayCardAtPoint(me.clientX, me.clientY);
+                if (hit) hit.card.classList.add('drag-over');
             };
-            const stop = () => {
-                note.classList.remove('dragging');
+            const stop = (me) => {
+                note.classList.remove('dragging', 'near-dock');
                 note.style.transform = '';
-                save();
+                document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+
+                const hit = getDayCardAtPoint(me.clientX, me.clientY);
+                if (hit && data.text && data.text.trim()) {
+                    // Dock the note into the day card
+                    const dateStr = hit.dateStr;
+                    if (dayNotes[dateStr]) {
+                        dayNotes[dateStr] += '\n' + data.text.trim();
+                    } else {
+                        dayNotes[dateStr] = data.text.trim();
+                    }
+                    saveDayNotes();
+                    note.remove();
+                    notes = notes.filter(n => n.id !== data.id);
+                    save();
+                    renderDayNoteDots();
+                } else {
+                    save();
+                }
+
                 window.removeEventListener('mousemove', move);
                 window.removeEventListener('mouseup', stop);
             };
@@ -1608,6 +1713,7 @@ body {
     function hideDayNotePreview() {
         dayNotePreview.classList.remove('show');
     }
+
 </script>
 <script src="js/weather.js"></script>
 <script>
@@ -1637,7 +1743,7 @@ body {
             }
             initDock();
             updateHeader();
-            scheduleMidnightRefresh();
+                scheduleMidnightRefresh();
         }, ms);
     }
     scheduleMidnightRefresh();
