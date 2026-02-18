@@ -23,11 +23,14 @@ async function startLocationProcess() {
                         reverseGeocode(latitude, longitude, "GPS Precision");
                         fetchWeather(latitude, longitude);
                     } catch (err) {
-                        display.textContent = 'Location Error';
+                        display.textContent = 'GPS Error';
                         fetchIPLocation();
                     }
                 },
-                () => { fetchIPLocation(); },
+                (err) => {
+                    display.textContent = 'Trying IP...';
+                    fetchIPLocation();
+                },
                 { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
             );
         } else {
@@ -45,15 +48,16 @@ async function fetchIPLocation() {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
         if (data.city && data.latitude && data.longitude) {
-            currentLat = data.latitude;
-            currentLon = data.longitude;
+            currentLat = parseFloat(data.latitude);
+            currentLon = parseFloat(data.longitude);
             display.textContent = `${data.city} (IP)`;
             display.title = `${data.city} - IP-Based\nLat: ${currentLat.toFixed(4)}, Lon: ${currentLon.toFixed(4)}`;
-            fetchWeather(data.latitude, data.longitude);
+            fetchWeather(currentLat, currentLon);
         } else {
             fetchIPLocationFallback();
         }
     } catch (err) {
+        display.textContent = 'Retrying...';
         fetchIPLocationFallback();
     }
 }
@@ -64,17 +68,17 @@ async function fetchIPLocationFallback() {
         const response = await fetch('http://ip-api.com/json/');
         const data = await response.json();
         if (data.status === 'success') {
-            currentLat = data.lat;
-            currentLon = data.lon;
+            currentLat = parseFloat(data.lat);
+            currentLon = parseFloat(data.lon);
             display.textContent = `${data.city} (IP)`;
             display.title = `${data.city} - IP-Based\nLat: ${currentLat.toFixed(4)}, Lon: ${currentLon.toFixed(4)}`;
-            fetchWeather(data.lat, data.lon);
+            fetchWeather(currentLat, currentLon);
         } else {
-            display.textContent = "Location Unknown";
+            display.textContent = 'Location Unknown';
             showWeatherError();
         }
     } catch (err) {
-        display.textContent = "Location Unknown";
+        showLocationError('Could not detect location');
         showWeatherError();
     }
 }
@@ -87,7 +91,8 @@ async function reverseGeocode(lat, lon, methodLabel = "GPS") {
             { headers: { 'User-Agent': 'AuraWeatherApp/1.0' } }
         );
         const data = await response.json();
-        const city = data.address.city || data.address.town || data.address.village || data.address.municipality || data.address.county || "Location";
+        const addr = data.address || {};
+        const city = addr.city || addr.town || addr.village || addr.municipality || addr.county || "Location";
         display.textContent = city;
         display.title = `${city} - ${methodLabel}\nLat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
     } catch (err) {
@@ -113,8 +118,9 @@ async function fetchWeather(lat, lon) {
     try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7`;
         const response = await fetch(url);
+        if (!response.ok) throw new Error(`Weather API ${response.status}`);
         const data = await response.json();
-        if (data.daily) {
+        if (data.daily && data.daily.time) {
             renderWeather(data.daily);
             weatherLoaded = true;
             localStorage.setItem('aura_weather_cache', JSON.stringify({ data: data.daily, ts: Date.now() }));
@@ -122,7 +128,9 @@ async function fetchWeather(lat, lon) {
             showWeatherError();
         }
     } catch (e) {
-        if (!weatherLoaded) showWeatherError();
+        if (!weatherLoaded) {
+            showWeatherError();
+        }
     }
 }
 
