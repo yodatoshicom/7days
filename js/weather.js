@@ -11,19 +11,30 @@ let weatherData = [];
 /* ---- LOCATION DETECTION ---- */
 
 async function startLocationProcess() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                const { latitude, longitude } = position.coords;
-                currentLat = latitude;
-                currentLon = longitude;
-                reverseGeocode(latitude, longitude, "GPS Precision");
-                fetchWeather(latitude, longitude);
-            },
-            () => { fetchIPLocation(); },
-            { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
-        );
-    } else {
+    const display = document.getElementById('city-display');
+    try {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    try {
+                        const { latitude, longitude } = position.coords;
+                        currentLat = latitude;
+                        currentLon = longitude;
+                        reverseGeocode(latitude, longitude, "GPS Precision");
+                        fetchWeather(latitude, longitude);
+                    } catch (err) {
+                        display.textContent = 'Location Error';
+                        fetchIPLocation();
+                    }
+                },
+                () => { fetchIPLocation(); },
+                { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
+            );
+        } else {
+            fetchIPLocation();
+        }
+    } catch (err) {
+        display.textContent = 'Location Error';
         fetchIPLocation();
     }
 }
@@ -184,12 +195,14 @@ function showWeatherTooltip(index) {
     const tooltip = document.getElementById('weather-tooltip');
     tooltip.textContent = getWeatherDescription(weatherData[index].code, index);
     tooltip.classList.add('show');
-    document.getElementById('greeting-sub').classList.add('hidden');
+    const greetingSub = document.getElementById('greeting-sub');
+    if (greetingSub) greetingSub.classList.add('hidden');
 }
 
 function hideWeatherTooltip() {
     document.getElementById('weather-tooltip').classList.remove('show');
-    document.getElementById('greeting-sub').classList.remove('hidden');
+    const greetingSub = document.getElementById('greeting-sub');
+    if (greetingSub) greetingSub.classList.remove('hidden');
 }
 
 function initWeatherPlaceholder() {

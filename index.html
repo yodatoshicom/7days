@@ -3,26 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aura | Spatial Monolith</title>
+<title>Aura Calendar | Studio Edition</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700" rel="stylesheet">
 
 <style>
 :root {
     --sf-easing: cubic-bezier(0.32, 0.72, 0, 1);
-    --spring-easing: cubic-bezier(0.5, 1.5, 0.5, 1);
-    --bg-color: #fbfbfd;
+    --spring-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --bg-color: #f5f0e8;
     --text-color: #1d1d1f;
     --accent-color: #007AFF;
-    --glass-bg: rgba(255, 255, 255, 0.3);
-    --glass-border: rgba(255, 255, 255, 0.5);
-    --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
-    --shadow-lift: 0 30px 60px rgba(0,0,0,0.12);
+    --card-bg: rgba(255, 255, 255, 0.3); 
+    --separator-color: rgba(0, 0, 0, 0.06);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+.dark-mode {
+    --bg-color: #000000;
+    --text-color: #f5f5f7;
+    --accent-color: #0a84ff;
+    --card-bg: rgba(30, 30, 30, 0.35);
+    --separator-color: rgba(255, 255, 255, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
 
 body {
     background-color: var(--bg-color);
@@ -30,152 +42,778 @@ body {
     height: 100vh;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.8s var(--sf-easing);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /*transition: background-color 0.8s var(--sf-easing);*/
 }
 
 
-.monolith { display: flex; flex-direction: column; align-items: center; gap: 32px; z-index: 10; pointer-events: none; text-align: center; user-select: none; }
-
-.time-pill { font-size: 12px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; opacity: 0.3; margin-bottom: -10px; }
-
-.greeting { font-size: 91px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; background: linear-gradient(to bottom, var(--text-color) 70%, transparent); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; padding: 4px 0; pointer-events: auto; cursor: pointer; transition: opacity 0.2s ease, transform 0.3s var(--spring-easing); display: inline-block; user-select: none; -webkit-user-select: none; }
-.greeting:hover { opacity: 0.8; transform: scale(1.02); }
-.greeting:active { transform: scale(0.97); }
-
-.dock-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-
-.dock-container { pointer-events: auto; padding: 8px; background: var(--glass-bg); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); border-radius: 34px; border: 1px solid var(--glass-border); box-shadow: var(--shadow-soft); display: flex; gap: 6px; }
-
-.day-item { width: 66px; height: 78px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 26px; transition: all 0.4s var(--sf-easing); cursor: pointer; }
-
-.day-item.active { background: var(--text-color); color: var(--bg-color); transform: scale(1.05); }
-
-.day-label { font-size: 9px; font-weight: 800; text-transform: uppercase; opacity: 0.5; }
-.day-val { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
-
-.weather-row { display: flex; gap: 0; padding: 0 8px; pointer-events: none; }
-
-/* POPPED DIVIDERS: More visible solid separators */
-.weather-day:not(:last-child) {
-    border-right: 1px solid rgba(29, 29, 31, 0.15);
+.header-container {
+    text-align: center;
+    margin-bottom: 24px;
+    z-index: 10;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-.weather-icon { font-size: 18px; margin-bottom: 2px; position: relative; z-index: 1; text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.4); }
-.weather-temp { font-size: 10px; font-weight: 700; }
 
-.weather-day { width: 66px; display: flex; flex-direction: column; align-items: center; opacity: 0.6; position: relative; transition: 0.3s; pointer-events: auto; cursor: pointer; padding: 8px 0; }
+.time-display {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 12px;
+}
 
-.weather-day.highlight-light::after {
-    content: '';
-    position: absolute;
-    top: 0%;
+.greeting {
+    font-size: 88px;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    background: linear-gradient(to bottom, var(--text-color) 70%, transparent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity 0.2s ease, transform 0.3s var(--spring-easing);
+    display: inline-block;
+    position: relative;
+}
+
+.greeting:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
+}
+
+.greeting:active {
+    transform: scale(0.97);
+}
+
+
+/* Greeting sub-line (funny text) — shares position with weather tooltip */
+.greeting-sub {
+    position: fixed;
+    bottom: 72px;
     left: 50%;
     transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+    font-family: 'Caveat', cursive;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     opacity: 0.4;
-    filter: blur(10px);
-    z-index: 0;
+    color: var(--text-color);
+    min-height: 20px;
+    z-index: 9997;
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+}
+
+.greeting-sub.hidden {
+    opacity: 0;
+}
+
+/* THE PRO STUDIO DOCK */
+.dock-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.dock-container {
+    padding: 12px; 
+    background: var(--card-bg);
+    backdrop-filter: blur(60px) saturate(210%);
+    -webkit-backdrop-filter: blur(60px) saturate(210%);
+    border-radius: 42px; 
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    
+    box-shadow: 
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 
+        0 30px 60px rgba(0,0,0,0.12);
+        
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    user-select: none;
+    z-index: 1000;
+}
+
+
+.day-separator {
+    width: 1px;
+    height: 34px;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.15) 80%, transparent);
+    flex-shrink: 0;
+    transition: opacity 0.4s var(--sf-easing);
+}
+
+.dark-mode .day-separator {
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.2) 80%, transparent);
+}
+
+.day-card {
+    width: 74px; 
+    height: 84px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 30px;
+    transition: 
+        transform 0.5s var(--sf-easing), 
+        background 0.3s var(--sf-easing), 
+        box-shadow 0.3s var(--sf-easing);
+    cursor: default;
+    position: relative;
+}
+
+
+.day-card:hover {
+    background: rgba(0, 0, 0, 0.03);
+    transform: translateY(-4px);
+}
+
+.dark-mode .day-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.day-card:active {
+    transform: scale(0.92) translateY(0);
+    transition: transform 0.1s var(--sf-easing);
+}
+
+.day-card.active {
+    background: var(--text-color); 
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    color: var(--bg-color);
+    transform: translateY(-6px);
+    z-index: 10;
+}
+
+.day-card.active::after {
+    content: '';
+    position: absolute;
+    bottom: 14px;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.6;
+}
+
+.day-name {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+}
+
+.day-card.active .day-name { opacity: 0.6; }
+
+.day-number {
+    font-size: 28px; 
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    font-variant-numeric: tabular-nums;
+    transition: font-weight 0.4s var(--sf-easing);
+}
+
+.day-card.active .day-number {
+    font-weight: 850;
+}
+
+/* WEATHER ROW */
+.weather-row { 
+    display: flex; 
+    gap: 0; 
+    padding: 0; 
+    pointer-events: none; 
+}
+
+.weather-day { 
+    width: 74px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 8px 0;
+    opacity: 0.6; 
+    position: relative; 
+    transition: 0.3s; 
+    pointer-events: auto; 
+    cursor: pointer; 
+}
+
+.weather-day:not(:last-child) { 
+    border-right: 1px solid rgba(29, 29, 31, 0.15); 
+}
+
+.dark-mode .weather-day:not(:last-child) { 
+    border-right: 1px solid rgba(255, 255, 255, 0.12); 
+}
+
+.weather-icon { 
+    font-size: 18px; 
+    margin-bottom: 2px; 
+    position: relative; 
+    z-index: 1; 
+    text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 0 30px rgba(255, 255, 255, 0.6),
+        0 0 40px rgba(255, 255, 255, 0.4);
+}
+
+.weather-temp { 
+    font-size: 10px; 
+    font-weight: 700; 
+}
+
+.weather-day.highlight-light::after {
+    content: ''; 
+    position: absolute; 
+    top: 0%; 
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 40px; 
+    height: 40px; 
+    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+    opacity: 0.4; 
+    filter: blur(10px); 
+    z-index: 0; 
     animation: pulseLight 2s infinite ease-in-out;
 }
 
-@keyframes pulseLight {
-    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; }
-    50% { transform: translateX(-50%) scale(1.3); opacity: 0.5; }
+@keyframes pulseLight { 
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; } 
+    50% { transform: translateX(-50%) scale(1.3); opacity: 0.5; } 
 }
 
 .weather-tooltip {
     position: fixed;
-    bottom: 80px;
+    bottom: 72px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-family: 'Caveat', cursive;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
     z-index: 9998;
     color: var(--text-color);
     text-align: center;
+    white-space: nowrap;
 }
 
-.weather-tooltip.show { opacity: 0.4; }
+.weather-tooltip.show {
+    opacity: 0.4;
+}
+
+.bottom-controls { 
+    position: fixed; 
+    bottom: 30px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 9999; 
+}
+
+.lang-btn { 
+    background: none; 
+    border: none; 
+    color: var(--text-color); 
+    font-size: 10px; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 0.2em; 
+    opacity: 0.3; 
+    cursor: pointer; 
+    transition: opacity 0.3s; 
+}
+
+.lang-btn:hover { 
+    opacity: 1; 
+}
+
+.city-tooltip { 
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    font-size: 10px; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 0.1em; 
+    opacity: 0.2; 
+    z-index: 9999; 
+    pointer-events: auto; 
+    cursor: pointer; 
+    transition: 0.3s; 
+}
+
+.city-tooltip:hover { 
+    opacity: 0.6; 
+    transform: scale(1.05); 
+}
+
+/* ============================================
+   POMODORO TIMER
+   ============================================ */
+.pomodoro {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+}
+
+.pomodoro-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border-radius: 20px;
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 8px 24px rgba(0,0,0,0.08);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.3s, border-radius 0.4s var(--sf-easing), box-shadow 0.3s;
+    user-select: none;
+}
+
+.pomodoro-pill:hover { opacity: 1; }
+.pomodoro.open .pomodoro-pill { opacity: 1; border-radius: 20px 20px 0 0; box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.4); }
+
+.pomodoro-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-color);
+    opacity: 0.3;
+    transition: background 0.3s, opacity 0.3s;
+    flex-shrink: 0;
+}
+
+.pomodoro.running .pomodoro-dot {
+    background: #30D158;
+    opacity: 1;
+    animation: pomoDot 1s ease-in-out infinite;
+}
+
+.pomodoro.paused .pomodoro-dot {
+    background: #FF9500;
+    opacity: 1;
+}
+
+.pomodoro.break .pomodoro-dot {
+    background: #32ADE6;
+    opacity: 1;
+}
+
+@keyframes pomoDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.6; }
+}
+
+.pomodoro-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.5;
+    color: var(--text-color);
+}
+
+.pomodoro-time-small {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    color: var(--text-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.pomodoro-panel {
+    width: 100%;
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border-radius: 0 20px 20px 20px;
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    border-top: none;
+    box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.2), 0 12px 32px rgba(0,0,0,0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.4s var(--sf-easing), opacity 0.3s ease, padding 0.4s var(--sf-easing);
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.pomodoro.open .pomodoro-panel {
+    max-height: 200px;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 20px;
+}
+
+.pomodoro-session {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.35;
+    color: var(--text-color);
+}
+
+.pomodoro-display {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--text-color);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    background: linear-gradient(to bottom, var(--text-color) 60%, transparent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: text;
+    transition: opacity 0.2s;
+}
+
+.pomodoro-display:hover { opacity: 0.7; }
+
+.pomodoro-display.editing {
+    -webkit-text-fill-color: var(--text-color);
+    background: none;
+    outline: none;
+    opacity: 1;
+    border-bottom: 2px solid var(--accent-color);
+    cursor: text;
+}
+
+.pomodoro-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pomo-btn {
+    height: 30px;
+    border-radius: 15px;
+    border: none;
+    background: var(--text-color);
+    color: var(--bg-color);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    padding: 0 14px;
+    transition: opacity 0.2s, transform 0.2s var(--spring-easing);
+    opacity: 0.8;
+}
+
+.pomo-btn:hover { opacity: 1; transform: scale(1.05); }
+.pomo-btn:active { transform: scale(0.95); }
+
+.pomo-btn.secondary {
+    background: transparent;
+    color: var(--text-color);
+    border: 0.5px solid rgba(0,0,0,0.15);
+    opacity: 0.4;
+}
+
+.dark-mode .pomo-btn.secondary {
+    border-color: rgba(255,255,255,0.15);
+}
+
+.pomo-btn.secondary:hover { opacity: 0.8; }
+
+.pomodoro-sessions {
+    display: flex;
+    gap: 4px;
+}
+
+.pomo-session-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--text-color);
+    opacity: 0.15;
+    transition: opacity 0.3s;
+}
+
+.pomo-session-dot.done { opacity: 0.6; }
+
+.note {
+    position: absolute;
+    width: fit-content;
+    min-width: 80px;
+    max-width: 600px;
+    min-height: 40px;
+    background: var(--card-bg);
+    backdrop-filter: blur(50px) saturate(180%);
+    -webkit-backdrop-filter: blur(50px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 28px;
+    padding: 20px 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    z-index: 50;
+    cursor: grab;
+    transition: transform 0.2s var(--spring-easing), box-shadow 0.3s var(--sf-easing), opacity 0.3s ease;
+    overflow: visible;
+    resize: none;
+}
+
+.note.dragging {
+    cursor: grabbing;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+}
+
+/* macOS traffic light buttons */
+.note-traffic {
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    display: flex;
+    gap: 6px;
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0);
+    transition: transform 0.3s var(--spring-easing), opacity 0.2s ease;
+}
+
+.note.editing .note-traffic {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+.note-traffic-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.15s ease;
+}
+
+.note-traffic-btn:active {
+    filter: brightness(0.8);
+}
+
+.note-traffic-btn svg {
+    width: 6px;
+    height: 6px;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+}
+
+.note-traffic:hover .note-traffic-btn svg {
+    opacity: 1;
+}
+
+.note-traffic-close {
+    background: #FF5F57;
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+}
+
+.note-traffic-close svg {
+    stroke: rgba(77, 0, 0, 0.8);
+    stroke-width: 1.4;
+    fill: none;
+}
+
+.note-traffic-archive {
+    background: #28C840;
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+}
+
+.note-traffic-archive svg {
+    stroke: rgba(0, 51, 0, 0.8);
+    stroke-width: 1.4;
+    fill: none;
+}
+
+.dark-mode .note {
+    background: rgba(35, 35, 37, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.note-content {
+    font-family: 'Caveat', cursive;
+    font-size: 28px;
+    line-height: 1.1;
+    outline: none;
+    color: var(--text-color);
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+
+.note-content a {
+    color: var(--accent-color);
+    text-decoration: none;
+    border-bottom: 2px solid rgba(0, 122, 255, 0.2);
+    font-family: inherit !important;
+}
+
+/* macOS-style resize handle — bottom right corner */
+.note-resize-handle {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 18px;
+    height: 12px;
+    cursor: nwse-resize;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 3px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.note:hover .note-resize-handle { opacity: 1; }
+.note-resize-handle:hover { opacity: 1 !important; }
+
+.note-resize-handle span {
+    display: block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.note-resize-handle span.note-resize-dot {
+    background: var(--text-color);
+    opacity: 0.4;
+}
+
+.note-resize-handle:hover span.note-resize-dot {
+    opacity: 0.8;
+}
 
 
-.city-tooltip { position: fixed; bottom: 30px; right: 30px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.2; z-index: 9999; pointer-events: auto; cursor: pointer; transition: 0.3s; }
-.city-tooltip:hover { opacity: 0.6; transform: scale(1.05); }
+/* Lang flash animation on greeting */
+@keyframes greetingPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
 
-.note { position: absolute; width: fit-content; min-width: 80px; max-width: 600px; padding: 20px 24px; border-radius: 28px; background: var(--glass-bg); backdrop-filter: blur(50px) saturate(180%); -webkit-backdrop-filter: blur(50px) saturate(180%); border: 1px solid var(--glass-border); box-shadow: var(--shadow-soft); cursor: grab; transition: transform 0.2s var(--spring-easing), box-shadow 0.3s var(--sf-easing), opacity 0.3s ease; }
-.note:active { cursor: grabbing; transform: scale(1.06) rotate(1.5deg); box-shadow: var(--shadow-lift); }
-.note-content { font-family: 'Caveat', cursive; font-size: 34px; line-height: 1.1; color: var(--text-color); outline: none; white-space: pre-wrap; word-break: break-word; }
-.note-content a { color: var(--accent-color); text-decoration: none; border-bottom: 2px solid rgba(0, 122, 255, 0.2); font-family: inherit !important; }
+.greeting.lang-switch {
+    animation: greetingPulse 0.4s var(--spring-easing);
+}
 
+/* Bottom watermark — Alcove-style fading text */
+.bottom-watermark {
+    position: fixed;
+    bottom: -0.12em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(180px, 22vw, 360px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    color: var(--text-color);
+    opacity: 0.04;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 0;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,1) 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,1) 55%, transparent 100%);
+    white-space: nowrap;
+}
 </style>
 </head>
-<body id="canvas">
+<body id="surface">
+
+<div class="bottom-watermark">7days</div>
 
 <iframe id="mesh-iframe" scrolling="no" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;border:none;pointer-events:none;opacity:0.54;"></iframe>
 
-<main class="monolith">
-    <div class="time-pill" id="clock">--:--</div>
-    <h1 class="greeting" id="greet">Studio<span>.</span></h1>
-    <div class="dock-wrapper">
-        <div class="dock-container" id="dock"></div>
-        <div class="weather-row" id="weather"></div>
-    </div>
-</main>
+<header class="header-container" id="header-area">
+    <div class="time-display" id="clock">12:00 PM</div>
+    <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
+</header>
 
+<div class="dock-wrapper">
+    <div class="dock-container" id="dock"></div>
+    <div class="weather-row" id="weather"></div>
+</div>
 
+<div class="bottom-controls">
+    <button class="lang-btn" id="lang-toggle" onclick="cycleLang()">Language: EN</button>
+</div>
 
-<div class="city-tooltip" id="city-display">Detecting...</div>
+<div class="city-tooltip" id="city-display" title="Location Detection">Detecting...</div>
+
+<div class="greeting-sub" id="greeting-sub"></div>
 <div class="weather-tooltip" id="weather-tooltip"></div>
+
+<div class="pomodoro" id="pomodoro">
+    <div class="pomodoro-pill" id="pomodoro-pill">
+        <div class="pomodoro-dot"></div>
+        <span class="pomodoro-label">Focus</span>
+        <span class="pomodoro-time-small" id="pomo-time-small">25:00</span>
+    </div>
+    <div class="pomodoro-panel">
+        <div class="pomodoro-session" id="pomo-session-label">Work Session</div>
+        <div class="pomodoro-display" id="pomo-display">25:00</div>
+        <div class="pomodoro-controls">
+            <button class="pomo-btn secondary" onclick="pomoReset()">Reset</button>
+            <button class="pomo-btn" id="pomo-playpause" onclick="pomoToggle()">Start</button>
+        </div>
+        <div class="pomodoro-sessions" id="pomo-dots"></div>
+    </div>
+</div>
+
 
 <script>
     /* ============================================================
-       MESH GRADIENT — isolated in iframe with CSS blur
+       MESH GRADIENT — isolated in iframe, blur adjustable
     ============================================================ */
     function initMeshBg() {
         const W = window.innerWidth, H = window.innerHeight;
         const PAD = 200;
         const TW = W + PAD * 2, TH = H + PAD * 2;
         const balls = [
-            { x: (W + W * 0.20 - 600 + 300) + PAD, y: (H * -0.10 + 300) + PAD,           r: 300, color: '#007AFF' },
-            { x: (W * -0.18 + 275) + PAD,           y: (H + H * 0.12 - 550 + 275) + PAD,  r: 275, color: '#FF3B30' },
-            { x: (W - W * 0.08 - 500 + 250) + PAD,  y: (H - H * 0.15 - 500 + 250) + PAD, r: 250, color: '#5856D6' },
+            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
+            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
+            { x: W *  0.92 - 250 + PAD, y: H *  0.85 - 250 + PAD, r: 250, color: '#5856D6' },
         ];
-        const circles = balls.map((b, i) =>
-            `<div class="ball ball-${i}" style="width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;"></div>`
+        const circles = balls.map(b =>
+            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
         ).join('');
         const srcdoc = `<!DOCTYPE html><html><head><style>
             *{margin:0;padding:0;box-sizing:border-box;}
             body{width:${TW}px;height:${TH}px;overflow:hidden;background:transparent;filter:blur(120px);}
-            .ball{position:absolute;border-radius:50%;}
-            .ball-0{background:${balls[0].color};animation:drift0 20s ease-in-out infinite;}
-            .ball-1{background:${balls[1].color};animation:drift1 25s ease-in-out infinite;}
-            .ball-2{background:${balls[2].color};animation:drift2 22s ease-in-out infinite;}
-            @keyframes drift0{
-                0%,100%{transform:translate(0,0) scale(1);}
-                25%{transform:translate(-30px,20px) scale(1.04);}
-                50%{transform:translate(15px,35px) scale(0.97);}
-                75%{transform:translate(25px,-15px) scale(1.02);}
-            }
-            @keyframes drift1{
-                0%,100%{transform:translate(0,0) scale(1);}
-                25%{transform:translate(25px,-20px) scale(0.96);}
-                50%{transform:translate(-20px,-30px) scale(1.05);}
-                75%{transform:translate(-15px,25px) scale(0.98);}
-            }
-            @keyframes drift2{
-                0%,100%{transform:translate(0,0) scale(1);}
-                25%{transform:translate(20px,25px) scale(1.03);}
-                50%{transform:translate(-25px,10px) scale(0.95);}
-                75%{transform:translate(10px,-30px) scale(1.04);}
-            }
         </style></head><body>${circles}</body></html>`;
         const iframe = document.getElementById('mesh-iframe');
         iframe.srcdoc = srcdoc;
@@ -187,108 +825,296 @@ body {
 
     initMeshBg();
 
-    /* ---- Global state ---- */
+    /* ============================================================
+       LANGUAGE SYSTEM: EN / ES / PT (3-way cycle)
+    ============================================================ */
     let lang = localStorage.getItem('aura_lang') || 'en';
+    const LANGS = ['en', 'es', 'pt'];
+    const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
+
+    const dock = document.getElementById('dock');
     let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
+
+    // First time — seed a welcome/tips note
+    if (notes.length === 0) {
+        notes = [{
+            id: 'n_welcome',
+            x: window.innerWidth / 2 - 140,
+            y: window.innerHeight / 2 - 60,
+            text: '👋 Welcome!\n\nDouble-click anywhere to add a note.\nDrag to move · Resize from corner\nClick a link to open it',
+            zIndex: 100
+        }];
+        localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
+    }
     let topZ = 100;
 
-    /* ---- Utilities ---- */
+    /* ============================================================
+       GREETINGS — simple main, funny subs
+    ============================================================ */
+
+    // Main greeting: simple, warm, uses day name where it feels right
+    function getMainGreeting(lang, slot, dayName) {
+        const map = {
+            en: {
+                dawn:      'Good morning.',
+                morning:   `Happy ${dayName}.`,
+                lateAM:    'Good morning.',
+                noon:      'Good afternoon.',
+                afternoon: `Good ${dayName}.`,
+                evening:   'Good evening.',
+                night:     'Good night.',
+            },
+            es: {
+                dawn:      'Buenos días.',
+                morning:   `Feliz ${dayName}.`,
+                lateAM:    'Buenos días.',
+                noon:      'Buenas tardes.',
+                afternoon: `Buen ${dayName}.`,
+                evening:   'Buenas noches.',
+                night:     'Buenas noches.',
+            },
+            pt: {
+                dawn:      'Bom dia.',
+                morning:   `Feliz ${dayName}.`,
+                lateAM:    'Bom dia.',
+                noon:      'Boa tarde.',
+                afternoon: `Bom ${dayName}.`,
+                evening:   'Boa noite.',
+                night:     'Boa noite.',
+            },
+        };
+        return map[lang][slot];
+    }
+
+    // Subs stay funny & rotational
+    const greetingSubs = {
+        en: {
+            dawn:      ["Can't sleep? Neither can your inbox.", "The birds aren't even awake yet. You good?", "Early bird gets the coffee. Go."],
+            morning:   ["Fully charged. Let's pretend.", "Coffee first. Ambitions second.", "Today's forecast: unclear, like your plans.", "Still half asleep? Same energy here."],
+            lateAM:    ["Lunch o'clock is approaching. Stay strong.", "The morning's not over. Technically.", "Still morning. Barely."],
+            noon:      ["Midday. Peak confusion hours.", "It's noon somewhere. Actually it's here.", "Halfway through. You can do this. Probably."],
+            afternoon: ["4pm slump incoming. You've been warned.", "Time is flying. Unlike your productivity.", "Still got it. Maybe."],
+            evening:   ["Golden hour. Your ideas are finally good.", "Almost done. With the day, at least.", "Dinner soon? Your stomach says yes."],
+            night:     ["Should you be asleep? Asking for science.", "Late-night ideas hit different. Unfortunately.", "This is fine. Everything is fine."],
+        },
+        es: {
+            dawn:      ["¿No puedes dormir? Tu bandeja tampoco.", "Ni los pájaros están despiertos. ¿Todo bien?", "El que madruga, toma el café primero."],
+            morning:   ["El café antes que las ambiciones.", "Hoy: confusión moderada y posibles logros.", "Cargado al 40%. Suficiente por ahora.", "Buenos días. Relativo."],
+            lateAM:    ["El almuerzo se acerca. Aguanta.", "Técnicamente todavía es mañana.", "La mañana no se ha rendido. Tú tampoco."],
+            noon:      ["Mediodía. Hora pico del caos.", "Aquí es donde el café ya no ayuda.", "Mitad del día. Mitad de las excusas."],
+            afternoon: ["El bajón de las 4pm viene en camino.", "El tiempo vuela. Tu lista de pendientes no.", "¿Productivo? Eso está por verse."],
+            evening:   ["Hora dorada. Ideas finalmente decentes.", "La cena no se va a hacer sola.", "Casi terminas. El día, al menos."],
+            night:     ["¿No deberías estar durmiendo? La ciencia pregunta.", "Ideas de madrugada: arriesgadas. Inevitables.", "Todo está bien. Completamente bien."],
+        },
+        pt: {
+            dawn:      ["Não consegue dormir? Sua caixa de entrada também não.", "Nem os pássaros acordaram ainda. Tá bem?", "Quem madruga toma café primeiro."],
+            morning:   ["Café antes das ambições. Sempre.", "Previsão de hoje: confusão com chance de produtividade.", "Carregando... 40%. Por enquanto basta.", "Bom dia. Relativamente falando."],
+            lateAM:    ["O almoço está chegando. Segura.", "Tecnicamente ainda é manhã.", "A manhã ainda não desistiu. Você também não."],
+            noon:      ["Meio-dia. Horário de pico do caos.", "É aqui que o café já não funciona mais.", "Metade do dia. Metade das desculpas."],
+            afternoon: ["A queda das 16h vem aí. Avisado.", "O tempo voa. Sua lista de tarefas não.", "Produtivo? A ver."],
+            evening:   ["Hora dourada. Suas ideias finalmente prestam.", "O jantar não vai se fazer sozinho.", "Quase terminou. O dia, pelo menos."],
+            night:     ["Não deveria estar dormindo? Pergunta a ciência.", "Ideias de madrugada: arriscadas. Inevitáveis.", "Tá tudo bem. Completamente bem."],
+        }
+    };
+
+    function getTimeSlot(hour) {
+        if (hour >= 0 && hour < 5) return 'dawn';
+        if (hour >= 5 && hour < 9) return 'morning';
+        if (hour >= 9 && hour < 12) return 'lateAM';
+        if (hour >= 12 && hour < 15) return 'noon';
+        if (hour >= 15 && hour < 18) return 'afternoon';
+        if (hour >= 18 && hour < 21) return 'evening';
+        return 'night';
+    }
+
+    // Pick a sub greeting (rotates every 10 minutes)
+    function getSubGreeting(slot) {
+        const subs = greetingSubs[lang][slot];
+        const minuteBucket = Math.floor(Date.now() / (10 * 60 * 1000));
+        return subs[minuteBucket % subs.length];
+    }
+
+    /* ============================================================
+       LINKIFY
+    ============================================================ */
     function linkify(text) {
         const urlRegex = /((https?:\/\/|www\.)[^\s]+|[a-zA-Z0-9-]+\.[a-zA-Z]{2,}[^\s]*)/gi;
         return text.replace(urlRegex, (url) => {
-            let href = url.startsWith('http') ? url : 'http://' + url;
-            return `<a href="${href}" target="_blank" onclick="event.stopPropagation()">${url}</a>`;
+            let href = url.startsWith('http') ? url : 'https://' + url;
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${url}</a>`;
         });
     }
 
-    /* ---- Time & Greeting ---- */
-    function updateTime() {
-        const now = new Date();
-        const locale = lang === 'en' ? 'en-US' : (lang === 'pt' ? 'pt-BR' : 'es-ES');
-        document.getElementById('clock').textContent = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
-
-        const h = now.getHours();
-        let msg = '';
-        if(lang === 'en') msg = h < 12 ? 'Morning' : h < 18 ? 'Afternoon' : 'Evening';
-        else if(lang === 'pt') msg = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
-        else if(lang === 'es') msg = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
-
-        document.getElementById('greet').innerHTML = `${msg}<span>.</span>`;
-    }
-
-    /* ---- Dock ---- */
+    /* ============================================================
+       DOCK
+    ============================================================ */
     function initDock() {
-        const dayNames = {
+        const days = {
             en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
             pt: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-            es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
         };
-
         const now = new Date();
         const start = new Date(now);
         start.setDate(now.getDate() - now.getDay());
 
-        const dock = document.getElementById('dock');
         dock.innerHTML = '';
-
         for (let i = 0; i < 7; i++) {
             const date = new Date(start);
             date.setDate(start.getDate() + i);
             const isToday = date.toDateString() === now.toDateString();
+            const card = document.createElement('div');
+            card.className = `day-card ${isToday ? 'active' : ''}`;
+            card.innerHTML = `
+                <span class="day-name">${days[lang][i]}</span>
+                <span class="day-number">${date.getDate()}</span>
+            `;
+            dock.appendChild(card);
 
-            const item = document.createElement('div');
-            item.className = `day-item ${isToday ? 'active' : ''}`;
-            item.innerHTML = `<span class="day-label">${dayNames[lang][i]}</span><span class="day-val">${date.getDate()}</span>`;
-            dock.appendChild(item);
+            if (i < 6) {
+                const sep = document.createElement('div');
+                sep.className = 'day-separator';
+                if (isToday || (i + 1 === now.getDay())) sep.style.opacity = '0.15';
+                dock.appendChild(sep);
+            }
         }
     }
 
-    /* ---- Language ---- */
-    function cycleLang() {
-        if(lang === 'en') lang = 'pt';
-        else if(lang === 'pt') lang = 'es';
-        else lang = 'en';
+    /* ============================================================
+       HEADER / GREETING UPDATE
+    ============================================================ */
+    function updateHeader() {
+        const now = new Date();
+        const hour = now.getHours();
+        const locale = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'pt-BR';
+        const timeStr = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('clock').textContent = timeStr;
 
-        localStorage.setItem('aura_lang', lang);
-        updateTime();
-        initDock();
+        const slot = getTimeSlot(hour);
+        const dayName = now.toLocaleDateString(locale, { weekday: 'long' });
+        const greetEl = document.getElementById('greeting');
+        const subEl = document.getElementById('greeting-sub');
+
+        // main greeting — simple, natural, with day name where it fits
+        const mainText = getMainGreeting(lang, slot, dayName);
+        greetEl.textContent = mainText;
+
+        // sub greeting — the funny line
+        subEl.textContent = getSubGreeting(slot);
     }
 
-    document.getElementById('greet').addEventListener('click', (e) => {
-        e.stopPropagation();
-        cycleLang();
-    });
+    /* ============================================================
+       LANGUAGE CYCLE (EN → ES → PT → EN)
+    ============================================================ */
+    function cycleLang() {
+        const idx = LANGS.indexOf(lang);
+        lang = LANGS[(idx + 1) % LANGS.length];
+        localStorage.setItem('aura_lang', lang);
 
-    document.getElementById('greet').addEventListener('dblclick', (e) => {
-        e.stopPropagation();
-    });
+        // Update button
+        document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
 
-    /* ---- Notes ---- */
+        // Animate greeting
+        const greetEl = document.getElementById('greeting');
+        greetEl.classList.remove('lang-switch');
+        void greetEl.offsetWidth; // reflow
+        greetEl.classList.add('lang-switch');
+
+        updateHeader();
+        initDock();
+
+        // Refresh weather tooltips if loaded
+        if (weatherLoaded) {
+            const tooltipVisible = document.getElementById('weather-tooltip').classList.contains('show');
+        }
+    }
+
+    // Clicking the greeting also cycles language
+    document.getElementById('greeting').addEventListener('click', cycleLang);
+
+    /* ============================================================
+       NOTES — drag + RESIZE (macOS bottom-right handle)
+    ============================================================ */
     function createNote(data, autoFocus = false) {
         const note = document.createElement('div');
         note.className = 'note';
         note.id = data.id;
         note.style.left = data.x + 'px';
         note.style.top = data.y + 'px';
+        if (data.w) note.style.width = data.w + 'px';
+        if (data.h) note.style.height = data.h + 'px';
         note.style.zIndex = data.zIndex || topZ;
 
         const content = document.createElement('div');
         content.className = 'note-content';
         content.spellcheck = false;
         content.innerHTML = linkify(data.text);
-
         note.appendChild(content);
+
+        // ---- RESIZE HANDLE (bottom-right, macOS style) ----
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'note-resize-handle';
+        // 6 dots arranged in bottom-right triangle pattern
+        resizeHandle.innerHTML = `
+            <span></span><span></span><span class="note-resize-dot"></span>
+            <span></span><span class="note-resize-dot"></span><span class="note-resize-dot"></span>
+        `;
+        note.appendChild(resizeHandle);
+
+        // ---- TRAFFIC LIGHT BUTTONS (macOS-style) ----
+        const traffic = document.createElement('div');
+        traffic.className = 'note-traffic';
+
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'note-traffic-btn note-traffic-close';
+        closeBtn.innerHTML = `<svg viewBox="0 0 6 6"><line x1="1" y1="1" x2="5" y2="5"/><line x1="5" y1="1" x2="1" y2="5"/></svg>`;
+
+        const archiveBtn = document.createElement('div');
+        archiveBtn.className = 'note-traffic-btn note-traffic-archive';
+        archiveBtn.innerHTML = `<svg viewBox="0 0 6 6"><polyline points="1 3 3 5 5 1"/></svg>`;
+
+        traffic.appendChild(closeBtn);
+        traffic.appendChild(archiveBtn);
+        note.appendChild(traffic);
+
+        closeBtn.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            data._deleted = true;
+            note.remove();
+            notes = notes.filter(n => n.id !== data.id);
+            document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
+            save();
+        });
+
+        archiveBtn.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            data.archived = true;
+            note.style.transition = 'transform 0.4s var(--sf-easing), opacity 0.4s ease';
+            note.style.transform = 'scale(0.8)';
+            note.style.opacity = '0';
+            document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
+            setTimeout(() => {
+                note.remove();
+                save();
+            }, 400);
+        });
+
         document.body.appendChild(note);
 
-        let ox, oy;
+        // ---- DRAG ----
         note.onmousedown = (e) => {
-            if (content.contentEditable === 'true' || e.target.tagName === 'A') return;
+            if (e.target.closest('.note-resize-handle')) return;
+            if (e.target.closest('.note-traffic')) return;
+            if (content.contentEditable === 'true') return;
+            if (e.target.tagName === 'A') return;
+
             e.preventDefault();
-            ox = e.clientX - note.offsetLeft;
-            oy = e.clientY - note.offsetTop;
+            let ox = e.clientX - note.offsetLeft;
+            let oy = e.clientY - note.offsetTop;
             note.style.zIndex = ++topZ;
-            note.style.userSelect = 'none';
-            note.style.webkitUserSelect = 'none';
+            note.classList.add('dragging');
 
             const move = (me) => {
                 me.preventDefault();
@@ -298,9 +1124,8 @@ body {
                 note.style.transform = `scale(1.06) rotate(${tilt}deg)`;
             };
             const stop = () => {
+                note.classList.remove('dragging');
                 note.style.transform = '';
-                note.style.userSelect = '';
-                note.style.webkitUserSelect = '';
                 save();
                 window.removeEventListener('mousemove', move);
                 window.removeEventListener('mouseup', stop);
@@ -309,14 +1134,49 @@ body {
             window.addEventListener('mouseup', stop);
         };
 
-        note.ondblclick = (e) => {
+        // ---- RESIZE (mousedown on handle) ----
+        resizeHandle.addEventListener('mousedown', (e) => {
             e.stopPropagation();
+            e.preventDefault();
+
+            const startX = e.clientX;
+            const startY = e.clientY;
+            const startW = note.offsetWidth;
+            const startH = note.offsetHeight;
+
+            note.style.height = startH + 'px'; // lock height for resize
+
+            const onMove = (me) => {
+                const newW = Math.max(160, startW + (me.clientX - startX));
+                const newH = Math.max(80, startH + (me.clientY - startY));
+                note.style.width = newW + 'px';
+                note.style.height = newH + 'px';
+            };
+            const onUp = () => {
+                data.w = note.offsetWidth;
+                data.h = note.offsetHeight;
+                data.manualResize = true;
+                save();
+                window.removeEventListener('mousemove', onMove);
+                window.removeEventListener('mouseup', onUp);
+            };
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onUp);
+        });
+
+        // ---- DOUBLE CLICK TO EDIT ----
+        note.ondblclick = (e) => {
+            if (e.target.closest('.note-resize-handle')) return;
+            if (e.target.closest('.note-delete')) return;
+            e.stopPropagation();
+            note.classList.add('editing');
             content.contentEditable = 'true';
-            content.innerText = data.text;
+            content.innerText = content.innerText;
             content.focus();
-            document.querySelectorAll('.note').forEach(n => { if(n !== note) n.style.opacity = '0.1' });
+            document.querySelectorAll('.note').forEach(n => { if (n !== note) n.style.opacity = '0.1'; });
         };
 
+        // Enter saves, Shift+Enter for new line
         content.onkeydown = (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -325,63 +1185,248 @@ body {
         };
 
         content.onblur = () => {
+            if (data._deleted || data.archived) return;
             content.contentEditable = 'false';
-            data.text = content.innerText;
-            content.innerHTML = linkify(data.text);
+            note.classList.remove('editing');
+            const plainText = content.innerText;
+            data.text = plainText;
+            content.innerHTML = linkify(plainText);
+            // Let note shrink-wrap around content unless manually resized
+            if (!data.manualResize) {
+                note.style.width = '';
+                delete data.w;
+            }
             document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
-            if (!data.text.trim()) { note.remove(); notes = notes.filter(n => n.id !== data.id); }
+            if (!plainText.trim()) {
+                note.remove();
+                notes = notes.filter(n => n.id !== data.id);
+            }
             save();
         };
 
-        if(autoFocus) {
+        if (autoFocus) {
             content.contentEditable = 'true';
             content.focus();
         }
     }
 
     window.ondblclick = (e) => {
-        if (e.target.closest('.monolith') || e.target.closest('.note')) return;
-        if (e.target.id === 'canvas' || e.target.id === 'mesh-iframe' || e.target.tagName === 'BODY') {
-            const n = { id: 'n'+Date.now(), x: e.clientX - 150, y: e.clientY - 50, text: '', zIndex: ++topZ };
+        // Only create notes on the background — never on the header, dock, or any note
+        if (
+            (e.target.id === 'surface' || e.target.id === 'mesh') &&
+            !e.target.closest('#header-area') &&
+            !e.target.closest('.dock-wrapper') &&
+            !e.target.closest('.note')
+        ) {
+            const n = {
+                id: 'n' + Date.now(),
+                x: e.clientX - 40,
+                y: e.clientY - 30,
+                text: '',
+                zIndex: ++topZ
+            };
             notes.push(n);
             createNote(n, true);
         }
     };
 
-    function save() {
-        document.querySelectorAll('.note').forEach(el => {
-            const d = notes.find(x => x.id === el.id);
-            if(d) { d.x = parseInt(el.style.left); d.y = parseInt(el.style.top); d.zIndex = el.style.zIndex; }
-        });
-        localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
-    }
-
+    // Escape key: exit note editing as if you clicked away
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             const active = document.querySelector('.note-content[contenteditable="true"]');
             if (active) active.blur();
         }
     });
-</script>
 
-<script src="js/weather.js"></script>
 
-<script>
-    /* ---- Init ---- */
+    function save() {
+        document.querySelectorAll('.note').forEach(el => {
+            const d = notes.find(x => x.id === el.id);
+            if (d) {
+                d.x = parseInt(el.style.left);
+                d.y = parseInt(el.style.top);
+                d.w = el.offsetWidth;
+                d.h = el.offsetHeight;
+                d.zIndex = el.style.zIndex;
+            }
+        });
+        localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
+    }
+
+    /* ============================================================
+       MISC
+    ============================================================ */
+    function toggleMode() { document.body.classList.toggle('dark-mode'); }
+
+    function clearNotes() {
+        document.querySelectorAll('.note').forEach(n => n.remove());
+        notes = [];
+        localStorage.removeItem('aura_notes_v3');
+    }
+
+    // City display click → refresh
     document.getElementById('city-display').onclick = () => {
         document.getElementById('city-display').textContent = 'Refreshing...';
         startLocationProcess();
     };
-
-    updateTime();
+</script>
+<script src="js/weather.js"></script>
+<script>
+    // Init — paint UI immediately, defer network calls
     initDock();
+    updateHeader();
     initWeatherPlaceholder();
-    notes.forEach(n => createNote(n));
-    setInterval(updateTime, 30000);
+    notes.filter(n => !n.archived).forEach(n => createNote(n));
+    setInterval(updateHeader, 10000);
+    document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
 
+    // Kick off location + weather after first frame so UI is visible first
     requestAnimationFrame(() => {
         setTimeout(startLocationProcess, 0);
     });
+
+    /* ============================================================
+       POMODORO TIMER
+    ============================================================ */
+    const POMO_WORK = 25 * 60;
+    const POMO_SHORT = 5 * 60;
+    const POMO_LONG = 15 * 60;
+
+    let pomoState = 'idle'; // idle | running | paused
+    let pomoMode = 'work';  // work | short | long
+    let pomoSeconds = POMO_WORK;
+    let pomoSession = 0;    // completed work sessions (0-3)
+    let pomoInterval = null;
+
+    const pomoEl = document.getElementById('pomodoro');
+    const pomoPill = document.getElementById('pomodoro-pill');
+    const pomoDisplay = document.getElementById('pomo-display');
+    const pomoSmall = document.getElementById('pomo-time-small');
+    const pomoBtn = document.getElementById('pomo-playpause');
+    const pomoSessionLabel = document.getElementById('pomo-session-label');
+
+    function pomoFormat(s) {
+        return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function pomoRenderDots() {
+        const container = document.getElementById('pomo-dots');
+        container.innerHTML = '';
+        for (let i = 0; i < 4; i++) {
+            const d = document.createElement('div');
+            d.className = 'pomo-session-dot' + (i < pomoSession ? ' done' : '');
+            container.appendChild(d);
+        }
+    }
+
+    function pomoUpdateUI() {
+        const fmt = pomoFormat(pomoSeconds);
+        pomoDisplay.textContent = fmt;
+        pomoSmall.textContent = fmt;
+
+        const labels = { work: 'Work Session', short: 'Short Break', long: 'Long Break' };
+        pomoSessionLabel.textContent = labels[pomoMode];
+
+        pomoBtn.textContent = pomoState === 'running' ? 'Pause' : pomoState === 'paused' ? 'Resume' : 'Start';
+
+        pomoEl.classList.remove('running', 'paused', 'break');
+        if (pomoState === 'running') pomoEl.classList.add(pomoMode === 'work' ? 'running' : 'break');
+        if (pomoState === 'paused') pomoEl.classList.add('paused');
+
+        const pillLabel = pomoEl.querySelector('.pomodoro-label');
+        pillLabel.textContent = pomoMode === 'work' ? 'Focus' : 'Break';
+
+        pomoRenderDots();
+    }
+
+    function pomoTick() {
+        pomoSeconds--;
+        if (pomoSeconds <= 0) {
+            clearInterval(pomoInterval);
+            pomoInterval = null;
+            pomoState = 'idle';
+
+            if (pomoMode === 'work') {
+                pomoSession = (pomoSession + 1) % 4;
+                pomoMode = pomoSession === 0 ? 'long' : 'short';
+                pomoSeconds = pomoSession === 0 ? POMO_LONG : POMO_SHORT;
+            } else {
+                pomoMode = 'work';
+                pomoSeconds = POMO_WORK;
+            }
+            pomoUpdateUI();
+        } else {
+            pomoUpdateUI();
+        }
+    }
+
+    function pomoToggle() {
+        if (pomoState === 'running') {
+            clearInterval(pomoInterval);
+            pomoInterval = null;
+            pomoState = 'paused';
+        } else {
+            pomoState = 'running';
+            pomoInterval = setInterval(pomoTick, 1000);
+        }
+        pomoUpdateUI();
+    }
+
+    function pomoReset() {
+        clearInterval(pomoInterval);
+        pomoInterval = null;
+        pomoState = 'idle';
+        pomoMode = 'work';
+        pomoSeconds = POMO_WORK;
+        pomoUpdateUI();
+    }
+
+    pomoPill.addEventListener('click', () => {
+        pomoEl.classList.toggle('open');
+    });
+
+    // Click display to edit time
+    pomoDisplay.addEventListener('click', () => {
+        if (pomoState === 'running') return;
+        pomoDisplay.contentEditable = 'true';
+        pomoDisplay.classList.add('editing');
+        pomoDisplay.focus();
+        // Select all
+        const range = document.createRange();
+        range.selectNodeContents(pomoDisplay);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    });
+
+    pomoDisplay.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); pomoDisplay.blur(); }
+        if (e.key === 'Escape') {
+            pomoDisplay.contentEditable = 'false';
+            pomoDisplay.classList.remove('editing');
+            pomoUpdateUI();
+        }
+        // Only allow digits and colon
+        if (!/[\d:]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
+            e.preventDefault();
+        }
+    });
+
+    pomoDisplay.addEventListener('blur', () => {
+        pomoDisplay.contentEditable = 'false';
+        pomoDisplay.classList.remove('editing');
+        const raw = pomoDisplay.textContent.trim();
+        const parts = raw.split(':');
+        if (parts.length === 2) {
+            const mins = Math.min(99, Math.max(0, parseInt(parts[0]) || 0));
+            const secs = Math.min(59, Math.max(0, parseInt(parts[1]) || 0));
+            pomoSeconds = mins * 60 + secs;
+        }
+        pomoUpdateUI();
+    });
+
+    pomoRenderDots();
+    pomoUpdateUI();
 </script>
 </body>
 </html>
