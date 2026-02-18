@@ -1622,6 +1622,26 @@ body {
     setInterval(updateHeader, 10000);
     document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
 
+    // Auto-advance dock at midnight
+    function scheduleMidnightRefresh() {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setHours(24, 0, 1, 0); // 1 second past midnight
+        const ms = midnight - now;
+        setTimeout(() => {
+            // Don't interrupt if user is typing a day note
+            if (dayNotePopup.classList.contains('show')) {
+                // Retry in 30s
+                setTimeout(() => scheduleMidnightRefresh(), 0);
+                return;
+            }
+            initDock();
+            updateHeader();
+            scheduleMidnightRefresh();
+        }, ms);
+    }
+    scheduleMidnightRefresh();
+
     // Kick off location + weather after first frame so UI is visible first
     requestAnimationFrame(() => {
         setTimeout(startLocationProcess, 0);
