@@ -1174,8 +1174,9 @@ body {
 
             const startX = e.clientX;
             const startY = e.clientY;
-            const startW = note.offsetWidth;
-            const startH = note.offsetHeight;
+            const startRect = note.getBoundingClientRect();
+            const startW = Math.ceil(startRect.width);
+            const startH = Math.ceil(startRect.height);
 
             note.style.height = startH + 'px'; // lock height for resize
 
@@ -1188,8 +1189,9 @@ body {
                 note.style.height = newH + 'px';
             };
             const onUp = () => {
-                data.w = note.offsetWidth;
-                data.h = note.offsetHeight;
+                const endRect = note.getBoundingClientRect();
+                data.w = Math.ceil(endRect.width);
+                data.h = Math.ceil(endRect.height);
                 data.manualResize = true;
                 save();
                 window.removeEventListener('mousemove', onMove);
@@ -1281,8 +1283,9 @@ body {
                 d.x = parseInt(el.style.left);
                 d.y = parseInt(el.style.top);
                 if (d.manualResize) {
-                    d.w = el.offsetWidth;
-                    d.h = el.offsetHeight;
+                    const rect = el.getBoundingClientRect();
+                    d.w = Math.ceil(rect.width);
+                    d.h = Math.ceil(rect.height);
                 }
                 d.zIndex = el.style.zIndex;
             }

@@ -24,11 +24,13 @@ async function startLocationProcess() {
                         fetchWeather(latitude, longitude);
                     } catch (err) {
                         display.textContent = 'GPS Error';
+                        display.title = `GPS error: ${err.message}`;
                         fetchIPLocation();
                     }
                 },
                 (err) => {
                     display.textContent = 'Trying IP...';
+                    display.title = `GPS denied: ${err.message} (code ${err.code})`;
                     fetchIPLocation();
                 },
                 { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
@@ -38,6 +40,7 @@ async function startLocationProcess() {
         }
     } catch (err) {
         display.textContent = 'Location Error';
+        display.title = `Location error: ${err.message}`;
         fetchIPLocation();
     }
 }
@@ -46,7 +49,9 @@ async function fetchIPLocation() {
     const display = document.getElementById('city-display');
     try {
         const response = await fetch('https://ipapi.co/json/');
+        if (!response.ok) throw new Error(`ipapi.co HTTP ${response.status}`);
         const data = await response.json();
+        if (data.error) throw new Error(`ipapi.co: ${data.reason || data.message || 'unknown error'}`);
         if (data.city && data.latitude && data.longitude) {
             currentLat = parseFloat(data.latitude);
             currentLon = parseFloat(data.longitude);
@@ -54,10 +59,12 @@ async function fetchIPLocation() {
             display.title = `${data.city} - IP-Based\nLat: ${currentLat.toFixed(4)}, Lon: ${currentLon.toFixed(4)}`;
             fetchWeather(currentLat, currentLon);
         } else {
+            display.title = `ipapi.co: missing city/coords in response`;
             fetchIPLocationFallback();
         }
     } catch (err) {
         display.textContent = 'Retrying...';
+        display.title = `ipapi.co failed: ${err.message}`;
         fetchIPLocationFallback();
     }
 }
@@ -66,6 +73,7 @@ async function fetchIPLocationFallback() {
     const display = document.getElementById('city-display');
     try {
         const response = await fetch('http://ip-api.com/json/');
+        if (!response.ok) throw new Error(`ip-api.com HTTP ${response.status}`);
         const data = await response.json();
         if (data.status === 'success') {
             currentLat = parseFloat(data.lat);
@@ -75,10 +83,12 @@ async function fetchIPLocationFallback() {
             fetchWeather(currentLat, currentLon);
         } else {
             display.textContent = 'Location Unknown';
+            display.title = `ip-api.com: ${data.message || 'request failed'}`;
             showWeatherError();
         }
     } catch (err) {
-        showLocationError('Could not detect location');
+        display.textContent = 'Location Failed';
+        display.title = `All location APIs failed. Last: ${err.message}`;
         showWeatherError();
     }
 }
@@ -128,6 +138,7 @@ async function fetchWeather(lat, lon) {
             showWeatherError();
         }
     } catch (e) {
+        console.warn('Weather fetch error:', e.message);
         if (!weatherLoaded) {
             showWeatherError();
         }
