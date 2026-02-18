@@ -17,10 +17,53 @@ function appendCityError(msg) {
     display.title = existing ? existing + '\n' + entry : entry;
 }
 
+/* ---- LOCATION CACHE ---- */
+const LOC_CACHE_KEY = 'aura_location_cache';
+const LOC_CACHE_MAX_AGE = 60 * 60 * 1000;  // 1 hour — skip all APIs if fresh
+const LOC_COOLDOWN = 60 * 1000;             // 1 min — minimum between requests
+
+function getLocationCache() {
+    try { return JSON.parse(localStorage.getItem(LOC_CACHE_KEY)); } catch { return null; }
+}
+
+function saveLocationCache(city, lat, lon, method) {
+    localStorage.setItem(LOC_CACHE_KEY, JSON.stringify({
+        city, lat, lon, method, ts: Date.now()
+    }));
+}
+
+function restoreFromCache(cache) {
+    const display = document.getElementById('city-display');
+    currentLat = cache.lat;
+    currentLon = cache.lon;
+    display.textContent = cache.city;
+    display.title = `${cache.city} (cached ${cache.method})\nLat: ${cache.lat.toFixed(4)}, Lon: ${cache.lon.toFixed(4)}`;
+    fetchWeather(cache.lat, cache.lon);
+}
+
 /* ---- LOCATION DETECTION ---- */
 
-async function startLocationProcess() {
+async function startLocationProcess(forceRefresh = false) {
     const display = document.getElementById('city-display');
+    const cache = getLocationCache();
+
+    // Use cache if fresh enough and not forcing
+    if (!forceRefresh && cache && (Date.now() - cache.ts < LOC_CACHE_MAX_AGE)) {
+        appendCityError(`Using cached location (${Math.round((Date.now() - cache.ts) / 60000)}m old)`);
+        restoreFromCache(cache);
+        return;
+    }
+
+    // Enforce cooldown even on force refresh
+    if (cache && (Date.now() - cache.ts < LOC_COOLDOWN)) {
+        const wait = Math.ceil((LOC_COOLDOWN - (Date.now() - cache.ts)) / 1000);
+        appendCityError(`Cooldown: wait ${wait}s before next request`);
+        display.textContent = cache.city;
+        display.title = `${cache.city} (cooldown — retry in ${wait}s)`;
+        restoreFromCache(cache);
+        return;
+    }
+
     try {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -66,6 +109,7 @@ async function fetchIPLocation() {
             currentLon = parseFloat(data.longitude);
             display.textContent = `${data.city} (IP)`;
             appendCityError(`ipapi.co OK: ${data.city} (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})`);
+            saveLocationCache(data.city, currentLat, currentLon, 'ipapi.co');
             fetchWeather(currentLat, currentLon);
         } else {
             appendCityError('ipapi.co: missing city/coords in response');
@@ -73,7 +117,8 @@ async function fetchIPLocation() {
         }
     } catch (err) {
         display.textContent = 'Retrying...';
-        appendCityError(`ipapi.co failed: ${err.message}`);
+        const isNetworkFail = err.message === 'Load failed' || err.message === 'Failed to fetch';
+        appendCityError(`ipapi.co failed: ${err.message}${isNetworkFail ? ' (likely rate-limited or CORS blocked)' : ''}`);
         fetchIPLocationFallback();
     }
 }
@@ -81,23 +126,27 @@ async function fetchIPLocation() {
 async function fetchIPLocationFallback() {
     const display = document.getElementById('city-display');
     try {
-        const response = await fetch('http://ip-api.com/json/');
-        if (!response.ok) throw new Error(`ip-api.com HTTP ${response.status}`);
+        // ip-api.com free tier is HTTP only — blocked on HTTPS pages (mixed content)
+        // Use their HTTPS endpoint with fields param instead
+        const response = await fetch('https://ipwho.is/');
+        if (!response.ok) throw new Error(`ipwho.is HTTP ${response.status}`);
         const data = await response.json();
-        if (data.status === 'success') {
-            currentLat = parseFloat(data.lat);
-            currentLon = parseFloat(data.lon);
+        if (data.success !== false && data.city && data.latitude && data.longitude) {
+            currentLat = parseFloat(data.latitude);
+            currentLon = parseFloat(data.longitude);
             display.textContent = `${data.city} (IP)`;
-            appendCityError(`ip-api.com OK: ${data.city} (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})`);
+            appendCityError(`ipwho.is OK: ${data.city} (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})`);
+            saveLocationCache(data.city, currentLat, currentLon, 'ipwho.is');
             fetchWeather(currentLat, currentLon);
         } else {
             display.textContent = 'Location Unknown';
-            appendCityError(`ip-api.com: ${data.message || 'request failed'}`);
+            appendCityError(`ipwho.is: ${data.message || 'no city/coords in response'}`);
             showWeatherError();
         }
     } catch (err) {
         display.textContent = 'Location Failed';
-        appendCityError(`ip-api.com failed: ${err.message}`);
+        const isNetworkFail = err.message === 'Load failed' || err.message === 'Failed to fetch';
+        appendCityError(`ipwho.is failed: ${err.message}${isNetworkFail ? ' (network/CORS blocked)' : ''}`);
         showWeatherError();
     }
 }
@@ -114,6 +163,7 @@ async function reverseGeocode(lat, lon, methodLabel = "GPS") {
         const city = addr.city || addr.town || addr.village || addr.municipality || addr.county || "Location";
         display.textContent = city;
         appendCityError(`Geocode OK: ${city} (${methodLabel}, ${lat.toFixed(4)}, ${lon.toFixed(4)})`);
+        saveLocationCache(city, lat, lon, methodLabel);
     } catch (err) {
         display.textContent = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
         appendCityError(`Geocode failed: ${err.message}`);
