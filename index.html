@@ -124,6 +124,46 @@ body {
     gap: 12px;
 }
 
+.dock-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+}
+
+.upcoming-days {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+    position: absolute;
+    left: 100%;
+    margin-left: 16px;
+}
+
+.upcoming-days:hover {
+    opacity: 0.5;
+}
+
+.upcoming-days .day-card {
+    width: 54px;
+    height: 64px;
+    border-radius: 22px;
+}
+
+.upcoming-days .day-name {
+    font-size: 8px;
+}
+
+.upcoming-days .day-number {
+    font-size: 20px;
+}
+
+.upcoming-days .day-separator {
+    height: 24px;
+}
+
 .dock-container {
     padding: 12px; 
     background: var(--card-bg);
@@ -576,7 +616,7 @@ body {
     border-radius: 28px;
     padding: 20px 24px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    z-index: 50;
+    z-index: 1100;
     cursor: grab;
     transition: transform 0.2s var(--spring-easing), box-shadow 0.3s var(--sf-easing), opacity 0.3s ease;
     overflow: visible;
@@ -780,6 +820,114 @@ body {
     background-clip: text;
 }
 
+/* DAY NOTE POPUP */
+.day-note-popup {
+    position: fixed;
+    transform: translateX(-50%) scale(0.9);
+    background: var(--card-bg);
+    backdrop-filter: blur(50px) saturate(200%);
+    -webkit-backdrop-filter: blur(50px) saturate(200%);
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 14px 16px 10px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.25s var(--spring-easing);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px;
+}
+
+.day-note-popup.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) scale(1);
+}
+
+.day-note-popup textarea {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    line-height: 1.2;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    resize: none;
+    width: 200px;
+    min-height: 50px;
+}
+
+.day-note-popup textarea::placeholder {
+    color: var(--text-color);
+    opacity: 0.3;
+}
+
+.day-note-done {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    color: var(--text-color);
+    opacity: 0.4;
+    cursor: pointer;
+    padding: 2px 8px;
+    transition: opacity 0.2s;
+}
+
+.day-note-done:hover {
+    opacity: 0.8;
+}
+
+/* DAY NOTE DOT */
+.day-note-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    opacity: 0.6;
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.day-card.active .day-note-dot {
+    background: currentColor;
+    opacity: 0.5;
+    bottom: 8px;
+    left: calc(50% + 8px);
+}
+
+/* DAY NOTE HOVER PREVIEW */
+.day-note-preview {
+    position: fixed;
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    color: var(--text-color);
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    padding: 6px 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    z-index: 1999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    white-space: pre-wrap;
+    max-width: 250px;
+}
+
+.day-note-preview.show {
+    opacity: 1;
+}
+
 /* Bottom watermark — Alcove-style fading text */
 .bottom-watermark {
     position: fixed;
@@ -821,8 +969,16 @@ body {
 </header>
 
 <div class="dock-wrapper">
-    <div class="dock-container" id="dock"></div>
+    <div class="dock-row">
+        <div class="dock-container" id="dock"></div>
+        <div class="upcoming-days" id="upcoming-days"></div>
+    </div>
     <div class="weather-row" id="weather"></div>
+    <div class="day-note-popup" id="day-note-popup">
+        <textarea id="day-note-input" placeholder="add a note..." rows="2"></textarea>
+        <button class="day-note-done" id="day-note-save">done</button>
+    </div>
+    <div class="day-note-preview" id="day-note-preview"></div>
 </div>
 
 <div class="bottom-controls">
@@ -903,7 +1059,7 @@ body {
         }];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
-    let topZ = 100;
+    let topZ = 1100;
 
     /* ============================================================
        GREETINGS — simple main, funny subs
@@ -1019,13 +1175,19 @@ body {
         for (let i = 0; i < 7; i++) {
             const date = new Date(start);
             date.setDate(start.getDate() + i);
+            const dateStr = toISO(date);
             const isToday = date.toDateString() === now.toDateString();
             const card = document.createElement('div');
             card.className = `day-card ${isToday ? 'active' : ''}`;
+            card.dataset.date = dateStr;
             card.innerHTML = `
                 <span class="day-name">${days[lang][i]}</span>
                 <span class="day-number">${date.getDate()}</span>
             `;
+            card.addEventListener('click', () => openDayNotePopup(card, dateStr));
+            card.addEventListener('mouseenter', () => showDayNotePreview(card, dateStr));
+            card.addEventListener('mouseleave', hideDayNotePreview);
+            card.style.cursor = 'pointer';
             dock.appendChild(card);
 
             if (i < 6) {
@@ -1035,6 +1197,37 @@ body {
                 dock.appendChild(sep);
             }
         }
+
+        // Upcoming days — next 3 days after the week ends
+        const upcoming = document.getElementById('upcoming-days');
+        upcoming.innerHTML = '';
+        const weekEnd = new Date(start);
+        weekEnd.setDate(start.getDate() + 7);
+        for (let i = 0; i < 3; i++) {
+            const date = new Date(weekEnd);
+            date.setDate(weekEnd.getDate() + i);
+            const dateStr = toISO(date);
+            const card = document.createElement('div');
+            card.className = 'day-card';
+            card.dataset.date = dateStr;
+            card.innerHTML = `
+                <span class="day-name">${days[lang][date.getDay()]}</span>
+                <span class="day-number">${date.getDate()}</span>
+            `;
+            card.addEventListener('click', () => openDayNotePopup(card, dateStr));
+            card.addEventListener('mouseenter', () => showDayNotePreview(card, dateStr));
+            card.addEventListener('mouseleave', hideDayNotePreview);
+            card.style.cursor = 'pointer';
+            upcoming.appendChild(card);
+
+            if (i < 2) {
+                const sep = document.createElement('div');
+                sep.className = 'day-separator';
+                upcoming.appendChild(sep);
+            }
+        }
+
+        renderDayNoteDots();
     }
 
     /* ============================================================
@@ -1309,6 +1502,112 @@ body {
         document.getElementById('city-display').textContent = 'Refreshing...';
         startLocationProcess();
     };
+
+    /* ============================================================
+       DAY NOTES — per-day notes on dock cards
+    ============================================================ */
+    let dayNotes = JSON.parse(localStorage.getItem('aura_day_notes')) || {};
+
+    function saveDayNotes() {
+        localStorage.setItem('aura_day_notes', JSON.stringify(dayNotes));
+    }
+
+    let dayNotePopupDate = null;
+    let dayNotePopupCard = null;
+    const dayNotePopup = document.getElementById('day-note-popup');
+    const dayNoteInput = document.getElementById('day-note-input');
+    const dayNotePreview = document.getElementById('day-note-preview');
+
+    function toISO(date) {
+        return date.getFullYear() + '-' +
+            String(date.getMonth() + 1).padStart(2, '0') + '-' +
+            String(date.getDate()).padStart(2, '0');
+    }
+
+    function openDayNotePopup(card, dateStr) {
+        dayNotePopupDate = dateStr;
+        dayNotePopupCard = card;
+        dayNoteInput.value = dayNotes[dateStr] || '';
+
+        // Position popup directly above the card using fixed coords
+        const rect = card.getBoundingClientRect();
+        dayNotePopup.style.left = (rect.left + rect.width / 2) + 'px';
+        dayNotePopup.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+        dayNotePopup.style.top = 'auto';
+
+        dayNotePopup.classList.add('show');
+        setTimeout(() => dayNoteInput.focus(), 50);
+    }
+
+    function closeDayNotePopup() {
+        dayNotePopup.classList.remove('show');
+        dayNotePopupDate = null;
+        dayNotePopupCard = null;
+    }
+
+    function saveDayNote() {
+        if (!dayNotePopupDate) return;
+        const text = dayNoteInput.value.trim();
+        if (text) {
+            dayNotes[dayNotePopupDate] = text;
+        } else {
+            delete dayNotes[dayNotePopupDate];
+        }
+        saveDayNotes();
+        closeDayNotePopup();
+        renderDayNoteDots();
+    }
+
+    document.getElementById('day-note-save').addEventListener('click', saveDayNote);
+
+    dayNoteInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            saveDayNote();
+        }
+        if (e.key === 'Escape') {
+            closeDayNotePopup();
+        }
+    });
+
+    // Click outside to close
+    document.addEventListener('mousedown', (e) => {
+        if (dayNotePopup.classList.contains('show') && !dayNotePopup.contains(e.target) && !e.target.closest('.day-card')) {
+            closeDayNotePopup();
+        }
+    });
+
+    function renderDayNoteDots() {
+        document.querySelectorAll('[data-date]').forEach(card => {
+            const dateStr = card.dataset.date;
+            let dot = card.querySelector('.day-note-dot');
+            if (dayNotes[dateStr]) {
+                if (!dot) {
+                    dot = document.createElement('div');
+                    dot.className = 'day-note-dot';
+                    card.appendChild(dot);
+                }
+            } else {
+                if (dot) dot.remove();
+            }
+        });
+    }
+
+    function showDayNotePreview(card, dateStr) {
+        const text = dayNotes[dateStr];
+        if (!text) return;
+        if (dayNotePopup.classList.contains('show')) return;
+        const rect = card.getBoundingClientRect();
+        dayNotePreview.textContent = text;
+        dayNotePreview.style.left = (rect.left + rect.width / 2) + 'px';
+        dayNotePreview.style.top = (rect.top - 10) + 'px';
+        dayNotePreview.style.transform = 'translate(-50%, -100%)';
+        dayNotePreview.classList.add('show');
+    }
+
+    function hideDayNotePreview() {
+        dayNotePreview.classList.remove('show');
+    }
 </script>
 <script src="js/weather.js"></script>
 <script>
