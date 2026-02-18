@@ -148,12 +148,34 @@ body {
             { x: (W * -0.18 + 275) + PAD,           y: (H + H * 0.12 - 550 + 275) + PAD,  r: 275, color: '#FF3B30' },
             { x: (W - W * 0.08 - 500 + 250) + PAD,  y: (H - H * 0.15 - 500 + 250) + PAD, r: 250, color: '#5856D6' },
         ];
-        const circles = balls.map(b =>
-            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
+        const circles = balls.map((b, i) =>
+            `<div class="ball ball-${i}" style="width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;"></div>`
         ).join('');
         const srcdoc = `<!DOCTYPE html><html><head><style>
             *{margin:0;padding:0;box-sizing:border-box;}
             body{width:${TW}px;height:${TH}px;overflow:hidden;background:transparent;filter:blur(120px);}
+            .ball{position:absolute;border-radius:50%;}
+            .ball-0{background:${balls[0].color};animation:drift0 20s ease-in-out infinite;}
+            .ball-1{background:${balls[1].color};animation:drift1 25s ease-in-out infinite;}
+            .ball-2{background:${balls[2].color};animation:drift2 22s ease-in-out infinite;}
+            @keyframes drift0{
+                0%,100%{transform:translate(0,0) scale(1);}
+                25%{transform:translate(-30px,20px) scale(1.04);}
+                50%{transform:translate(15px,35px) scale(0.97);}
+                75%{transform:translate(25px,-15px) scale(1.02);}
+            }
+            @keyframes drift1{
+                0%,100%{transform:translate(0,0) scale(1);}
+                25%{transform:translate(25px,-20px) scale(0.96);}
+                50%{transform:translate(-20px,-30px) scale(1.05);}
+                75%{transform:translate(-15px,25px) scale(0.98);}
+            }
+            @keyframes drift2{
+                0%,100%{transform:translate(0,0) scale(1);}
+                25%{transform:translate(20px,25px) scale(1.03);}
+                50%{transform:translate(-25px,10px) scale(0.95);}
+                75%{transform:translate(10px,-30px) scale(1.04);}
+            }
         </style></head><body>${circles}</body></html>`;
         const iframe = document.getElementById('mesh-iframe');
         iframe.srcdoc = srcdoc;

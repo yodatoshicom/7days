@@ -184,10 +184,12 @@ function showWeatherTooltip(index) {
     const tooltip = document.getElementById('weather-tooltip');
     tooltip.textContent = getWeatherDescription(weatherData[index].code, index);
     tooltip.classList.add('show');
+    document.getElementById('greeting-sub').classList.add('hidden');
 }
 
 function hideWeatherTooltip() {
     document.getElementById('weather-tooltip').classList.remove('show');
+    document.getElementById('greeting-sub').classList.remove('hidden');
 }
 
 function initWeatherPlaceholder() {
