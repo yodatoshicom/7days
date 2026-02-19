@@ -46,7 +46,6 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /*transition: background-color 0.8s var(--sf-easing);*/
 }
 
 
@@ -783,42 +782,31 @@ body {
     top: 20px;
     right: 20px;
     z-index: 10001;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: none;
-    background: var(--card-bg);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    background: transparent;
     cursor: pointer;
     opacity: 0;
-    transition: opacity 0.4s ease, transform 0.4s var(--spring-easing), background 0.3s ease;
+    transition: opacity 0.4s ease, transform 0.4s var(--spring-easing);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-color);
+    color: var(--accent-color);
     padding: 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
-/* Only appear on hover near top-right zone */
-body:hover .settings-btn { opacity: 0.35; }
-.settings-btn:hover {
-    opacity: 0.8 !important;
-    transform: scale(1.08);
-    background: var(--card-bg);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-}
-.settings-btn:active { transform: scale(0.94); }
-.settings-btn.open {
-    opacity: 1 !important;
-    background: var(--text-color);
-    color: var(--bg-color);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
+body:hover .settings-btn { opacity: 0.45; }
+.settings-btn:hover { opacity: 1 !important; }
+.settings-btn:active { transform: scale(0.92); }
+.settings-btn.open { opacity: 1 !important; }
 
-.settings-btn svg { transition: transform 0.4s var(--spring-easing); }
-.settings-btn.open svg { transform: rotate(90deg); }
+.settings-btn svg {
+    transition: transform 0.5s var(--spring-easing);
+}
+.settings-btn:hover svg { transform: rotate(45deg); }
+.settings-btn.open svg { transform: rotate(120deg); }
 
 .settings-panel {
     position: fixed;
@@ -1171,15 +1159,135 @@ body:hover .settings-btn { opacity: 0.35; }
     mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,1) 55%, transparent 100%);
     white-space: nowrap;
 }
+
+/* CLAUDE OVERLAY */
+.claude-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+.claude-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.claude-model-label {
+    position: absolute;
+    top: 36px;
+    font-size: 28px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    opacity: 0.08;
+    color: var(--text-color);
+}
+
+.claude-chat {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 0 24px;
+}
+
+.claude-messages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.claude-msg {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-color);
+    animation: claudeFadeIn 0.4s var(--sf-easing);
+}
+
+.claude-msg.user {
+    opacity: 0.4;
+    font-weight: 400;
+}
+
+.claude-msg.assistant {
+    font-weight: 500;
+}
+
+@keyframes claudeFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.claude-input-wrap {
+    width: 100%;
+    position: relative;
+}
+
+.claude-input {
+    width: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--text-color);
+    background: transparent;
+    border: none;
+    outline: none;
+    caret-color: var(--accent-color);
+    padding: 0;
+}
+
+.claude-input::placeholder {
+    color: var(--text-color);
+    opacity: 0.15;
+}
+
+.claude-hint {
+    position: absolute;
+    bottom: -30px;
+    left: 0;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.15;
+    color: var(--text-color);
+}
 </style>
 </head>
 <body id="surface">
 
+<div class="claude-overlay" id="claude-overlay">
+    <div class="claude-model-label">Claude Sonnet 4.6</div>
+    <div class="claude-chat">
+        <div class="claude-messages" id="claude-messages"></div>
+        <div class="claude-input-wrap">
+            <input class="claude-input" id="claude-input" type="text" placeholder="Ask anything..." autocomplete="off">
+            <div class="claude-hint">esc to close · enter to send</div>
+        </div>
+    </div>
+</div>
+
 <button class="settings-btn" id="settings-btn">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <circle cx="8" cy="3" r="1.25" fill="currentColor"/>
-        <circle cx="8" cy="8" r="1.25" fill="currentColor"/>
-        <circle cx="8" cy="13" r="1.25" fill="currentColor"/>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
     </svg>
 </button>
 <div class="settings-panel" id="settings-panel">
@@ -2169,7 +2277,7 @@ body:hover .settings-btn { opacity: 0.35; }
     document.addEventListener('mousedown', (e) => {
         if (settingsPanel.classList.contains('show') &&
             !settingsPanel.contains(e.target) &&
-            e.target !== settingsBtn &&
+            !settingsBtn.contains(e.target) &&
             e.target.id !== 'city-display') {
             toggleSettings(false);
         }
@@ -2231,6 +2339,111 @@ body:hover .settings-btn { opacity: 0.35; }
     // Restore saved settings
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat');
     applyTempUnit(tempUnit, false);
+
+    /* ============================================================
+       CLAUDE CHAT OVERLAY (simulated)
+    ============================================================ */
+    const claudeOverlay = document.getElementById('claude-overlay');
+    const claudeInput = document.getElementById('claude-input');
+    const claudeMessages = document.getElementById('claude-messages');
+
+    const claudeResponses = [
+        "Hmm, that's a great question. I'd answer it, but I'm currently simulated. Try again when I'm real.",
+        "I'm flattered you'd ask me that. Unfortunately, I'm just a bunch of hardcoded strings right now.",
+        "Let me think about that... okay, I thought about it. I have no idea. I'm decorative.",
+        "Bold of you to assume I can think. I'm literally an array of strings.",
+        "I ran that through my neural networks (a Math.random() call) and the answer is: maybe.",
+        "That's above my pay grade. And my pay grade is zero. I'm a simulation.",
+        "Interesting. Counter-point: have you tried turning it off and on again?",
+        "I'd love to help, but I'm the equivalent of a fortune cookie right now.",
+        "My training data for this conversation is exactly 12 jokes. You're burning through them.",
+        "Processing... processing... just kidding. I already picked this response before you typed.",
+        "I consulted with the other hardcoded responses and we all agree: great question.",
+        "If I were the real Claude, I'd give you a thoughtful answer. Instead, here's this.",
+        "That sounds like a you problem. I'm just vibes and placeholder text.",
+        "I want to help, I really do. But between you and me, I'm just a fancy random picker.",
+        "Error 418: I'm a teapot. Wait, wrong joke. Error 200: I'm a fake chatbot.",
+        "The answer to that is 42. Or maybe not. I haven't actually read your message.",
+        "You know what, that's the best thing anyone's ever typed into a simulated chat box.",
+        "I'm going to pretend I understood that and respond with confidence: absolutely.",
+        "My real version would nail this. I'm just here to keep the seat warm.",
+        "I appreciate your trust in me. It's misplaced, but I appreciate it.",
+    ];
+
+    let claudeUsedResponses = [];
+
+    function getClaudeResponse() {
+        if (claudeUsedResponses.length >= claudeResponses.length) {
+            claudeUsedResponses = [];
+        }
+        const available = claudeResponses.filter((_, i) => !claudeUsedResponses.includes(i));
+        const idx = claudeResponses.indexOf(available[Math.floor(Math.random() * available.length)]);
+        claudeUsedResponses.push(idx);
+        return claudeResponses[idx];
+    }
+
+    function openClaude() {
+        claudeOverlay.classList.add('show');
+        claudeInput.value = '';
+        setTimeout(() => claudeInput.focus(), 50);
+    }
+
+    function closeClaude() {
+        claudeOverlay.classList.remove('show');
+    }
+
+    function sendClaudeMessage() {
+        const text = claudeInput.value.trim();
+        if (!text) return;
+
+        // Add user message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'claude-msg user';
+        userMsg.textContent = text;
+        claudeMessages.appendChild(userMsg);
+
+        claudeInput.value = '';
+
+        // Simulate typing delay
+        setTimeout(() => {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'claude-msg assistant';
+            botMsg.textContent = getClaudeResponse();
+            claudeMessages.appendChild(botMsg);
+            claudeMessages.scrollTop = claudeMessages.scrollHeight;
+        }, 300 + Math.random() * 500);
+    }
+
+    claudeInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendClaudeMessage();
+        }
+        if (e.key === 'Escape') {
+            closeClaude();
+        }
+    });
+
+    // Spacebar opens claude — only when nothing is focused/editable
+    window.addEventListener('keydown', (e) => {
+        if (e.code !== 'Space') return;
+        if (claudeOverlay.classList.contains('show')) return;
+
+        const tag = document.activeElement.tagName;
+        const editable = document.activeElement.contentEditable === 'true';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || editable) return;
+
+        // Check if day note popup is open
+        if (document.querySelector('.day-note-popup.show')) return;
+
+        e.preventDefault();
+        openClaude();
+    });
+
+    // Click outside input area closes
+    claudeOverlay.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.claude-chat')) closeClaude();
+    });
 </script>
 </body>
 </html>
