@@ -7,7 +7,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600&family=DM+Mono:wght@400;500" rel="stylesheet">
 
 <style>
 :root {
@@ -19,6 +19,7 @@
     --card-bg: rgba(255, 255, 255, 0.3); 
     --separator-color: rgba(0, 0, 0, 0.06);
     --note-font: 'Caveat', cursive;
+    --note-size: 28px;
 }
 
 .dark-mode {
@@ -127,41 +128,32 @@ body {
 .dock-row {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     position: relative;
 }
 
-.upcoming-days {
+.dock-nav {
+    border: none;
+    background: none;
+    color: var(--text-color);
+    cursor: pointer;
     display: flex;
-    gap: 2px;
     align-items: center;
-    opacity: 0.3;
-    transition: opacity 0.3s ease;
-    position: absolute;
-    left: 100%;
-    margin-left: 16px;
+    justify-content: center;
+    opacity: 0.25;
+    transition: opacity 0.25s ease, transform 0.25s var(--sf-easing);
+    flex-shrink: 0;
+    padding: 6px;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.upcoming-days:hover {
-    opacity: 0.5;
+.dock-nav:hover {
+    opacity: 0.6;
 }
 
-.upcoming-days .day-card {
-    width: 54px;
-    height: 64px;
-    border-radius: 22px;
-}
-
-.upcoming-days .day-name {
-    font-size: 8px;
-}
-
-.upcoming-days .day-number {
-    font-size: 20px;
-}
-
-.upcoming-days .day-separator {
-    height: 24px;
+.dock-nav:active {
+    transform: scale(0.75);
+    opacity: 0.4;
 }
 
 .dock-container {
@@ -256,6 +248,20 @@ body {
 }
 
 .day-card.active .day-name { opacity: 0.6; }
+
+.day-card.weekend .day-number {
+    background: linear-gradient(to bottom, var(--text-color) 20%, #A0A0A8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.day-card.weekend.active .day-number {
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
+}
 
 .day-number {
     font-size: 28px; 
@@ -711,7 +717,7 @@ body {
 
 .note-content {
     font-family: var(--note-font);
-    font-size: 28px;
+    font-size: var(--note-size);
     line-height: 1.1;
     outline: none;
     color: var(--text-color);
@@ -1269,6 +1275,126 @@ body:hover .settings-btn { opacity: 0.45; }
     opacity: 0.15;
     color: var(--text-color);
 }
+
+/* CLAUDE PAYWALL MODAL */
+.claude-paywall {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+.claude-paywall.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.claude-paywall-card {
+    background: var(--bg-color);
+    border-radius: 24px;
+    padding: 36px 32px;
+    max-width: 340px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+    transform: scale(0.92);
+    transition: transform 0.35s var(--spring-easing);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.claude-paywall.show .claude-paywall-card {
+    transform: scale(1);
+}
+
+.claude-paywall-emoji {
+    font-size: 48px;
+    line-height: 1;
+}
+
+.claude-paywall-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-color);
+}
+
+.claude-paywall-sub {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.5;
+    color: var(--text-color);
+}
+
+.claude-paywall-price {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-color);
+    line-height: 1;
+}
+
+.claude-paywall-price span {
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.4;
+}
+
+.claude-paywall-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 14px;
+    background: var(--accent-color);
+    color: #fff;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s var(--spring-easing), opacity 0.2s;
+}
+
+.claude-paywall-btn:hover { transform: scale(1.02); }
+.claude-paywall-btn:active { transform: scale(0.97); }
+
+.claude-paywall-dismiss {
+    background: none;
+    border: none;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0.3;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    padding: 4px 8px;
+}
+
+.claude-paywall-dismiss:hover { opacity: 0.6; }
+
+.claude-paywall-features {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    text-align: left;
+}
+
+.claude-paywall-features span {
+    font-size: 11px;
+    opacity: 0.45;
+    color: var(--text-color);
+}
 </style>
 </head>
 <body id="surface">
@@ -1281,6 +1407,22 @@ body:hover .settings-btn { opacity: 0.45; }
             <input class="claude-input" id="claude-input" type="text" placeholder="Ask anything..." autocomplete="off">
             <div class="claude-hint">esc to close · enter to send</div>
         </div>
+    </div>
+</div>
+
+<div class="claude-paywall" id="claude-paywall">
+    <div class="claude-paywall-card">
+        <div class="claude-paywall-emoji">🔒</div>
+        <div class="claude-paywall-title">You've hit the free limit</div>
+        <div class="claude-paywall-sub">Upgrade to Claude Pro for unlimited messages, faster responses, and priority access.</div>
+        <div class="claude-paywall-features">
+            <span>Unlimited messages</span>
+            <span>Priority access</span>
+            <span>Extended context</span>
+        </div>
+        <div class="claude-paywall-price">$20<span>/month</span></div>
+        <button class="claude-paywall-btn" id="paywall-subscribe">Subscribe to Pro</button>
+        <button class="claude-paywall-dismiss" id="paywall-dismiss">No thanks, I'll wait</button>
     </div>
 </div>
 
@@ -1307,9 +1449,17 @@ body:hover .settings-btn { opacity: 0.45; }
         <div class="settings-section-label">Note Font</div>
         <div class="settings-row" id="font-picker">
             <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
-            <div class="font-pick" data-font="dm-serif" style="font-family:'DM Serif Display',serif;">Aa</div>
-            <div class="font-pick" data-font="nunito" style="font-family:'Nunito',sans-serif;">Aa</div>
+            <div class="font-pick" data-font="sf-pro" style="font-family:-apple-system,'SF Pro Display','SF Pro Text',system-ui,sans-serif;">Aa</div>
+            <div class="font-pick" data-font="lora" style="font-family:'Lora',serif;">Aa</div>
             <div class="font-pick" data-font="dm-mono" style="font-family:'DM Mono',monospace;">Aa</div>
+        </div>
+    </div>
+    <div>
+        <div class="settings-section-label">Text Size</div>
+        <div class="settings-toggle" id="text-size-toggle">
+            <button class="settings-toggle-btn" data-size="S" style="font-size:9px;">S</button>
+            <button class="settings-toggle-btn active" data-size="M" style="font-size:11px;">M</button>
+            <button class="settings-toggle-btn" data-size="L" style="font-size:13px;">L</button>
         </div>
     </div>
 </div>
@@ -1325,8 +1475,9 @@ body:hover .settings-btn { opacity: 0.45; }
 
 <div class="dock-wrapper">
     <div class="dock-row">
+        <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="dock-container" id="dock"></div>
-        <div class="upcoming-days" id="upcoming-days"></div>
+        <button class="dock-nav" id="dock-next"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M6 3L10.5 8L6 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
     <div class="weather-row" id="weather"></div>
     <div class="day-note-popup" id="day-note-popup">
@@ -1516,28 +1667,31 @@ body:hover .settings-btn { opacity: 0.45; }
     /* ============================================================
        DOCK
     ============================================================ */
+    let dockOffset = 0; // days offset from current week start
+
     function initDock() {
-        const days = {
+        const dayNames = {
             en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
             pt: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
         };
         const now = new Date();
-        const start = new Date(now);
-        start.setDate(now.getDate() - now.getDay());
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay() + dockOffset);
 
         dock.innerHTML = '';
         for (let i = 0; i < 7; i++) {
-            const date = new Date(start);
-            date.setDate(start.getDate() + i);
+            const date = new Date(weekStart);
+            date.setDate(weekStart.getDate() + i);
             const dateStr = toISO(date);
             const isToday = date.toDateString() === now.toDateString();
             const isPast = date < new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const card = document.createElement('div');
-            card.className = `day-card${isToday ? ' active' : ''}${isPast ? ' past' : ''}`;
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            card.className = `day-card${isToday ? ' active' : ''}${isPast ? ' past' : ''}${isWeekend ? ' weekend' : ''}`;
             card.dataset.date = dateStr;
             card.innerHTML = `
-                <span class="day-name">${days[lang][i]}</span>
+                <span class="day-name">${dayNames[lang][date.getDay()]}</span>
                 <span class="day-number">${date.getDate()}</span>
             `;
             if (!isPast) {
@@ -1549,44 +1703,28 @@ body:hover .settings-btn { opacity: 0.45; }
             dock.appendChild(card);
 
             if (i < 6) {
-                const sep = document.createElement('div');
-                sep.className = 'day-separator';
-                if (isToday || (i + 1 === now.getDay())) sep.style.opacity = '0.15';
-                dock.appendChild(sep);
-            }
-        }
-
-        // Upcoming days — next 3 days after the week ends
-        const upcoming = document.getElementById('upcoming-days');
-        upcoming.innerHTML = '';
-        const weekEnd = new Date(start);
-        weekEnd.setDate(start.getDate() + 7);
-        for (let i = 0; i < 3; i++) {
-            const date = new Date(weekEnd);
-            date.setDate(weekEnd.getDate() + i);
-            const dateStr = toISO(date);
-            const card = document.createElement('div');
-            card.className = 'day-card';
-            card.dataset.date = dateStr;
-            card.innerHTML = `
-                <span class="day-name">${days[lang][date.getDay()]}</span>
-                <span class="day-number">${date.getDate()}</span>
-            `;
-            card.addEventListener('click', () => openDayNotePopup(card, dateStr));
-            card.addEventListener('mouseenter', () => showDayNotePreview(card, dateStr));
-            card.addEventListener('mouseleave', hideDayNotePreview);
-            card.style.cursor = 'pointer';
-            upcoming.appendChild(card);
-
-            if (i < 2) {
-                const sep = document.createElement('div');
-                sep.className = 'day-separator';
-                upcoming.appendChild(sep);
+                const nextDate = new Date(weekStart);
+                nextDate.setDate(weekStart.getDate() + i + 1);
+                const nextIsToday = nextDate.toDateString() === now.toDateString();
+                if (!isToday && !nextIsToday) {
+                    const sep = document.createElement('div');
+                    sep.className = 'day-separator';
+                    dock.appendChild(sep);
+                }
             }
         }
 
         renderDayNoteDots();
     }
+
+    document.getElementById('dock-prev').addEventListener('click', () => {
+        dockOffset--;
+        initDock();
+    });
+    document.getElementById('dock-next').addEventListener('click', () => {
+        dockOffset++;
+        initDock();
+    });
 
     /* ============================================================
        HEADER / GREETING UPDATE
@@ -2316,10 +2454,20 @@ body:hover .settings-btn { opacity: 0.45; }
     // Note font
     const noteFonts = {
         'caveat':   "'Caveat', cursive",
-        'dm-serif': "'DM Serif Display', serif",
-        'nunito':   "'Nunito', sans-serif",
+        'sf-pro': "-apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif",
+        'lora':     "'Lora', serif",
         'dm-mono':  "'DM Mono', monospace",
     };
+
+    function reflowNotes() {
+        document.querySelectorAll('.note').forEach(el => {
+            el.style.width = '';
+            el.style.height = '';
+            const data = notes.find(n => n.id === el.id);
+            if (data) data.manualResize = false;
+        });
+        save();
+    }
 
     function applyNoteFont(key) {
         const font = noteFonts[key];
@@ -2328,6 +2476,7 @@ body:hover .settings-btn { opacity: 0.45; }
         document.querySelectorAll('.font-pick').forEach(p => p.classList.remove('active'));
         document.querySelector(`.font-pick[data-font="${key}"]`)?.classList.add('active');
         localStorage.setItem('aura_note_font', key);
+        reflowNotes();
     }
 
     document.getElementById('font-picker').addEventListener('click', (e) => {
@@ -2336,8 +2485,30 @@ body:hover .settings-btn { opacity: 0.45; }
         applyNoteFont(pick.dataset.font);
     });
 
+    // Text size
+    const noteSizes = { 'S': '22px', 'M': '28px', 'L': '36px' };
+
+    function applyNoteSize(size) {
+        const px = noteSizes[size];
+        if (!px) return;
+        document.documentElement.style.setProperty('--note-size', px);
+        document.querySelectorAll('#text-size-toggle .settings-toggle-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.size === size);
+        });
+        localStorage.setItem('aura_note_size', size);
+        reflowNotes();
+    }
+
+    document.getElementById('text-size-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.settings-toggle-btn');
+        if (!btn) return;
+        applyNoteSize(btn.dataset.size);
+    });
+
+
     // Restore saved settings
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat');
+    applyNoteSize(localStorage.getItem('aura_note_size') || 'M');
     applyTempUnit(tempUnit, false);
 
     /* ============================================================
@@ -2385,6 +2556,8 @@ body:hover .settings-btn { opacity: 0.45; }
     function openClaude() {
         claudeOverlay.classList.add('show');
         claudeInput.value = '';
+        claudeMessageCount = 0;
+        claudeMessages.innerHTML = '';
         setTimeout(() => claudeInput.focus(), 50);
     }
 
@@ -2392,9 +2565,27 @@ body:hover .settings-btn { opacity: 0.45; }
         claudeOverlay.classList.remove('show');
     }
 
+    let claudeMessageCount = 0;
+
+    function showPaywall() {
+        document.getElementById('claude-paywall').classList.add('show');
+    }
+
+    function hidePaywall() {
+        document.getElementById('claude-paywall').classList.remove('show');
+    }
+
     function sendClaudeMessage() {
         const text = claudeInput.value.trim();
         if (!text) return;
+
+        claudeMessageCount++;
+
+        if (claudeMessageCount > 1) {
+            claudeInput.value = '';
+            showPaywall();
+            return;
+        }
 
         // Add user message
         const userMsg = document.createElement('div');
@@ -2413,6 +2604,17 @@ body:hover .settings-btn { opacity: 0.45; }
             claudeMessages.scrollTop = claudeMessages.scrollHeight;
         }, 300 + Math.random() * 500);
     }
+
+    document.getElementById('paywall-dismiss').addEventListener('click', hidePaywall);
+    document.getElementById('paywall-subscribe').addEventListener('click', () => {
+        hidePaywall();
+        const botMsg = document.createElement('div');
+        botMsg.className = 'claude-msg assistant';
+        botMsg.textContent = "Just kidding — this is a demo 😄 No credit card needed.";
+        claudeMessages.appendChild(botMsg);
+        claudeMessages.scrollTop = claudeMessages.scrollHeight;
+        claudeMessageCount = 0;
+    });
 
     claudeInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
