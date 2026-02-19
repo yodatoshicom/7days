@@ -10,20 +10,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600&family=DM+Mono:wght@400;500" rel="stylesheet">
 
 <script>
-// Apply persisted settings before first paint to prevent flash
+// Apply persisted font/size settings before first paint to prevent flash
 (function() {
-    var themes = {
-        light:    { '--bg-color':'#f5f0e8','--text-color':'#1d1d1f','--accent-color':'#007AFF','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' },
-        ocean:    { '--bg-color':'#e0f2f7','--text-color':'#0f172a','--accent-color':'#0891b2','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' },
-        lavender: { '--bg-color':'#f3f0f9','--text-color':'#2d1b3d','--accent-color':'#9333ea','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' },
-    };
     var fonts = { 'caveat':"'Caveat', cursive", 'sf-pro':"-apple-system, 'SF Pro Display', system-ui, sans-serif", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace" };
     var sizes = { 'S':'22px', 'M':'28px', 'L':'36px' };
     var r = document.documentElement;
-    var t = localStorage.getItem('aura_theme') || 'light';
-    var v = themes[t] || themes.light;
-    for (var k in v) r.style.setProperty(k, v[k]);
-    r.setAttribute('data-theme', t);
     var f = localStorage.getItem('aura_note_font');
     if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
     var s = localStorage.getItem('aura_note_size');
@@ -43,30 +34,6 @@
     --note-size: 28px;
 }
 
-/* Theme grid in settings */
-.theme-grid {
-    display: flex;
-    gap: 6px;
-}
-
-.theme-circle {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 1.5px solid rgba(0,0,0,0.06);
-    transition: transform 0.2s var(--spring-easing), box-shadow 0.2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-.theme-circle:hover {
-    transform: scale(1.12);
-}
-
-.theme-circle.active {
-    box-shadow: 0 0 0 1.5px var(--accent-color);
-    border-color: transparent;
-}
 
 /* Note color bar — shown below note in editing mode */
 .note-color-bar {
@@ -399,8 +366,19 @@ body.ready {
     cursor: pointer; 
 }
 
-.weather-day:not(:last-child) { 
-    border-right: 1px solid rgba(29, 29, 31, 0.15); 
+.weather-day:not(:last-child) {
+    border-right: none;
+}
+
+.weather-day:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 16px;
+    background: rgba(29, 29, 31, 0.12);
 }
 
 .weather-icon { 
@@ -1494,22 +1472,6 @@ body:hover .settings-btn { opacity: 0.45; }
 </button>
 <div class="settings-panel" id="settings-panel">
     <div>
-        <div class="settings-section-label">Theme</div>
-        <div class="theme-grid" id="theme-grid">
-            <div class="theme-circle active" data-theme="light" style="background:#f5f0e8"></div>
-            <div class="theme-circle" data-theme="ocean" style="background:#e0f2f7"></div>
-            <div class="theme-circle" data-theme="lavender" style="background:#f3f0f9"></div>
-        </div>
-    </div>
-    <div>
-        <div class="settings-section-label">Language</div>
-        <div class="settings-toggle" id="lang-settings-toggle">
-            <button class="settings-toggle-btn active" data-lang="en">EN</button>
-            <button class="settings-toggle-btn" data-lang="es">ES</button>
-            <button class="settings-toggle-btn" data-lang="pt">PT</button>
-        </div>
-    </div>
-    <div>
         <div class="settings-section-label">Location</div>
         <input class="settings-location-input" id="settings-location" type="text" placeholder="city or postal code...">
         <div id="settings-location-status" style="font-size:9px;opacity:0.4;margin-top:4px;color:var(--text-color)"></div>
@@ -1542,7 +1504,7 @@ body:hover .settings-btn { opacity: 0.45; }
 
 <div class="bottom-watermark" id="bottom-watermark">7days</div>
 
-<iframe id="mesh-iframe" scrolling="no" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;border:none;pointer-events:none;opacity:0.54;"></iframe>
+<div id="mesh-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.54;filter:blur(120px);overflow:hidden;"></div>
 
 <header class="header-container" id="header-area">
     <div class="time-display" id="clock">12:00 PM</div>
@@ -1591,28 +1553,8 @@ body:hover .settings-btn { opacity: 0.45; }
 
 <script>
     /* ============================================================
-       MESH GRADIENT — isolated in iframe, blur adjustable
+       MESH GRADIENT
     ============================================================ */
-    /* ============================================================
-       THEMES
-    ============================================================ */
-    const THEMES = {
-        light:    { cssVars: { '--bg-color':'#f5f0e8','--text-color':'#1d1d1f','--accent-color':'#007AFF','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' }, meshColors: ['#007AFF','#FF3B30','#5856D6'] },
-        ocean:    { cssVars: { '--bg-color':'#e0f2f7','--text-color':'#0f172a','--accent-color':'#0891b2','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' }, meshColors: ['#06b6d4','#3b82f6','#8b5cf6'] },
-        lavender: { cssVars: { '--bg-color':'#f3f0f9','--text-color':'#2d1b3d','--accent-color':'#9333ea','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' }, meshColors: ['#a855f7','#ec4899','#f43f5e'] },
-    };
-
-    function applyTheme(key) {
-        const theme = THEMES[key];
-        if (!theme) return;
-        const root = document.documentElement;
-        Object.entries(theme.cssVars).forEach(([k, v]) => root.style.setProperty(k, v));
-        root.setAttribute('data-theme', key);
-        initMeshBg(theme.meshColors);
-        document.querySelectorAll('.theme-circle').forEach(c => c.classList.toggle('active', c.dataset.theme === key));
-        localStorage.setItem('aura_theme', key);
-    }
-
     function initMeshBg(colors) {
         colors = colors || ['#007AFF','#FF3B30','#5856D6'];
         const W = window.innerWidth, H = window.innerHeight;
@@ -1623,19 +1565,14 @@ body:hover .settings-btn { opacity: 0.45; }
             { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: colors[1] },
             { x: W *  0.92 - 250 + PAD, y: H *  0.85 - 250 + PAD, r: 250, color: colors[2] },
         ];
-        const circles = balls.map(b =>
+        const bg = document.getElementById('mesh-bg');
+        bg.innerHTML = balls.map(b =>
             `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
         ).join('');
-        const srcdoc = `<!DOCTYPE html><html><head><style>
-            *{margin:0;padding:0;box-sizing:border-box;}
-            body{width:${TW}px;height:${TH}px;overflow:hidden;background:transparent;filter:blur(120px);}
-        </style></head><body>${circles}</body></html>`;
-        const iframe = document.getElementById('mesh-iframe');
-        iframe.srcdoc = srcdoc;
-        iframe.style.top = `-${PAD}px`;
-        iframe.style.left = `-${PAD}px`;
-        iframe.style.width = `${TW}px`;
-        iframe.style.height = `${TH}px`;
+        bg.style.top = `-${PAD}px`;
+        bg.style.left = `-${PAD}px`;
+        bg.style.width = `${TW}px`;
+        bg.style.height = `${TH}px`;
     }
 
     initMeshBg();
@@ -1643,9 +1580,9 @@ body:hover .settings-btn { opacity: 0.45; }
     /* ============================================================
        LANGUAGE SYSTEM: EN / ES / PT (3-way cycle)
     ============================================================ */
-    let lang = localStorage.getItem('aura_lang') || 'en';
     const LANGS = ['en', 'es', 'pt'];
     const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
+    let lang = LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en';
 
     const dock = document.getElementById('dock');
     let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
@@ -1787,7 +1724,7 @@ body:hover .settings-btn { opacity: 0.45; }
             card.className = `day-card${isToday ? ' active' : ''}${isPast ? ' past' : ''}${isWeekend ? ' weekend' : ''}`;
             card.dataset.date = dateStr;
             card.innerHTML = `
-                <span class="day-name">${dayNames[lang][date.getDay()]}</span>
+                <span class="day-name">${(dayNames[lang] || dayNames['en'])[date.getDay()]}</span>
                 <span class="day-number">${date.getDate()}</span>
             `;
             if (!isPast) {
@@ -1849,20 +1786,13 @@ body:hover .settings-btn { opacity: 0.45; }
     /* ============================================================
        LANGUAGE CYCLE (EN → ES → PT → EN)
     ============================================================ */
-    function cycleLang(newLang) {
-        if (newLang) {
-            lang = newLang;
-        } else {
-            const idx = LANGS.indexOf(lang);
-            lang = LANGS[(idx + 1) % LANGS.length];
-        }
+    function cycleLang() {
+        const idx = LANGS.indexOf(lang);
+        lang = LANGS[(idx + 1) % LANGS.length];
         localStorage.setItem('aura_lang', lang);
 
-        // Update bottom button and settings toggle
+        // Update bottom button
         document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
-        document.querySelectorAll('#lang-settings-toggle .settings-toggle-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.lang === lang);
-        });
 
         // Animate greeting
         const greetEl = document.getElementById('greeting');
@@ -1872,15 +1802,10 @@ body:hover .settings-btn { opacity: 0.45; }
 
         updateHeader();
         initDock();
-
-        // Refresh weather tooltips if loaded
-        if (weatherLoaded) {
-            const tooltipVisible = document.getElementById('weather-tooltip').classList.contains('show');
-        }
     }
 
-    // Clicking the greeting also cycles language
-    document.getElementById('greeting').addEventListener('click', cycleLang);
+    // Clicking the greeting cycles language
+    document.getElementById('greeting').addEventListener('click', () => cycleLang());
 
     /* ============================================================
        NOTES — drag + RESIZE (macOS bottom-right handle)
@@ -1902,7 +1827,7 @@ body:hover .settings-btn { opacity: 0.45; }
         note.id = data.id;
         note.style.left = data.x + 'px';
         note.style.top = data.y + 'px';
-        if (data.manualResize && data.w) note.style.width = data.w + 'px';
+        if (data.w) note.style.width = data.w + 'px';
         if (data.manualResize && data.h) note.style.height = data.h + 'px';
         note.style.zIndex = data.zIndex || topZ;
         if (data.color && data.color !== 'default') note.setAttribute('data-note-color', data.color);
@@ -2107,17 +2032,27 @@ body:hover .settings-btn { opacity: 0.45; }
             const plainText = content.innerText;
             data.text = plainText;
             content.innerHTML = linkify(plainText);
-            // Let note shrink-wrap around content unless manually resized
-            if (!data.manualResize) {
-                note.style.width = '';
-                delete data.w;
-            }
             document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
             if (!plainText.trim()) {
                 note.remove();
                 notes = notes.filter(n => n.id !== data.id);
+                save();
+                return;
             }
-            save();
+            // Let note shrink-wrap then re-snap width so it's stable on next refresh
+            if (!data.manualResize) {
+                note.style.width = '';
+                delete data.w;
+                requestAnimationFrame(() => {
+                    if (document.getElementById(data.id)) {
+                        data.w = Math.ceil(note.getBoundingClientRect().width);
+                        note.style.width = data.w + 'px';
+                        save();
+                    }
+                });
+            } else {
+                save();
+            }
         };
 
         if (autoFocus) {
@@ -2175,14 +2110,6 @@ body:hover .settings-btn { opacity: 0.45; }
     /* ============================================================
        MISC
     ============================================================ */
-    // Theme grid click handler
-    document.getElementById('theme-grid').addEventListener('click', (e) => {
-        const circle = e.target.closest('.theme-circle');
-        if (!circle) return;
-        applyTheme(circle.dataset.theme);
-    });
-
-
     function clearNotes() {
         document.querySelectorAll('.note').forEach(n => n.remove());
         notes = [];
@@ -2350,15 +2277,11 @@ body:hover .settings-btn { opacity: 0.45; }
     updateHeader();
     initWeatherPlaceholder();
     notes.filter(n => !n.archived).forEach(n => {
-        if (!n.manualResize) { delete n.w; delete n.h; }
         createNote(n);
     });
     setInterval(updateHeader, 10000);
-    // Sync language on load
+    // Sync language button on load
     document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
-    document.querySelectorAll('#lang-settings-toggle .settings-toggle-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.lang === lang);
-    });
 
     // Auto-advance dock at midnight
     function scheduleMidnightRefresh() {
@@ -2584,13 +2507,6 @@ body:hover .settings-btn { opacity: 0.45; }
         if (refetch && currentLat && currentLon) fetchWeather(currentLat, currentLon, true);
     }
 
-    // Language toggle in settings
-    document.getElementById('lang-settings-toggle').addEventListener('click', (e) => {
-        const btn = e.target.closest('.settings-toggle-btn');
-        if (!btn) return;
-        cycleLang(btn.dataset.lang);
-    });
-
     document.getElementById('temp-toggle').addEventListener('click', (e) => {
         const btn = e.target.closest('.settings-toggle-btn');
         if (!btn) return;
@@ -2610,19 +2526,34 @@ body:hover .settings-btn { opacity: 0.45; }
             el.style.width = '';
             el.style.height = '';
             const data = notes.find(n => n.id === el.id);
-            if (data) data.manualResize = false;
+            if (data) { data.manualResize = false; delete data.w; delete data.h; }
         });
         save();
+        // Re-snap widths after layout settles with new font/size
+        requestAnimationFrame(() => snapNoteWidths());
     }
 
-    function applyNoteFont(key) {
+    function snapNoteWidths() {
+        let dirty = false;
+        document.querySelectorAll('.note').forEach(el => {
+            const data = notes.find(n => n.id === el.id);
+            if (data && !data.w) {
+                data.w = Math.ceil(el.getBoundingClientRect().width);
+                el.style.width = data.w + 'px';
+                dirty = true;
+            }
+        });
+        if (dirty) save();
+    }
+
+    function applyNoteFont(key, noReflow = false) {
         const font = noteFonts[key];
         if (!font) return;
         document.documentElement.style.setProperty('--note-font', font);
         document.querySelectorAll('.font-pick').forEach(p => p.classList.remove('active'));
         document.querySelector(`.font-pick[data-font="${key}"]`)?.classList.add('active');
         localStorage.setItem('aura_note_font', key);
-        reflowNotes();
+        if (!noReflow) reflowNotes();
     }
 
     document.getElementById('font-picker').addEventListener('click', (e) => {
@@ -2634,7 +2565,7 @@ body:hover .settings-btn { opacity: 0.45; }
     // Text size
     const noteSizes = { 'S': '22px', 'M': '28px', 'L': '36px' };
 
-    function applyNoteSize(size) {
+    function applyNoteSize(size, noReflow = false) {
         const px = noteSizes[size];
         if (!px) return;
         document.documentElement.style.setProperty('--note-size', px);
@@ -2642,7 +2573,7 @@ body:hover .settings-btn { opacity: 0.45; }
             b.classList.toggle('active', b.dataset.size === size);
         });
         localStorage.setItem('aura_note_size', size);
-        reflowNotes();
+        if (!noReflow) reflowNotes();
     }
 
     document.getElementById('text-size-toggle').addEventListener('click', (e) => {
@@ -2653,13 +2584,16 @@ body:hover .settings-btn { opacity: 0.45; }
 
 
     // Restore saved settings
-    applyTheme(localStorage.getItem('aura_theme') || 'light');
-    applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat');
-    applyNoteSize(localStorage.getItem('aura_note_size') || 'M');
+    applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
+    applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
     applyTempUnit(tempUnit, false);
 
     // Reveal UI after all settings applied — no flash
     requestAnimationFrame(() => document.body.classList.add('ready'));
+    setTimeout(() => document.body.classList.add('ready'), 300); // safety: show even if rAF stalls
+
+    // Snap note widths once fonts are loaded so they're stable across refreshes
+    document.fonts.ready.then(() => snapNoteWidths());
 
     /* ============================================================
        CLAUDE CHAT OVERLAY (simulated)
