@@ -64,36 +64,40 @@ async function startLocationProcess(forceRefresh = false) {
         return;
     }
 
+    // Go straight to IP-based location — no browser geolocation prompt
+    display.textContent = 'Locating...';
+    fetchIPLocation();
+}
+
+async function searchCity(query) {
+    const display = document.getElementById('city-display');
+    display.textContent = 'Searching...';
     try {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    try {
-                        const { latitude, longitude } = position.coords;
-                        currentLat = latitude;
-                        currentLon = longitude;
-                        reverseGeocode(latitude, longitude, "GPS Precision");
-                        fetchWeather(latitude, longitude);
-                    } catch (err) {
-                        display.textContent = 'GPS Error';
-                        appendCityError(`GPS error: ${err.message}`);
-                        fetchIPLocation();
-                    }
-                },
-                (err) => {
-                    display.textContent = 'Trying IP...';
-                    appendCityError(`GPS denied: ${err.message} (code ${err.code})`);
-                    fetchIPLocation();
-                },
-                { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 }
-            );
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
+            { headers: { 'User-Agent': 'AuraWeatherApp/1.0' } }
+        );
+        const results = await response.json();
+        if (results.length > 0) {
+            const { lat, lon, display_name } = results[0];
+            currentLat = parseFloat(lat);
+            currentLon = parseFloat(lon);
+            const city = display_name.split(',')[0].trim();
+            display.textContent = city;
+            appendCityError(`Manual search OK: ${city} (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})`);
+            saveLocationCache(city, currentLat, currentLon, 'manual');
+            fetchWeather(currentLat, currentLon);
         } else {
-            fetchIPLocation();
+            display.textContent = 'Not found';
+            appendCityError(`Search: no results for "${query}"`);
+            setTimeout(() => {
+                const cache = getLocationCache();
+                if (cache) display.textContent = cache.city;
+            }, 2000);
         }
     } catch (err) {
-        display.textContent = 'Location Error';
-        appendCityError(`Location error: ${err.message}`);
-        fetchIPLocation();
+        display.textContent = 'Search failed';
+        appendCityError(`Search error: ${err.message}`);
     }
 }
 

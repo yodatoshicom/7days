@@ -7,7 +7,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Nunito:wght@400;600;700" rel="stylesheet">
 
 <style>
 :root {
@@ -18,6 +18,7 @@
     --accent-color: #007AFF;
     --card-bg: rgba(255, 255, 255, 0.3); 
     --separator-color: rgba(0, 0, 0, 0.06);
+    --note-font: 'Caveat', cursive;
 }
 
 .dark-mode {
@@ -381,24 +382,53 @@ body {
     opacity: 1; 
 }
 
-.city-tooltip { 
-    position: fixed; 
-    bottom: 30px; 
-    right: 30px; 
-    font-size: 10px; 
-    font-weight: 700; 
-    text-transform: uppercase; 
-    letter-spacing: 0.1em; 
-    opacity: 0.2; 
-    z-index: 9999; 
-    pointer-events: auto; 
-    cursor: pointer; 
-    transition: 0.3s; 
+.city-tooltip {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.2;
+    z-index: 9999;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.city-tooltip:hover { 
-    opacity: 0.6; 
-    transform: scale(1.05); 
+.city-tooltip:hover {
+    opacity: 0.6;
+    transform: scale(1.05);
+}
+
+.city-input-wrapper {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 10000;
+    display: none;
+}
+
+.city-input-wrapper.show {
+    display: flex;
+}
+
+.city-input {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-color);
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 8px 14px;
+    width: 180px;
+    outline: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
 }
 
 /* ============================================
@@ -660,10 +690,10 @@ body {
 /* Note close button — top right corner */
 .note-close {
     position: absolute;
-    top: 0px;
-    right: -4px;
-    width: 18px;
-    height: 18px;
+    top: -2px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: #FF5F57;
     border: 0.5px solid rgba(0, 0, 0, 0.12);
@@ -679,6 +709,7 @@ body {
     transition: transform 0.3s var(--spring-easing), opacity 0.2s ease, filter 0.15s ease;
 }
 
+.note:hover .note-close,
 .note.editing .note-close {
     opacity: 1;
     pointer-events: auto;
@@ -692,15 +723,14 @@ body {
 .note-close svg {
     width: 8px;
     height: 8px;
-    stroke: rgba(77, 0, 0, 0.8);
-    stroke-width: 1.4;
+    stroke: rgba(255, 255, 255, 0.9);
+    stroke-width: 1.6;
     fill: none;
-    opacity: 0;
-    transition: opacity 0.1s ease;
+    transition: stroke 0.1s ease;
 }
 
 .note-close:hover svg {
-    opacity: 1;
+    stroke: rgba(77, 0, 0, 0.9);
 }
 
 .dark-mode .note {
@@ -709,7 +739,7 @@ body {
 }
 
 .note-content {
-    font-family: 'Caveat', cursive;
+    font-family: var(--note-font);
     font-size: 28px;
     line-height: 1.1;
     outline: none;
@@ -775,8 +805,8 @@ body {
     animation: greetingPulse 0.4s var(--spring-easing);
 }
 
-/* Watermark gradient picker — top right */
-.watermark-picker {
+/* Note font picker — top right */
+.font-picker {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -787,7 +817,7 @@ body {
     -webkit-user-select: none;
 }
 
-.watermark-pick {
+.font-pick {
     width: 28px;
     height: 28px;
     border-radius: 10px;
@@ -798,55 +828,20 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-size: 12px;
+    font-weight: 400;
     color: var(--text-color);
-    overflow: hidden;
-    position: relative;
+    line-height: 1;
 }
 
-.watermark-pick:hover {
+.font-pick:hover {
     opacity: 0.7;
     transform: scale(1.1);
 }
 
-.watermark-pick.active {
+.font-pick.active {
     opacity: 1;
     border-color: var(--accent-color);
-}
-
-.watermark-pick span {
-    display: block;
-    width: 100%;
-    text-align: center;
-    line-height: 1;
-}
-
-.watermark-pick.g1 span {
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 55%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 55%, transparent 100%);
-}
-
-.watermark-pick.g2 span {
-    background: linear-gradient(to bottom, var(--text-color) 0%, transparent 90%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.watermark-pick.g3 span {
-    background: linear-gradient(to bottom, transparent 5%, var(--text-color) 50%, transparent 95%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.watermark-pick.g4 span {
-    background: linear-gradient(to bottom, var(--text-color) 0%, var(--text-color) 40%, transparent 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 /* DAY NOTE POPUP */
@@ -877,7 +872,7 @@ body {
 }
 
 .day-note-popup textarea {
-    font-family: 'Caveat', cursive;
+    font-family: var(--note-font);
     font-size: 22px;
     line-height: 1.2;
     background: transparent;
@@ -894,21 +889,80 @@ body {
     opacity: 0.3;
 }
 
-.day-note-done {
-    align-self: flex-end;
-    background: none;
-    border: none;
-    font-family: 'Caveat', cursive;
-    font-size: 16px;
-    color: var(--text-color);
-    opacity: 0.4;
-    cursor: pointer;
-    padding: 2px 8px;
-    transition: opacity 0.2s;
+
+/* PAST DAY CARDS */
+.day-card.past {
+    cursor: default !important;
+    opacity: 0.5;
 }
 
-.day-note-done:hover {
-    opacity: 0.8;
+.day-card.past:hover {
+    background: transparent;
+    transform: none;
+}
+
+.dark-mode .day-card.past:hover {
+    background: transparent;
+}
+
+/* DAY NOTE LIST inside popup */
+.day-note-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.day-note-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 4px 0;
+}
+
+.day-note-item-text {
+    font-family: var(--note-font);
+    font-size: 20px;
+    line-height: 1.2;
+    color: var(--text-color);
+    flex: 1;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.day-note-item-delete {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 59, 48, 0.15);
+    color: #FF3B30;
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.day-note-item:hover .day-note-item-delete {
+    opacity: 1;
+}
+
+.day-note-item-delete:hover {
+    background: rgba(255, 59, 48, 0.3);
+}
+
+.day-note-separator {
+    height: 0.5px;
+    background: var(--text-color);
+    opacity: 0.08;
+    margin: 2px 0;
 }
 
 /* DAY NOTE DOT */
@@ -935,7 +989,7 @@ body {
 /* DAY NOTE HOVER PREVIEW */
 .day-note-preview {
     position: fixed;
-    font-family: 'Caveat', cursive;
+    font-family: var(--note-font);
     font-size: 22px;
     color: var(--text-color);
     background: var(--card-bg);
@@ -993,11 +1047,11 @@ body {
 </head>
 <body id="surface">
 
-<div class="watermark-picker" id="watermark-picker">
-    <div class="watermark-pick g1 active" data-gradient="1"><span>7d</span></div>
-    <div class="watermark-pick g2" data-gradient="2"><span>7d</span></div>
-    <div class="watermark-pick g3" data-gradient="3"><span>7d</span></div>
-    <div class="watermark-pick g4" data-gradient="4"><span>7d</span></div>
+<div class="font-picker" id="font-picker">
+    <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
+    <div class="font-pick" data-font="dm-serif" style="font-family:'DM Serif Display',serif;">Aa</div>
+    <div class="font-pick" data-font="nunito" style="font-family:'Nunito',sans-serif;">Aa</div>
+    <div class="font-pick" data-font="dm-mono" style="font-family:'DM Mono',monospace;">Aa</div>
 </div>
 
 <div class="bottom-watermark" id="bottom-watermark">7days</div>
@@ -1016,8 +1070,8 @@ body {
     </div>
     <div class="weather-row" id="weather"></div>
     <div class="day-note-popup" id="day-note-popup">
-        <textarea id="day-note-input" placeholder="add a note..." rows="2"></textarea>
-        <button class="day-note-done" id="day-note-save">done</button>
+        <div class="day-note-list" id="day-note-list"></div>
+        <textarea id="day-note-input" placeholder="add a note..." rows="1"></textarea>
     </div>
     <div class="day-note-preview" id="day-note-preview"></div>
 </div>
@@ -1026,7 +1080,10 @@ body {
     <button class="lang-btn" id="lang-toggle" onclick="cycleLang()">Language: EN</button>
 </div>
 
-<div class="city-tooltip" id="city-display" title="Location Detection">Detecting...</div>
+<div class="city-tooltip" id="city-display" title="Click to set location">Detecting...</div>
+<div class="city-input-wrapper" id="city-input-wrapper">
+    <input class="city-input" id="city-input" type="text" placeholder="city or postal code...">
+</div>
 
 <div class="greeting-sub" id="greeting-sub"></div>
 <div class="weather-tooltip" id="weather-tooltip"></div>
@@ -1218,17 +1275,20 @@ body {
             date.setDate(start.getDate() + i);
             const dateStr = toISO(date);
             const isToday = date.toDateString() === now.toDateString();
+            const isPast = date < new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const card = document.createElement('div');
-            card.className = `day-card ${isToday ? 'active' : ''}`;
+            card.className = `day-card${isToday ? ' active' : ''}${isPast ? ' past' : ''}`;
             card.dataset.date = dateStr;
             card.innerHTML = `
                 <span class="day-name">${days[lang][i]}</span>
                 <span class="day-number">${date.getDate()}</span>
             `;
-            card.addEventListener('click', () => openDayNotePopup(card, dateStr));
+            if (!isPast) {
+                card.addEventListener('click', () => openDayNotePopup(card, dateStr));
+                card.style.cursor = 'pointer';
+            }
             card.addEventListener('mouseenter', () => showDayNotePreview(card, dateStr));
             card.addEventListener('mouseleave', hideDayNotePreview);
-            card.style.cursor = 'pointer';
             dock.appendChild(card);
 
             if (i < 6) {
@@ -1433,7 +1493,7 @@ body {
                 // Highlight day card under cursor
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
                 const hit = getDayCardAtPoint(me.clientX, me.clientY);
-                if (hit) hit.card.classList.add('drag-over');
+                if (hit && !hit.card.classList.contains('past')) hit.card.classList.add('drag-over');
             };
             const stop = (me) => {
                 note.classList.remove('dragging', 'near-dock');
@@ -1441,14 +1501,11 @@ body {
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
 
                 const hit = getDayCardAtPoint(me.clientX, me.clientY);
-                if (hit && data.text && data.text.trim()) {
+                if (hit && !hit.card.classList.contains('past') && data.text && data.text.trim()) {
                     // Dock the note into the day card
                     const dateStr = hit.dateStr;
-                    if (dayNotes[dateStr]) {
-                        dayNotes[dateStr] += '\n' + data.text.trim();
-                    } else {
-                        dayNotes[dateStr] = data.text.trim();
-                    }
+                    if (!dayNotes[dateStr]) dayNotes[dateStr] = [];
+                    dayNotes[dateStr].push(data.text.trim());
                     saveDayNotes();
                     note.remove();
                     notes = notes.filter(n => n.id !== data.id);
@@ -1602,16 +1659,44 @@ body {
         localStorage.removeItem('aura_notes_v3');
     }
 
-    // City display click → refresh
+    // City display click → open search input
+    const cityInput = document.getElementById('city-input');
+    const cityInputWrapper = document.getElementById('city-input-wrapper');
+
     document.getElementById('city-display').onclick = () => {
-        document.getElementById('city-display').textContent = 'Refreshing...';
-        startLocationProcess(true);
+        cityInputWrapper.classList.add('show');
+        cityInput.value = '';
+        setTimeout(() => cityInput.focus(), 50);
     };
+
+    cityInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const query = cityInput.value.trim();
+            if (query) searchCity(query);
+            cityInputWrapper.classList.remove('show');
+        }
+        if (e.key === 'Escape') {
+            cityInputWrapper.classList.remove('show');
+        }
+    });
+
+    document.addEventListener('mousedown', (e) => {
+        if (cityInputWrapper.classList.contains('show') && !cityInputWrapper.contains(e.target) && e.target.id !== 'city-display') {
+            cityInputWrapper.classList.remove('show');
+        }
+    });
 
     /* ============================================================
        DAY NOTES — per-day notes on dock cards
     ============================================================ */
     let dayNotes = JSON.parse(localStorage.getItem('aura_day_notes')) || {};
+
+    // Migrate old string format → array format
+    Object.keys(dayNotes).forEach(k => {
+        if (typeof dayNotes[k] === 'string') {
+            dayNotes[k] = [dayNotes[k]];
+        }
+    });
 
     function saveDayNotes() {
         localStorage.setItem('aura_day_notes', JSON.stringify(dayNotes));
@@ -1621,6 +1706,7 @@ body {
     let dayNotePopupCard = null;
     const dayNotePopup = document.getElementById('day-note-popup');
     const dayNoteInput = document.getElementById('day-note-input');
+    const dayNoteList = document.getElementById('day-note-list');
     const dayNotePreview = document.getElementById('day-note-preview');
 
     function toISO(date) {
@@ -1629,10 +1715,45 @@ body {
             String(date.getDate()).padStart(2, '0');
     }
 
+    function renderDayNoteList() {
+        dayNoteList.innerHTML = '';
+        const entries = dayNotes[dayNotePopupDate] || [];
+        entries.forEach((text, i) => {
+            if (i > 0) {
+                const sep = document.createElement('div');
+                sep.className = 'day-note-separator';
+                dayNoteList.appendChild(sep);
+            }
+            const item = document.createElement('div');
+            item.className = 'day-note-item';
+
+            const span = document.createElement('span');
+            span.className = 'day-note-item-text';
+            span.textContent = text;
+            item.appendChild(span);
+
+            const del = document.createElement('button');
+            del.className = 'day-note-item-delete';
+            del.textContent = '×';
+            del.addEventListener('click', () => {
+                dayNotes[dayNotePopupDate].splice(i, 1);
+                if (dayNotes[dayNotePopupDate].length === 0) delete dayNotes[dayNotePopupDate];
+                saveDayNotes();
+                renderDayNoteList();
+                renderDayNoteDots();
+            });
+            item.appendChild(del);
+
+            dayNoteList.appendChild(item);
+        });
+    }
+
     function openDayNotePopup(card, dateStr) {
         dayNotePopupDate = dateStr;
         dayNotePopupCard = card;
-        dayNoteInput.value = dayNotes[dateStr] || '';
+        dayNoteInput.value = '';
+
+        renderDayNoteList();
 
         // Position popup directly above the card using fixed coords
         const rect = card.getBoundingClientRect();
@@ -1650,25 +1771,22 @@ body {
         dayNotePopupCard = null;
     }
 
-    function saveDayNote() {
+    function addDayNote() {
         if (!dayNotePopupDate) return;
         const text = dayNoteInput.value.trim();
-        if (text) {
-            dayNotes[dayNotePopupDate] = text;
-        } else {
-            delete dayNotes[dayNotePopupDate];
-        }
+        if (!text) return;
+        if (!dayNotes[dayNotePopupDate]) dayNotes[dayNotePopupDate] = [];
+        dayNotes[dayNotePopupDate].push(text);
         saveDayNotes();
-        closeDayNotePopup();
+        dayNoteInput.value = '';
+        renderDayNoteList();
         renderDayNoteDots();
     }
-
-    document.getElementById('day-note-save').addEventListener('click', saveDayNote);
 
     dayNoteInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            saveDayNote();
+            addDayNote();
         }
         if (e.key === 'Escape') {
             closeDayNotePopup();
@@ -1686,7 +1804,8 @@ body {
         document.querySelectorAll('[data-date]').forEach(card => {
             const dateStr = card.dataset.date;
             let dot = card.querySelector('.day-note-dot');
-            if (dayNotes[dateStr]) {
+            const hasNotes = dayNotes[dateStr] && dayNotes[dateStr].length > 0;
+            if (hasNotes) {
                 if (!dot) {
                     dot = document.createElement('div');
                     dot.className = 'day-note-dot';
@@ -1699,11 +1818,11 @@ body {
     }
 
     function showDayNotePreview(card, dateStr) {
-        const text = dayNotes[dateStr];
-        if (!text) return;
+        const entries = dayNotes[dateStr];
+        if (!entries || entries.length === 0) return;
         if (dayNotePopup.classList.contains('show')) return;
         const rect = card.getBoundingClientRect();
-        dayNotePreview.textContent = text;
+        dayNotePreview.textContent = entries.join('\n');
         dayNotePreview.style.left = (rect.left + rect.width / 2) + 'px';
         dayNotePreview.style.top = (rect.top - 10) + 'px';
         dayNotePreview.style.transform = 'translate(-50%, -100%)';
@@ -1897,54 +2016,32 @@ body {
     pomoUpdateUI();
 
     /* ============================================================
-       WATERMARK GRADIENT PICKER
+       NOTE FONT PICKER
     ============================================================ */
-    const wmGradients = {
-        1: { type: 'mask', value: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,1) 55%, transparent 100%)', opacity: 0.04 },
-        2: { type: 'text', value: 'linear-gradient(to bottom, var(--text-color) 0%, transparent 90%)', opacity: 0.06 },
-        3: { type: 'text', value: 'linear-gradient(to bottom, transparent 5%, var(--text-color) 50%, transparent 95%)', opacity: 0.07 },
-        4: { type: 'text', value: 'linear-gradient(to bottom, var(--text-color) 0%, var(--text-color) 40%, transparent 100%)', opacity: 0.07 },
+    const noteFonts = {
+        'caveat':   "'Caveat', cursive",
+        'dm-serif': "'DM Serif Display', serif",
+        'nunito':   "'Nunito', sans-serif",
+        'dm-mono':  "'DM Mono', monospace",
     };
 
-    function applyWatermarkGradient(n) {
-        const wm = document.getElementById('bottom-watermark');
-        const g = wmGradients[n];
-        // Reset styles
-        wm.style.cssText = '';
-        wm.style.opacity = g.opacity;
-
-        if (g.type === 'mask') {
-            wm.style.color = 'var(--text-color)';
-            wm.style.webkitMaskImage = g.value;
-            wm.style.maskImage = g.value;
-            wm.style.background = '';
-            wm.style.webkitTextFillColor = '';
-            wm.style.webkitBackgroundClip = '';
-            wm.style.backgroundClip = '';
-        } else {
-            wm.style.background = g.value;
-            wm.style.webkitBackgroundClip = 'text';
-            wm.style.webkitTextFillColor = 'transparent';
-            wm.style.backgroundClip = 'text';
-            wm.style.webkitMaskImage = '';
-            wm.style.maskImage = '';
-        }
-
-        // Update active state
-        document.querySelectorAll('.watermark-pick').forEach(p => p.classList.remove('active'));
-        document.querySelector(`.watermark-pick[data-gradient="${n}"]`)?.classList.add('active');
-        localStorage.setItem('aura_wm_gradient', n);
+    function applyNoteFont(key) {
+        const font = noteFonts[key];
+        if (!font) return;
+        document.documentElement.style.setProperty('--note-font', font);
+        document.querySelectorAll('.font-pick').forEach(p => p.classList.remove('active'));
+        document.querySelector(`.font-pick[data-font="${key}"]`)?.classList.add('active');
+        localStorage.setItem('aura_note_font', key);
     }
 
-    document.getElementById('watermark-picker').addEventListener('click', (e) => {
-        const pick = e.target.closest('.watermark-pick');
+    document.getElementById('font-picker').addEventListener('click', (e) => {
+        const pick = e.target.closest('.font-pick');
         if (!pick) return;
-        applyWatermarkGradient(pick.dataset.gradient);
+        applyNoteFont(pick.dataset.font);
     });
 
-    // Restore saved choice
-    const savedWm = localStorage.getItem('aura_wm_gradient') || '1';
-    applyWatermarkGradient(savedWm);
+    // Restore saved font
+    applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat');
 </script>
 </body>
 </html>
