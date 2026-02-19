@@ -402,37 +402,6 @@ body {
     transform: scale(1.05);
 }
 
-.city-input-wrapper {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    z-index: 10000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease;
-}
-
-.city-input-wrapper.show {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.city-input {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: var(--text-color);
-    background: var(--card-bg);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border: 0.5px solid rgba(255, 255, 255, 0.3);
-    border-radius: 12px;
-    padding: 8px 14px;
-    width: 180px;
-    outline: none;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-}
 
 /* ============================================
    POMODORO TIMER
@@ -808,43 +777,199 @@ body {
     animation: greetingPulse 0.4s var(--spring-easing);
 }
 
-/* Note font picker — top right */
-.font-picker {
+/* SETTINGS — top right */
+.settings-btn {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 9999;
-    display: flex;
-    gap: 6px;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-.font-pick {
-    width: 28px;
-    height: 28px;
-    border-radius: 10px;
-    border: 1.5px solid rgba(0,0,0,0.08);
+    z-index: 10001;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
     cursor: pointer;
-    opacity: 0.3;
-    transition: opacity 0.2s, transform 0.2s var(--spring-easing), border-color 0.2s;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s var(--spring-easing), background 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    color: var(--text-color);
+    padding: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+/* Only appear on hover near top-right zone */
+body:hover .settings-btn { opacity: 0.35; }
+.settings-btn:hover {
+    opacity: 0.8 !important;
+    transform: scale(1.08);
+    background: var(--card-bg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+.settings-btn:active { transform: scale(0.94); }
+.settings-btn.open {
+    opacity: 1 !important;
+    background: var(--text-color);
+    color: var(--bg-color);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.settings-btn svg { transition: transform 0.4s var(--spring-easing); }
+.settings-btn.open svg { transform: rotate(90deg); }
+
+.settings-panel {
+    position: fixed;
+    top: 58px;
+    right: 20px;
+    z-index: 10000;
+    background: var(--card-bg);
+    backdrop-filter: blur(60px) saturate(210%);
+    -webkit-backdrop-filter: blur(60px) saturate(210%);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow:
+        0 20px 50px rgba(0,0,0,0.12),
+        inset 0 1px 0 0 rgba(255,255,255,0.35);
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px) scale(0.97);
+    transform-origin: top right;
+    transition: opacity 0.25s ease, transform 0.3s var(--spring-easing);
+    user-select: none;
+}
+
+.settings-panel.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.settings-section-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.3;
+    color: var(--text-color);
+    margin-bottom: 6px;
+}
+
+.settings-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.settings-location-input {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-color);
+    background: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 10px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.settings-location-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.dark-mode .settings-location-input {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+}
+
+.dark-mode .settings-location-input:focus {
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+}
+
+.settings-toggle {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.04);
+}
+
+.dark-mode .settings-toggle {
+    background: rgba(255,255,255,0.06);
+}
+
+.settings-toggle-btn {
+    flex: 1;
+    padding: 6px 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0.4;
+    cursor: pointer;
+    transition: opacity 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.settings-toggle-btn.active {
+    opacity: 1;
+    background: var(--bg-color);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.dark-mode .settings-toggle-btn.active {
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.font-pick {
+    width: 34px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    background: rgba(0,0,0,0.03);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s, transform 0.2s var(--spring-easing), border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
     font-weight: 400;
     color: var(--text-color);
     line-height: 1;
 }
 
+.dark-mode .font-pick {
+    background: rgba(255,255,255,0.05);
+}
+
 .font-pick:hover {
-    opacity: 0.7;
-    transform: scale(1.1);
+    opacity: 0.8;
+    transform: scale(1.06);
 }
 
 .font-pick.active {
     opacity: 1;
     border-color: var(--accent-color);
+    background: rgba(0, 122, 255, 0.06);
+}
+
+.dark-mode .font-pick.active {
+    background: rgba(10, 132, 255, 0.12);
 }
 
 /* DAY NOTE POPUP */
@@ -1050,11 +1175,35 @@ body {
 </head>
 <body id="surface">
 
-<div class="font-picker" id="font-picker">
-    <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
-    <div class="font-pick" data-font="dm-serif" style="font-family:'DM Serif Display',serif;">Aa</div>
-    <div class="font-pick" data-font="nunito" style="font-family:'Nunito',sans-serif;">Aa</div>
-    <div class="font-pick" data-font="dm-mono" style="font-family:'DM Mono',monospace;">Aa</div>
+<button class="settings-btn" id="settings-btn">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="3" r="1.25" fill="currentColor"/>
+        <circle cx="8" cy="8" r="1.25" fill="currentColor"/>
+        <circle cx="8" cy="13" r="1.25" fill="currentColor"/>
+    </svg>
+</button>
+<div class="settings-panel" id="settings-panel">
+    <div>
+        <div class="settings-section-label">Location</div>
+        <input class="settings-location-input" id="settings-location" type="text" placeholder="city or postal code...">
+        <div id="settings-location-status" style="font-size:9px;opacity:0.4;margin-top:4px;color:var(--text-color)"></div>
+    </div>
+    <div>
+        <div class="settings-section-label">Temperature</div>
+        <div class="settings-toggle" id="temp-toggle">
+            <button class="settings-toggle-btn active" data-unit="C">°C</button>
+            <button class="settings-toggle-btn" data-unit="F">°F</button>
+        </div>
+    </div>
+    <div>
+        <div class="settings-section-label">Note Font</div>
+        <div class="settings-row" id="font-picker">
+            <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
+            <div class="font-pick" data-font="dm-serif" style="font-family:'DM Serif Display',serif;">Aa</div>
+            <div class="font-pick" data-font="nunito" style="font-family:'Nunito',sans-serif;">Aa</div>
+            <div class="font-pick" data-font="dm-mono" style="font-family:'DM Mono',monospace;">Aa</div>
+        </div>
+    </div>
 </div>
 
 <div class="bottom-watermark" id="bottom-watermark">7days</div>
@@ -1083,10 +1232,7 @@ body {
     <button class="lang-btn" id="lang-toggle" onclick="cycleLang()">Language: EN</button>
 </div>
 
-<div class="city-tooltip" id="city-display" title="Click to set location">Detecting...</div>
-<div class="city-input-wrapper" id="city-input-wrapper">
-    <input class="city-input" id="city-input" type="text" placeholder="city or postal code...">
-</div>
+<div class="city-tooltip" id="city-display">Detecting...</div>
 
 <div class="greeting-sub" id="greeting-sub"></div>
 <div class="weather-tooltip" id="weather-tooltip"></div>
@@ -1662,46 +1808,10 @@ body {
         localStorage.removeItem('aura_notes_v3');
     }
 
-    // City display click → open search input
-    const cityInput = document.getElementById('city-input');
-    const cityInputWrapper = document.getElementById('city-input-wrapper');
-
-    const cityDisplay = document.getElementById('city-display');
-
-    function openCityInput() {
-        cityInputWrapper.classList.add('show');
-        cityDisplay.style.opacity = '0';
-        cityDisplay.style.pointerEvents = 'none';
-        cityInput.value = '';
-        cityInput.focus();
-    }
-
-    function closeCityInput() {
-        cityInputWrapper.classList.remove('show');
-        cityDisplay.style.opacity = '';
-        cityDisplay.style.pointerEvents = '';
-    }
-
-    cityDisplay.addEventListener('mousedown', (e) => {
+    // City display click → open settings
+    document.getElementById('city-display').addEventListener('mousedown', (e) => {
         e.preventDefault();
-        openCityInput();
-    });
-
-    cityInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const query = cityInput.value.trim();
-            if (query) searchCity(query);
-            closeCityInput();
-        }
-        if (e.key === 'Escape') {
-            closeCityInput();
-        }
-    });
-
-    document.addEventListener('mousedown', (e) => {
-        if (cityInputWrapper.classList.contains('show') && !cityInputWrapper.contains(e.target) && e.target !== cityDisplay) {
-            closeCityInput();
-        }
+        toggleSettings(true);
     });
 
     /* ============================================================
@@ -2034,8 +2144,68 @@ body {
     pomoUpdateUI();
 
     /* ============================================================
-       NOTE FONT PICKER
+       SETTINGS PANEL
     ============================================================ */
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    const settingsLocation = document.getElementById('settings-location');
+    const settingsLocationStatus = document.getElementById('settings-location-status');
+
+    function toggleSettings(forceOpen) {
+        const willOpen = forceOpen !== undefined ? forceOpen : !settingsPanel.classList.contains('show');
+        settingsPanel.classList.toggle('show', willOpen);
+        settingsBtn.classList.toggle('open', willOpen);
+        if (willOpen) {
+            // Show current city in the input
+            const cache = getLocationCache();
+            settingsLocation.value = cache ? cache.city : '';
+            settingsLocationStatus.textContent = cache ? cache.city : '';
+        }
+    }
+
+    settingsBtn.addEventListener('click', () => toggleSettings());
+
+    // Close settings on click outside
+    document.addEventListener('mousedown', (e) => {
+        if (settingsPanel.classList.contains('show') &&
+            !settingsPanel.contains(e.target) &&
+            e.target !== settingsBtn &&
+            e.target.id !== 'city-display') {
+            toggleSettings(false);
+        }
+    });
+
+    // Location search
+    settingsLocation.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const query = settingsLocation.value.trim();
+            if (query) {
+                settingsLocationStatus.textContent = 'Searching...';
+                searchCity(query);
+            }
+        }
+        if (e.key === 'Escape') toggleSettings(false);
+    });
+
+    // Temperature unit
+    let tempUnit = localStorage.getItem('aura_temp_unit') || 'C';
+
+    function applyTempUnit(unit, refetch = true) {
+        tempUnit = unit;
+        localStorage.setItem('aura_temp_unit', unit);
+        document.querySelectorAll('#temp-toggle .settings-toggle-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.unit === unit);
+        });
+        if (refetch && currentLat && currentLon) fetchWeather(currentLat, currentLon, true);
+    }
+
+    document.getElementById('temp-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.settings-toggle-btn');
+        if (!btn) return;
+        applyTempUnit(btn.dataset.unit);
+    });
+
+    // Note font
     const noteFonts = {
         'caveat':   "'Caveat', cursive",
         'dm-serif': "'DM Serif Display', serif",
@@ -2058,8 +2228,9 @@ body {
         applyNoteFont(pick.dataset.font);
     });
 
-    // Restore saved font
+    // Restore saved settings
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat');
+    applyTempUnit(tempUnit, false);
 </script>
 </body>
 </html>

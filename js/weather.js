@@ -71,7 +71,9 @@ async function startLocationProcess(forceRefresh = false) {
 
 async function searchCity(query) {
     const display = document.getElementById('city-display');
+    const status = document.getElementById('settings-location-status');
     display.textContent = 'Searching...';
+    if (status) status.textContent = 'Searching...';
     try {
         const response = await fetch(
             `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
@@ -84,19 +86,25 @@ async function searchCity(query) {
             currentLon = parseFloat(lon);
             const city = display_name.split(',')[0].trim();
             display.textContent = city;
+            if (status) status.textContent = city;
             appendCityError(`Manual search OK: ${city} (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})`);
             saveLocationCache(city, currentLat, currentLon, 'manual');
             fetchWeather(currentLat, currentLon, true);
         } else {
             display.textContent = 'Not found';
+            if (status) status.textContent = 'Not found';
             appendCityError(`Search: no results for "${query}"`);
             setTimeout(() => {
                 const cache = getLocationCache();
-                if (cache) display.textContent = cache.city;
+                if (cache) {
+                    display.textContent = cache.city;
+                    if (status) status.textContent = cache.city;
+                }
             }, 2000);
         }
     } catch (err) {
         display.textContent = 'Search failed';
+        if (status) status.textContent = 'Search failed';
         appendCityError(`Search error: ${err.message}`);
     }
 }
@@ -190,7 +198,8 @@ async function fetchWeather(lat, lon, forceRefresh = false) {
         } catch(e) {}
     }
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7`;
+        const tUnit = (typeof tempUnit !== 'undefined' && tempUnit === 'F') ? '&temperature_unit=fahrenheit' : '';
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7${tUnit}`;
         const response = await fetch(url);
         if (!response.ok) {
             const body = await response.text().catch(() => '');
