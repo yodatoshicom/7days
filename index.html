@@ -9,6 +9,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600&family=DM+Mono:wght@400;500" rel="stylesheet">
 
+<script>
+// Apply persisted settings before first paint to prevent flash
+(function() {
+    var themes = {
+        light:    { '--bg-color':'#f5f0e8','--text-color':'#1d1d1f','--accent-color':'#007AFF','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' },
+        ocean:    { '--bg-color':'#e0f2f7','--text-color':'#0f172a','--accent-color':'#0891b2','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' },
+        lavender: { '--bg-color':'#f3f0f9','--text-color':'#2d1b3d','--accent-color':'#9333ea','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' },
+    };
+    var fonts = { 'caveat':"'Caveat', cursive", 'sf-pro':"-apple-system, 'SF Pro Display', system-ui, sans-serif", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace" };
+    var sizes = { 'S':'22px', 'M':'28px', 'L':'36px' };
+    var r = document.documentElement;
+    var t = localStorage.getItem('aura_theme') || 'light';
+    var v = themes[t] || themes.light;
+    for (var k in v) r.style.setProperty(k, v[k]);
+    r.setAttribute('data-theme', t);
+    var f = localStorage.getItem('aura_note_font');
+    if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
+    var s = localStorage.getItem('aura_note_size');
+    if (s && sizes[s]) r.style.setProperty('--note-size', sizes[s]);
+})();
+</script>
 <style>
 :root {
     --sf-easing: cubic-bezier(0.32, 0.72, 0, 1);
@@ -16,18 +37,103 @@
     --bg-color: #f5f0e8;
     --text-color: #1d1d1f;
     --accent-color: #007AFF;
-    --card-bg: rgba(255, 255, 255, 0.3); 
+    --card-bg: rgba(255, 255, 255, 0.3);
     --separator-color: rgba(0, 0, 0, 0.06);
     --note-font: 'Caveat', cursive;
     --note-size: 28px;
 }
 
-.dark-mode {
-    --bg-color: #000000;
-    --text-color: #f5f5f7;
-    --accent-color: #0a84ff;
-    --card-bg: rgba(30, 30, 30, 0.35);
-    --separator-color: rgba(255, 255, 255, 0.12);
+/* Theme grid in settings */
+.theme-grid {
+    display: flex;
+    gap: 6px;
+}
+
+.theme-circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 1.5px solid rgba(0,0,0,0.06);
+    transition: transform 0.2s var(--spring-easing), box-shadow 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.theme-circle:hover {
+    transform: scale(1.12);
+}
+
+.theme-circle.active {
+    box-shadow: 0 0 0 1.5px var(--accent-color);
+    border-color: transparent;
+}
+
+/* Note color bar — shown below note in editing mode */
+.note-color-bar {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    margin-top: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.note.editing .note-color-bar {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.note-color-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s var(--spring-easing), border-color 0.2s;
+}
+
+.note-color-dot:hover {
+    transform: scale(1.25);
+}
+
+.note-color-dot.active {
+    border-color: var(--text-color);
+}
+
+.note-color-dot[data-color="default"] {
+    background: rgba(0,0,0,0.08);
+}
+.note-color-dot[data-color="yellow"] { background: #fbbf24; }
+.note-color-dot[data-color="blue"] { background: #60a5fa; }
+.note-color-dot[data-color="mint"] { background: #34d399; }
+.note-color-dot[data-color="pink"] { background: #f472b6; }
+
+/* Note color tints */
+.note[data-note-color="yellow"] {
+    background: rgba(251, 191, 36, 0.18);
+    border-color: rgba(251, 191, 36, 0.3);
+}
+.note[data-note-color="blue"] {
+    background: rgba(96, 165, 250, 0.18);
+    border-color: rgba(96, 165, 250, 0.3);
+}
+.note[data-note-color="mint"] {
+    background: rgba(52, 211, 153, 0.18);
+    border-color: rgba(52, 211, 153, 0.3);
+}
+.note[data-note-color="pink"] {
+    background: rgba(244, 114, 182, 0.18);
+    border-color: rgba(244, 114, 182, 0.3);
 }
 
 * {
@@ -47,6 +153,11 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+}
+
+body.ready {
+    opacity: 1;
 }
 
 
@@ -184,10 +295,6 @@ body {
     transition: opacity 0.4s var(--sf-easing);
 }
 
-.dark-mode .day-separator {
-    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.2) 80%, transparent);
-}
-
 .day-card {
     width: 74px; 
     height: 84px; 
@@ -209,10 +316,6 @@ body {
 .day-card:hover {
     background: rgba(0, 0, 0, 0.03);
     transform: translateY(-4px);
-}
-
-.dark-mode .day-card:hover {
-    background: rgba(255, 255, 255, 0.05);
 }
 
 .day-card:active {
@@ -300,10 +403,6 @@ body {
     border-right: 1px solid rgba(29, 29, 31, 0.15); 
 }
 
-.dark-mode .weather-day:not(:last-child) { 
-    border-right: 1px solid rgba(255, 255, 255, 0.12); 
-}
-
 .weather-icon { 
     font-size: 18px; 
     margin-bottom: 2px; 
@@ -362,29 +461,29 @@ body {
     opacity: 0.4;
 }
 
-.bottom-controls { 
-    position: fixed; 
-    bottom: 30px; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    z-index: 9999; 
+.bottom-controls {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
 }
 
-.lang-btn { 
-    background: none; 
-    border: none; 
-    color: var(--text-color); 
-    font-size: 10px; 
-    font-weight: 700; 
-    text-transform: uppercase; 
-    letter-spacing: 0.2em; 
-    opacity: 0.3; 
-    cursor: pointer; 
-    transition: opacity 0.3s; 
+.lang-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: opacity 0.3s;
 }
 
-.lang-btn:hover { 
-    opacity: 1; 
+.lang-btn:hover {
+    opacity: 1;
 }
 
 .city-tooltip {
@@ -588,10 +687,6 @@ body {
     opacity: 0.4;
 }
 
-.dark-mode .pomo-btn.secondary {
-    border-color: rgba(255,255,255,0.15);
-}
-
 .pomo-btn.secondary:hover { opacity: 0.8; }
 
 .pomodoro-sessions {
@@ -621,7 +716,7 @@ body {
     -webkit-backdrop-filter: blur(50px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 28px;
-    padding: 20px 24px;
+    padding: 20px 25px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     z-index: 1100;
     cursor: grab;
@@ -659,7 +754,8 @@ body {
 }
 
 .note.dragging.near-dock .note-resize-handle,
-.note.dragging.near-dock .note-close {
+.note.dragging.near-dock .note-close,
+.note.dragging.near-dock .note-color-bar {
     opacity: 0;
     pointer-events: none;
 }
@@ -710,10 +806,6 @@ body {
     stroke: rgba(77, 0, 0, 0.9);
 }
 
-.dark-mode .note {
-    background: rgba(35, 35, 37, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
 
 .note-content {
     font-family: var(--note-font);
@@ -882,25 +974,12 @@ body:hover .settings-btn { opacity: 0.45; }
     box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
 }
 
-.dark-mode .settings-location-input {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.08);
-}
-
-.dark-mode .settings-location-input:focus {
-    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
-}
-
 .settings-toggle {
     display: flex;
     gap: 2px;
     padding: 2px;
     border-radius: 10px;
     background: rgba(0,0,0,0.04);
-}
-
-.dark-mode .settings-toggle {
-    background: rgba(255,255,255,0.06);
 }
 
 .settings-toggle-btn {
@@ -924,10 +1003,6 @@ body:hover .settings-btn { opacity: 0.45; }
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-.dark-mode .settings-toggle-btn.active {
-    background: rgba(255,255,255,0.1);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-}
 
 .font-pick {
     width: 34px;
@@ -947,10 +1022,6 @@ body:hover .settings-btn { opacity: 0.45; }
     line-height: 1;
 }
 
-.dark-mode .font-pick {
-    background: rgba(255,255,255,0.05);
-}
-
 .font-pick:hover {
     opacity: 0.8;
     transform: scale(1.06);
@@ -960,10 +1031,6 @@ body:hover .settings-btn { opacity: 0.45; }
     opacity: 1;
     border-color: var(--accent-color);
     background: rgba(0, 122, 255, 0.06);
-}
-
-.dark-mode .font-pick.active {
-    background: rgba(10, 132, 255, 0.12);
 }
 
 /* DAY NOTE POPUP */
@@ -1021,10 +1088,6 @@ body:hover .settings-btn { opacity: 0.45; }
 .day-card.past:hover {
     background: transparent;
     transform: none;
-}
-
-.dark-mode .day-card.past:hover {
-    background: transparent;
 }
 
 /* DAY NOTE LIST inside popup */
@@ -1140,9 +1203,6 @@ body:hover .settings-btn { opacity: 0.45; }
     transition: transform 0.2s var(--spring-easing), background 0.2s ease;
 }
 
-.dark-mode .day-card.drag-over {
-    background: rgba(10, 132, 255, 0.12);
-}
 
 
 /* Bottom watermark — Alcove-style fading text */
@@ -1434,6 +1494,22 @@ body:hover .settings-btn { opacity: 0.45; }
 </button>
 <div class="settings-panel" id="settings-panel">
     <div>
+        <div class="settings-section-label">Theme</div>
+        <div class="theme-grid" id="theme-grid">
+            <div class="theme-circle active" data-theme="light" style="background:#f5f0e8"></div>
+            <div class="theme-circle" data-theme="ocean" style="background:#e0f2f7"></div>
+            <div class="theme-circle" data-theme="lavender" style="background:#f3f0f9"></div>
+        </div>
+    </div>
+    <div>
+        <div class="settings-section-label">Language</div>
+        <div class="settings-toggle" id="lang-settings-toggle">
+            <button class="settings-toggle-btn active" data-lang="en">EN</button>
+            <button class="settings-toggle-btn" data-lang="es">ES</button>
+            <button class="settings-toggle-btn" data-lang="pt">PT</button>
+        </div>
+    </div>
+    <div>
         <div class="settings-section-label">Location</div>
         <input class="settings-location-input" id="settings-location" type="text" placeholder="city or postal code...">
         <div id="settings-location-status" style="font-size:9px;opacity:0.4;margin-top:4px;color:var(--text-color)"></div>
@@ -1513,19 +1589,39 @@ body:hover .settings-btn { opacity: 0.45; }
     </div>
 </div>
 
-
 <script>
     /* ============================================================
        MESH GRADIENT — isolated in iframe, blur adjustable
     ============================================================ */
-    function initMeshBg() {
+    /* ============================================================
+       THEMES
+    ============================================================ */
+    const THEMES = {
+        light:    { cssVars: { '--bg-color':'#f5f0e8','--text-color':'#1d1d1f','--accent-color':'#007AFF','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' }, meshColors: ['#007AFF','#FF3B30','#5856D6'] },
+        ocean:    { cssVars: { '--bg-color':'#e0f2f7','--text-color':'#0f172a','--accent-color':'#0891b2','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' }, meshColors: ['#06b6d4','#3b82f6','#8b5cf6'] },
+        lavender: { cssVars: { '--bg-color':'#f3f0f9','--text-color':'#2d1b3d','--accent-color':'#9333ea','--card-bg':'rgba(255,255,255,0.3)','--separator-color':'rgba(0,0,0,0.06)' }, meshColors: ['#a855f7','#ec4899','#f43f5e'] },
+    };
+
+    function applyTheme(key) {
+        const theme = THEMES[key];
+        if (!theme) return;
+        const root = document.documentElement;
+        Object.entries(theme.cssVars).forEach(([k, v]) => root.style.setProperty(k, v));
+        root.setAttribute('data-theme', key);
+        initMeshBg(theme.meshColors);
+        document.querySelectorAll('.theme-circle').forEach(c => c.classList.toggle('active', c.dataset.theme === key));
+        localStorage.setItem('aura_theme', key);
+    }
+
+    function initMeshBg(colors) {
+        colors = colors || ['#007AFF','#FF3B30','#5856D6'];
         const W = window.innerWidth, H = window.innerHeight;
         const PAD = 200;
         const TW = W + PAD * 2, TH = H + PAD * 2;
         const balls = [
-            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
-            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
-            { x: W *  0.92 - 250 + PAD, y: H *  0.85 - 250 + PAD, r: 250, color: '#5856D6' },
+            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: colors[0] },
+            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: colors[1] },
+            { x: W *  0.92 - 250 + PAD, y: H *  0.85 - 250 + PAD, r: 250, color: colors[2] },
         ];
         const circles = balls.map(b =>
             `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
@@ -1753,13 +1849,20 @@ body:hover .settings-btn { opacity: 0.45; }
     /* ============================================================
        LANGUAGE CYCLE (EN → ES → PT → EN)
     ============================================================ */
-    function cycleLang() {
-        const idx = LANGS.indexOf(lang);
-        lang = LANGS[(idx + 1) % LANGS.length];
+    function cycleLang(newLang) {
+        if (newLang) {
+            lang = newLang;
+        } else {
+            const idx = LANGS.indexOf(lang);
+            lang = LANGS[(idx + 1) % LANGS.length];
+        }
         localStorage.setItem('aura_lang', lang);
 
-        // Update button
+        // Update bottom button and settings toggle
         document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
+        document.querySelectorAll('#lang-settings-toggle .settings-toggle-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.lang === lang);
+        });
 
         // Animate greeting
         const greetEl = document.getElementById('greeting');
@@ -1802,12 +1905,37 @@ body:hover .settings-btn { opacity: 0.45; }
         if (data.manualResize && data.w) note.style.width = data.w + 'px';
         if (data.manualResize && data.h) note.style.height = data.h + 'px';
         note.style.zIndex = data.zIndex || topZ;
+        if (data.color && data.color !== 'default') note.setAttribute('data-note-color', data.color);
 
         const content = document.createElement('div');
         content.className = 'note-content';
         content.spellcheck = false;
         content.innerHTML = linkify(data.text);
         note.appendChild(content);
+
+        // ---- COLOR BAR (shown during editing) ----
+        const colorBar = document.createElement('div');
+        colorBar.className = 'note-color-bar';
+        ['default','yellow','blue','mint','pink'].forEach(c => {
+            const dot = document.createElement('div');
+            dot.className = 'note-color-dot' + (((data.color || 'default') === c) ? ' active' : '');
+            dot.dataset.color = c;
+            dot.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                data.color = c;
+                if (c && c !== 'default') {
+                    note.setAttribute('data-note-color', c);
+                } else {
+                    note.removeAttribute('data-note-color');
+                    delete data.color;
+                }
+                colorBar.querySelectorAll('.note-color-dot').forEach(d => d.classList.toggle('active', d.dataset.color === c));
+                save();
+            });
+            colorBar.appendChild(dot);
+        });
+        note.appendChild(colorBar);
 
         // ---- RESIZE HANDLE (bottom-right, macOS style) ----
         const resizeHandle = document.createElement('div');
@@ -1889,6 +2017,7 @@ body:hover .settings-btn { opacity: 0.45; }
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
                 const hit = getDayCardAtPoint(me.clientX, me.clientY);
                 if (hit && !hit.card.classList.contains('past')) hit.card.classList.add('drag-over');
+
             };
             const stop = (me) => {
                 note.classList.remove('dragging', 'near-dock');
@@ -2046,7 +2175,13 @@ body:hover .settings-btn { opacity: 0.45; }
     /* ============================================================
        MISC
     ============================================================ */
-    function toggleMode() { document.body.classList.toggle('dark-mode'); }
+    // Theme grid click handler
+    document.getElementById('theme-grid').addEventListener('click', (e) => {
+        const circle = e.target.closest('.theme-circle');
+        if (!circle) return;
+        applyTheme(circle.dataset.theme);
+    });
+
 
     function clearNotes() {
         document.querySelectorAll('.note').forEach(n => n.remove());
@@ -2219,7 +2354,11 @@ body:hover .settings-btn { opacity: 0.45; }
         createNote(n);
     });
     setInterval(updateHeader, 10000);
+    // Sync language on load
     document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
+    document.querySelectorAll('#lang-settings-toggle .settings-toggle-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.lang === lang);
+    });
 
     // Auto-advance dock at midnight
     function scheduleMidnightRefresh() {
@@ -2445,6 +2584,13 @@ body:hover .settings-btn { opacity: 0.45; }
         if (refetch && currentLat && currentLon) fetchWeather(currentLat, currentLon, true);
     }
 
+    // Language toggle in settings
+    document.getElementById('lang-settings-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.settings-toggle-btn');
+        if (!btn) return;
+        cycleLang(btn.dataset.lang);
+    });
+
     document.getElementById('temp-toggle').addEventListener('click', (e) => {
         const btn = e.target.closest('.settings-toggle-btn');
         if (!btn) return;
@@ -2507,9 +2653,13 @@ body:hover .settings-btn { opacity: 0.45; }
 
 
     // Restore saved settings
+    applyTheme(localStorage.getItem('aura_theme') || 'light');
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat');
     applyNoteSize(localStorage.getItem('aura_note_size') || 'M');
     applyTempUnit(tempUnit, false);
+
+    // Reveal UI after all settings applied — no flash
+    requestAnimationFrame(() => document.body.classList.add('ready'));
 
     /* ============================================================
        CLAUDE CHAT OVERLAY (simulated)
