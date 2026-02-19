@@ -86,7 +86,7 @@ async function searchCity(query) {
             display.textContent = city;
             appendCityError(`Manual search OK: ${city} (${currentLat.toFixed(4)}, ${currentLon.toFixed(4)})`);
             saveLocationCache(city, currentLat, currentLon, 'manual');
-            fetchWeather(currentLat, currentLon);
+            fetchWeather(currentLat, currentLon, true);
         } else {
             display.textContent = 'Not found';
             appendCityError(`Search: no results for "${query}"`);
@@ -176,9 +176,9 @@ async function reverseGeocode(lat, lon, methodLabel = "GPS") {
 
 /* ---- WEATHER — Open-Meteo API with caching ---- */
 
-async function fetchWeather(lat, lon) {
+async function fetchWeather(lat, lon, forceRefresh = false) {
     const cached = localStorage.getItem('aura_weather_cache');
-    if (cached) {
+    if (!forceRefresh && cached) {
         try {
             const { data, ts } = JSON.parse(cached);
             if (Date.now() - ts < 30 * 60 * 1000) {
