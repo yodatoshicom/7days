@@ -47,6 +47,13 @@ async function startLocationProcess(forceRefresh = false) {
     const display = document.getElementById('city-display');
     const cache = getLocationCache();
 
+    // Always use manually set location — never overwrite with auto-detection
+    if (!forceRefresh && cache && cache.method === 'manual') {
+        appendCityError(`Using manual location: ${cache.city}`);
+        restoreFromCache(cache);
+        return;
+    }
+
     // Use cache if fresh enough and not forcing
     if (!forceRefresh && cache && (Date.now() - cache.ts < LOC_CACHE_MAX_AGE)) {
         appendCityError(`Using cached location (${Math.round((Date.now() - cache.ts) / 60000)}m old)`);

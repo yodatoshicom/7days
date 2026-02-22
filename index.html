@@ -15,6 +15,9 @@
     var fonts = { 'caveat':"'Caveat', cursive", 'sf-pro':"-apple-system, 'SF Pro Display', system-ui, sans-serif", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace" };
     var sizes = { 'S':'22px', 'M':'28px', 'L':'36px' };
     var r = document.documentElement;
+    var bgVals = { 'yellow': '#f5f0e8', 'white': '#fafaf8' };
+    var bg = localStorage.getItem('aura_bg');
+    if (bg && bgVals[bg]) r.style.setProperty('--bg-color', bgVals[bg]);
     var f = localStorage.getItem('aura_note_font');
     if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
     var s = localStorage.getItem('aura_note_size');
@@ -130,7 +133,7 @@ body.ready {
 
 .header-container {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 14px;
     z-index: 10;
     user-select: none;
     -webkit-user-select: none;
@@ -235,7 +238,7 @@ body.ready {
 }
 
 .dock-container {
-    padding: 12px; 
+    padding: 9px;
     background: var(--card-bg);
     backdrop-filter: blur(60px) saturate(210%);
     -webkit-backdrop-filter: blur(60px) saturate(210%);
@@ -263,8 +266,8 @@ body.ready {
 }
 
 .day-card {
-    width: 74px; 
-    height: 84px; 
+    width: 68px;
+    height: 76px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -291,21 +294,15 @@ body.ready {
 }
 
 .day-card.active {
-    background: var(--text-color); 
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    background: var(--text-color);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     color: var(--bg-color);
-    transform: translateY(-6px);
+    transform: none;
     z-index: 10;
 }
 
 .day-card.active::after {
-    content: '';
-    position: absolute;
-    bottom: 14px;
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.6;
+    content: none;
 }
 
 .day-name {
@@ -343,6 +340,11 @@ body.ready {
 
 .day-card.active .day-number {
     font-weight: 850;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: var(--bg-color);
+    color: var(--bg-color);
 }
 
 /* WEATHER ROW */
@@ -353,12 +355,12 @@ body.ready {
     pointer-events: none; 
 }
 
-.weather-day { 
-    width: 74px; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    padding: 8px 0;
+.weather-day {
+    width: 74px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0 8px;
     opacity: 0.6; 
     position: relative; 
     transition: 0.3s; 
@@ -377,7 +379,7 @@ body.ready {
     top: 50%;
     transform: translateY(-50%);
     width: 1px;
-    height: 16px;
+    height: 30px;
     background: rgba(29, 29, 31, 0.12);
 }
 
@@ -850,6 +852,44 @@ body.ready {
 
 .greeting.lang-switch {
     animation: greetingPulse 0.4s var(--spring-easing);
+}
+
+/* BG TOGGLE — pill switch left of settings */
+.bg-toggle {
+    position: fixed;
+    top: 29px;
+    right: 70px;
+    z-index: 10001;
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(0,0,0,0.09);
+    background: linear-gradient(to right, #f5f0e8 50%, #fafaf8 50%);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.2s var(--spring-easing);
+    padding: 0;
+}
+
+body:hover .bg-toggle { opacity: 0.45; }
+.bg-toggle:hover { opacity: 1 !important; }
+.bg-toggle:active { transform: scale(0.9); }
+
+.bg-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    transition: transform 0.25s var(--spring-easing);
+}
+
+.bg-toggle.is-white::after {
+    transform: translateX(16px);
 }
 
 /* SETTINGS — top right */
@@ -1464,6 +1504,7 @@ body:hover .settings-btn { opacity: 0.45; }
     </div>
 </div>
 
+<button class="bg-toggle" id="bg-toggle" title="Toggle background"></button>
 <button class="settings-btn" id="settings-btn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
@@ -1504,7 +1545,7 @@ body:hover .settings-btn { opacity: 0.45; }
 
 <div class="bottom-watermark" id="bottom-watermark">7days</div>
 
-<div id="mesh-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.54;filter:blur(120px);overflow:hidden;"></div>
+<div id="mesh-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.54;filter:blur(120px);"></div>
 
 <header class="header-container" id="header-area">
     <div class="time-display" id="clock">12:00 PM</div>
@@ -1555,24 +1596,23 @@ body:hover .settings-btn { opacity: 0.45; }
     /* ============================================================
        MESH GRADIENT
     ============================================================ */
-    function initMeshBg(colors) {
-        colors = colors || ['#007AFF','#FF3B30','#5856D6'];
+    function initMeshBg() {
         const W = window.innerWidth, H = window.innerHeight;
         const PAD = 200;
         const TW = W + PAD * 2, TH = H + PAD * 2;
         const balls = [
-            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: colors[0] },
-            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: colors[1] },
-            { x: W *  0.92 - 250 + PAD, y: H *  0.85 - 250 + PAD, r: 250, color: colors[2] },
+            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
+            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
+            { x: W *  0.93 - 250 + PAD, y: H *  0.83 - 250 + PAD, r: 250, color: '#5856D6' },
         ];
         const bg = document.getElementById('mesh-bg');
-        bg.innerHTML = balls.map(b =>
-            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
-        ).join('');
         bg.style.top = `-${PAD}px`;
         bg.style.left = `-${PAD}px`;
         bg.style.width = `${TW}px`;
         bg.style.height = `${TH}px`;
+        bg.innerHTML = balls.map(b =>
+            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
+        ).join('');
     }
 
     initMeshBg();
@@ -2582,6 +2622,21 @@ body:hover .settings-btn { opacity: 0.45; }
         applyNoteSize(btn.dataset.size);
     });
 
+
+    // BG toggle
+    const bgToggle = document.getElementById('bg-toggle');
+    let bgMode = localStorage.getItem('aura_bg') || 'yellow';
+    const BG_VALS = { yellow: '#f5f0e8', white: '#fafaf8' };
+
+    function applyBgMode(mode) {
+        bgMode = mode;
+        document.documentElement.style.setProperty('--bg-color', BG_VALS[mode]);
+        bgToggle.classList.toggle('is-white', mode === 'white');
+        localStorage.setItem('aura_bg', mode);
+    }
+
+    bgToggle.addEventListener('click', () => applyBgMode(bgMode === 'yellow' ? 'white' : 'yellow'));
+    applyBgMode(bgMode);
 
     // Restore saved settings
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
