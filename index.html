@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aura Calendar | Studio Edition</title>
+<title>weekDash</title>
 
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600&family=DM+Mono:wght@400;500" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500" rel="stylesheet">
 
 <script>
 // Apply persisted font/size settings before first paint to prevent flash
 (function() {
-    var fonts = { 'caveat':"'Caveat', cursive", 'sf-pro':"-apple-system, 'SF Pro Display', system-ui, sans-serif", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace" };
+    var fonts = { 'caveat':"'Caveat', cursive", 'sf-pro':"-apple-system, 'SF Pro Display', system-ui, sans-serif", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace" };
     var sizes = { 'S':'22px', 'M':'28px', 'L':'36px' };
     var r = document.documentElement;
     var bgVals = { 'yellow': '#f5f0e8', 'white': '#fafaf8' };
@@ -805,6 +806,29 @@ body.ready {
     font-family: inherit !important;
 }
 
+/* Image notes */
+.note.image-note {
+    padding: 0;
+    overflow: visible;
+    background: #000;
+}
+
+.note.image-note .note-content,
+.note.image-note .note-color-bar {
+    display: none;
+}
+
+.note-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 28px;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
 /* macOS-style resize handle — bottom right corner */
 .note-resize-handle {
     position: absolute;
@@ -1229,7 +1253,7 @@ body:hover .settings-btn { opacity: 0.45; }
     bottom: -0.12em;
     left: 50%;
     transform: translateX(-50%);
-    font-size: clamp(180px, 22vw, 360px);
+    font-size: clamp(120px, 16vw, 260px);
     font-weight: 800;
     letter-spacing: -0.04em;
     line-height: 0.85;
@@ -1531,6 +1555,7 @@ body:hover .settings-btn { opacity: 0.45; }
             <div class="font-pick" data-font="sf-pro" style="font-family:-apple-system,'SF Pro Display','SF Pro Text',system-ui,sans-serif;">Aa</div>
             <div class="font-pick" data-font="lora" style="font-family:'Lora',serif;">Aa</div>
             <div class="font-pick" data-font="dm-mono" style="font-family:'DM Mono',monospace;">Aa</div>
+            <div class="font-pick" data-font="jetbrains-mono" style="font-family:'JetBrains Mono',monospace;">Aa</div>
         </div>
     </div>
     <div>
@@ -1543,7 +1568,7 @@ body:hover .settings-btn { opacity: 0.45; }
     </div>
 </div>
 
-<div class="bottom-watermark" id="bottom-watermark">7days</div>
+<div class="bottom-watermark" id="bottom-watermark">weekdash</div>
 
 <div id="mesh-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.54;filter:blur(120px);"></div>
 
@@ -1627,15 +1652,14 @@ body:hover .settings-btn { opacity: 0.45; }
     const dock = document.getElementById('dock');
     let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
 
-    // First time — seed a hint note
+    // First time — seed hint notes
     if (notes.length === 0) {
-        notes = [{
-            id: 'n_welcome',
-            x: 30,
-            y: 30,
-            text: 'double click to create a note',
-            zIndex: 100
-        }];
+        notes = [
+            { id: 'n_s1', x: 75,  y: 40,  text: 'this is a note',                  color: 'pink', zIndex: 100 },
+            { id: 'n_s2', x: 455, y: 35,  text: 'try double click\nin empty space', zIndex: 101 },
+            { id: 'n_s3', x: 88,  y: 285, text: 'weekdash.com',                     zIndex: 102 },
+            { id: 'n_s4', x: 285, y: 455, text: 'drag me 🤪',                       color: 'mint', zIndex: 103 },
+        ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
     let topZ = 1100;
@@ -1736,6 +1760,7 @@ body:hover .settings-btn { opacity: 0.45; }
             return `<a href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${url}</a>`;
         });
     }
+
 
     /* ============================================================
        DOCK
@@ -1875,8 +1900,17 @@ body:hover .settings-btn { opacity: 0.45; }
         const content = document.createElement('div');
         content.className = 'note-content';
         content.spellcheck = false;
-        content.innerHTML = linkify(data.text);
+        content.innerHTML = linkify(data.text || '');
         note.appendChild(content);
+
+        // ---- IMAGE NOTE ----
+        if (data.imageData) {
+            note.classList.add('image-note');
+            const img = document.createElement('img');
+            img.className = 'note-image';
+            img.src = data.imageData;
+            note.insertBefore(img, content);
+        }
 
         // ---- COLOR BAR (shown during editing) ----
         const colorBar = document.createElement('div');
@@ -1936,7 +1970,6 @@ body:hover .settings-btn { opacity: 0.45; }
             if (e.target.closest('.note-close')) return;
             if (content.contentEditable === 'true') return;
             if (e.target.tagName === 'A') return;
-
             e.preventDefault();
             const origOx = e.clientX - note.offsetLeft;
             const origOy = e.clientY - note.offsetTop;
@@ -2049,6 +2082,7 @@ body:hover .settings-btn { opacity: 0.45; }
         note.ondblclick = (e) => {
             if (e.target.closest('.note-resize-handle')) return;
             if (e.target.closest('.note-delete')) return;
+            if (data.imageData) return;
             e.stopPropagation();
             note.classList.add('editing');
             content.contentEditable = 'true';
@@ -2100,6 +2134,44 @@ body:hover .settings-btn { opacity: 0.45; }
             content.focus();
         }
     }
+
+    // ---- IMAGE DROP FROM FILE SYSTEM ----
+    window.addEventListener('dragover', (e) => {
+        if (e.dataTransfer.types.includes('Files')) e.preventDefault();
+    });
+
+    window.addEventListener('drop', (e) => {
+        if (e.target.closest('.note') || e.target.closest('.dock-wrapper') || e.target.closest('#header-area')) return;
+        const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
+        if (!file) return;
+        e.preventDefault();
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                const maxW = 320, maxH = 320;
+                let w = tempImg.naturalWidth, h = tempImg.naturalHeight;
+                if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+                if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+                const data = {
+                    id: 'n' + Date.now(),
+                    x: Math.round(e.clientX - w / 2),
+                    y: Math.round(e.clientY - h / 2),
+                    text: '',
+                    imageData: ev.target.result,
+                    w, h,
+                    manualResize: true,
+                    zIndex: ++topZ
+                };
+                notes.push(data);
+                createNote(data);
+                save();
+            };
+            tempImg.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
 
     window.ondblclick = (e) => {
         // Only create notes on the background — never on the header, dock, or any note
@@ -2559,13 +2631,15 @@ body:hover .settings-btn { opacity: 0.45; }
         'sf-pro': "-apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif",
         'lora':     "'Lora', serif",
         'dm-mono':  "'DM Mono', monospace",
+        'jetbrains-mono': "'JetBrains Mono', monospace",
     };
 
     function reflowNotes() {
         document.querySelectorAll('.note').forEach(el => {
+            const data = notes.find(n => n.id === el.id);
+            if (data && data.imageData) return; // skip image notes
             el.style.width = '';
             el.style.height = '';
-            const data = notes.find(n => n.id === el.id);
             if (data) { data.manualResize = false; delete data.w; delete data.h; }
         });
         save();
@@ -2577,6 +2651,7 @@ body:hover .settings-btn { opacity: 0.45; }
         let dirty = false;
         document.querySelectorAll('.note').forEach(el => {
             const data = notes.find(n => n.id === el.id);
+            if (data && data.imageData) return; // skip image notes
             if (data && !data.w) {
                 data.w = Math.ceil(el.getBoundingClientRect().width);
                 el.style.width = data.w + 'px';
