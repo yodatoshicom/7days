@@ -13,16 +13,20 @@
 <script>
 // Apply persisted font/size settings before first paint to prevent flash
 (function() {
-    var fonts = { 'caveat':"'Caveat', cursive", 'sf-pro':"-apple-system, 'SF Pro Display', system-ui, sans-serif", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace" };
+    var fonts = { 'caveat':"'Caveat', cursive", 'sf-mono':"'SF Mono', 'SFMono-Regular', ui-monospace, monospace", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace" };
     var sizes = { 'S':'22px', 'M':'28px', 'L':'36px' };
     var r = document.documentElement;
-    var bgVals = { 'yellow': '#f5f0e8', 'white': '#fafaf8' };
-    var bg = localStorage.getItem('aura_bg');
-    if (bg && bgVals[bg]) r.style.setProperty('--bg-color', bgVals[bg]);
     var f = localStorage.getItem('aura_note_font');
     if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
     var s = localStorage.getItem('aura_note_size');
     if (s && sizes[s]) r.style.setProperty('--note-size', sizes[s]);
+    // Dark mode pre-paint: override bg and key vars before first render
+    if (localStorage.getItem('aura_dark') === '1') {
+        r.style.setProperty('--bg-color', '#01030e');
+        r.style.setProperty('--text-color', 'rgba(255,255,255,0.9)');
+        r.style.setProperty('--card-bg', 'rgba(255,255,255,0.06)');
+        r.style.setProperty('--accent-color', '#0A84FF');
+    }
 })();
 </script>
 <style>
@@ -89,6 +93,16 @@
 .note-color-dot[data-color="mint"] { background: #34d399; }
 .note-color-dot[data-color="pink"] { background: #f472b6; }
 
+/* Note glass levels — :not([data-note-color]) so colored notes are never affected */
+body.note-glass-none .note:not([data-note-color]) { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; }
+body.note-glass-low .note:not([data-note-color])  { background: rgba(255,255,255,0.07); }
+body.note-glass-mid .note:not([data-note-color])  { background: rgba(255,255,255,0.15); }
+body.note-glass-high .note:not([data-note-color]) { background: rgba(255,255,255,0.3); }
+body.dark-mode.note-glass-none .note:not([data-note-color]) { background: transparent; }
+body.dark-mode.note-glass-low .note:not([data-note-color])  { background: rgba(255,255,255,0.04); backdrop-filter: blur(50px) saturate(180%); -webkit-backdrop-filter: blur(50px) saturate(180%); }
+body.dark-mode.note-glass-mid .note:not([data-note-color])  { background: rgba(255,255,255,0.08); backdrop-filter: blur(50px) saturate(180%); -webkit-backdrop-filter: blur(50px) saturate(180%); }
+body.dark-mode.note-glass-high .note:not([data-note-color]) { background: rgba(255,255,255,0.15); backdrop-filter: blur(50px) saturate(180%); -webkit-backdrop-filter: blur(50px) saturate(180%); }
+
 /* Note color tints */
 .note[data-note-color="yellow"] {
     background: rgba(251, 191, 36, 0.18);
@@ -117,6 +131,8 @@
 
 body {
     background-color: var(--bg-color);
+    background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px);
+    background-size: 22px 22px;
     color: var(--text-color);
     height: 100vh;
     overflow: hidden;
@@ -132,71 +148,122 @@ body.ready {
 }
 
 
-.header-container {
-    text-align: center;
-    margin-bottom: 14px;
-    z-index: 10;
-    user-select: none;
-    -webkit-user-select: none;
-}
 
 
-.time-display {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    opacity: 0.4;
-    margin-bottom: 12px;
-}
-
-.greeting {
-    font-size: 88px;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    background: linear-gradient(to bottom, var(--text-color) 70%, transparent);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-    transition: opacity 0.2s ease, transform 0.3s var(--spring-easing);
-    display: inline-block;
+/* Time ruler — sits above the dock */
+.time-ruler {
     position: relative;
+    width: calc((100% - 32px) * 0.756);
+    height: 44px;
+    margin-bottom: -14px;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-.greeting:hover {
-    opacity: 0.8;
-    transform: scale(1.02);
+.time-ruler-track {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, var(--text-color) 50%, transparent 100%);
+    opacity: 0.15;
 }
 
-.greeting:active {
-    transform: scale(0.97);
+.time-ruler-past {
+    position: relative;
+    height: 100%;
+    background: linear-gradient(to right, rgba(167,139,202,0.08), rgba(167,139,202,0.5));
+    border-radius: 1px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: visible;
 }
-
-
-/* Greeting sub-line (funny text) — shares position with weather tooltip */
-.greeting-sub {
-    position: fixed;
-    bottom: 72px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Caveat', cursive;
-    font-size: 32px;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    opacity: 0.4;
-    color: var(--text-color);
-    min-height: 20px;
-    z-index: 9997;
+.time-ruler-past::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.5));
+    border-radius: 1px;
     pointer-events: none;
-    text-align: center;
-    white-space: nowrap;
-    transition: opacity 0.2s ease;
+}
+.time-ruler-past::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: -5px;
+    width: 20px;
+    height: 11px;
+    background: rgba(167,139,202,0.55);
+    filter: blur(6px);
+    border-radius: 50%;
+    pointer-events: none;
 }
 
-.greeting-sub.hidden {
-    opacity: 0;
+.time-ruler-tick {
+    position: absolute;
+    bottom: 1px;
+    width: 1px;
+    transform: translateX(-50%);
+    border-radius: 1px;
+}
+
+.time-ruler-tick.hour    { height: 14px; }
+.time-ruler-tick.half    { height: 7px; }
+.time-ruler-tick.quarter { height: 3px; }
+
+.time-ruler-now {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 0 5px rgba(167,139,202,0.4));
+}
+
+.time-ruler-now-line {
+    flex: 1;
+    width: 1.5px;
+    position: relative;
+    background: linear-gradient(to bottom, rgba(167,139,202,0.0), rgba(167,139,202,0.95));
+    border-radius: 1px;
+    margin: 2px 0 2px;
+}
+
+.time-ruler-now-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #A78BCA;
+    border: 1.5px solid rgba(255,255,255,0.65);
+    box-shadow: 0 0 0 3px rgba(167,139,202,0.25), 0 0 14px rgba(167,139,202,0.7);
+    animation: yearDotPulse 3s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.time-ruler-now-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    color: #7B52B0;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background: rgba(167,139,202,0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0.5px solid rgba(167,139,202,0.3);
+    border-radius: 20px;
+    padding: 3px 10px;
+}
+body.dark-mode .time-ruler-now-label {
+    color: #C9A8E8;
 }
 
 /* THE PRO STUDIO DOCK */
@@ -210,7 +277,7 @@ body.ready {
 .dock-row {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 5px;
     position: relative;
 }
 
@@ -243,11 +310,11 @@ body.ready {
     background: var(--card-bg);
     backdrop-filter: blur(60px) saturate(210%);
     -webkit-backdrop-filter: blur(60px) saturate(210%);
-    border-radius: 42px; 
+    border-radius: 28px;
     border: 0.5px solid rgba(255, 255, 255, 0.15);
     
     box-shadow: 
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 
+        inset 0 2px 0 0 rgba(255, 255, 255, 0.4),
         0 30px 60px rgba(0,0,0,0.12);
         
     display: flex;
@@ -692,12 +759,12 @@ body.ready {
     min-width: 80px;
     max-width: 600px;
     min-height: 40px;
-    background: var(--card-bg);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(50px) saturate(180%);
     -webkit-backdrop-filter: blur(50px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 28px;
-    padding: 20px 25px;
+    padding: 18px 25px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     z-index: 1100;
     cursor: grab;
@@ -792,11 +859,19 @@ body.ready {
     font-family: var(--note-font);
     font-size: var(--note-size);
     line-height: 1.1;
+}
+body.note-font-sf-mono .note-content {
+    font-size: calc(var(--note-size) * 0.72);
     outline: none;
     color: var(--text-color);
     white-space: pre-wrap;
     overflow-wrap: break-word;
     word-break: normal;
+}
+
+.note-content.is-command {
+    color: var(--accent-color, #007AFF);
+    opacity: 0.75;
 }
 
 .note-content a {
@@ -827,6 +902,55 @@ body.ready {
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
+}
+
+/* ---- Timer notes ---- */
+.note.timer-note {
+    min-width: 110px;
+    cursor: grab;
+}
+
+.timer-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.timer-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.3;
+}
+
+.timer-countdown {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: var(--text-color);
+    transition: opacity 0.3s ease;
+}
+
+.note.timer-done .timer-countdown {
+    opacity: 0.3;
+}
+
+.note.timer-done .timer-label {
+    opacity: 0.5;
+}
+
+@keyframes timerDonePop {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.note.timer-done {
+    animation: timerDonePop 0.45s var(--spring-easing);
 }
 
 /* macOS-style resize handle — bottom right corner */
@@ -867,54 +991,6 @@ body.ready {
 }
 
 
-/* Lang flash animation on greeting */
-@keyframes greetingPulse {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.03); }
-    100% { transform: scale(1); }
-}
-
-.greeting.lang-switch {
-    animation: greetingPulse 0.4s var(--spring-easing);
-}
-
-/* BG TOGGLE — pill switch left of settings */
-.bg-toggle {
-    position: fixed;
-    top: 29px;
-    right: 70px;
-    z-index: 10001;
-    width: 36px;
-    height: 20px;
-    border-radius: 10px;
-    border: 1.5px solid rgba(0,0,0,0.09);
-    background: linear-gradient(to right, #f5f0e8 50%, #fafaf8 50%);
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.4s ease, transform 0.2s var(--spring-easing);
-    padding: 0;
-}
-
-body:hover .bg-toggle { opacity: 0.45; }
-.bg-toggle:hover { opacity: 1 !important; }
-.bg-toggle:active { transform: scale(0.9); }
-
-.bg-toggle::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-    transition: transform 0.25s var(--spring-easing);
-}
-
-.bg-toggle.is-white::after {
-    transform: translateX(16px);
-}
 
 /* SETTINGS — top right */
 .settings-btn {
@@ -963,6 +1039,8 @@ body:hover .settings-btn { opacity: 0.45; }
         0 20px 50px rgba(0,0,0,0.12),
         inset 0 1px 0 0 rgba(255,255,255,0.35);
     width: 220px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -1247,6 +1325,7 @@ body:hover .settings-btn { opacity: 0.45; }
 
 
 
+
 /* Bottom watermark — Alcove-style fading text */
 .bottom-watermark {
     position: fixed;
@@ -1497,6 +1576,321 @@ body:hover .settings-btn { opacity: 0.45; }
     opacity: 0.45;
     color: var(--text-color);
 }
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+/* Dot connection lines canvas */
+#dot-connections {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Galaxy canvas — always in DOM, fades in/out */
+#galaxy-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+body.dark-mode #galaxy-canvas { opacity: 1; }
+
+/* Mesh bg dims slightly in dark mode */
+#mesh-bg { transition: opacity 0.6s ease; }
+body.dark-mode #mesh-bg { opacity: 0.38 !important; }
+
+/* Live mesh toggle */
+.live-toggle {
+    position: fixed;
+    top: 30px;
+    right: 162px;
+    z-index: 10001;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(120,120,128,0.2);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.4s ease, background 0.3s ease, transform 0.2s var(--spring-easing);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+body:hover .live-toggle { opacity: 0.4; }
+.live-toggle:hover { opacity: 1 !important; }
+.live-toggle:active { transform: scale(0.88); }
+.live-toggle::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(120,120,128,0.6);
+    transition: background 0.3s ease;
+}
+.live-toggle.active::after {
+    background: #FF3B30;
+    box-shadow: 0 0 6px rgba(255,59,48,0.6);
+    animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.5; }
+}
+
+/* Note glass segmented switch */
+.glass-switch {
+    position: fixed;
+    top: 28px;
+    right: 190px;
+    z-index: 10001;
+    display: flex;
+    gap: 2px;
+    background: rgba(120,120,128,0.15);
+    border-radius: 10px;
+    padding: 2px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+body:hover .glass-switch { opacity: 0.45; }
+.glass-switch:hover { opacity: 1 !important; }
+.glass-switch-btn {
+    width: 20px;
+    height: 16px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--text-color);
+    opacity: 0.5;
+    transition: opacity 0.2s, background 0.2s;
+    padding: 0;
+    letter-spacing: 0;
+}
+.glass-switch-btn.active {
+    background: var(--bg-color);
+    opacity: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+body.dark-mode .glass-switch { background: rgba(255,255,255,0.08); }
+body.dark-mode .glass-switch-btn.active { background: rgba(255,255,255,0.14); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+
+/* Dark mode pill toggle — iOS style */
+.dark-toggle {
+    position: fixed;
+    top: 29px;
+    right: 116px;
+    z-index: 10001;
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(120, 120, 128, 0.22);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.2s var(--spring-easing), background 0.3s ease;
+    padding: 0;
+}
+body:hover .dark-toggle { opacity: 0.45; }
+.dark-toggle:hover { opacity: 1 !important; }
+.dark-toggle:active { transform: scale(0.9); }
+body.dark-mode .dark-toggle { background: #0A84FF; }
+.dark-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s var(--spring-easing);
+}
+body.dark-mode .dark-toggle::after { transform: translateX(16px); }
+
+/* Dark mode dot grid */
+body.dark-mode {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
+}
+
+/* Dark mode CSS variables */
+body.dark-mode {
+    --bg-color: #06080f;
+    --text-color: rgba(255, 255, 255, 0.88);
+    --card-bg: rgba(255, 255, 255, 0.075);
+    --separator-color: rgba(255, 255, 255, 0.06);
+    --accent-color: #0A84FF;
+}
+
+/* Component overrides */
+body.dark-mode .day-separator {
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.09) 20%, rgba(255,255,255,0.09) 80%, transparent);
+}
+body.dark-mode .day-card:hover { background: rgba(255,255,255,0.06); }
+body.dark-mode .dock-container {
+    border-color: rgba(255,255,255,0.13);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        0 2px 0 rgba(255,255,255,0.04),
+        0 40px 80px rgba(0,0,0,0.7),
+        0 0 0 0.5px rgba(255,255,255,0.06);
+}
+body.dark-mode .weather-day:not(:last-child)::after { background: rgba(255,255,255,0.1); }
+/* Notes — no bg, white border, text glow in dark mode */
+body.dark-mode .note {
+    background: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+body.dark-mode .note::before { display: none; }
+body.dark-mode .note-content {
+    text-shadow: 0 0 12px rgba(255,255,255,0.25), 0 1px 8px rgba(0,0,0,0.5);
+}
+body.dark-mode .note[data-note-color="yellow"] { border-color: rgba(251,191,36,0.35); }
+body.dark-mode .note[data-note-color="blue"]   { border-color: rgba(96,165,250,0.35); }
+body.dark-mode .note[data-note-color="mint"]   { border-color: rgba(52,211,153,0.35); }
+body.dark-mode .note[data-note-color="pink"]   { border-color: rgba(244,114,182,0.35); }
+/* Image notes — no pseudo border */
+body.dark-mode .note.image-note { background: #000; box-shadow: none; }
+body.dark-mode .note.image-note::before { display: none; }
+body.dark-mode .note-color-dot[data-color="default"] { background: rgba(255,255,255,0.2); }
+body.dark-mode .settings-location-input { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+body.dark-mode .settings-toggle { background: rgba(255,255,255,0.05); }
+body.dark-mode .settings-toggle-btn.active { background: rgba(255,255,255,0.1); box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+body.dark-mode .font-pick { background: rgba(255,255,255,0.04); }
+body.dark-mode .font-pick.active { background: rgba(10,132,255,0.15); border-color: #0A84FF; }
+body.dark-mode .pomo-btn.secondary { border-color: rgba(255,255,255,0.15); }
+body.dark-mode .day-card.drag-over { background: rgba(10,132,255,0.12); }
+body.dark-mode .day-card.weekend .day-number {
+    background: linear-gradient(to bottom, rgba(255,255,255,0.9) 20%, rgba(255,255,255,0.3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+body.dark-mode .day-note-popup,
+body.dark-mode .day-note-preview {
+    border-color: rgba(255,255,255,0.08);
+}
+body.dark-mode .note-color-bar {
+    border-color: rgba(255,255,255,0.08);
+}
+
+/* Dark vibrancy material — settings, pomodoro, popups */
+body.dark-mode .settings-panel,
+body.dark-mode .pomodoro-pill,
+body.dark-mode .pomodoro-panel,
+body.dark-mode .day-note-popup,
+body.dark-mode .day-note-preview {
+    background: rgba(16, 17, 26, 0.92);
+    border-color: rgba(255,255,255,0.09);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* Active day card — glow instead of invisible dark shadow */
+body.dark-mode .day-card.active {
+    box-shadow: 0 0 20px rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Note drag elevation — light glow */
+body.dark-mode .note.dragging {
+    box-shadow: 0 0 0 2.5px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.7);
+}
+
+/* Note text — shadow so it reads cleanly over the galaxy */
+body.dark-mode .note-content {
+    text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+}
+
+/* Watermark slightly more visible on dark */
+body.dark-mode .bottom-watermark { opacity: 0.055; }
+
+/* Year progress bar */
+.year-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    z-index: 500;
+    background: rgba(0,0,0,0.07);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+    pointer-events: none;
+    overflow: visible;
+}
+body.dark-mode .year-bar {
+    background: rgba(255,255,255,0.07);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+}
+.year-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, rgba(167,139,202,0.25), #A78BCA);
+    border-radius: 0 4px 4px 0;
+    position: relative;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.year-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.18), transparent);
+    border-radius: 0 4px 0 0;
+    pointer-events: none;
+}
+.year-bar-marker {
+    position: absolute;
+    bottom: 2px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.year-bar-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #A78BCA;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    box-shadow: 0 0 0 3px rgba(167,139,202,0.2), 0 0 12px rgba(167,139,202,0.55);
+    animation: yearDotPulse 3s ease-in-out infinite;
+}
+@keyframes yearDotPulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(167,139,202,0.2), 0 0 12px rgba(167,139,202,0.55); }
+    50%       { box-shadow: 0 0 0 5px rgba(167,139,202,0.12), 0 0 20px rgba(167,139,202,0.7); }
+}
+.year-bar-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #A78BCA;
+    white-space: nowrap;
+    background: rgba(167,139,202,0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0.5px solid rgba(167,139,202,0.3);
+    border-radius: 20px;
+    padding: 2px 8px;
+}
+
 </style>
 </head>
 <body id="surface">
@@ -1528,7 +1922,16 @@ body:hover .settings-btn { opacity: 0.45; }
     </div>
 </div>
 
-<button class="bg-toggle" id="bg-toggle" title="Toggle background"></button>
+<canvas id="dot-connections"></canvas>
+<canvas id="galaxy-canvas"></canvas>
+<button class="live-toggle" id="live-toggle" title="Animate background"></button>
+<div class="glass-switch" id="note-glass-toggle" title="Note transparency">
+    <button class="glass-switch-btn" data-glass="none">○</button>
+    <button class="glass-switch-btn" data-glass="low">◔</button>
+    <button class="glass-switch-btn active" data-glass="mid">◑</button>
+    <button class="glass-switch-btn" data-glass="high">●</button>
+</div>
+<button class="dark-toggle" id="dark-toggle" title="Toggle dark mode"></button>
 <button class="settings-btn" id="settings-btn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
@@ -1552,7 +1955,7 @@ body:hover .settings-btn { opacity: 0.45; }
         <div class="settings-section-label">Note Font</div>
         <div class="settings-row" id="font-picker">
             <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
-            <div class="font-pick" data-font="sf-pro" style="font-family:-apple-system,'SF Pro Display','SF Pro Text',system-ui,sans-serif;">Aa</div>
+            <div class="font-pick" data-font="sf-mono" style="font-family:'SF Mono','SFMono-Regular',ui-monospace,monospace;">Aa</div>
             <div class="font-pick" data-font="lora" style="font-family:'Lora',serif;">Aa</div>
             <div class="font-pick" data-font="dm-mono" style="font-family:'DM Mono',monospace;">Aa</div>
             <div class="font-pick" data-font="jetbrains-mono" style="font-family:'JetBrains Mono',monospace;">Aa</div>
@@ -1566,18 +1969,25 @@ body:hover .settings-btn { opacity: 0.45; }
             <button class="settings-toggle-btn" data-size="L" style="font-size:13px;">L</button>
         </div>
     </div>
+    </div>
 </div>
 
 <div class="bottom-watermark" id="bottom-watermark">weekdash</div>
 
 <div id="mesh-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.54;filter:blur(120px);"></div>
 
-<header class="header-container" id="header-area">
-    <div class="time-display" id="clock">12:00 PM</div>
-    <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
-</header>
 
 <div class="dock-wrapper">
+    <div class="time-ruler" id="time-ruler">
+        <div class="time-ruler-track">
+            <div class="time-ruler-past" id="time-ruler-past"></div>
+        </div>
+        <div class="time-ruler-now" id="time-ruler-now">
+            <div class="time-ruler-now-label" id="time-ruler-now-label"></div>
+            <div class="time-ruler-now-line"></div>
+            <div class="time-ruler-now-dot"></div>
+        </div>
+    </div>
     <div class="dock-row">
         <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="dock-container" id="dock"></div>
@@ -1597,7 +2007,6 @@ body:hover .settings-btn { opacity: 0.45; }
 
 <div class="city-tooltip" id="city-display">Detecting...</div>
 
-<div class="greeting-sub" id="greeting-sub"></div>
 <div class="weather-tooltip" id="weather-tooltip"></div>
 
 <div class="pomodoro" id="pomodoro">
@@ -1621,26 +2030,117 @@ body:hover .settings-btn { opacity: 0.45; }
     /* ============================================================
        MESH GRADIENT
     ============================================================ */
+    const meshShapes = [];
+    let meshRaf = null;
+
     function initMeshBg() {
         const W = window.innerWidth, H = window.innerHeight;
         const PAD = 200;
         const TW = W + PAD * 2, TH = H + PAD * 2;
-        const balls = [
-            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
-            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
-            { x: W *  0.93 - 250 + PAD, y: H *  0.83 - 250 + PAD, r: 250, color: '#5856D6' },
-        ];
         const bg = document.getElementById('mesh-bg');
         bg.style.top = `-${PAD}px`;
         bg.style.left = `-${PAD}px`;
         bg.style.width = `${TW}px`;
         bg.style.height = `${TH}px`;
-        bg.innerHTML = balls.map(b =>
-            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
-        ).join('');
+        bg.innerHTML = '';
+        meshShapes.length = 0;
+
+        const rnd = (a, b) => a + Math.random() * (b - a);
+
+        const balls = [
+            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
+            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
+            { x: W *  0.93 - 250 + PAD, y: H *  0.83 - 250 + PAD, r: 250, color: '#5856D6' },
+        ];
+        balls.forEach(b => {
+            const el = document.createElement('div');
+            el.style.cssText = `position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};`;
+            bg.appendChild(el);
+            meshShapes.push({ el, bx: b.x, by: b.y, r: b.r,
+                ax: rnd(50, 90),  ay: rnd(40, 80),
+                fx: rnd(0.00018, 0.00032), fy: rnd(0.00015, 0.00028),
+                px: rnd(0, Math.PI * 2),   py: rnd(0, Math.PI * 2),
+            });
+        });
+
+        const tri = { x: W * 0.5 + PAD, y: H * 0.5 + PAD, w: 110, h: 580, color: '#BF5AF2' };
+        const triEl = document.createElement('div');
+        triEl.style.cssText = `position:absolute;width:${tri.w}px;height:${tri.h}px;left:${tri.x-tri.w/2}px;top:${tri.y-tri.h/2}px;background:${tri.color};clip-path:polygon(50% 0%,0% 100%,100% 100%);transform:rotate(10deg);`;
+        bg.appendChild(triEl);
+        meshShapes.push({ el: triEl, bx: tri.x, by: tri.y, w: tri.w, h: tri.h, isTri: true,
+            ax: rnd(30, 60), ay: rnd(30, 60),
+            fx: rnd(0.0001, 0.0002), fy: rnd(0.0001, 0.0002),
+            px: rnd(0, Math.PI * 2),  py: rnd(0, Math.PI * 2),
+        });
     }
 
+    function meshTick(t) {
+        meshShapes.forEach(s => {
+            const dx = s.ax * Math.sin(s.fx * t + s.px);
+            const dy = s.ay * Math.cos(s.fy * t + s.py);
+            if (s.isTri) {
+                s.el.style.left = (s.bx - s.w / 2 + dx) + 'px';
+                s.el.style.top  = (s.by - s.h / 2 + dy) + 'px';
+            } else {
+                s.el.style.left = (s.bx - s.r + dx) + 'px';
+                s.el.style.top  = (s.by - s.r + dy) + 'px';
+            }
+        });
+        meshRaf = requestAnimationFrame(meshTick);
+    }
+
+    let meshLive = localStorage.getItem('aura_mesh_live') === '1';
+    const liveBtn = document.getElementById('live-toggle');
+
+    function applyMeshLive() {
+        if (meshLive) {
+            liveBtn.classList.add('active');
+            if (!meshRaf) meshRaf = requestAnimationFrame(meshTick);
+        } else {
+            liveBtn.classList.remove('active');
+            if (meshRaf) { cancelAnimationFrame(meshRaf); meshRaf = null; }
+        }
+    }
+
+    liveBtn.addEventListener('click', () => {
+        meshLive = !meshLive;
+        localStorage.setItem('aura_mesh_live', meshLive ? '1' : '0');
+        applyMeshLive();
+    });
+
     initMeshBg();
+    applyMeshLive();
+
+    /* ============================================================
+       DOT CONNECTIONS
+    ============================================================ */
+    function drawDotConnections() {
+        const canvas = document.getElementById('dot-connections');
+        const W = window.innerWidth, H = window.innerHeight;
+        canvas.width  = W;
+        canvas.height = H;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, W, H);
+
+        const STEP = 22, OFF = 11;
+        const cols = Math.ceil(W / STEP) + 1;
+        const rows = Math.ceil(H / STEP) + 1;
+        const dark = document.body.classList.contains('dark-mode');
+        ctx.strokeStyle = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.13)';
+        ctx.lineWidth = 1;
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const x1 = c * STEP + OFF, y1 = r * STEP + OFF;
+                if (c < cols - 1 && Math.random() < 0.14)
+                    { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + STEP, y1); ctx.stroke(); }
+                if (r < rows - 1 && Math.random() < 0.14)
+                    { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1, y1 + STEP); ctx.stroke(); }
+            }
+        }
+    }
+
+    drawDotConnections();
 
     /* ============================================================
        LANGUAGE SYSTEM: EN / ES / PT (3-way cycle)
@@ -1648,6 +2148,7 @@ body:hover .settings-btn { opacity: 0.45; }
     const LANGS = ['en', 'es', 'pt'];
     const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
     let lang = LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en';
+    let isDarkMode = localStorage.getItem('aura_dark') === '1';
 
     const dock = document.getElementById('dock');
     let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
@@ -1668,87 +2169,6 @@ body:hover .settings-btn { opacity: 0.45; }
        GREETINGS — simple main, funny subs
     ============================================================ */
 
-    // Main greeting: simple, warm, uses day name where it feels right
-    function getMainGreeting(lang, slot, dayName) {
-        const map = {
-            en: {
-                dawn:      'Good morning.',
-                morning:   `Happy ${dayName}.`,
-                lateAM:    'Good morning.',
-                noon:      'Good afternoon.',
-                afternoon: `Good ${dayName}.`,
-                evening:   'Good evening.',
-                night:     'Good night.',
-            },
-            es: {
-                dawn:      'Buenos días.',
-                morning:   `Feliz ${dayName}.`,
-                lateAM:    'Buenos días.',
-                noon:      'Buenas tardes.',
-                afternoon: `Buen ${dayName}.`,
-                evening:   'Buenas noches.',
-                night:     'Buenas noches.',
-            },
-            pt: {
-                dawn:      'Bom dia.',
-                morning:   `Feliz ${dayName}.`,
-                lateAM:    'Bom dia.',
-                noon:      'Boa tarde.',
-                afternoon: `${dayName}.`,
-                evening:   'Boa noite.',
-                night:     'Boa noite.',
-            },
-        };
-        return map[lang][slot];
-    }
-
-    // Subs stay funny & rotational
-    const greetingSubs = {
-        en: {
-            dawn:      ["Can't sleep? Neither can your inbox.", "The birds aren't even awake yet. You good?", "Early bird gets the coffee. Go."],
-            morning:   ["Fully charged. Let's pretend.", "Coffee first. Ambitions second.", "Today's forecast: unclear, like your plans.", "Still half asleep? Same energy here."],
-            lateAM:    ["Lunch o'clock is approaching. Stay strong.", "The morning's not over. Technically.", "Still morning. Barely."],
-            noon:      ["Midday. Peak confusion hours.", "It's noon somewhere. Actually it's here.", "Halfway through. You can do this. Probably."],
-            afternoon: ["4pm slump incoming. You've been warned.", "Time is flying. Unlike your productivity.", "Still got it. Maybe."],
-            evening:   ["Golden hour. Your ideas are finally good.", "Almost done. With the day, at least.", "Dinner soon? Your stomach says yes."],
-            night:     ["Should you be asleep? Asking for science.", "Late-night ideas hit different. Unfortunately.", "This is fine. Everything is fine."],
-        },
-        es: {
-            dawn:      ["¿No puedes dormir? Tu bandeja tampoco.", "Ni los pájaros están despiertos. ¿Todo bien?", "El que madruga, toma el café primero."],
-            morning:   ["El café antes que las ambiciones.", "Hoy: confusión moderada y posibles logros.", "Cargado al 40%. Suficiente por ahora.", "Buenos días. Relativo."],
-            lateAM:    ["El almuerzo se acerca. Aguanta.", "Técnicamente todavía es mañana.", "La mañana no se ha rendido. Tú tampoco."],
-            noon:      ["Mediodía. Hora pico del caos.", "Aquí es donde el café ya no ayuda.", "Mitad del día. Mitad de las excusas."],
-            afternoon: ["El bajón de las 4pm viene en camino.", "El tiempo vuela. Tu lista de pendientes no.", "¿Productivo? Eso está por verse."],
-            evening:   ["Hora dorada. Ideas finalmente decentes.", "La cena no se va a hacer sola.", "Casi terminas. El día, al menos."],
-            night:     ["¿No deberías estar durmiendo? La ciencia pregunta.", "Ideas de madrugada: arriesgadas. Inevitables.", "Todo está bien. Completamente bien."],
-        },
-        pt: {
-            dawn:      ["Não consegue dormir? Sua caixa de entrada também não.", "Nem os pássaros acordaram ainda. Tá bem?", "Quem madruga toma café primeiro."],
-            morning:   ["Café antes das ambições. Sempre.", "Previsão de hoje: confusão com chance de produtividade.", "Carregando... 40%. Por enquanto basta.", "Bom dia. Relativamente falando."],
-            lateAM:    ["O almoço está chegando. Segura.", "Tecnicamente ainda é manhã.", "A manhã ainda não desistiu. Você também não."],
-            noon:      ["Meio-dia. Horário de pico do caos.", "É aqui que o café já não funciona mais.", "Metade do dia. Metade das desculpas."],
-            afternoon: ["A queda das 16h vem aí. Avisado.", "O tempo voa. Sua lista de tarefas não.", "Produtivo? A ver."],
-            evening:   ["Hora dourada. Suas ideias finalmente prestam.", "O jantar não vai se fazer sozinho.", "Quase terminou. O dia, pelo menos."],
-            night:     ["Não deveria estar dormindo? Pergunta a ciência.", "Ideias de madrugada: arriscadas. Inevitáveis.", "Tá tudo bem. Completamente bem."],
-        }
-    };
-
-    function getTimeSlot(hour) {
-        if (hour >= 0 && hour < 5) return 'dawn';
-        if (hour >= 5 && hour < 9) return 'morning';
-        if (hour >= 9 && hour < 12) return 'lateAM';
-        if (hour >= 12 && hour < 15) return 'noon';
-        if (hour >= 15 && hour < 18) return 'afternoon';
-        if (hour >= 18 && hour < 21) return 'evening';
-        return 'night';
-    }
-
-    // Pick a sub greeting (rotates every 10 minutes)
-    function getSubGreeting(slot) {
-        const subs = greetingSubs[lang][slot];
-        const minuteBucket = Math.floor(Date.now() / (10 * 60 * 1000));
-        return subs[minuteBucket % subs.length];
-    }
 
     /* ============================================================
        LINKIFY
@@ -1825,27 +2245,77 @@ body:hover .settings-btn { opacity: 0.45; }
     });
 
     /* ============================================================
-       HEADER / GREETING UPDATE
+       TIME RULER
     ============================================================ */
-    function updateHeader() {
+    const RULER_START = 6;   // 6am
+    const RULER_END   = 24;  // midnight
+    const RULER_SPAN  = RULER_END - RULER_START;
+
+    function buildTimeRuler() {
+        const ruler = document.getElementById('time-ruler');
+        ruler.querySelectorAll('.time-ruler-tick').forEach(el => el.remove());
+
         const now = new Date();
-        const hour = now.getHours();
-        const locale = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'pt-BR';
-        const timeStr = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
-        document.getElementById('clock').textContent = timeStr;
+        const nowH = now.getHours() + now.getMinutes() / 60;
 
-        const slot = getTimeSlot(hour);
-        const dayName = now.toLocaleDateString(locale, { weekday: 'long' });
-        const greetEl = document.getElementById('greeting');
-        const subEl = document.getElementById('greeting-sub');
+        for (let h = RULER_START; h <= RULER_END; h++) {
+            const isPastH = h <= nowH;
 
-        // main greeting — simple, natural, with day name where it fits
-        const mainText = getMainGreeting(lang, slot, dayName);
-        greetEl.textContent = mainText;
+            // Hour tick
+            const pct = (h - RULER_START) / RULER_SPAN * 100;
+            const tick = document.createElement('div');
+            tick.className = 'time-ruler-tick hour';
+            tick.style.left = pct + '%';
+            tick.style.background = isPastH ? '#A78BCA' : 'var(--text-color)';
+            tick.style.opacity = isPastH ? '0.55' : '0.25';
+            ruler.appendChild(tick);
 
-        // sub greeting — the funny line
-        subEl.textContent = getSubGreeting(slot);
+            if (h < RULER_END) {
+                // Half-hour tick
+                const halfPct = (h + 0.5 - RULER_START) / RULER_SPAN * 100;
+                const isPastHalf = (h + 0.5) <= nowH;
+                const half = document.createElement('div');
+                half.className = 'time-ruler-tick half';
+                half.style.left = halfPct + '%';
+                half.style.background = isPastHalf ? '#A78BCA' : 'var(--text-color)';
+                half.style.opacity = isPastHalf ? '0.35' : '0.15';
+                ruler.appendChild(half);
 
+                // Quarter-hour ticks
+                [0.25, 0.75].forEach(q => {
+                    const qPct = (h + q - RULER_START) / RULER_SPAN * 100;
+                    const isPastQ = (h + q) <= nowH;
+                    const qt = document.createElement('div');
+                    qt.className = 'time-ruler-tick quarter';
+                    qt.style.left = qPct + '%';
+                    qt.style.background = isPastQ ? '#A78BCA' : 'var(--text-color)';
+                    qt.style.opacity = isPastQ ? '0.2' : '0.08';
+                    ruler.appendChild(qt);
+                });
+            }
+        }
+    }
+
+    function updateTimeline() {
+        const now = new Date();
+        const hours = now.getHours() + now.getMinutes() / 60;
+        const nowEl = document.getElementById('time-ruler-now');
+        const labelEl = document.getElementById('time-ruler-now-label');
+        const pastEl = document.getElementById('time-ruler-past');
+
+        const h = now.getHours();
+        const m = now.getMinutes().toString().padStart(2, '0');
+        labelEl.textContent = h + ':' + m;
+
+        if (hours < RULER_START || hours > RULER_END) {
+            nowEl.style.display = 'none';
+            pastEl.style.width = hours < RULER_START ? '0%' : '100%';
+            return;
+        }
+        const pct = (hours - RULER_START) / RULER_SPAN * 100;
+        nowEl.style.display = 'flex';
+        nowEl.style.left = pct + '%';
+        pastEl.style.width = pct + '%';
     }
 
     /* ============================================================
@@ -1859,18 +2329,9 @@ body:hover .settings-btn { opacity: 0.45; }
         // Update bottom button
         document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
 
-        // Animate greeting
-        const greetEl = document.getElementById('greeting');
-        greetEl.classList.remove('lang-switch');
-        void greetEl.offsetWidth; // reflow
-        greetEl.classList.add('lang-switch');
-
-        updateHeader();
+        updateTimeline();
         initDock();
     }
-
-    // Clicking the greeting cycles language
-    document.getElementById('greeting').addEventListener('click', () => cycleLang());
 
     /* ============================================================
        NOTES — drag + RESIZE (macOS bottom-right handle)
@@ -1884,6 +2345,66 @@ body:hover .settings-btn { opacity: 0.45; }
             }
         }
         return null;
+    }
+
+    function formatTimerRemaining(ms) {
+        const totalSec = Math.max(0, Math.ceil(ms / 1000));
+        const h = Math.floor(totalSec / 3600);
+        const m = Math.floor((totalSec % 3600) / 60);
+        const s = totalSec % 60;
+        if (h > 0) return h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        return m + ':' + String(s).padStart(2,'0');
+    }
+
+    function buildTimerUI(note, data) {
+        note.classList.add('timer-note');
+        const content = note.querySelector('.note-content');
+        if (content) content.style.display = 'none';
+        note.querySelector('.note-color-bar')?.remove();
+
+        const existing = note.querySelector('.timer-display');
+        if (existing) existing.remove();
+
+        const display = document.createElement('div');
+        display.className = 'timer-display';
+
+        const label = document.createElement('div');
+        label.className = 'timer-label';
+        const totalSec = Math.round(data.timerDuration / 1000);
+        const lh = Math.floor(totalSec / 3600);
+        const lm = Math.floor((totalSec % 3600) / 60);
+        const ls = totalSec % 60;
+        label.textContent = lh > 0 ? lh + 'h' : lm > 0 ? lm + 'm' : ls + 's';
+
+        const countdown = document.createElement('div');
+        countdown.className = 'timer-countdown';
+        const remaining = data.timerEnd - Date.now();
+        if (remaining <= 0) {
+            countdown.textContent = 'done';
+            note.classList.add('timer-done');
+        } else {
+            countdown.textContent = formatTimerRemaining(remaining);
+        }
+
+        display.appendChild(label);
+        display.appendChild(countdown);
+        note.insertBefore(display, note.querySelector('.note-resize-handle'));
+
+        note.style.width = '120px';
+        data.w = 120;
+    }
+
+    function activateTimerNote(note, data, durationMs) {
+        data.timerEnd = Date.now() + durationMs;
+        data.timerDuration = durationMs;
+        data.timerDone = false;
+        const content = note.querySelector('.note-content');
+        data.text = content ? content.innerText.trim() : '';
+        content.contentEditable = 'false';
+        note.classList.remove('editing');
+        document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
+        buildTimerUI(note, data);
+        save();
     }
 
     function createNote(data, autoFocus = false) {
@@ -1902,6 +2423,35 @@ body:hover .settings-btn { opacity: 0.45; }
         content.spellcheck = false;
         content.innerHTML = linkify(data.text || '');
         note.appendChild(content);
+
+        // ---- TIMER NOTE (restore from saved state) ----
+        if (data.timerEnd) {
+            const timerClose = document.createElement('div');
+            timerClose.className = 'note-close';
+            timerClose.innerHTML = `<svg viewBox="0 0 6 6"><line x1="1" y1="1" x2="5" y2="5"/><line x1="5" y1="1" x2="1" y2="5"/></svg>`;
+            note.appendChild(timerClose);
+            buildTimerUI(note, data);
+            document.body.appendChild(note);
+            timerClose.addEventListener('mousedown', (e) => {
+                e.stopPropagation(); e.preventDefault();
+                data._deleted = true; note.remove();
+                notes = notes.filter(n => n.id !== data.id);
+                document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
+                save();
+            });
+            note.onmousedown = (e) => {
+                if (e.target.closest('.note-close')) return;
+                e.preventDefault();
+                const ox = e.clientX - note.offsetLeft, oy = e.clientY - note.offsetTop;
+                note.style.zIndex = ++topZ;
+                note.classList.add('dragging');
+                const move = (me) => { me.preventDefault(); note.style.left = (me.clientX - ox) + 'px'; note.style.top = (me.clientY - oy) + 'px'; };
+                const stop = () => { note.classList.remove('dragging'); save(); window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', stop); };
+                window.addEventListener('mousemove', move);
+                window.addEventListener('mouseup', stop);
+            };
+            return;
+        }
 
         // ---- IMAGE NOTE ----
         if (data.imageData) {
@@ -2078,11 +2628,30 @@ body:hover .settings-btn { opacity: 0.45; }
             window.addEventListener('mouseup', onUp);
         });
 
+        // ---- COMMAND DETECTION (visual only while typing) ----
+        function parseCommand(text) {
+            const match = text.trim().match(/^\/(\d+(?:\.\d+)?)\s*(h|hr|hours?|m|min|minutes?|s|sec|seconds?)?$/i);
+            if (!match) return null;
+            const num = parseFloat(match[1]);
+            const unit = (match[2] || 'm').toLowerCase();
+            let ms;
+            if (unit.startsWith('h')) ms = num * 3600000;
+            else if (unit.startsWith('s')) ms = num * 1000;
+            else ms = num * 60000;
+            return (ms > 0 && ms <= 24 * 3600000) ? ms : null;
+        }
+
+        content.oninput = () => {
+            const isCmd = parseCommand(content.innerText) !== null;
+            content.classList.toggle('is-command', isCmd);
+        };
+
         // ---- DOUBLE CLICK TO EDIT ----
         note.ondblclick = (e) => {
             if (e.target.closest('.note-resize-handle')) return;
             if (e.target.closest('.note-delete')) return;
             if (data.imageData) return;
+            if (data.timerEnd) return;
             e.stopPropagation();
             note.classList.add('editing');
             content.contentEditable = 'true';
@@ -2101,6 +2670,9 @@ body:hover .settings-btn { opacity: 0.45; }
 
         content.onblur = () => {
             if (data._deleted) return;
+            content.classList.remove('is-command');
+            const ms = parseCommand(content.innerText);
+            if (ms !== null) { activateTimerNote(note, data, ms); return; }
             content.contentEditable = 'false';
             note.classList.remove('editing');
             const plainText = content.innerText;
@@ -2141,7 +2713,7 @@ body:hover .settings-btn { opacity: 0.45; }
     });
 
     window.addEventListener('drop', (e) => {
-        if (e.target.closest('.note') || e.target.closest('.dock-wrapper') || e.target.closest('#header-area')) return;
+        if (e.target.closest('.note') || e.target.closest('.dock-wrapper')) return;
         const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
         if (!file) return;
         e.preventDefault();
@@ -2177,7 +2749,6 @@ body:hover .settings-btn { opacity: 0.45; }
         // Only create notes on the background — never on the header, dock, or any note
         if (
             (e.target.id === 'surface' || e.target.id === 'mesh') &&
-            !e.target.closest('#header-area') &&
             !e.target.closest('.dock-wrapper') &&
             !e.target.closest('.note')
         ) {
@@ -2386,12 +2957,34 @@ body:hover .settings-btn { opacity: 0.45; }
 <script>
     // Init — paint UI immediately, defer network calls
     initDock();
-    updateHeader();
+    buildTimeRuler();
+    updateTimeline();
     initWeatherPlaceholder();
     notes.filter(n => !n.archived).forEach(n => {
         createNote(n);
     });
-    setInterval(updateHeader, 10000);
+    setInterval(updateTimeline, 10000);
+
+    // Global timer tick — updates all active timer notes every second
+    setInterval(() => {
+        document.querySelectorAll('.note.timer-note').forEach(noteEl => {
+            const data = notes.find(n => n.id === noteEl.id);
+            if (!data || !data.timerEnd) return;
+            const remaining = data.timerEnd - Date.now();
+            const countdown = noteEl.querySelector('.timer-countdown');
+            if (!countdown) return;
+            if (remaining <= 0) {
+                if (!noteEl.classList.contains('timer-done')) {
+                    countdown.textContent = 'done';
+                    noteEl.classList.add('timer-done');
+                    data.timerDone = true;
+                    save();
+                }
+            } else {
+                countdown.textContent = formatTimerRemaining(remaining);
+            }
+        });
+    }, 1000);
     // Sync language button on load
     document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
 
@@ -2409,7 +3002,7 @@ body:hover .settings-btn { opacity: 0.45; }
                 return;
             }
             initDock();
-            updateHeader();
+            updateTimeline();
                 scheduleMidnightRefresh();
         }, ms);
     }
@@ -2628,7 +3221,7 @@ body:hover .settings-btn { opacity: 0.45; }
     // Note font
     const noteFonts = {
         'caveat':   "'Caveat', cursive",
-        'sf-pro': "-apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif",
+        'sf-mono': "'SF Mono', 'SFMono-Regular', ui-monospace, monospace",
         'lora':     "'Lora', serif",
         'dm-mono':  "'DM Mono', monospace",
         'jetbrains-mono': "'JetBrains Mono', monospace",
@@ -2665,6 +3258,7 @@ body:hover .settings-btn { opacity: 0.45; }
         const font = noteFonts[key];
         if (!font) return;
         document.documentElement.style.setProperty('--note-font', font);
+        document.body.classList.toggle('note-font-sf-mono', key === 'sf-mono');
         document.querySelectorAll('.font-pick').forEach(p => p.classList.remove('active'));
         document.querySelector(`.font-pick[data-font="${key}"]`)?.classList.add('active');
         localStorage.setItem('aura_note_font', key);
@@ -2697,25 +3291,26 @@ body:hover .settings-btn { opacity: 0.45; }
         applyNoteSize(btn.dataset.size);
     });
 
-
-    // BG toggle
-    const bgToggle = document.getElementById('bg-toggle');
-    let bgMode = localStorage.getItem('aura_bg') || 'yellow';
-    const BG_VALS = { yellow: '#f5f0e8', white: '#fafaf8' };
-
-    function applyBgMode(mode) {
-        bgMode = mode;
-        document.documentElement.style.setProperty('--bg-color', BG_VALS[mode]);
-        bgToggle.classList.toggle('is-white', mode === 'white');
-        localStorage.setItem('aura_bg', mode);
+    const glassLevels = ['none', 'low', 'mid', 'high'];
+    function applyNoteGlass(level, noSave = false) {
+        glassLevels.forEach(l => document.body.classList.remove('note-glass-' + l));
+        document.body.classList.add('note-glass-' + level);
+        document.querySelectorAll('#note-glass-toggle .glass-switch-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.glass === level);
+        });
+        if (!noSave) localStorage.setItem('aura_note_glass', level);
     }
 
-    bgToggle.addEventListener('click', () => applyBgMode(bgMode === 'yellow' ? 'white' : 'yellow'));
-    applyBgMode(bgMode);
+    document.getElementById('note-glass-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.glass-switch-btn');
+        if (!btn) return;
+        applyNoteGlass(btn.dataset.glass);
+    });
 
     // Restore saved settings
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
     applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
+    applyNoteGlass(localStorage.getItem('aura_note_glass') || 'mid', true);
     applyTempUnit(tempUnit, false);
 
     // Reveal UI after all settings applied — no flash
@@ -2860,6 +3455,141 @@ body:hover .settings-btn { opacity: 0.45; }
     claudeOverlay.addEventListener('mousedown', (e) => {
         if (!e.target.closest('.claude-chat')) closeClaude();
     });
+
+    /* ============================================================
+       GALAXY BACKGROUND (dark mode only — draws once, never redraws)
+       ============================================================ */
+    let galaxyInitialized = false;
+    function initGalaxyBg() {
+        if (galaxyInitialized) return;
+        galaxyInitialized = true;
+        const canvas = document.getElementById('galaxy-canvas');
+        const W = window.innerWidth, H = window.innerHeight;
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#06080f';
+        ctx.fillRect(0, 0, W, H);
+
+        // Nebulae — layered radial gradients
+        [
+            { x: W*0.78, y: H*0.14, r: 480, c: [100, 55, 210], a: 0.2  },  // violet top-right
+            { x: W*0.12, y: H*0.72, r: 380, c: [10,  60, 180], a: 0.18 },  // deep blue bottom-left
+            { x: W*0.88, y: H*0.82, r: 300, c: [0,  110, 130], a: 0.14 },  // teal bottom-right
+            { x: W*0.38, y: H*0.42, r: 260, c: [140, 28,  90], a: 0.13 },  // rose centre
+            { x: W*0.55, y: H*0.08, r: 200, c: [60,  30, 160], a: 0.1  },  // indigo top-centre
+            { x: W*0.05, y: H*0.25, r: 220, c: [0,   80, 160], a: 0.1  },  // blue left
+        ].forEach(({ x, y, r, c, a }) => {
+            const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+            g.addColorStop(0,    `rgba(${c[0]},${c[1]},${c[2]},${a})`);
+            g.addColorStop(0.45, `rgba(${c[0]},${c[1]},${c[2]},${(a*0.35).toFixed(3)})`);
+            g.addColorStop(1,    `rgba(${c[0]},${c[1]},${c[2]},0)`);
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+        });
+
+        // Subtle horizontal dust band across the middle
+        const band = ctx.createLinearGradient(0, H*0.42, 0, H*0.58);
+        band.addColorStop(0,   'rgba(80,60,160,0)');
+        band.addColorStop(0.5, 'rgba(80,60,160,0.05)');
+        band.addColorStop(1,   'rgba(80,60,160,0)');
+        ctx.fillStyle = band;
+        ctx.fillRect(0, H*0.42, W, H*0.16);
+
+        // Star field
+        const rnd = (a, b) => a + Math.random() * (b - a);
+        for (let i = 0; i < 240; i++) {
+            const a = rnd(0.15, 0.75);
+            ctx.beginPath();
+            ctx.arc(rnd(0, W), rnd(0, H), rnd(0.2, 1.1), 0, Math.PI*2);
+            ctx.fillStyle = `rgba(${200 + ~~rnd(0,55)},${200 + ~~rnd(0,55)},255,${a.toFixed(2)})`;
+            ctx.fill();
+        }
+        // Bright stars with glow
+        for (let i = 0; i < 26; i++) {
+            const x = rnd(0, W), y = rnd(0, H);
+            const glowR = rnd(4, 9);
+            const glow = ctx.createRadialGradient(x, y, 0, x, y, glowR);
+            glow.addColorStop(0, 'rgba(200,215,255,0.32)');
+            glow.addColorStop(1, 'rgba(200,215,255,0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath(); ctx.arc(x, y, glowR, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x, y, rnd(1.0, 1.8), 0, Math.PI*2);
+            ctx.fillStyle = `rgba(255,255,255,${rnd(0.85,1).toFixed(2)})`; ctx.fill();
+        }
+
+        // Vignette
+        const vig = ctx.createRadialGradient(W/2, H/2, H*0.25, W/2, H/2, H*0.85);
+        vig.addColorStop(0, 'rgba(0,0,0,0)');
+        vig.addColorStop(1, 'rgba(0,0,0,0.55)');
+        ctx.fillStyle = vig;
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    /* ============================================================
+       DARK MODE
+       ============================================================ */
+    function applyDarkMode(dark, persist = true) {
+        isDarkMode = dark;
+        document.body.classList.toggle('dark-mode', dark);
+        drawDotConnections();
+        if (dark) {
+            document.documentElement.style.setProperty('--bg-color', '#06080f');
+            initGalaxyBg();
+        } else {
+            // Remove ALL inline overrides set by dark mode or pre-paint — so CSS defaults restore correctly
+            document.documentElement.style.removeProperty('--bg-color');
+            document.documentElement.style.removeProperty('--text-color');
+            document.documentElement.style.removeProperty('--card-bg');
+            document.documentElement.style.removeProperty('--accent-color');
+        }
+        if (persist) localStorage.setItem('aura_dark', dark ? '1' : '0');
+    }
+
+    document.getElementById('dark-toggle').addEventListener('click', () => {
+        // Add transition only on user click, not on init
+        document.body.style.setProperty('transition', 'background-color 0.45s ease');
+        setTimeout(() => document.body.style.removeProperty('transition'), 500);
+        applyDarkMode(!isDarkMode);
+    });
+
+    applyDarkMode(isDarkMode, false);
+
+    // Year progress bar
+    (function() {
+        const bar = document.createElement('div');
+        bar.className = 'year-bar';
+        bar.innerHTML = `
+            <div class="year-bar-fill" id="year-bar-fill"></div>
+            <div class="year-bar-marker" id="year-bar-marker">
+                <div class="year-bar-label" id="year-bar-label"></div>
+                <div class="year-bar-dot"></div>
+            </div>`;
+        document.body.appendChild(bar);
+
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+        function updateYearBar() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 1);
+            const end   = new Date(now.getFullYear() + 1, 0, 1);
+            const pct   = (now - start) / (end - start);
+            const pctDisplay = Math.floor(pct * 100);
+            const pctStr = (pct * 100) + '%';
+
+            document.getElementById('year-bar-fill').style.width = pctStr;
+            document.getElementById('year-bar-marker').style.left = pctStr;
+            document.getElementById('year-bar-label').textContent =
+                `${months[now.getMonth()]} ${now.getFullYear()}  ·  ${pctDisplay}%`;
+        }
+
+        // Animate in: start at 0, then transition to real value
+        document.getElementById('year-bar-fill').style.width = '0%';
+        document.getElementById('year-bar-marker').style.left = '0%';
+        requestAnimationFrame(() => requestAnimationFrame(updateYearBar));
+        setInterval(updateYearBar, 60000);
+    })();
 </script>
 </body>
 </html>
