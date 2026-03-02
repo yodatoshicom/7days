@@ -6,6 +6,7 @@
 <title>weekDash</title>
 
 <link rel="icon" type="image/png" href="favicon.png">
+<script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500" rel="stylesheet">
@@ -1886,6 +1887,157 @@ body.dark-mode .year-bar {
     padding: 2px 8px;
 }
 
+
+/* ── Mobile base ── */
+#mobile-notes { display: none; }
+
+/* ── Mobile layout ── */
+@media (max-width: 768px) {
+    body {
+        justify-content: flex-start;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: auto;
+        min-height: 100vh;
+        align-items: stretch;
+    }
+
+    /* Dock floats to top of page flow */
+    .dock-wrapper {
+        order: 1;
+        margin-top: 100px;
+        padding: 14px 10px 12px;
+        gap: 8px;
+        align-self: stretch;
+        align-items: center;
+    }
+
+    /* Hide mesh gradient spheres */
+    #mesh-bg { display: none !important; }
+
+    /* Notes list sits below dock */
+    #mobile-notes {
+        order: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px 40px 60px;
+    }
+
+    /* Smaller dock */
+    .time-ruler { display: none; }
+
+    .dock-container {
+        padding: 6px;
+        gap: 2px;
+        border-radius: 22px;
+    }
+
+    .day-card {
+        width: 52px;
+        height: 68px;
+        border-radius: 26px;
+    }
+
+    .day-card:hover { transform: none; }
+
+    .day-number { font-size: 26px; }
+    .day-name   { font-size: 9px; }
+    .dock-nav   { display: none; }
+
+    /* Weather row — narrower on mobile */
+    .weather-day { width: 42px; padding: 3px 0 6px; }
+    .weather-icon { font-size: 15px; }
+    .weather-temp { font-size: 9px; }
+
+    /* Hide floating notes — replaced by list */
+    .note { display: none !important; }
+
+    /* Hide capsule */
+    .capsule { display: none !important; }
+
+    /* Hide year bar & desktop chrome */
+    .year-bar        { display: none !important; }
+    .live-toggle     { display: none !important; }
+    .geo-switch      { display: none !important; }
+    .bottom-watermark{ display: none !important; }
+    .bottom-controls { display: none !important; }
+    #weather-tooltip { display: none !important; }
+
+    /* Always-visible controls on mobile */
+    .settings-btn  { opacity: 0.55 !important; }
+    .dark-toggle   { opacity: 0.7 !important; bottom: 16px; top: auto; }
+
+    /* ── Mobile note list items ── */
+    .mobile-note-item {
+        position: relative;
+        background: var(--card-bg);
+        backdrop-filter: blur(20px) saturate(150%);
+        -webkit-backdrop-filter: blur(20px) saturate(150%);
+        border: 0.5px solid rgba(255,255,255,0.22);
+        border-radius: 18px;
+        padding: 14px 44px 14px 16px;
+        min-height: 56px;
+    }
+
+    .mobile-note-item[data-note-color="yellow"] { border-color: rgba(251,191,36,0.45); }
+    .mobile-note-item[data-note-color="blue"]   { border-color: rgba(96,165,250,0.45); }
+    .mobile-note-item[data-note-color="mint"]   { border-color: rgba(52,211,153,0.45); }
+    .mobile-note-item[data-note-color="pink"]   { border-color: rgba(244,114,182,0.45); }
+
+    .mobile-note-text {
+        font-family: var(--note-font);
+        font-size: 24px;
+        line-height: 1.3;
+        color: var(--text-color);
+        outline: none;
+        white-space: pre-wrap;
+        word-break: break-word;
+        min-height: 28px;
+    }
+
+    .mobile-note-del {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0,0,0,0.08);
+        color: var(--text-color);
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.3;
+        padding: 0;
+        line-height: 1;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-note-add {
+        border: 0.5px dashed rgba(0,0,0,0.15);
+        background: transparent;
+        border-radius: 18px;
+        padding: 14px 16px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--accent-color);
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        opacity: 0.7;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-note-add:active { opacity: 0.4; }
+
+    body.dark-mode .mobile-note-del  { background: rgba(255,255,255,0.1); }
+    body.dark-mode .mobile-note-add  { border-color: rgba(255,255,255,0.15); }
+}
 </style>
 </head>
 <body id="surface">
@@ -1990,6 +2142,7 @@ body.dark-mode .year-bar {
 <div id="mesh-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.54;filter:blur(120px);"></div>
 
 
+<div id="mobile-notes"></div>
 <div class="dock-wrapper">
 <div class="time-ruler" id="time-ruler">
         <div class="time-ruler-track">
@@ -2975,6 +3128,7 @@ function createNote(data, autoFocus = false) {
     notes.filter(n => !n.archived).forEach(n => {
         createNote(n);
     });
+    renderMobileNotes();
     setInterval(updateTimeline, 10000);
 
     // Sync language button on load
@@ -3790,6 +3944,65 @@ function createNote(data, autoFocus = false) {
             setTimeout(() => placeSun(true),  150);
         };
     })();
+
+    // ── Mobile Notes List ──
+    function isMobile() { return window.innerWidth <= 768; }
+
+    function renderMobileNotes() {
+        if (!isMobile()) return;
+        const container = document.getElementById('mobile-notes');
+        if (!container) return;
+
+        const visible = notes.filter(n => !n.archived && !n.imageData);
+        container.innerHTML = '';
+
+        // Add-note button at top
+        const addBtn = document.createElement('button');
+        addBtn.className = 'mobile-note-add';
+        addBtn.textContent = '+ New note';
+        addBtn.addEventListener('click', () => {
+            const n = { id: 'n' + Date.now(), x: 0, y: 0, text: '', zIndex: ++topZ };
+            notes.push(n);
+            localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
+            renderMobileNotes();
+            const newText = container.querySelector(`[data-note-id="${n.id}"] .mobile-note-text`);
+            if (newText) newText.focus();
+        });
+        container.appendChild(addBtn);
+
+        visible.forEach(note => {
+            const item = document.createElement('div');
+            item.className = 'mobile-note-item';
+            item.dataset.noteId = note.id;
+            if (note.color && note.color !== 'default') item.dataset.noteColor = note.color;
+
+            const text = document.createElement('div');
+            text.className = 'mobile-note-text';
+            text.contentEditable = 'true';
+            text.spellcheck = false;
+            text.textContent = note.text;
+            text.addEventListener('input', () => {
+                const d = notes.find(n => n.id === note.id);
+                if (d) d.text = text.textContent;
+                localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
+            });
+
+            const del = document.createElement('button');
+            del.className = 'mobile-note-del';
+            del.innerHTML = '&times;';
+            del.setAttribute('aria-label', 'Delete note');
+            del.addEventListener('click', () => {
+                const idx = notes.findIndex(n => n.id === note.id);
+                if (idx > -1) notes.splice(idx, 1);
+                localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
+                renderMobileNotes();
+            });
+
+            item.appendChild(text);
+            item.appendChild(del);
+            container.appendChild(item);
+        });
+    }
 
     // ── Time Capsule ──
     (function() {
