@@ -206,7 +206,7 @@ async function fetchWeather(lat, lon, forceRefresh = false) {
     }
     try {
         const tUnit = (typeof tempUnit !== 'undefined' && tempUnit === 'F') ? '&temperature_unit=fahrenheit' : '';
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7${tUnit}`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto&forecast_days=7${tUnit}`;
         const response = await fetch(url);
         if (!response.ok) {
             const body = await response.text().catch(() => '');
@@ -250,6 +250,11 @@ function renderWeather(daily) {
         code: daily.weathercode[i],
         date: new Date(day)
     }));
+    // Expose today's sunrise/sunset for the time ruler
+    if (daily.sunrise && daily.sunset) {
+        window.todaySunTimes = { rise: daily.sunrise[0], set: daily.sunset[0] };
+        if (typeof drawSunriseSunset === 'function') drawSunriseSunset();
+    }
     daily.time.forEach((day, i) => {
         const temp = Math.round(daily.temperature_2m_max[i]);
         const icon = mapWmoToEmoji(daily.weathercode[i]);
