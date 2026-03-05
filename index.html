@@ -52,20 +52,13 @@
     if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
     var s = localStorage.getItem('aura_note_size');
     if (s && sizes[s]) r.style.setProperty('--note-size', sizes[s]);
-    // Dark mode pre-paint: override bg and key vars before first render
-    if (localStorage.getItem('aura_dark') === '1') {
-        r.style.setProperty('--bg-color', '#01030e');
-        r.style.setProperty('--text-color', 'rgba(255,255,255,0.9)');
-        r.style.setProperty('--card-bg', 'rgba(255,255,255,0.06)');
-        r.style.setProperty('--accent-color', '#0A84FF');
-    }
 })();
 </script>
 <style>
 :root {
     --sf-easing: cubic-bezier(0.32, 0.72, 0, 1);
     --spring-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --bg-color: #f5f0e8;
+    --bg-color: #e8e2d8;
     --text-color: #1d1d1f;
     --accent-color: #007AFF;
     --card-bg: rgba(255, 255, 255, 0.3);
@@ -153,17 +146,13 @@
 }
 
 /* Background geometry modes */
-body.bg-geo-dots,
-body.bg-geo-web  { background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px); background-size: 22px 22px; }
-body.dark-mode.bg-geo-dots,
-body.dark-mode.bg-geo-web  { background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px); }
-body.bg-geo-off,
-body.bg-geo-stellar,
-body.bg-geo-tribon { background-image: none; }
 
 body {
     background-color: var(--bg-color);
-    background-image: none;
+    background-image: url('bg2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: var(--text-color);
     height: 100vh;
     overflow: hidden;
@@ -345,10 +334,6 @@ body.ready {
     user-select: none;
     pointer-events: auto;
 }
-body.dark-mode .time-ruler-now-label {
-    color: #C9A8E8;
-}
-
 
 
 /* THE PRO STUDIO DOCK */
@@ -395,7 +380,7 @@ body.dark-mode .time-ruler-now-label {
     background: var(--card-bg);
     backdrop-filter: blur(60px) saturate(210%);
     -webkit-backdrop-filter: blur(60px) saturate(210%);
-    border-radius: 28px;
+    border-radius: 30px;
     border: 0.5px solid rgba(255, 255, 255, 0.15);
     
     box-shadow: 
@@ -651,7 +636,7 @@ body.dark-mode .time-ruler-now-label {
     backdrop-filter: blur(50px) saturate(180%);
     -webkit-backdrop-filter: blur(50px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 28px;
+    border-radius: 30px;
     padding: 18px 25px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     z-index: 1100;
@@ -670,7 +655,7 @@ body.dark-mode .time-ruler-now-label {
 
 .note.dragging.near-dock {
     padding: 6px 14px;
-    border-radius: 16px;
+    border-radius: 30px;
     opacity: 0.85;
     pointer-events: none;
     transform-origin: center center;
@@ -786,48 +771,41 @@ body.note-font-sf-mono .note-content {
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 28px;
+    border-radius: 30px;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
 }
 
 
-/* macOS-style resize handle — bottom right corner */
+/* iOS-style resize handle — integrated into bottom-right corner */
 .note-resize-handle {
     position: absolute;
-    bottom: 12px;
-    right: 12px;
-    width: 18px;
-    height: 12px;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
     cursor: nwse-resize;
     z-index: 10;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 3px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, transform 0.2s var(--sf-easing);
+    color: var(--text-color);
+    padding: 3px;
+}
+
+.note-resize-handle svg {
+    display: block;
+    opacity: 0.15;
+    transition: opacity 0.2s ease, transform 0.2s var(--sf-easing);
 }
 
 .note:hover .note-resize-handle { opacity: 1; }
-.note-resize-handle:hover { opacity: 1 !important; }
-
-.note-resize-handle span {
-    display: block;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: transparent;
-}
-
-.note-resize-handle span.note-resize-dot {
-    background: var(--text-color);
-    opacity: 0.4;
-}
-
-.note-resize-handle:hover span.note-resize-dot {
-    opacity: 0.8;
+.note-resize-handle:hover svg {
+    opacity: 0.55;
+    transform: scale(1.1);
 }
 
 
@@ -844,7 +822,7 @@ body.note-font-sf-mono .note-content {
     border: none;
     background: transparent;
     cursor: pointer;
-    opacity: 0;
+    opacity: 0.35;
     transition: opacity 0.4s ease, transform 0.4s var(--spring-easing);
     display: flex;
     align-items: center;
@@ -853,10 +831,10 @@ body.note-font-sf-mono .note-content {
     padding: 0;
 }
 
-body:hover .settings-btn { opacity: 0.45; }
-.settings-btn:hover { opacity: 1 !important; }
+.settings-btn:hover { opacity: 1; }
 .settings-btn:active { transform: scale(0.92); }
-.settings-btn.open { opacity: 1 !important; }
+.settings-btn.open { opacity: 1; }
+
 
 .settings-btn svg {
     transition: transform 0.5s var(--spring-easing);
@@ -1182,8 +1160,8 @@ body:hover .settings-btn { opacity: 0.45; }
     user-select: none;
     -webkit-user-select: none;
     z-index: 0;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,1) 55%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,1) 55%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.8) 45%, transparent 80%);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.8) 45%, transparent 80%);
     white-space: nowrap;
 }
 
@@ -1320,7 +1298,7 @@ body:hover .settings-btn { opacity: 0.45; }
 
 .claude-paywall-card {
     background: var(--bg-color);
-    border-radius: 24px;
+    border-radius: 30px;
     padding: 36px 32px;
     max-width: 340px;
     width: 90%;
@@ -1417,234 +1395,6 @@ body:hover .settings-btn { opacity: 0.45; }
     color: var(--text-color);
 }
 
-/* ============================================================
-   DARK MODE
-   ============================================================ */
-
-/* Dot connection lines canvas */
-#dot-connections {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-}
-
-/* Galaxy canvas — always in DOM, fades in/out */
-#galaxy-canvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-}
-body.dark-mode #galaxy-canvas { opacity: 1; }
-
-/* Mesh bg dims slightly in dark mode */
-#mesh-bg { transition: opacity 0.6s ease; }
-body.dark-mode #mesh-bg { opacity: 0.38 !important; }
-
-/* Live mesh toggle */
-.live-toggle {
-    position: fixed;
-    top: 30px;
-    right: 162px;
-    z-index: 10001;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(120,120,128,0.2);
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.4s ease, background 0.3s ease, transform 0.2s var(--spring-easing);
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-body:hover .live-toggle { opacity: 0.4; }
-.live-toggle:hover { opacity: 1 !important; }
-.live-toggle:active { transform: scale(0.88); }
-.live-toggle::after {
-    content: '';
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(120,120,128,0.6);
-    transition: background 0.3s ease;
-}
-.live-toggle.active::after {
-    background: #FF3B30;
-    box-shadow: 0 0 6px rgba(255,59,48,0.6);
-    animation: livePulse 2s ease-in-out infinite;
-}
-@keyframes livePulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.5; }
-}
-
-/* Background geometry switch */
-.geo-switch {
-    position: fixed;
-    top: 28px;
-    right: 190px;
-    z-index: 10001;
-    display: flex;
-    gap: 2px;
-    background: rgba(120,120,128,0.15);
-    border-radius: 10px;
-    padding: 2px;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-body:hover .geo-switch { opacity: 0.45; }
-.geo-switch:hover { opacity: 1 !important; }
-.geo-switch-btn {
-    width: 22px;
-    height: 16px;
-    border: none;
-    border-radius: 7px;
-    background: transparent;
-    cursor: pointer;
-    font-size: 9px;
-    color: var(--text-color);
-    opacity: 0.5;
-    transition: opacity 0.2s, background 0.2s;
-    padding: 0;
-    line-height: 1;
-}
-.geo-switch-btn.active {
-    background: var(--bg-color);
-    opacity: 1;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-}
-body.dark-mode .geo-switch { background: rgba(255,255,255,0.08); }
-body.dark-mode .geo-switch-btn.active { background: rgba(255,255,255,0.14); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
-
-/* Dark mode pill toggle — iOS style */
-.dark-toggle {
-    position: fixed;
-    top: 29px;
-    right: 116px;
-    z-index: 10001;
-    width: 36px;
-    height: 20px;
-    border-radius: 10px;
-    border: none;
-    background: rgba(120, 120, 128, 0.22);
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.4s ease, transform 0.2s var(--spring-easing), background 0.3s ease;
-    padding: 0;
-}
-body:hover .dark-toggle { opacity: 0.45; }
-.dark-toggle:hover { opacity: 1 !important; }
-.dark-toggle:active { transform: scale(0.9); }
-body.dark-mode .dark-toggle { background: #0A84FF; }
-.dark-toggle::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: white;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s var(--spring-easing);
-}
-body.dark-mode .dark-toggle::after { transform: translateX(16px); }
-
-
-/* Dark mode CSS variables */
-body.dark-mode {
-    --bg-color: #06080f;
-    --text-color: rgba(255, 255, 255, 0.88);
-    --card-bg: rgba(255, 255, 255, 0.075);
-    --separator-color: rgba(255, 255, 255, 0.06);
-    --accent-color: #0A84FF;
-}
-
-/* Component overrides */
-body.dark-mode .day-separator {
-    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.09) 20%, rgba(255,255,255,0.09) 80%, transparent);
-}
-body.dark-mode .day-card:hover { background: rgba(255,255,255,0.06); }
-body.dark-mode .dock-container {
-    border-color: rgba(255,255,255,0.13);
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
-        0 2px 0 rgba(255,255,255,0.04),
-        0 40px 80px rgba(0,0,0,0.7),
-        0 0 0 0.5px rgba(255,255,255,0.06);
-}
-body.dark-mode .weather-day:not(:last-child)::after { background: rgba(255,255,255,0.1); }
-/* Notes — no bg, white border, text glow in dark mode */
-body.dark-mode .note {
-    background: transparent;
-    border: 1px solid transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-body.dark-mode .note::before { display: none; }
-body.dark-mode .note[data-note-color="yellow"] { border-color: rgba(251,191,36,0.35); }
-body.dark-mode .note[data-note-color="blue"]   { border-color: rgba(96,165,250,0.35); }
-body.dark-mode .note[data-note-color="mint"]   { border-color: rgba(52,211,153,0.35); }
-body.dark-mode .note[data-note-color="pink"]   { border-color: rgba(244,114,182,0.35); }
-body.dark-mode .note-color-dot[data-color="default"] { background: rgba(255,255,255,0.2); }
-body.dark-mode .settings-location-input { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
-body.dark-mode .settings-toggle { background: rgba(255,255,255,0.05); }
-body.dark-mode .settings-toggle-btn.active { background: rgba(255,255,255,0.1); box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
-body.dark-mode .font-pick { background: rgba(255,255,255,0.04); }
-body.dark-mode .font-pick.active { background: rgba(10,132,255,0.15); border-color: #0A84FF; }
-body.dark-mode .day-card.drag-over { background: rgba(10,132,255,0.12); }
-body.dark-mode .day-card.weekend .day-number {
-    background: linear-gradient(to bottom, rgba(255,255,255,0.9) 20%, rgba(255,255,255,0.3));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-body.dark-mode .day-note-popup,
-body.dark-mode .day-note-preview {
-    border-color: rgba(255,255,255,0.08);
-}
-body.dark-mode .note-color-bar {
-    border-color: rgba(255,255,255,0.08);
-}
-
-/* Dark vibrancy material — settings, popups */
-body.dark-mode .settings-panel,
-body.dark-mode .day-note-popup,
-body.dark-mode .day-note-preview {
-    background: rgba(16, 17, 26, 0.92);
-    border-color: rgba(255,255,255,0.09);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 50px rgba(0,0,0,0.6);
-}
-
-/* Active day card — glow instead of invisible dark shadow */
-body.dark-mode .day-card.active {
-    box-shadow: 0 0 20px rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.4);
-}
-
-/* Note drag elevation — light glow */
-body.dark-mode .note.dragging {
-    box-shadow: 0 0 0 2.5px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.7);
-}
-
-/* Note text — shadow so it reads cleanly over the galaxy */
-body.dark-mode .note-content {
-    text-shadow: 0 1px 8px rgba(0,0,0,0.6);
-}
-
-/* Watermark slightly more visible on dark */
-body.dark-mode .bottom-watermark { opacity: 0.055; }
-
 /* ── Time Capsule ── */
 .capsule {
     position: fixed;
@@ -1714,7 +1464,6 @@ body.dark-mode .bottom-watermark { opacity: 0.055; }
     padding: 10px 12px; font-family: 'Inter', sans-serif; font-size: 13px;
     color: var(--text-color); outline: none; line-height: 1.5;
 }
-body.dark-mode .capsule-textarea { background: rgba(255,255,255,0.06); }
 .capsule-textarea::placeholder { opacity: 0.3; }
 .capsule-days { display: flex; gap: 6px; }
 .capsule-day-btn {
@@ -1724,7 +1473,6 @@ body.dark-mode .capsule-textarea { background: rgba(255,255,255,0.06); }
     letter-spacing: 0.06em; cursor: pointer; opacity: 0.35;
     transition: opacity 0.2s, background 0.2s, color 0.2s;
 }
-body.dark-mode .capsule-day-btn { border-color: rgba(255,255,255,0.15); }
 .capsule-day-btn.active { background: var(--text-color); color: var(--bg-color); opacity: 1; }
 .capsule-day-btn:hover { opacity: 0.7; }
 .capsule-send {
@@ -1743,16 +1491,12 @@ body.dark-mode .capsule-day-btn { border-color: rgba(255,255,255,0.15); }
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 6px;
+    height: 7px;
     z-index: 500;
     background: rgba(0,0,0,0.07);
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
     pointer-events: none;
     overflow: visible;
-}
-body.dark-mode .year-bar {
-    background: rgba(255,255,255,0.07);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
 }
 .year-bar-fill {
     height: 100%;
@@ -1774,32 +1518,32 @@ body.dark-mode .year-bar {
 }
 .year-bar-marker {
     position: absolute;
-    bottom: 2px;
+    bottom: 2.4px;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
 }
 .year-bar-dot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: #A78BCA;
     border: 1.5px solid rgba(255,255,255,0.5);
-    box-shadow: 0 0 0 3px rgba(167,139,202,0.2), 0 0 12px rgba(167,139,202,0.55);
+    box-shadow: 0 0 0 3.6px rgba(167,139,202,0.2), 0 0 14px rgba(167,139,202,0.55);
     animation: yearDotPulse 3s ease-in-out infinite;
 }
 @keyframes yearDotPulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(167,139,202,0.2), 0 0 12px rgba(167,139,202,0.55); }
-    50%       { box-shadow: 0 0 0 5px rgba(167,139,202,0.12), 0 0 20px rgba(167,139,202,0.7); }
+    0%, 100% { box-shadow: 0 0 0 3.6px rgba(167,139,202,0.2), 0 0 14px rgba(167,139,202,0.55); }
+    50%       { box-shadow: 0 0 0 6px rgba(167,139,202,0.12), 0 0 24px rgba(167,139,202,0.7); }
 }
 /* Season ticks on year bar */
 .season-tick {
     position: absolute;
     bottom: 0;
     width: 1px;
-    height: 10px;
+    height: 12px;
     background: linear-gradient(to top, transparent, rgba(167,139,202,0.55) 45%, #A78BCA);
     transform: translateX(-50%);
     transform-origin: bottom center;
@@ -1816,16 +1560,16 @@ body.dark-mode .year-bar {
 .season-tick::after {
     content: '';
     position: absolute;
-    top: -3px; left: 50%;
+    top: -3.6px; left: 50%;
     transform: translateX(-50%);
-    width: 3px; height: 3px;
+    width: 3.6px; height: 3.6px;
     border-radius: 50%;
     background: #A78BCA;
     opacity: 0.65;
     transition: opacity 0.22s ease, transform 0.22s ease;
 }
 .season-tick:hover {
-    height: 20px;
+    height: 24px;
     filter: drop-shadow(0 0 4px rgba(167,139,202,0.5));
 }
 .season-tick:hover::after {
@@ -1838,7 +1582,7 @@ body.dark-mode .year-bar {
     left: 50%;
     transform: translateX(-50%) translateY(6px);
     font-family: 'Inter', sans-serif;
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.02em;
     color: #A78BCA;
@@ -1848,7 +1592,7 @@ body.dark-mode .year-bar {
     -webkit-backdrop-filter: blur(20px);
     border: 0.5px solid rgba(167,139,202,0.2);
     border-radius: 20px;
-    padding: 3px 10px;
+    padding: 3.6px 12px;
     opacity: 0;
     transition: opacity 0.22s ease, transform 0.22s ease;
     pointer-events: none;
@@ -1905,7 +1649,7 @@ body.dark-mode .year-bar {
 
 .year-bar-label {
     font-family: 'Inter', sans-serif;
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.04em;
     color: #A78BCA;
@@ -1915,163 +1659,32 @@ body.dark-mode .year-bar {
     -webkit-backdrop-filter: blur(12px);
     border: 0.5px solid rgba(167,139,202,0.3);
     border-radius: 20px;
-    padding: 2px 8px;
+    padding: 2.5px 10px;
 }
 
 
 /* ── Mobile base ── */
-#mobile-notes { display: none; }
-
-/* ── Mobile layout ── */
 @media (max-width: 768px) {
-    body {
-        justify-content: flex-start;
-        overflow-y: auto;
-        overflow-x: hidden;
-        height: auto;
-        min-height: 100vh;
-        align-items: stretch;
-    }
-
-    /* Dock floats to top of page flow */
-    .dock-wrapper {
-        order: 1;
-        margin-top: 100px;
-        padding: 14px 10px 12px;
-        gap: 8px;
-        align-self: stretch;
-        align-items: center;
-    }
-
-    /* Hide mesh gradient spheres */
-    #mesh-bg { display: none !important; }
-
-    /* Notes list sits below dock */
-    #mobile-notes {
-        order: 2;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding: 16px 40px 60px;
-    }
-
-    /* Smaller dock */
-    .time-ruler { display: none; }
-
-    .dock-container {
-        padding: 6px;
-        gap: 2px;
-        border-radius: 22px;
-    }
-
-    .day-card {
-        width: 52px;
-        height: 68px;
-        border-radius: 26px;
-    }
-
-    .day-card:hover { transform: none; }
-
-    .day-number { font-size: 26px; }
-    .day-name   { font-size: 9px; }
-    .dock-nav   { display: none; }
-
-    /* Weather row — narrower on mobile */
-    .weather-day { width: 42px; padding: 3px 0 6px; }
-    .weather-icon { font-size: 15px; }
-    .weather-temp { font-size: 9px; }
-
-    /* Hide floating notes — replaced by list */
-    .note { display: none !important; }
-
-    /* Hide capsule */
-    .capsule { display: none !important; }
-
-    /* Hide year bar & desktop chrome */
-    .year-bar        { display: none !important; }
-    .live-toggle     { display: none !important; }
-    .geo-switch      { display: none !important; }
-    .bottom-watermark{ display: none !important; }
-    .bottom-controls { display: none !important; }
-    #weather-tooltip { display: none !important; }
-
-    /* Always-visible controls on mobile */
-    .settings-btn  { opacity: 0.55 !important; }
-    .dark-toggle   { opacity: 0.7 !important; bottom: 16px; top: auto; }
-
-    /* ── Mobile note list items ── */
-    .mobile-note-item {
-        position: relative;
-        background: var(--card-bg);
-        backdrop-filter: blur(20px) saturate(150%);
-        -webkit-backdrop-filter: blur(20px) saturate(150%);
-        border: 0.5px solid rgba(255,255,255,0.22);
-        border-radius: 18px;
-        padding: 14px 44px 14px 16px;
-        min-height: 56px;
-    }
-
-    .mobile-note-item[data-note-color="yellow"] { border-color: rgba(251,191,36,0.45); }
-    .mobile-note-item[data-note-color="blue"]   { border-color: rgba(96,165,250,0.45); }
-    .mobile-note-item[data-note-color="mint"]   { border-color: rgba(52,211,153,0.45); }
-    .mobile-note-item[data-note-color="pink"]   { border-color: rgba(244,114,182,0.45); }
-
-    .mobile-note-text {
-        font-family: var(--note-font);
-        font-size: 24px;
-        line-height: 1.3;
-        color: var(--text-color);
-        outline: none;
-        white-space: pre-wrap;
-        word-break: break-word;
-        min-height: 28px;
-    }
-
-    .mobile-note-del {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        border: none;
-        background: rgba(0,0,0,0.08);
-        color: var(--text-color);
-        font-size: 16px;
-        cursor: pointer;
-        display: flex;
+    body > *:not(#desktop-only) { display: none !important; }
+    #desktop-only {
+        display: flex !important;
+        position: fixed;
+        inset: 0;
         align-items: center;
         justify-content: center;
-        opacity: 0.3;
-        padding: 0;
-        line-height: 1;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    .mobile-note-add {
-        border: 0.5px dashed rgba(0,0,0,0.15);
-        background: transparent;
-        border-radius: 18px;
-        padding: 14px 16px;
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 13px;
         font-weight: 500;
-        color: var(--accent-color);
-        cursor: pointer;
-        text-align: left;
-        width: 100%;
-        opacity: 0.7;
-        -webkit-tap-highlight-color: transparent;
+        color: rgba(0,0,0,0.35);
+        letter-spacing: 0.02em;
+        pointer-events: none;
     }
-
-    .mobile-note-add:active { opacity: 0.4; }
-
-    body.dark-mode .mobile-note-del  { background: rgba(255,255,255,0.1); }
-    body.dark-mode .mobile-note-add  { border-color: rgba(255,255,255,0.15); }
 }
 </style>
 </head>
 <body id="surface">
+
+<div id="desktop-only" style="display:none">Desktop only</div>
 
 <div class="claude-overlay" id="claude-overlay">
     <div class="claude-model-label">Claude Sonnet 4.6</div>
@@ -2100,17 +1713,6 @@ body.dark-mode .year-bar {
     </div>
 </div>
 
-<canvas id="dot-connections"></canvas>
-<canvas id="galaxy-canvas"></canvas>
-<button class="live-toggle" id="live-toggle" title="Animate background"></button>
-<div class="geo-switch" id="geo-switch" title="Background pattern">
-    <button class="geo-switch-btn" data-geo="off">—</button>
-    <button class="geo-switch-btn" data-geo="dots">∷</button>
-    <button class="geo-switch-btn active" data-geo="web">⊹</button>
-    <button class="geo-switch-btn" data-geo="stellar">✦</button>
-    <button class="geo-switch-btn" data-geo="tribon">⁂</button>
-</div>
-<button class="dark-toggle" id="dark-toggle" title="Toggle dark mode"></button>
 <button class="settings-btn" id="settings-btn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
@@ -2135,9 +1737,6 @@ body.dark-mode .year-bar {
         <div class="settings-row" id="font-picker">
             <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
             <div class="font-pick" data-font="sf-mono" style="font-family:'SF Mono','SFMono-Regular',ui-monospace,monospace;">Aa</div>
-            <div class="font-pick" data-font="lora" style="font-family:'Lora',serif;">Aa</div>
-            <div class="font-pick" data-font="dm-mono" style="font-family:'DM Mono',monospace;">Aa</div>
-            <div class="font-pick" data-font="jetbrains-mono" style="font-family:'JetBrains Mono',monospace;">Aa</div>
         </div>
     </div>
     <div>
@@ -2170,10 +1769,8 @@ body.dark-mode .year-bar {
     </div>
 </div>
 
-<div id="mesh-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.54;filter:blur(120px);"></div>
 
 
-<div id="mobile-notes"></div>
 <div class="dock-wrapper">
 <div class="time-ruler" id="time-ruler">
         <div class="time-ruler-track">
@@ -2209,179 +1806,11 @@ body.dark-mode .year-bar {
 
 <script>
     /* ============================================================
-       MESH GRADIENT
-    ============================================================ */
-    const meshShapes = [];
-    let meshRaf = null;
-
-    function initMeshBg() {
-        const W = window.innerWidth, H = window.innerHeight;
-        const PAD = 200;
-        const TW = W + PAD * 2, TH = H + PAD * 2;
-        const bg = document.getElementById('mesh-bg');
-        bg.style.top = `-${PAD}px`;
-        bg.style.left = `-${PAD}px`;
-        bg.style.width = `${TW}px`;
-        bg.style.height = `${TH}px`;
-        bg.innerHTML = '';
-        meshShapes.length = 0;
-
-        const rnd = (a, b) => a + Math.random() * (b - a);
-
-        const balls = [
-            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
-            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
-            { x: W *  0.93 - 250 + PAD, y: H *  0.83 - 250 + PAD, r: 250, color: '#5856D6' },
-        ];
-        balls.forEach(b => {
-            const el = document.createElement('div');
-            el.style.cssText = `position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};`;
-            bg.appendChild(el);
-            meshShapes.push({ el, bx: b.x, by: b.y, r: b.r,
-                ax: rnd(50, 90),  ay: rnd(40, 80),
-                fx: rnd(0.00018, 0.00032), fy: rnd(0.00015, 0.00028),
-                px: rnd(0, Math.PI * 2),   py: rnd(0, Math.PI * 2),
-            });
-        });
-
-        const tri = { x: W * 0.5 + PAD, y: H * 0.5 + PAD, w: 60, h: 320, color: '#b0b0b0' };
-        const triEl = document.createElement('div');
-        triEl.style.cssText = `position:absolute;width:${tri.w}px;height:${tri.h}px;left:${tri.x-tri.w/2}px;top:${tri.y-tri.h/2}px;background:${tri.color};clip-path:polygon(50% 0%,0% 100%,100% 100%);transform:rotate(10deg);`;
-        bg.appendChild(triEl);
-        meshShapes.push({ el: triEl, bx: tri.x, by: tri.y, w: tri.w, h: tri.h, isTri: true,
-            ax: rnd(30, 60), ay: rnd(30, 60),
-            fx: rnd(0.0001, 0.0002), fy: rnd(0.0001, 0.0002),
-            px: rnd(0, Math.PI * 2),  py: rnd(0, Math.PI * 2),
-        });
-
-    }
-
-    function meshTick(t) {
-        meshShapes.forEach(s => {
-            const dx = s.ax * Math.sin(s.fx * t + s.px);
-            const dy = s.ay * Math.cos(s.fy * t + s.py);
-            if (s.isTri) {
-                s.el.style.left = (s.bx - s.w / 2 + dx) + 'px';
-                s.el.style.top  = (s.by - s.h / 2 + dy) + 'px';
-            } else {
-                s.el.style.left = (s.bx - s.r + dx) + 'px';
-                s.el.style.top  = (s.by - s.r + dy) + 'px';
-            }
-        });
-        meshRaf = requestAnimationFrame(meshTick);
-    }
-
-    let meshLive = localStorage.getItem('aura_mesh_live') === '1';
-    const liveBtn = document.getElementById('live-toggle');
-
-    function applyMeshLive() {
-        if (meshLive) {
-            liveBtn.classList.add('active');
-            if (!meshRaf) meshRaf = requestAnimationFrame(meshTick);
-        } else {
-            liveBtn.classList.remove('active');
-            if (meshRaf) { cancelAnimationFrame(meshRaf); meshRaf = null; }
-        }
-    }
-
-    liveBtn.addEventListener('click', () => {
-        meshLive = !meshLive;
-        localStorage.setItem('aura_mesh_live', meshLive ? '1' : '0');
-        applyMeshLive();
-    });
-
-    initMeshBg();
-    applyMeshLive();
-
-    /* ============================================================
-       BACKGROUND GEOMETRY
-    ============================================================ */
-    const geoModes = ['off', 'dots', 'web', 'stellar', 'tribon'];
-    let currentGeo = localStorage.getItem('aura_bg_geo') || 'web';
-
-    function drawBgGeo() {
-        const canvas = document.getElementById('dot-connections');
-        const W = window.innerWidth, H = window.innerHeight;
-        canvas.width = W; canvas.height = H;
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, W, H);
-        const dark = document.body.classList.contains('dark-mode');
-
-        if (currentGeo === 'web') {
-            // Sparse H/V connections on dot grid
-            const STEP = 22, OFF = 11;
-            const cols = Math.ceil(W / STEP) + 1;
-            const rows = Math.ceil(H / STEP) + 1;
-            ctx.strokeStyle = dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.13)';
-            ctx.lineWidth = 1;
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const x = c * STEP + OFF, y = r * STEP + OFF;
-                    if (c < cols - 1 && Math.random() < 0.14)
-                        { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + STEP, y); ctx.stroke(); }
-                    if (r < rows - 1 && Math.random() < 0.14)
-                        { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + STEP); ctx.stroke(); }
-                }
-            }
-        } else if (currentGeo === 'stellar') {
-            // Constellation — random scattered dots connected by proximity
-            const N = Math.floor((W * H) / 14000);
-            const pts = Array.from({ length: N }, () => ({ x: Math.random() * W, y: Math.random() * H }));
-            const MAX_DIST = 160;
-            ctx.lineWidth = 0.8;
-            for (let i = 0; i < pts.length; i++) {
-                for (let j = i + 1; j < pts.length; j++) {
-                    const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
-                    const d = Math.sqrt(dx*dx + dy*dy);
-                    if (d < MAX_DIST) {
-                        const alpha = (1 - d / MAX_DIST) * (dark ? 0.28 : 0.22);
-                        ctx.strokeStyle = dark ? `rgba(255,255,255,${alpha})` : `rgba(0,0,0,${alpha})`;
-                        ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
-                    }
-                }
-            }
-            // Draw the dots themselves
-            ctx.fillStyle = dark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)';
-            pts.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 1.3, 0, Math.PI * 2); ctx.fill(); });
-        } else if (currentGeo === 'tribon') {
-            // Tribonacci low-discrepancy point field — uniform, no clustering
-            const A1 = 0.5436890126920764;
-            const A2 = 0.2956120693571985;
-            const N = Math.floor((W * H) / 6500);
-            ctx.fillStyle = dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.38)';
-            for (let i = 0; i < N; i++) {
-                const x = ((0.5 + i * A1) % 1) * W;
-                const y = ((0.5 + i * A2) % 1) * H;
-                ctx.beginPath(); ctx.arc(x, y, 1.2, 0, Math.PI * 2); ctx.fill();
-            }
-        }
-        // 'off' and 'dots' — canvas is clear, CSS handles dots
-    }
-
-    function applyBgGeo(mode, noSave = false) {
-        geoModes.forEach(m => document.body.classList.remove('bg-geo-' + m));
-        document.body.classList.add('bg-geo-' + mode);
-        document.querySelectorAll('.geo-switch-btn').forEach(b => b.classList.toggle('active', b.dataset.geo === mode));
-        currentGeo = mode;
-        drawBgGeo();
-        if (!noSave) localStorage.setItem('aura_bg_geo', mode);
-    }
-
-    document.getElementById('geo-switch').addEventListener('click', e => {
-        const btn = e.target.closest('.geo-switch-btn');
-        if (btn) applyBgGeo(btn.dataset.geo);
-    });
-
-    applyBgGeo(currentGeo, true);
-
-    /* ============================================================
        LANGUAGE SYSTEM: EN / ES / PT (3-way cycle)
     ============================================================ */
     const LANGS = ['en', 'es', 'pt'];
     const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
     let lang = LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en';
-    let isDarkMode = localStorage.getItem('aura_dark') === '1';
-
     const dock = document.getElementById('dock');
     let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
 
@@ -2704,14 +2133,13 @@ function createNote(data, autoFocus = false) {
         });
         note.appendChild(colorBar);
 
-        // ---- RESIZE HANDLE (bottom-right, macOS style) ----
+        // ---- RESIZE HANDLE (bottom-right, iOS style) ----
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'note-resize-handle';
-        // 6 dots arranged in bottom-right triangle pattern
-        resizeHandle.innerHTML = `
-            <span></span><span></span><span class="note-resize-dot"></span>
-            <span></span><span class="note-resize-dot"></span><span class="note-resize-dot"></span>
-        `;
+        resizeHandle.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-linecap="round">
+            <line x1="3" y1="11" x2="11" y2="3" stroke-width="1.6" opacity="0.6"/>
+            <line x1="7" y1="11" x2="11" y2="7" stroke-width="1.6" opacity="0.4"/>
+        </svg>`;
         note.appendChild(resizeHandle);
 
         // ---- CLOSE BUTTON (top-right) ----
@@ -3159,7 +2587,6 @@ function createNote(data, autoFocus = false) {
     notes.filter(n => !n.archived).forEach(n => {
         createNote(n);
     });
-    renderMobileNotes();
     setInterval(updateTimeline, 10000);
 
     // Sync language button on load
@@ -3306,7 +2733,7 @@ function createNote(data, autoFocus = false) {
     });
 
     // Text size
-    const noteSizes = { 'S': '22px', 'M': '28px', 'L': '36px' };
+    const noteSizes = { 'S': '25px', 'M': '28px', 'L': '36px' };
 
     function applyNoteSize(size, noReflow = false) {
         const px = noteSizes[size];
@@ -3330,6 +2757,7 @@ function createNote(data, autoFocus = false) {
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
     applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
     applyTempUnit(tempUnit, false);
+
 
     // Reveal UI after all settings applied — no flash
     requestAnimationFrame(() => document.body.classList.add('ready'));
@@ -3473,106 +2901,6 @@ function createNote(data, autoFocus = false) {
     claudeOverlay.addEventListener('mousedown', (e) => {
         if (!e.target.closest('.claude-chat')) closeClaude();
     });
-
-    /* ============================================================
-       GALAXY BACKGROUND (dark mode only — draws once, never redraws)
-       ============================================================ */
-    let galaxyInitialized = false;
-    function initGalaxyBg() {
-        if (galaxyInitialized) return;
-        galaxyInitialized = true;
-        const canvas = document.getElementById('galaxy-canvas');
-        const W = window.innerWidth, H = window.innerHeight;
-        canvas.width = W;
-        canvas.height = H;
-        const ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = '#06080f';
-        ctx.fillRect(0, 0, W, H);
-
-        // Nebulae — layered radial gradients
-        [
-            { x: W*0.78, y: H*0.14, r: 480, c: [100, 55, 210], a: 0.2  },  // violet top-right
-            { x: W*0.12, y: H*0.72, r: 380, c: [10,  60, 180], a: 0.18 },  // deep blue bottom-left
-            { x: W*0.88, y: H*0.82, r: 300, c: [0,  110, 130], a: 0.14 },  // teal bottom-right
-            { x: W*0.38, y: H*0.42, r: 260, c: [140, 28,  90], a: 0.13 },  // rose centre
-            { x: W*0.55, y: H*0.08, r: 200, c: [60,  30, 160], a: 0.1  },  // indigo top-centre
-            { x: W*0.05, y: H*0.25, r: 220, c: [0,   80, 160], a: 0.1  },  // blue left
-        ].forEach(({ x, y, r, c, a }) => {
-            const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-            g.addColorStop(0,    `rgba(${c[0]},${c[1]},${c[2]},${a})`);
-            g.addColorStop(0.45, `rgba(${c[0]},${c[1]},${c[2]},${(a*0.35).toFixed(3)})`);
-            g.addColorStop(1,    `rgba(${c[0]},${c[1]},${c[2]},0)`);
-            ctx.fillStyle = g;
-            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
-        });
-
-        // Subtle horizontal dust band across the middle
-        const band = ctx.createLinearGradient(0, H*0.42, 0, H*0.58);
-        band.addColorStop(0,   'rgba(80,60,160,0)');
-        band.addColorStop(0.5, 'rgba(80,60,160,0.05)');
-        band.addColorStop(1,   'rgba(80,60,160,0)');
-        ctx.fillStyle = band;
-        ctx.fillRect(0, H*0.42, W, H*0.16);
-
-        // Star field
-        const rnd = (a, b) => a + Math.random() * (b - a);
-        for (let i = 0; i < 240; i++) {
-            const a = rnd(0.15, 0.75);
-            ctx.beginPath();
-            ctx.arc(rnd(0, W), rnd(0, H), rnd(0.2, 1.1), 0, Math.PI*2);
-            ctx.fillStyle = `rgba(${200 + ~~rnd(0,55)},${200 + ~~rnd(0,55)},255,${a.toFixed(2)})`;
-            ctx.fill();
-        }
-        // Bright stars with glow
-        for (let i = 0; i < 26; i++) {
-            const x = rnd(0, W), y = rnd(0, H);
-            const glowR = rnd(4, 9);
-            const glow = ctx.createRadialGradient(x, y, 0, x, y, glowR);
-            glow.addColorStop(0, 'rgba(200,215,255,0.32)');
-            glow.addColorStop(1, 'rgba(200,215,255,0)');
-            ctx.fillStyle = glow;
-            ctx.beginPath(); ctx.arc(x, y, glowR, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(x, y, rnd(1.0, 1.8), 0, Math.PI*2);
-            ctx.fillStyle = `rgba(255,255,255,${rnd(0.85,1).toFixed(2)})`; ctx.fill();
-        }
-
-        // Vignette
-        const vig = ctx.createRadialGradient(W/2, H/2, H*0.25, W/2, H/2, H*0.85);
-        vig.addColorStop(0, 'rgba(0,0,0,0)');
-        vig.addColorStop(1, 'rgba(0,0,0,0.55)');
-        ctx.fillStyle = vig;
-        ctx.fillRect(0, 0, W, H);
-    }
-
-    /* ============================================================
-       DARK MODE
-       ============================================================ */
-    function applyDarkMode(dark, persist = true) {
-        isDarkMode = dark;
-        document.body.classList.toggle('dark-mode', dark);
-        drawBgGeo();
-        if (dark) {
-            document.documentElement.style.setProperty('--bg-color', '#06080f');
-            initGalaxyBg();
-        } else {
-            // Remove ALL inline overrides set by dark mode or pre-paint — so CSS defaults restore correctly
-            document.documentElement.style.removeProperty('--bg-color');
-            document.documentElement.style.removeProperty('--text-color');
-            document.documentElement.style.removeProperty('--card-bg');
-            document.documentElement.style.removeProperty('--accent-color');
-        }
-        if (persist) localStorage.setItem('aura_dark', dark ? '1' : '0');
-    }
-
-    document.getElementById('dark-toggle').addEventListener('click', () => {
-        // Add transition only on user click, not on init
-        document.body.style.setProperty('transition', 'background-color 0.45s ease');
-        setTimeout(() => document.body.style.removeProperty('transition'), 500);
-        applyDarkMode(!isDarkMode);
-    });
-
-    applyDarkMode(isDarkMode, false);
 
     // Year progress bar
     (function() {
@@ -3975,65 +3303,6 @@ function createNote(data, autoFocus = false) {
             setTimeout(() => placeSun(true),  150);
         };
     })();
-
-    // ── Mobile Notes List ──
-    function isMobile() { return window.innerWidth <= 768; }
-
-    function renderMobileNotes() {
-        if (!isMobile()) return;
-        const container = document.getElementById('mobile-notes');
-        if (!container) return;
-
-        const visible = notes.filter(n => !n.archived && !n.imageData);
-        container.innerHTML = '';
-
-        // Add-note button at top
-        const addBtn = document.createElement('button');
-        addBtn.className = 'mobile-note-add';
-        addBtn.textContent = '+ New note';
-        addBtn.addEventListener('click', () => {
-            const n = { id: 'n' + Date.now(), x: 0, y: 0, text: '', zIndex: ++topZ };
-            notes.push(n);
-            localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
-            renderMobileNotes();
-            const newText = container.querySelector(`[data-note-id="${n.id}"] .mobile-note-text`);
-            if (newText) newText.focus();
-        });
-        container.appendChild(addBtn);
-
-        visible.forEach(note => {
-            const item = document.createElement('div');
-            item.className = 'mobile-note-item';
-            item.dataset.noteId = note.id;
-            if (note.color && note.color !== 'default') item.dataset.noteColor = note.color;
-
-            const text = document.createElement('div');
-            text.className = 'mobile-note-text';
-            text.contentEditable = 'true';
-            text.spellcheck = false;
-            text.textContent = note.text;
-            text.addEventListener('input', () => {
-                const d = notes.find(n => n.id === note.id);
-                if (d) d.text = text.textContent;
-                localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
-            });
-
-            const del = document.createElement('button');
-            del.className = 'mobile-note-del';
-            del.innerHTML = '&times;';
-            del.setAttribute('aria-label', 'Delete note');
-            del.addEventListener('click', () => {
-                const idx = notes.findIndex(n => n.id === note.id);
-                if (idx > -1) notes.splice(idx, 1);
-                localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
-                renderMobileNotes();
-            });
-
-            item.appendChild(text);
-            item.appendChild(del);
-            container.appendChild(item);
-        });
-    }
 
     // ── Time Capsule ──
     (function() {

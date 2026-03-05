@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Background — weekDash</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg-color: #e8e2d8;
+    --text-color: #1d1d1f;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    margin: 0;
+}
+
+#mesh-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    pointer-events: none;
+    opacity: 0.54;
+    filter: blur(120px);
+}
+</style>
+</head>
+<body>
+
+<div id="mesh-bg"></div>
+
+<script>
+    /* ============================================================
+       MESH GRADIENT
+    ============================================================ */
+    function initMeshBg() {
+        const W = window.innerWidth, H = window.innerHeight;
+        const PAD = 200;
+        const TW = W + PAD * 2, TH = H + PAD * 2;
+        const balls = [
+            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
+            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
+            { x: W *  0.93 - 250 + PAD, y: H *  0.83 - 250 + PAD, r: 250, color: '#5856D6' },
+        ];
+        const bg = document.getElementById('mesh-bg');
+        bg.style.top = `-${PAD}px`;
+        bg.style.left = `-${PAD}px`;
+        bg.style.width = `${TW}px`;
+        bg.style.height = `${TH}px`;
+        bg.innerHTML = balls.map(b =>
+            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
+        ).join('');
+    }
+
+    initMeshBg();
+    window.addEventListener('resize', initMeshBg);
+</script>
+
+</body>
+</html>

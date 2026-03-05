@@ -10,7 +10,7 @@ A minimal weekly dashboard that lives in your browser. See your week at a glance
 - **Sticky notes** — double-click anywhere to create a note, drag to move, click to edit, color-code them
 - **Image notes** — drag any image from your desktop onto the page to pin it as a note
 - **Themes** — light, dark, and a few color accents
-- **Font picker** — Inter, Lora, Caveat, DM Mono, JetBrains Mono
+- **Font picker** — Caveat, SF Mono
 - **Multi-language** — click the greeting to switch between English, Portuguese, and Spanish
 
 Everything is saved to localStorage — no server, no backend.
