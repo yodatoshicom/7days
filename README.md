@@ -1,31 +1,30 @@
 # weekDash
 
-A minimal weekly dashboard that lives in your browser. See your week at a glance, check the weather, and keep sticky notes — no accounts, no sync, no frameworks.
+A high-speed thought canvas and minimalist project planner. Designed for rapid capture and visual organization of ideas, straight in your browser.
 
-## What it does
+## Philosophy
 
-- **Weekly calendar** — current week with today highlighted, navigate forward/back
-- **7-day weather** — forecast with icons and hover descriptions, powered by Open-Meteo (free, no API key)
-- **Auto location** — detects your city via IP, or set it manually in settings
-- **Sticky notes** — double-click anywhere to create a note, drag to move, click to edit, color-code them
-- **Image notes** — drag any image from your desktop onto the page to pin it as a note
-- **Themes** — light, dark, and a few color accents
-- **Font picker** — Caveat, SF Mono
-- **Multi-language** — click the greeting to switch between English, Portuguese, and Spanish
+- **High-Speed Capture** — Double-click anywhere to pin a thought. No forms, no friction.
+- **Visual Planning** — Drag, group, and color-code notes to map out your projects.
+- **Contextual Awareness** — A 7-day weather forecast and weekly dock keep your tasks grounded in time.
+- **Zero Overhead** — No accounts, no databases, no complex setups. Everything lives in your browser's local storage.
 
-Everything is saved to localStorage — no server, no backend.
+## Key Features
+
+- **Fluid Thought Canvas** — Free-form sticky notes with image support (drag & drop from desktop).
+- **Weekly Horizon** — A minimalist dock to navigate your current and upcoming weeks.
+- **Live Context** — Real-time weather and location detection to inform your daily planning.
+- **Refined Aesthetics** — Clean, Apple-inspired UI with customizable fonts and a subtle, focus-oriented background.
 
 ## Run
 
-Just open `index.html` in a browser. No install, no build step.
+Visit **[weekdash.com](https://weekdash.com)** or simply open `index.html` in any modern browser. No installation or build steps required.
 
 ## Structure
 
-```
-index.html      Everything — HTML, CSS, and app logic
-js/weather.js   Weather fetching, location detection, and rendering
-favicon.png     Site icon
-```
+- `index.html` — The core application: layout, styling, and logic.
+- `js/weather.js` — Real-time weather and location processing.
+- `bg2.png` — High-fidelity, minimalist background canvas.
 
 ## License
 
