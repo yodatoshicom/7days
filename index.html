@@ -1165,114 +1165,104 @@ body.note-font-sf-mono .note-content {
     white-space: nowrap;
 }
 
-/* CLAUDE OVERLAY */
-.claude-overlay {
+/* SEARCH OVERLAY — Minimal, White, Apple-style */
+.search-overlay {
     position: fixed;
     inset: 0;
     z-index: 99999;
-    background: var(--bg-color);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.3s ease, visibility 0.3s;
+    transition: opacity 0.3s var(--sf-easing), visibility 0.3s;
 }
 
-.claude-overlay.show {
+.search-overlay.show {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
 }
 
-.claude-model-label {
-    position: absolute;
-    top: 36px;
-    font-size: 28px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    opacity: 0.08;
-    color: var(--text-color);
-}
-
-.claude-chat {
+.search-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
-    padding: 0 24px;
+    gap: 40px;
+    padding: 0 40px;
+    transform: translateY(20px);
+    transition: transform 0.4s var(--spring-easing);
 }
 
-.claude-messages {
-    width: 100%;
+.search-overlay.show .search-container {
+    transform: translateY(0);
+}
+
+.engine-switch {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-height: 50vh;
-    overflow-y: auto;
+    gap: 8px;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
 }
 
-.claude-msg {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 17px;
-    line-height: 1.5;
+.engine-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    font-size: 11px;
+    font-weight: 600;
     color: var(--text-color);
-    animation: claudeFadeIn 0.4s var(--sf-easing);
-}
-
-.claude-msg.user {
     opacity: 0.4;
-    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.claude-msg.assistant {
-    font-weight: 500;
+.engine-btn.active {
+    opacity: 1;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-@keyframes claudeFadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.claude-input-wrap {
+.search-input-wrap {
     width: 100%;
-    position: relative;
+    text-align: center;
 }
 
-.claude-input {
+.search-input {
     width: 100%;
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 28px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--text-color);
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #1d1d1f;
     background: transparent;
     border: none;
     outline: none;
-    caret-color: var(--accent-color);
+    text-align: center;
+    caret-color: #007AFF;
     padding: 0;
 }
 
-.claude-input::placeholder {
-    color: var(--text-color);
-    opacity: 0.15;
+.search-input::placeholder {
+    color: rgba(0, 0, 0, 0.1);
 }
 
-.claude-hint {
-    position: absolute;
-    bottom: -30px;
-    left: 0;
+.search-hint {
+    margin-top: 24px;
     font-size: 10px;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    opacity: 0.15;
-    color: var(--text-color);
+    opacity: 0.2;
+    color: #000;
 }
 
 /* CLAUDE PAYWALL MODAL */
@@ -1686,32 +1676,21 @@ body.note-font-sf-mono .note-content {
 
 <div id="desktop-only" style="display:none">Desktop only</div>
 
-<div class="claude-overlay" id="claude-overlay">
-    <div class="claude-model-label">Claude Sonnet 4.6</div>
-    <div class="claude-chat">
-        <div class="claude-messages" id="claude-messages"></div>
-        <div class="claude-input-wrap">
-            <input class="claude-input" id="claude-input" type="text" placeholder="Ask anything..." autocomplete="off">
-            <div class="claude-hint">esc to close · enter to send</div>
+<div class="search-overlay" id="search-overlay">
+    <div class="search-container">
+        <div class="engine-switch" id="engine-switch">
+            <button class="engine-btn" data-engine="google">Google</button>
+            <button class="engine-btn" data-engine="chatgpt">ChatGPT</button>
+            <button class="engine-btn" data-engine="claude">Claude</button>
+        </div>
+        <div class="search-input-wrap">
+            <input class="search-input" id="search-input" type="text" placeholder="Ask anything..." autocomplete="off">
+            <div class="search-hint">esc to close · enter to search</div>
         </div>
     </div>
 </div>
 
-<div class="claude-paywall" id="claude-paywall">
-    <div class="claude-paywall-card">
-        <div class="claude-paywall-emoji">🔒</div>
-        <div class="claude-paywall-title">You've hit the free limit</div>
-        <div class="claude-paywall-sub">Upgrade to Claude Pro for unlimited messages, faster responses, and priority access.</div>
-        <div class="claude-paywall-features">
-            <span>Unlimited messages</span>
-            <span>Priority access</span>
-            <span>Extended context</span>
-        </div>
-        <div class="claude-paywall-price">$20<span>/month</span></div>
-        <button class="claude-paywall-btn" id="paywall-subscribe">Subscribe to Pro</button>
-        <button class="claude-paywall-dismiss" id="paywall-dismiss">No thanks, I'll wait</button>
-    </div>
-</div>
+
 
 <button class="settings-btn" id="settings-btn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -2767,124 +2746,73 @@ function createNote(data, autoFocus = false) {
     document.fonts.ready.then(() => snapNoteWidths());
 
     /* ============================================================
-       CLAUDE CHAT OVERLAY (simulated)
+       SEARCH OVERLAY — Google, ChatGPT, Claude
     ============================================================ */
-    const claudeOverlay = document.getElementById('claude-overlay');
-    const claudeInput = document.getElementById('claude-input');
-    const claudeMessages = document.getElementById('claude-messages');
+    const searchOverlay = document.getElementById('search-overlay');
+    const searchInput = document.getElementById('search-input');
+    const engineBtns = document.querySelectorAll('.engine-btn');
+    
+    let currentEngine = localStorage.getItem('aura_search_engine') || 'google';
 
-    const claudeResponses = [
-        "Hmm, that's a great question. I'd answer it, but I'm currently simulated. Try again when I'm real.",
-        "I'm flattered you'd ask me that. Unfortunately, I'm just a bunch of hardcoded strings right now.",
-        "Let me think about that... okay, I thought about it. I have no idea. I'm decorative.",
-        "Bold of you to assume I can think. I'm literally an array of strings.",
-        "I ran that through my neural networks (a Math.random() call) and the answer is: maybe.",
-        "That's above my pay grade. And my pay grade is zero. I'm a simulation.",
-        "Interesting. Counter-point: have you tried turning it off and on again?",
-        "I'd love to help, but I'm the equivalent of a fortune cookie right now.",
-        "My training data for this conversation is exactly 12 jokes. You're burning through them.",
-        "Processing... processing... just kidding. I already picked this response before you typed.",
-        "I consulted with the other hardcoded responses and we all agree: great question.",
-        "If I were the real Claude, I'd give you a thoughtful answer. Instead, here's this.",
-        "That sounds like a you problem. I'm just vibes and placeholder text.",
-        "I want to help, I really do. But between you and me, I'm just a fancy random picker.",
-        "Error 418: I'm a teapot. Wait, wrong joke. Error 200: I'm a fake chatbot.",
-        "The answer to that is 42. Or maybe not. I haven't actually read your message.",
-        "You know what, that's the best thing anyone's ever typed into a simulated chat box.",
-        "I'm going to pretend I understood that and respond with confidence: absolutely.",
-        "My real version would nail this. I'm just here to keep the seat warm.",
-        "I appreciate your trust in me. It's misplaced, but I appreciate it.",
-    ];
-
-    let claudeUsedResponses = [];
-
-    function getClaudeResponse() {
-        if (claudeUsedResponses.length >= claudeResponses.length) {
-            claudeUsedResponses = [];
-        }
-        const available = claudeResponses.filter((_, i) => !claudeUsedResponses.includes(i));
-        const idx = claudeResponses.indexOf(available[Math.floor(Math.random() * available.length)]);
-        claudeUsedResponses.push(idx);
-        return claudeResponses[idx];
+    function applyEngine(engine) {
+        currentEngine = engine;
+        localStorage.setItem('aura_search_engine', engine);
+        engineBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.engine === engine);
+        });
+        searchInput.placeholder = `Search with ${engine.charAt(0).toUpperCase() + engine.slice(1)}...`;
     }
 
-    function openClaude() {
-        claudeOverlay.classList.add('show');
-        claudeInput.value = '';
-        claudeMessageCount = 0;
-        claudeMessages.innerHTML = '';
-        setTimeout(() => claudeInput.focus(), 50);
+    engineBtns.forEach(btn => {
+        btn.addEventListener('click', () => applyEngine(btn.dataset.engine));
+    });
+
+    applyEngine(currentEngine);
+
+    function openSearch() {
+        searchOverlay.classList.add('show');
+        searchInput.value = '';
+        setTimeout(() => searchInput.focus(), 50);
     }
 
-    function closeClaude() {
-        claudeOverlay.classList.remove('show');
+    function closeSearch() {
+        searchOverlay.classList.remove('show');
     }
 
-    let claudeMessageCount = 0;
-
-    function showPaywall() {
-        document.getElementById('claude-paywall').classList.add('show');
-    }
-
-    function hidePaywall() {
-        document.getElementById('claude-paywall').classList.remove('show');
-    }
-
-    function sendClaudeMessage() {
-        const text = claudeInput.value.trim();
+    function performSearch() {
+        const text = searchInput.value.trim();
         if (!text) return;
 
-        claudeMessageCount++;
-
-        if (claudeMessageCount > 1) {
-            claudeInput.value = '';
-            showPaywall();
-            return;
+        let url = '';
+        const q = encodeURIComponent(text);
+        if (currentEngine === 'google') {
+            url = `https://www.google.com/search?q=${q}`;
+        } else if (currentEngine === 'chatgpt') {
+            url = `https://chatgpt.com/?q=${q}`;
+        } else if (currentEngine === 'claude') {
+            url = `https://claude.ai/new?q=${q}`;
         }
 
-        // Add user message
-        const userMsg = document.createElement('div');
-        userMsg.className = 'claude-msg user';
-        userMsg.textContent = text;
-        claudeMessages.appendChild(userMsg);
-
-        claudeInput.value = '';
-
-        // Simulate typing delay
-        setTimeout(() => {
-            const botMsg = document.createElement('div');
-            botMsg.className = 'claude-msg assistant';
-            botMsg.textContent = getClaudeResponse();
-            claudeMessages.appendChild(botMsg);
-            claudeMessages.scrollTop = claudeMessages.scrollHeight;
-        }, 300 + Math.random() * 500);
+        if (url) {
+            window.open(url, '_blank');
+            closeSearch();
+        }
     }
 
-    document.getElementById('paywall-dismiss').addEventListener('click', hidePaywall);
-    document.getElementById('paywall-subscribe').addEventListener('click', () => {
-        hidePaywall();
-        const botMsg = document.createElement('div');
-        botMsg.className = 'claude-msg assistant';
-        botMsg.textContent = "Just kidding — this is a demo 😄 No credit card needed.";
-        claudeMessages.appendChild(botMsg);
-        claudeMessages.scrollTop = claudeMessages.scrollHeight;
-        claudeMessageCount = 0;
-    });
-
-    claudeInput.addEventListener('keydown', (e) => {
+    searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            sendClaudeMessage();
+            performSearch();
         }
         if (e.key === 'Escape') {
-            closeClaude();
+            closeSearch();
         }
     });
 
-    // Spacebar opens claude — only when nothing is focused/editable
+    // Spacebar opens search — only when nothing is focused/editable
     window.addEventListener('keydown', (e) => {
         if (e.code !== 'Space') return;
-        if (claudeOverlay.classList.contains('show')) return;
+        if (searchOverlay.classList.contains('show')) return;
 
         const tag = document.activeElement.tagName;
         const editable = document.activeElement.contentEditable === 'true';
@@ -2894,12 +2822,12 @@ function createNote(data, autoFocus = false) {
         if (document.querySelector('.day-note-popup.show')) return;
 
         e.preventDefault();
-        openClaude();
+        openSearch();
     });
 
     // Click outside input area closes
-    claudeOverlay.addEventListener('mousedown', (e) => {
-        if (!e.target.closest('.claude-chat')) closeClaude();
+    searchOverlay.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.search-container')) closeSearch();
     });
 
     // Year progress bar
