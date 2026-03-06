@@ -2158,10 +2158,10 @@ body.dev-mode .dev-export-btn { display: block; }
     // First time — seed hint notes
     if (notes.length === 0) {
         notes = [
-            { id: 'n_s1', x: 56,   y: 18,  w: 278, text: 'this week\n— finish the landing page\n— reply to Jonas re: collab\n— gym mon · wed · fri\n— read before sleep\n— call mom (overdue)', zIndex: 100 },
-            { id: 'n_s2', x: 316,  y: 44,  w: 268, text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8',                                                   color: 'mint',   zIndex: 101 },
-            { id: 'n_s4', x: 1009, y: 37,  w: 150, text: 'book flights\n↗ tokyo, april\nbefore prices jump',                                                                   color: 'yellow', zIndex: 102 },
-            { id: 'n_s5', x: 699,  y: 240, w: 205, text: 'ship it. don\'t wait.',                                                                                              color: 'blue',   zIndex: 103 },
+            { id: 'n_s1', x: 56,   y: 18,  text: 'this week\n— finish the landing page\n— reply to Jonas re: collab\n— gym mon · wed · fri\n— read before sleep\n— call mom (overdue)', zIndex: 100 },
+            { id: 'n_s2', x: 316,  y: 44,  text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8',                                                            color: 'mint',   zIndex: 101 },
+            { id: 'n_s4', x: 1009, y: 37,  text: 'book flights\n↗ tokyo, april\nbefore prices jump',                                                                            color: 'yellow', zIndex: 102 },
+            { id: 'n_s5', x: 699,  y: 240, text: 'ship it. don\'t wait.',                                                                                                       color: 'blue',   zIndex: 103 },
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
