@@ -1496,21 +1496,21 @@ body.note-font-sf-mono .note-content {
 /* Year progress bar — Clean Data Rail */
 .year-bar-wrapper {
     position: fixed;
-    bottom: 20px;
+    bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    width: 80%;
-    max-width: 700px;
+    width: 88%;
+    max-width: 850px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     z-index: 500;
     pointer-events: none;
 }
 
 .year-bar-year, .year-bar-pct {
     font-family: 'JetBrains Mono', 'SF Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--text-color);
     opacity: 0.5;
@@ -1533,10 +1533,107 @@ body.note-font-sf-mono .note-content {
     border-radius: 4px;
 }
 
-/* Season names — permanent labels below the rail */
+/* Month labels — static labels ABOVE the rail */
+.month-name {
+    position: absolute;
+    bottom: 100%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-color);
+    opacity: 0.4;
+    padding-bottom: 10px;
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
+}
+
+.month-name.current {
+    opacity: 0.8;
+    color: #6366F1;
+}
+
+/* Month ticks — stand up from the top of the rail */
+.month-tick {
+    position: absolute;
+    bottom: 100%;
+    width: 1px;
+    height: 10px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
+    transform: translateX(-50%);
+    z-index: 4;
+}
+
+/* Day ticks — tiny vertical markers for each day */
+.day-tick {
+    position: absolute;
+    bottom: 100%;
+    width: 1px;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.05);
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+/* Holiday pins — tiny elegant markers on top */
+.holiday-pin {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    width: 1px;
+    height: 8px;
+    background: linear-gradient(to top, rgba(99, 102, 241, 0.4), #6366F1);
+    transform: translateX(-50%);
+    z-index: 6;
+    pointer-events: auto;
+}
+
+.holiday-pin::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background: #6366F1;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+}
+
+.holiday-label {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    font-family: 'Inter', sans-serif;
+    font-size: 7px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6366F1;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.2s var(--sf-easing);
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.holiday-pin:hover .holiday-label {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+/* Season names — permanent labels BELOW the rail */
 .season-name {
     position: absolute;
-    top: 12px;
+    top: 100%;
     transform: translateX(-50%);
     font-family: 'Inter', sans-serif;
     font-size: 8px;
@@ -1544,22 +1641,24 @@ body.note-font-sf-mono .note-content {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-color);
-    opacity: 0.35;
+    opacity: 0.25;
+    padding-top: 12px;
     white-space: nowrap;
+    transition: opacity 0.3s ease;
 }
 
 .season-name.current {
-    opacity: 0.9;
+    opacity: 0.7;
     color: #6366F1;
 }
 
-/* Season ticks — sharp vertical dividers */
+/* Season ticks — stand down from the bottom of the rail */
 .season-tick {
     position: absolute;
-    top: -1px; /* Center 6px tick over 4px rail */
+    top: 100%;
     width: 1px;
-    height: 6px;
-    background: rgba(0, 0, 0, 0.25);
+    height: 10px;
+    background: rgba(0, 0, 0, 0.35);
     transform: translateX(-50%);
     z-index: 5;
 }
@@ -2843,10 +2942,51 @@ function createNote(data, autoFocus = false) {
 
         const rail = document.getElementById('year-bar-rail');
 
-        // Season system
-        const yr = new Date().getFullYear();
+        // Year & Date system
+        const now = new Date();
+        const yr = now.getFullYear();
         const yStart = new Date(yr, 0, 1), yEnd = new Date(yr + 1, 0, 1), ySpan = yEnd - yStart;
-        const now0 = new Date();
+
+        // --- Months & Days ---
+        const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        let runningDate = new Date(yStart);
+        for (let m = 0; m < 12; m++) {
+            const mStart = new Date(runningDate);
+            const mEnd = new Date(yr, m + 1, 1);
+            const startPct = (mStart - yStart) / ySpan * 100;
+            const endPct   = (mEnd - yStart) / ySpan * 100;
+            const midPct   = (startPct + endPct) / 2;
+
+            // Month Label
+            const lbl = document.createElement('div');
+            lbl.className = 'month-name' + (now.getMonth() === m ? ' current' : '');
+            lbl.style.left = midPct + '%';
+            lbl.textContent = monthNames[m];
+            rail.appendChild(lbl);
+
+            // Day Ticks
+            const daysInMonth = (mEnd - mStart) / (24 * 3600 * 1000);
+            for (let d = 1; d < daysInMonth; d++) {
+                const dDate = new Date(mStart);
+                dDate.setDate(dDate.getDate() + d);
+                const dPct = (dDate - yStart) / ySpan * 100;
+                const dTick = document.createElement('div');
+                dTick.className = 'day-tick';
+                dTick.style.left = dPct + '%';
+                rail.appendChild(dTick);
+            }
+
+            // Month Tick (at start of each month except Jan)
+            if (m > 0) {
+                const tick = document.createElement('div');
+                tick.className = 'month-tick';
+                tick.style.left = startPct + '%';
+                rail.appendChild(tick);
+            }
+            runningDate = mEnd;
+        }
+
+        // --- Seasons ---
         const springD = new Date(yr, 2, 20), summerD = new Date(yr, 5, 21),
               fallD   = new Date(yr, 8, 22), winterD  = new Date(yr, 11, 21);
 
@@ -2858,7 +2998,7 @@ function createNote(data, autoFocus = false) {
             { name: 'winter', s: winterD, e: yEnd,    tick: true },
         ];
 
-        const isCurrent = s => now0 >= s.s && now0 < s.e;
+        const isCurrent = s => now >= s.s && now < s.e;
 
         seasons.forEach((s, idx) => {
             const startPct = (s.s - yStart) / ySpan * 100;
@@ -2882,6 +3022,27 @@ function createNote(data, autoFocus = false) {
                 tick.style.left = tickPct + '%';
                 rail.appendChild(tick);
             }
+        });
+
+        // --- Holidays ---
+        const holidays = [
+            { name: "New Year's Day", m: 0, d: 1 },
+            { name: "Valentine's Day", m: 1, d: 14 },
+            { name: "St. Patrick's Day", m: 2, d: 17 },
+            { name: "Earth Day", m: 3, d: 22 },
+            { name: "Halloween", m: 9, d: 31 },
+            { name: "Christmas", m: 11, d: 25 },
+            { name: "New Year's Eve", m: 11, d: 31 }
+        ];
+
+        holidays.forEach(h => {
+            const hDate = new Date(yr, h.m, h.d);
+            const hPct = (hDate - yStart) / ySpan * 100;
+            const pin = document.createElement('div');
+            pin.className = 'holiday-pin';
+            pin.style.left = hPct + '%';
+            pin.innerHTML = `<div class="holiday-label">${h.name}</div>`;
+            rail.appendChild(pin);
         });
 
         function updateYearBar() {
