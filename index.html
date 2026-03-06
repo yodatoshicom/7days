@@ -27,7 +27,65 @@
 <meta name="twitter:description" content="Free browser-based weekly planner with weather, sticky notes, and year progress bar. No account needed.">
 <meta name="twitter:image" content="https://weekdash.com/og.png">
 
-<!-- Structured data -->
+<!-- FAQ structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is weekDash?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "weekDash is a free, minimal weekly planner that runs entirely in the browser. It shows your current week as a calendar, fetches a 7-day weather forecast, and lets you create sticky notes. No account or install is required."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is weekDash free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. weekDash is completely free. There is no account, no subscription, and no paid tier."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does weekDash store my data?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All data — notes, settings, and weather cache — is stored locally in your browser's localStorage. Nothing is sent to a server."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does weekDash get my location for weather?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "weekDash detects your city automatically using IP geolocation (ipapi.co with ipwho.is as fallback). You can override the location manually by searching for a city in settings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What languages does weekDash support?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "weekDash supports English, Spanish, and Portuguese. The language can be changed in the settings panel."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does weekDash work offline?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "weekDash works offline for notes and the calendar. Weather data is cached and shown until a fresh fetch is possible. An internet connection is needed to load the page initially and refresh weather."
+      }
+    }
+  ]
+}
+</script>
+
+<!-- App structured data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1747,6 +1805,25 @@ body.note-font-sf-mono .note-content {
 </style>
 </head>
 <body id="surface">
+<noscript>
+  <div style="font-family:sans-serif;max-width:600px;margin:40px auto;padding:0 20px;color:#333">
+    <h1>weekDash — Weekly Planner</h1>
+    <p>weekDash is a free, minimal weekly planner that runs in your browser. It shows your current week, a 7-day weather forecast, and lets you create sticky notes — no account or install needed.</p>
+    <h2>Features</h2>
+    <ul>
+      <li>Weekly calendar with today highlighted and week navigation</li>
+      <li>7-day weather forecast via Open-Meteo (automatic location detection)</li>
+      <li>Sticky notes — create by double-clicking, drag, resize, color</li>
+      <li>Image notes — drag any image from your desktop onto the page</li>
+      <li>Year progress bar with month and season labels</li>
+      <li>Sun and moon arc showing daylight position</li>
+      <li>Themes, font picker, Celsius/Fahrenheit toggle</li>
+      <li>Multi-language: English, Spanish, Portuguese</li>
+      <li>All data stored locally — no server, no tracking</li>
+    </ul>
+    <p>JavaScript is required to run weekDash. Please enable JavaScript in your browser.</p>
+  </div>
+</noscript>
 
 <div id="desktop-only" style="display:none">Desktop only</div>
 

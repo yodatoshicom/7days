@@ -1,30 +1,74 @@
 # weekDash
 
-A high-speed thought canvas and minimalist project planner. Designed for rapid capture and visual organization of ideas, straight in your browser.
+A free, minimal weekly planner that runs entirely in your browser. No account, no install, no backend — open the URL and start using it.
 
-## Philosophy
+**Live app:** [weekdash.com](https://weekdash.com) · [yodatoshii.github.io/7days](https://yodatoshii.github.io/7days/)
 
-- **High-Speed Capture** — Double-click anywhere to pin a thought. No forms, no friction.
-- **Visual Planning** — Drag, group, and color-code notes to map out your projects.
-- **Contextual Awareness** — A 7-day weather forecast and weekly dock keep your tasks grounded in time.
-- **Zero Overhead** — No accounts, no databases, no complex setups. Everything lives in your browser's local storage.
+---
 
-## Key Features
+## What it does
 
-- **Fluid Thought Canvas** — Free-form sticky notes with image support (drag & drop from desktop).
-- **Weekly Horizon** — A minimalist dock to navigate your current and upcoming weeks.
-- **Live Context** — Real-time weather and location detection to inform your daily planning.
-- **Refined Aesthetics** — Clean, Apple-inspired UI with customizable fonts and a subtle, focus-oriented background.
+weekDash shows your current week as a clean calendar dock, today highlighted. Navigate forward or back by week. A year progress bar shows how far through the year you are, with months and seasons marked.
 
-## Run
+Weather is fetched automatically from [Open-Meteo](https://open-meteo.com/) (free, no API key) based on your IP location. You can override the city manually in settings. Temperatures toggle between Celsius and Fahrenheit.
 
-Visit **[weekdash.com](https://weekdash.com)** or simply open `index.html` in any modern browser. No installation or build steps required.
+Double-click anywhere on the page to create a sticky note. Drag it, resize it, pick a color, edit inline. Drop an image from your desktop and it becomes a pinned image note. Everything saves to `localStorage` — nothing leaves your browser.
 
-## Structure
+A sun/moon arc overlays the sky background showing the current position of the sun or moon relative to the day's arc.
 
-- `index.html` — The core application: layout, styling, and logic.
-- `js/weather.js` — Real-time weather and location processing.
-- `bg2.png` — High-fidelity, minimalist background canvas.
+---
+
+## Features
+
+- Weekly calendar with today highlighted and forward/back week navigation
+- 7-day weather forecast with conditions, temperature, and wind
+- Automatic city detection via IP (ipapi.co → ipwho.is fallback), manual override
+- Celsius / Fahrenheit toggle
+- Sticky notes — double-click to create, drag to move, resize, color picker
+- Image notes — drag any image from your desktop onto the page
+- Year progress bar with month labels and season markers
+- Sun and moon arc with night sky and stars
+- Themes and font picker
+- Multi-language: English, Spanish, Portuguese
+- All data in `localStorage` — no server, no account, no tracking
+
+---
+
+## Stack
+
+- Single `index.html` — no framework, no build step, no dependencies
+- Vanilla JS + CSS only
+- Weather: [Open-Meteo API](https://open-meteo.com/) (free, no key)
+- Location: ipapi.co with ipwho.is fallback
+- Analytics: Umami (self-hosted, privacy-friendly)
+
+---
+
+## Run locally
+
+```
+git clone https://github.com/yodatoshii/7days.git
+open index.html
+```
+
+No build step. No `npm install`. Just open the file.
+
+---
+
+## localStorage keys
+
+| Key | Contents |
+|---|---|
+| `aura_notes_v3` | Notes array |
+| `aura_location_cache` | City, lat, lon, method, timestamp |
+| `aura_weather_cache` | Weather data + timestamp |
+| `aura_temp_unit` | `'C'` or `'F'` |
+| `aura_lang` | `'en'`, `'es'`, or `'pt'` |
+| `aura_bg` | Theme/background selection |
+| `aura_note_font` | Font selection |
+| `aura_note_size` | Font size |
+
+---
 
 ## License
 
