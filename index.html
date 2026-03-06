@@ -2107,6 +2107,7 @@ body.note-font-sf-mono .note-content {
         updateTimeline();
         initDock();
         updateWatermark();
+        if (window.updateYearBarLang) window.updateYearBarLang();
     }
 
     document.getElementById('lang-picker').addEventListener('click', (e) => {
@@ -2930,7 +2931,29 @@ function createNote(data, autoFocus = false) {
         const yStart = new Date(yr, 0, 1), yEnd = new Date(yr + 1, 0, 1), ySpan = yEnd - yStart;
 
         // --- Months & Days ---
-        const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const MONTH_NAMES = {
+            en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+            es: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            pt: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        };
+        const SEASON_NAMES = {
+            en: { winter: 'winter', spring: 'spring', summer: 'summer', fall: 'fall' },
+            es: { winter: 'invierno', spring: 'primavera', summer: 'verano', fall: 'otoño' },
+            pt: { winter: 'inverno', spring: 'primavera', summer: 'verão', fall: 'outono' },
+        };
+
+        window.updateYearBarLang = function() {
+            const l = localStorage.getItem('aura_lang') || 'en';
+            const mn = MONTH_NAMES[l] || MONTH_NAMES.en;
+            const sn = SEASON_NAMES[l] || SEASON_NAMES.en;
+            rail.querySelectorAll('.month-name').forEach(el => {
+                el.textContent = mn[+el.dataset.month];
+            });
+            rail.querySelectorAll('.season-name').forEach(el => {
+                el.textContent = sn[el.dataset.season] || el.dataset.season;
+            });
+        };
+
         let runningDate = new Date(yStart);
         for (let m = 0; m < 12; m++) {
             const mStart = new Date(runningDate);
@@ -2943,7 +2966,7 @@ function createNote(data, autoFocus = false) {
             const lbl = document.createElement('div');
             lbl.className = 'month-name' + (now.getMonth() === m ? ' current' : '');
             lbl.style.left = midPct + '%';
-            lbl.textContent = monthNames[m];
+            lbl.dataset.month = m;
             rail.appendChild(lbl);
 
             // Day Ticks
@@ -2992,7 +3015,7 @@ function createNote(data, autoFocus = false) {
                 const lbl = document.createElement('div');
                 lbl.className = 'season-name' + (isCurrent(s) ? ' current' : '');
                 lbl.style.left = midPct + '%';
-                lbl.textContent = s.name;
+                lbl.dataset.season = s.name;
                 rail.appendChild(lbl);
             }
 
@@ -3040,6 +3063,7 @@ function createNote(data, autoFocus = false) {
         }
 
         updateYearBar();
+        window.updateYearBarLang();
         setInterval(updateYearBar, 60000);
     })();
 
