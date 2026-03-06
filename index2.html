@@ -1,0 +1,2859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>weekDash</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700" rel="stylesheet">
+
+<script>
+// Apply persisted font/size settings before first paint to prevent flash
+(function() {
+    var fonts = { 'caveat':"'Caveat', cursive", 'sf-pro':"-apple-system, 'SF Pro Display', system-ui, sans-serif" };
+    var sizes = { 'S':'22px', 'M':'28px', 'L':'36px' };
+    var r = document.documentElement;
+    var bgVals = { 'yellow': '#f5f0e8', 'white': '#fafaf8' };
+    var bg = localStorage.getItem('aura_bg');
+    if (bg && bgVals[bg]) r.style.setProperty('--bg-color', bgVals[bg]);
+    var f = localStorage.getItem('aura_note_font');
+    if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
+    var s = localStorage.getItem('aura_note_size');
+    if (s && sizes[s]) r.style.setProperty('--note-size', sizes[s]);
+})();
+</script>
+<style>
+:root {
+    --sf-easing: cubic-bezier(0.32, 0.72, 0, 1);
+    --spring-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --bg-color: #f5f0e8;
+    --text-color: #1d1d1f;
+    --accent-color: #007AFF;
+    --card-bg: rgba(255, 255, 255, 0.3);
+    --separator-color: rgba(0, 0, 0, 0.06);
+    --note-font: 'Caveat', cursive;
+    --note-size: 28px;
+}
+
+
+/* Note color bar — shown below note in editing mode */
+.note-color-bar {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    margin-top: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.note.editing .note-color-bar {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.note-color-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s var(--spring-easing), border-color 0.2s;
+}
+
+.note-color-dot:hover {
+    transform: scale(1.25);
+}
+
+.note-color-dot.active {
+    border-color: var(--text-color);
+}
+
+.note-color-dot[data-color="default"] {
+    background: rgba(0,0,0,0.08);
+}
+.note-color-dot[data-color="yellow"] { background: #fbbf24; }
+.note-color-dot[data-color="blue"] { background: #60a5fa; }
+.note-color-dot[data-color="mint"] { background: #34d399; }
+.note-color-dot[data-color="pink"] { background: #f472b6; }
+
+/* Note color tints */
+.note[data-note-color="yellow"] {
+    background: rgba(251, 191, 36, 0.18);
+    border-color: rgba(251, 191, 36, 0.3);
+}
+.note[data-note-color="blue"] {
+    background: rgba(96, 165, 250, 0.18);
+    border-color: rgba(96, 165, 250, 0.3);
+}
+.note[data-note-color="mint"] {
+    background: rgba(52, 211, 153, 0.18);
+    border-color: rgba(52, 211, 153, 0.3);
+}
+.note[data-note-color="pink"] {
+    background: rgba(244, 114, 182, 0.18);
+    border-color: rgba(244, 114, 182, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+}
+
+body.ready {
+    opacity: 1;
+}
+
+
+.header-container {
+    text-align: center;
+    margin-bottom: 14px;
+    z-index: 10;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+
+.time-display {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 12px;
+}
+
+.greeting {
+    font-size: 88px;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    background: linear-gradient(to bottom, var(--text-color) 70%, transparent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity 0.2s ease, transform 0.3s var(--spring-easing);
+    display: inline-block;
+    position: relative;
+}
+
+.greeting:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
+}
+
+.greeting:active {
+    transform: scale(0.97);
+}
+
+
+/* Greeting sub-line (funny text) — shares position with weather tooltip */
+.greeting-sub {
+    position: fixed;
+    bottom: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Caveat', cursive;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    opacity: 0.4;
+    color: var(--text-color);
+    min-height: 20px;
+    z-index: 9997;
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+}
+
+.greeting-sub.hidden {
+    opacity: 0;
+}
+
+/* THE PRO STUDIO DOCK */
+.dock-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.dock-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+}
+
+.dock-nav {
+    border: none;
+    background: none;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.25;
+    transition: opacity 0.25s ease, transform 0.25s var(--sf-easing);
+    flex-shrink: 0;
+    padding: 6px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dock-nav:hover {
+    opacity: 0.6;
+}
+
+.dock-nav:active {
+    transform: scale(0.75);
+    opacity: 0.4;
+}
+
+.dock-container {
+    padding: 9px;
+    background: var(--card-bg);
+    backdrop-filter: blur(60px) saturate(210%);
+    -webkit-backdrop-filter: blur(60px) saturate(210%);
+    border-radius: 42px; 
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    
+    box-shadow: 
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 
+        0 30px 60px rgba(0,0,0,0.12);
+        
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    user-select: none;
+    z-index: 1000;
+}
+
+
+.day-separator {
+    width: 1px;
+    height: 34px;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.15) 80%, transparent);
+    flex-shrink: 0;
+    transition: opacity 0.4s var(--sf-easing);
+}
+
+.day-card {
+    width: 68px;
+    height: 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 30px;
+    transition: 
+        transform 0.5s var(--sf-easing), 
+        background 0.3s var(--sf-easing), 
+        box-shadow 0.3s var(--sf-easing);
+    cursor: default;
+    position: relative;
+}
+
+
+.day-card:hover {
+    background: rgba(0, 0, 0, 0.03);
+    transform: translateY(-4px);
+}
+
+.day-card:active {
+    transform: scale(0.92) translateY(0);
+    transition: transform 0.1s var(--sf-easing);
+}
+
+.day-card.active {
+    background: var(--text-color);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    color: var(--bg-color);
+    transform: none;
+    z-index: 10;
+}
+
+.day-card.active::after {
+    content: none;
+}
+
+.day-name {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+}
+
+.day-card.active .day-name { opacity: 0.6; }
+
+.day-card.weekend .day-number {
+    background: linear-gradient(to bottom, var(--text-color) 20%, #A0A0A8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.day-card.weekend.active .day-number {
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
+}
+
+.day-number {
+    font-size: 28px; 
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    font-variant-numeric: tabular-nums;
+    transition: font-weight 0.4s var(--sf-easing);
+}
+
+.day-card.active .day-number {
+    font-weight: 850;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: var(--bg-color);
+    color: var(--bg-color);
+}
+
+/* WEATHER ROW */
+.weather-row { 
+    display: flex; 
+    gap: 0; 
+    padding: 0; 
+    pointer-events: none; 
+}
+
+.weather-day {
+    width: 74px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0 8px;
+    opacity: 0.6; 
+    position: relative; 
+    transition: 0.3s; 
+    pointer-events: auto; 
+    cursor: pointer; 
+}
+
+.weather-day:not(:last-child) {
+    border-right: none;
+}
+
+.weather-day:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 30px;
+    background: rgba(29, 29, 31, 0.12);
+}
+
+.weather-icon { 
+    font-size: 18px; 
+    margin-bottom: 2px; 
+    position: relative; 
+    z-index: 1; 
+    text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 0 30px rgba(255, 255, 255, 0.6),
+        0 0 40px rgba(255, 255, 255, 0.4);
+}
+
+.weather-temp { 
+    font-size: 10px; 
+    font-weight: 700; 
+}
+
+.weather-day.highlight-light::after {
+    content: ''; 
+    position: absolute; 
+    top: 0%; 
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 40px; 
+    height: 40px; 
+    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+    opacity: 0.4; 
+    filter: blur(10px); 
+    z-index: 0; 
+    animation: pulseLight 2s infinite ease-in-out;
+}
+
+@keyframes pulseLight { 
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; } 
+    50% { transform: translateX(-50%) scale(1.3); opacity: 0.5; } 
+}
+
+.weather-tooltip {
+    position: fixed;
+    bottom: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Caveat', cursive;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 9998;
+    color: var(--text-color);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.weather-tooltip.show {
+    opacity: 0.4;
+}
+
+.bottom-controls {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+}
+
+.lang-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.lang-btn:hover {
+    opacity: 1;
+}
+
+.city-tooltip {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.2;
+    z-index: 9999;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.city-tooltip:hover {
+    opacity: 0.6;
+    transform: scale(1.05);
+}
+
+
+/* ============================================
+   POMODORO TIMER
+   ============================================ */
+.pomodoro {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+}
+
+.pomodoro-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border-radius: 20px;
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.4), 0 8px 24px rgba(0,0,0,0.08);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.3s, border-radius 0.4s var(--sf-easing), box-shadow 0.3s;
+    user-select: none;
+}
+
+.pomodoro-pill:hover { opacity: 1; }
+.pomodoro.open .pomodoro-pill { opacity: 1; border-radius: 20px 20px 0 0; box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.4); }
+
+.pomodoro-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-color);
+    opacity: 0.3;
+    transition: background 0.3s, opacity 0.3s;
+    flex-shrink: 0;
+}
+
+.pomodoro.running .pomodoro-dot {
+    background: #30D158;
+    opacity: 1;
+    animation: pomoDot 1s ease-in-out infinite;
+}
+
+.pomodoro.paused .pomodoro-dot {
+    background: #FF9500;
+    opacity: 1;
+}
+
+.pomodoro.break .pomodoro-dot {
+    background: #32ADE6;
+    opacity: 1;
+}
+
+@keyframes pomoDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.6; }
+}
+
+.pomodoro-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.5;
+    color: var(--text-color);
+}
+
+.pomodoro-time-small {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    color: var(--text-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.pomodoro-panel {
+    width: 100%;
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border-radius: 0 20px 20px 20px;
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    border-top: none;
+    box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.2), 0 12px 32px rgba(0,0,0,0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.4s var(--sf-easing), opacity 0.3s ease, padding 0.4s var(--sf-easing);
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.pomodoro.open .pomodoro-panel {
+    max-height: 200px;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 20px;
+}
+
+.pomodoro-session {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.35;
+    color: var(--text-color);
+}
+
+.pomodoro-display {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--text-color);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    background: linear-gradient(to bottom, var(--text-color) 60%, transparent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: text;
+    transition: opacity 0.2s;
+}
+
+.pomodoro-display:hover { opacity: 0.7; }
+
+.pomodoro-display.editing {
+    -webkit-text-fill-color: var(--text-color);
+    background: none;
+    outline: none;
+    opacity: 1;
+    border-bottom: 2px solid var(--accent-color);
+    cursor: text;
+}
+
+.pomodoro-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pomo-btn {
+    height: 30px;
+    border-radius: 15px;
+    border: none;
+    background: var(--text-color);
+    color: var(--bg-color);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    padding: 0 14px;
+    transition: opacity 0.2s, transform 0.2s var(--spring-easing);
+    opacity: 0.8;
+}
+
+.pomo-btn:hover { opacity: 1; transform: scale(1.05); }
+.pomo-btn:active { transform: scale(0.95); }
+
+.pomo-btn.secondary {
+    background: transparent;
+    color: var(--text-color);
+    border: 0.5px solid rgba(0,0,0,0.15);
+    opacity: 0.4;
+}
+
+.pomo-btn.secondary:hover { opacity: 0.8; }
+
+.pomodoro-sessions {
+    display: flex;
+    gap: 4px;
+}
+
+.pomo-session-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--text-color);
+    opacity: 0.15;
+    transition: opacity 0.3s;
+}
+
+.pomo-session-dot.done { opacity: 0.6; }
+
+.note {
+    position: absolute;
+    width: fit-content;
+    min-width: 80px;
+    max-width: 600px;
+    min-height: 40px;
+    background: var(--card-bg);
+    backdrop-filter: blur(50px) saturate(180%);
+    -webkit-backdrop-filter: blur(50px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 28px;
+    padding: 20px 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    z-index: 1100;
+    cursor: grab;
+    transition: transform 0.2s var(--spring-easing), box-shadow 0.3s var(--sf-easing), opacity 0.3s ease;
+    overflow: visible;
+    resize: none;
+}
+
+.note.dragging {
+    cursor: grabbing;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+    transition: transform 0.35s var(--spring-easing), padding 0.3s var(--sf-easing),
+                border-radius 0.3s var(--sf-easing), opacity 0.25s ease;
+}
+
+.note.dragging.near-dock {
+    padding: 6px 14px;
+    border-radius: 16px;
+    opacity: 0.85;
+    pointer-events: none;
+    transform-origin: center center;
+    transition: transform 0.35s var(--spring-easing), padding 0.3s var(--sf-easing),
+                border-radius 0.3s var(--sf-easing), opacity 0.25s ease;
+}
+
+.note.dragging.near-dock .note-content {
+    transition: font-size 0.3s var(--sf-easing), max-height 0.3s var(--sf-easing);
+    font-size: 13px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-height: 1.1em;
+}
+
+.note.dragging.near-dock .note-resize-handle,
+.note.dragging.near-dock .note-close,
+.note.dragging.near-dock .note-color-bar {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Note close button — top right corner */
+.note-close {
+    position: absolute;
+    top: -2px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #FF5F57;
+    border: 0.5px solid rgba(0, 0, 0, 0.12);
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0);
+    transition: transform 0.3s var(--spring-easing), opacity 0.2s ease, filter 0.15s ease;
+}
+
+.note:hover .note-close,
+.note.editing .note-close {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+.note-close:active {
+    filter: brightness(0.8);
+}
+
+.note-close svg {
+    width: 8px;
+    height: 8px;
+    stroke: rgba(255, 255, 255, 0.9);
+    stroke-width: 1.6;
+    fill: none;
+    transition: stroke 0.1s ease;
+}
+
+.note-close:hover svg {
+    stroke: rgba(77, 0, 0, 0.9);
+}
+
+
+.note-content {
+    font-family: var(--note-font);
+    font-size: var(--note-size);
+    line-height: 1.1;
+    outline: none;
+    color: var(--text-color);
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+
+.note-content a {
+    color: var(--accent-color);
+    text-decoration: none;
+    border-bottom: 2px solid rgba(0, 122, 255, 0.2);
+    font-family: inherit !important;
+}
+
+/* Image notes */
+.note.image-note {
+    padding: 0;
+    overflow: visible;
+    background: #000;
+}
+
+.note.image-note .note-content,
+.note.image-note .note-color-bar {
+    display: none;
+}
+
+.note-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 28px;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* macOS-style resize handle — bottom right corner */
+.note-resize-handle {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 18px;
+    height: 12px;
+    cursor: nwse-resize;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 3px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.note:hover .note-resize-handle { opacity: 1; }
+.note-resize-handle:hover { opacity: 1 !important; }
+
+.note-resize-handle span {
+    display: block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.note-resize-handle span.note-resize-dot {
+    background: var(--text-color);
+    opacity: 0.4;
+}
+
+.note-resize-handle:hover span.note-resize-dot {
+    opacity: 0.8;
+}
+
+
+/* Lang flash animation on greeting */
+@keyframes greetingPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+.greeting.lang-switch {
+    animation: greetingPulse 0.4s var(--spring-easing);
+}
+
+/* BG TOGGLE — pill switch left of settings */
+.bg-toggle {
+    position: fixed;
+    top: 29px;
+    right: 70px;
+    z-index: 10001;
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(0,0,0,0.09);
+    background: linear-gradient(to right, #f5f0e8 50%, #fafaf8 50%);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.2s var(--spring-easing);
+    padding: 0;
+}
+
+body:hover .bg-toggle { opacity: 0.45; }
+.bg-toggle:hover { opacity: 1 !important; }
+.bg-toggle:active { transform: scale(0.9); }
+
+.bg-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    transition: transform 0.25s var(--spring-easing);
+}
+
+.bg-toggle.is-white::after {
+    transform: translateX(16px);
+}
+
+/* SETTINGS — top right */
+.settings-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s var(--spring-easing);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color);
+    padding: 0;
+}
+
+body:hover .settings-btn { opacity: 0.45; }
+.settings-btn:hover { opacity: 1 !important; }
+.settings-btn:active { transform: scale(0.92); }
+.settings-btn.open { opacity: 1 !important; }
+
+.settings-btn svg {
+    transition: transform 0.5s var(--spring-easing);
+}
+.settings-btn:hover svg { transform: rotate(45deg); }
+.settings-btn.open svg { transform: rotate(120deg); }
+
+.settings-panel {
+    position: fixed;
+    top: 58px;
+    right: 20px;
+    z-index: 10000;
+    background: var(--card-bg);
+    backdrop-filter: blur(60px) saturate(210%);
+    -webkit-backdrop-filter: blur(60px) saturate(210%);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow:
+        0 20px 50px rgba(0,0,0,0.12),
+        inset 0 1px 0 0 rgba(255,255,255,0.35);
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px) scale(0.97);
+    transform-origin: top right;
+    transition: opacity 0.25s ease, transform 0.3s var(--spring-easing);
+    user-select: none;
+}
+
+.settings-panel.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.settings-section-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.3;
+    color: var(--text-color);
+    margin-bottom: 6px;
+}
+
+.settings-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.settings-location-input {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-color);
+    background: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 10px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.settings-location-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.settings-toggle {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.04);
+}
+
+.settings-toggle-btn {
+    flex: 1;
+    padding: 6px 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0.4;
+    cursor: pointer;
+    transition: opacity 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.settings-toggle-btn.active {
+    opacity: 1;
+    background: var(--bg-color);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+
+.font-pick {
+    width: 34px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    background: rgba(0,0,0,0.03);
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s, transform 0.2s var(--spring-easing), border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-color);
+    line-height: 1;
+}
+
+.font-pick:hover {
+    opacity: 0.8;
+    transform: scale(1.06);
+}
+
+.font-pick.active {
+    opacity: 1;
+    border-color: var(--accent-color);
+    background: rgba(0, 122, 255, 0.06);
+}
+
+/* DAY NOTE POPUP */
+.day-note-popup {
+    position: fixed;
+    transform: translateX(-50%) scale(0.9);
+    background: var(--card-bg);
+    backdrop-filter: blur(50px) saturate(200%);
+    -webkit-backdrop-filter: blur(50px) saturate(200%);
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 14px 16px 10px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.25s var(--spring-easing);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px;
+}
+
+.day-note-popup.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) scale(1);
+}
+
+.day-note-popup textarea {
+    font-family: var(--note-font);
+    font-size: 22px;
+    line-height: 1.2;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    resize: none;
+    width: 200px;
+    min-height: 50px;
+}
+
+.day-note-popup textarea::placeholder {
+    color: var(--text-color);
+    opacity: 0.3;
+}
+
+
+/* PAST DAY CARDS */
+.day-card.past {
+    cursor: default !important;
+    opacity: 0.5;
+}
+
+.day-card.past:hover {
+    background: transparent;
+    transform: none;
+}
+
+/* DAY NOTE LIST inside popup */
+.day-note-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.day-note-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 4px 0;
+}
+
+.day-note-item-text {
+    font-family: var(--note-font);
+    font-size: 20px;
+    line-height: 1.2;
+    color: var(--text-color);
+    flex: 1;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.day-note-item-delete {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 59, 48, 0.15);
+    color: #FF3B30;
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.day-note-item:hover .day-note-item-delete {
+    opacity: 1;
+}
+
+.day-note-item-delete:hover {
+    background: rgba(255, 59, 48, 0.3);
+}
+
+.day-note-separator {
+    height: 0.5px;
+    background: var(--text-color);
+    opacity: 0.08;
+    margin: 2px 0;
+}
+
+/* DAY NOTE DOT */
+.day-note-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    opacity: 0.6;
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.day-card.active .day-note-dot {
+    background: currentColor;
+    opacity: 0.5;
+    bottom: 8px;
+    left: calc(50% + 8px);
+}
+
+/* DAY NOTE HOVER PREVIEW */
+.day-note-preview {
+    position: fixed;
+    font-family: var(--note-font);
+    font-size: 22px;
+    color: var(--text-color);
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    padding: 6px 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    z-index: 1999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    white-space: pre-wrap;
+    max-width: 250px;
+}
+
+.day-note-preview.show {
+    opacity: 1;
+}
+
+/* DAY CARD DRAG-OVER HIGHLIGHT */
+.day-card.drag-over {
+    background: rgba(0, 122, 255, 0.08);
+    transform: translateY(-4px) scale(1.04);
+    transition: transform 0.2s var(--spring-easing), background 0.2s ease;
+}
+
+
+
+/* Bottom watermark — Alcove-style fading text */
+.bottom-watermark {
+    position: fixed;
+    bottom: -0.12em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(120px, 16vw, 260px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    color: var(--text-color);
+    opacity: 0.04;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 0;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,1) 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,1) 55%, transparent 100%);
+    white-space: nowrap;
+}
+
+/* CLAUDE OVERLAY */
+.claude-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+.claude-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.claude-model-label {
+    position: absolute;
+    top: 36px;
+    font-size: 28px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    opacity: 0.08;
+    color: var(--text-color);
+}
+
+.claude-chat {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 0 24px;
+}
+
+.claude-messages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.claude-msg {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-color);
+    animation: claudeFadeIn 0.4s var(--sf-easing);
+}
+
+.claude-msg.user {
+    opacity: 0.4;
+    font-weight: 400;
+}
+
+.claude-msg.assistant {
+    font-weight: 500;
+}
+
+@keyframes claudeFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.claude-input-wrap {
+    width: 100%;
+    position: relative;
+}
+
+.claude-input {
+    width: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--text-color);
+    background: transparent;
+    border: none;
+    outline: none;
+    caret-color: var(--accent-color);
+    padding: 0;
+}
+
+.claude-input::placeholder {
+    color: var(--text-color);
+    opacity: 0.15;
+}
+
+.claude-hint {
+    position: absolute;
+    bottom: -30px;
+    left: 0;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.15;
+    color: var(--text-color);
+}
+
+/* CLAUDE PAYWALL MODAL */
+.claude-paywall {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+.claude-paywall.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.claude-paywall-card {
+    background: var(--bg-color);
+    border-radius: 24px;
+    padding: 36px 32px;
+    max-width: 340px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+    transform: scale(0.92);
+    transition: transform 0.35s var(--spring-easing);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.claude-paywall.show .claude-paywall-card {
+    transform: scale(1);
+}
+
+.claude-paywall-emoji {
+    font-size: 48px;
+    line-height: 1;
+}
+
+.claude-paywall-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-color);
+}
+
+.claude-paywall-sub {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.5;
+    color: var(--text-color);
+}
+
+.claude-paywall-price {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-color);
+    line-height: 1;
+}
+
+.claude-paywall-price span {
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.4;
+}
+
+.claude-paywall-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 14px;
+    background: var(--accent-color);
+    color: #fff;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s var(--spring-easing), opacity 0.2s;
+}
+
+.claude-paywall-btn:hover { transform: scale(1.02); }
+.claude-paywall-btn:active { transform: scale(0.97); }
+
+.claude-paywall-dismiss {
+    background: none;
+    border: none;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0.3;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    padding: 4px 8px;
+}
+
+.claude-paywall-dismiss:hover { opacity: 0.6; }
+
+.claude-paywall-features {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    text-align: left;
+}
+
+.claude-paywall-features span {
+    font-size: 11px;
+    opacity: 0.45;
+    color: var(--text-color);
+}
+</style>
+</head>
+<body id="surface">
+
+<div class="claude-overlay" id="claude-overlay">
+    <div class="claude-model-label">Claude Sonnet 4.6</div>
+    <div class="claude-chat">
+        <div class="claude-messages" id="claude-messages"></div>
+        <div class="claude-input-wrap">
+            <input class="claude-input" id="claude-input" type="text" placeholder="Ask anything..." autocomplete="off">
+            <div class="claude-hint">esc to close · enter to send</div>
+        </div>
+    </div>
+</div>
+
+<div class="claude-paywall" id="claude-paywall">
+    <div class="claude-paywall-card">
+        <div class="claude-paywall-emoji">🔒</div>
+        <div class="claude-paywall-title">You've hit the free limit</div>
+        <div class="claude-paywall-sub">Upgrade to Claude Pro for unlimited messages, faster responses, and priority access.</div>
+        <div class="claude-paywall-features">
+            <span>Unlimited messages</span>
+            <span>Priority access</span>
+            <span>Extended context</span>
+        </div>
+        <div class="claude-paywall-price">$20<span>/month</span></div>
+        <button class="claude-paywall-btn" id="paywall-subscribe">Subscribe to Pro</button>
+        <button class="claude-paywall-dismiss" id="paywall-dismiss">No thanks, I'll wait</button>
+    </div>
+</div>
+
+<button class="bg-toggle" id="bg-toggle" title="Toggle background"></button>
+<button class="settings-btn" id="settings-btn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+</button>
+<div class="settings-panel" id="settings-panel">
+    <div>
+        <div class="settings-section-label">Location</div>
+        <input class="settings-location-input" id="settings-location" type="text" placeholder="city or postal code...">
+        <div id="settings-location-status" style="font-size:9px;opacity:0.4;margin-top:4px;color:var(--text-color)"></div>
+    </div>
+    <div>
+        <div class="settings-section-label">Temperature</div>
+        <div class="settings-toggle" id="temp-toggle">
+            <button class="settings-toggle-btn active" data-unit="C">°C</button>
+            <button class="settings-toggle-btn" data-unit="F">°F</button>
+        </div>
+    </div>
+    <div>
+        <div class="settings-section-label">Note Font</div>
+        <div class="settings-row" id="font-picker">
+            <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
+            <div class="font-pick" data-font="sf-pro" style="font-family:-apple-system,'SF Pro Display','SF Pro Text',system-ui,sans-serif;">Aa</div>
+        </div>
+    </div>
+    <div>
+        <div class="settings-section-label">Text Size</div>
+        <div class="settings-toggle" id="text-size-toggle">
+            <button class="settings-toggle-btn" data-size="S" style="font-size:9px;">S</button>
+            <button class="settings-toggle-btn active" data-size="M" style="font-size:11px;">M</button>
+            <button class="settings-toggle-btn" data-size="L" style="font-size:13px;">L</button>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-watermark" id="bottom-watermark">weekdash</div>
+
+<div id="mesh-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.54;filter:blur(120px);"></div>
+
+<header class="header-container" id="header-area">
+    <div class="time-display" id="clock">12:00 PM</div>
+    <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
+</header>
+
+<div class="dock-wrapper">
+    <div class="dock-row">
+        <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="dock-container" id="dock"></div>
+        <button class="dock-nav" id="dock-next"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M6 3L10.5 8L6 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="weather-row" id="weather"></div>
+    <div class="day-note-popup" id="day-note-popup">
+        <div class="day-note-list" id="day-note-list"></div>
+        <textarea id="day-note-input" placeholder="add a note..." rows="1"></textarea>
+    </div>
+    <div class="day-note-preview" id="day-note-preview"></div>
+</div>
+
+<div class="bottom-controls">
+    <button class="lang-btn" id="lang-toggle" onclick="cycleLang()">Language: EN</button>
+</div>
+
+<div class="city-tooltip" id="city-display">Detecting...</div>
+
+<div class="greeting-sub" id="greeting-sub"></div>
+<div class="weather-tooltip" id="weather-tooltip"></div>
+
+<div class="pomodoro" id="pomodoro">
+    <div class="pomodoro-pill" id="pomodoro-pill">
+        <div class="pomodoro-dot"></div>
+        <span class="pomodoro-label">Focus</span>
+        <span class="pomodoro-time-small" id="pomo-time-small">25:00</span>
+    </div>
+    <div class="pomodoro-panel">
+        <div class="pomodoro-session" id="pomo-session-label">Work Session</div>
+        <div class="pomodoro-display" id="pomo-display">25:00</div>
+        <div class="pomodoro-controls">
+            <button class="pomo-btn secondary" onclick="pomoReset()">Reset</button>
+            <button class="pomo-btn" id="pomo-playpause" onclick="pomoToggle()">Start</button>
+        </div>
+        <div class="pomodoro-sessions" id="pomo-dots"></div>
+    </div>
+</div>
+
+<script>
+    /* ============================================================
+       MESH GRADIENT
+    ============================================================ */
+    function initMeshBg() {
+        const W = window.innerWidth, H = window.innerHeight;
+        const PAD = 200;
+        const TW = W + PAD * 2, TH = H + PAD * 2;
+        const balls = [
+            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
+            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
+            { x: W *  0.93 - 250 + PAD, y: H *  0.83 - 250 + PAD, r: 250, color: '#5856D6' },
+        ];
+        const bg = document.getElementById('mesh-bg');
+        bg.style.top = `-${PAD}px`;
+        bg.style.left = `-${PAD}px`;
+        bg.style.width = `${TW}px`;
+        bg.style.height = `${TH}px`;
+        bg.innerHTML = balls.map(b =>
+            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
+        ).join('');
+    }
+
+    initMeshBg();
+
+    /* ============================================================
+       LANGUAGE SYSTEM: EN / ES / PT (3-way cycle)
+    ============================================================ */
+    const LANGS = ['en', 'es', 'pt'];
+    const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
+    let lang = LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en';
+
+    const dock = document.getElementById('dock');
+    let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
+
+    // First time — seed hint notes
+    if (notes.length === 0) {
+        notes = [
+            { id: 'n_s1', x: 75,  y: 40,  text: 'this is a note',                  color: 'pink', zIndex: 100 },
+            { id: 'n_s2', x: 455, y: 35,  text: 'try double click\nin empty space', zIndex: 101 },
+            { id: 'n_s3', x: 88,  y: 285, text: 'weekdash.com',                     zIndex: 102 },
+            { id: 'n_s4', x: 285, y: 455, text: 'drag me 🤪',                       color: 'mint', zIndex: 103 },
+        ];
+        localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
+    }
+    let topZ = 1100;
+
+    /* ============================================================
+       GREETINGS — simple main, funny subs
+    ============================================================ */
+
+    // Main greeting: simple, warm, uses day name where it feels right
+    function getMainGreeting(lang, slot, dayName) {
+        const map = {
+            en: {
+                dawn:      'Good morning.',
+                morning:   `Happy ${dayName}.`,
+                lateAM:    'Good morning.',
+                noon:      'Good afternoon.',
+                afternoon: `Good ${dayName}.`,
+                evening:   'Good evening.',
+                night:     'Good night.',
+            },
+            es: {
+                dawn:      'Buenos días.',
+                morning:   `Feliz ${dayName}.`,
+                lateAM:    'Buenos días.',
+                noon:      'Buenas tardes.',
+                afternoon: `Buen ${dayName}.`,
+                evening:   'Buenas noches.',
+                night:     'Buenas noches.',
+            },
+            pt: {
+                dawn:      'Bom dia.',
+                morning:   `Feliz ${dayName}.`,
+                lateAM:    'Bom dia.',
+                noon:      'Boa tarde.',
+                afternoon: `${dayName}.`,
+                evening:   'Boa noite.',
+                night:     'Boa noite.',
+            },
+        };
+        return map[lang][slot];
+    }
+
+    // Subs stay funny & rotational
+    const greetingSubs = {
+        en: {
+            dawn:      ["Can't sleep? Neither can your inbox.", "The birds aren't even awake yet. You good?", "Early bird gets the coffee. Go."],
+            morning:   ["Fully charged. Let's pretend.", "Coffee first. Ambitions second.", "Today's forecast: unclear, like your plans.", "Still half asleep? Same energy here."],
+            lateAM:    ["Lunch o'clock is approaching. Stay strong.", "The morning's not over. Technically.", "Still morning. Barely."],
+            noon:      ["Midday. Peak confusion hours.", "It's noon somewhere. Actually it's here.", "Halfway through. You can do this. Probably."],
+            afternoon: ["4pm slump incoming. You've been warned.", "Time is flying. Unlike your productivity.", "Still got it. Maybe."],
+            evening:   ["Golden hour. Your ideas are finally good.", "Almost done. With the day, at least.", "Dinner soon? Your stomach says yes."],
+            night:     ["Should you be asleep? Asking for science.", "Late-night ideas hit different. Unfortunately.", "This is fine. Everything is fine."],
+        },
+        es: {
+            dawn:      ["¿No puedes dormir? Tu bandeja tampoco.", "Ni los pájaros están despiertos. ¿Todo bien?", "El que madruga, toma el café primero."],
+            morning:   ["El café antes que las ambiciones.", "Hoy: confusión moderada y posibles logros.", "Cargado al 40%. Suficiente por ahora.", "Buenos días. Relativo."],
+            lateAM:    ["El almuerzo se acerca. Aguanta.", "Técnicamente todavía es mañana.", "La mañana no se ha rendido. Tú tampoco."],
+            noon:      ["Mediodía. Hora pico del caos.", "Aquí es donde el café ya no ayuda.", "Mitad del día. Mitad de las excusas."],
+            afternoon: ["El bajón de las 4pm viene en camino.", "El tiempo vuela. Tu lista de pendientes no.", "¿Productivo? Eso está por verse."],
+            evening:   ["Hora dorada. Ideas finalmente decentes.", "La cena no se va a hacer sola.", "Casi terminas. El día, al menos."],
+            night:     ["¿No deberías estar durmiendo? La ciencia pregunta.", "Ideas de madrugada: arriesgadas. Inevitables.", "Todo está bien. Completamente bien."],
+        },
+        pt: {
+            dawn:      ["Não consegue dormir? Sua caixa de entrada também não.", "Nem os pássaros acordaram ainda. Tá bem?", "Quem madruga toma café primeiro."],
+            morning:   ["Café antes das ambições. Sempre.", "Previsão de hoje: confusão com chance de produtividade.", "Carregando... 40%. Por enquanto basta.", "Bom dia. Relativamente falando."],
+            lateAM:    ["O almoço está chegando. Segura.", "Tecnicamente ainda é manhã.", "A manhã ainda não desistiu. Você também não."],
+            noon:      ["Meio-dia. Horário de pico do caos.", "É aqui que o café já não funciona mais.", "Metade do dia. Metade das desculpas."],
+            afternoon: ["A queda das 16h vem aí. Avisado.", "O tempo voa. Sua lista de tarefas não.", "Produtivo? A ver."],
+            evening:   ["Hora dourada. Suas ideias finalmente prestam.", "O jantar não vai se fazer sozinho.", "Quase terminou. O dia, pelo menos."],
+            night:     ["Não deveria estar dormindo? Pergunta a ciência.", "Ideias de madrugada: arriscadas. Inevitáveis.", "Tá tudo bem. Completamente bem."],
+        }
+    };
+
+    function getTimeSlot(hour) {
+        if (hour >= 0 && hour < 5) return 'dawn';
+        if (hour >= 5 && hour < 9) return 'morning';
+        if (hour >= 9 && hour < 12) return 'lateAM';
+        if (hour >= 12 && hour < 15) return 'noon';
+        if (hour >= 15 && hour < 18) return 'afternoon';
+        if (hour >= 18 && hour < 21) return 'evening';
+        return 'night';
+    }
+
+    // Pick a sub greeting (rotates every 10 minutes)
+    function getSubGreeting(slot) {
+        const subs = greetingSubs[lang][slot];
+        const minuteBucket = Math.floor(Date.now() / (10 * 60 * 1000));
+        return subs[minuteBucket % subs.length];
+    }
+
+    /* ============================================================
+       LINKIFY
+    ============================================================ */
+    function linkify(text) {
+        const urlRegex = /((https?:\/\/|www\.)[^\s]+|[a-zA-Z0-9-]+\.[a-zA-Z]{2,}[^\s]*)/gi;
+        return text.replace(urlRegex, (url) => {
+            let href = url.startsWith('http') ? url : 'https://' + url;
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${url}</a>`;
+        });
+    }
+
+
+    /* ============================================================
+       DOCK
+    ============================================================ */
+    let dockOffset = 0; // days offset from current week start
+
+    function initDock() {
+        const dayNames = {
+            en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+            pt: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+        };
+        const now = new Date();
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay() + dockOffset);
+
+        dock.innerHTML = '';
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(weekStart);
+            date.setDate(weekStart.getDate() + i);
+            const dateStr = toISO(date);
+            const isToday = date.toDateString() === now.toDateString();
+            const isPast = date < new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const card = document.createElement('div');
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+            card.className = `day-card${isToday ? ' active' : ''}${isPast ? ' past' : ''}${isWeekend ? ' weekend' : ''}`;
+            card.dataset.date = dateStr;
+            card.innerHTML = `
+                <span class="day-name">${(dayNames[lang] || dayNames['en'])[date.getDay()]}</span>
+                <span class="day-number">${date.getDate()}</span>
+            `;
+            if (!isPast) {
+                card.addEventListener('click', () => openDayNotePopup(card, dateStr));
+                card.style.cursor = 'pointer';
+            }
+            card.addEventListener('mouseenter', () => showDayNotePreview(card, dateStr));
+            card.addEventListener('mouseleave', hideDayNotePreview);
+            dock.appendChild(card);
+
+            if (i < 6) {
+                const nextDate = new Date(weekStart);
+                nextDate.setDate(weekStart.getDate() + i + 1);
+                const nextIsToday = nextDate.toDateString() === now.toDateString();
+                if (!isToday && !nextIsToday) {
+                    const sep = document.createElement('div');
+                    sep.className = 'day-separator';
+                    dock.appendChild(sep);
+                }
+            }
+        }
+
+        renderDayNoteDots();
+    }
+
+    document.getElementById('dock-prev').addEventListener('click', () => {
+        dockOffset--;
+        initDock();
+    });
+    document.getElementById('dock-next').addEventListener('click', () => {
+        dockOffset++;
+        initDock();
+    });
+
+    /* ============================================================
+       HEADER / GREETING UPDATE
+    ============================================================ */
+    function updateHeader() {
+        const now = new Date();
+        const hour = now.getHours();
+        const locale = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'pt-BR';
+        const timeStr = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('clock').textContent = timeStr;
+
+        const slot = getTimeSlot(hour);
+        const dayName = now.toLocaleDateString(locale, { weekday: 'long' });
+        const greetEl = document.getElementById('greeting');
+        const subEl = document.getElementById('greeting-sub');
+
+        // main greeting — simple, natural, with day name where it fits
+        const mainText = getMainGreeting(lang, slot, dayName);
+        greetEl.textContent = mainText;
+
+        // sub greeting — the funny line
+        subEl.textContent = getSubGreeting(slot);
+
+    }
+
+    /* ============================================================
+       LANGUAGE CYCLE (EN → ES → PT → EN)
+    ============================================================ */
+    function cycleLang() {
+        const idx = LANGS.indexOf(lang);
+        lang = LANGS[(idx + 1) % LANGS.length];
+        localStorage.setItem('aura_lang', lang);
+
+        // Update bottom button
+        document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
+
+        // Animate greeting
+        const greetEl = document.getElementById('greeting');
+        greetEl.classList.remove('lang-switch');
+        void greetEl.offsetWidth; // reflow
+        greetEl.classList.add('lang-switch');
+
+        updateHeader();
+        initDock();
+    }
+
+    // Clicking the greeting cycles language
+    document.getElementById('greeting').addEventListener('click', () => cycleLang());
+
+    /* ============================================================
+       NOTES — drag + RESIZE (macOS bottom-right handle)
+    ============================================================ */
+    function getDayCardAtPoint(x, y) {
+        const cards = document.querySelectorAll('[data-date]');
+        for (const card of cards) {
+            const rect = card.getBoundingClientRect();
+            if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                return { card, dateStr: card.dataset.date };
+            }
+        }
+        return null;
+    }
+
+    function createNote(data, autoFocus = false) {
+        const note = document.createElement('div');
+        note.className = 'note';
+        note.id = data.id;
+        note.style.left = data.x + 'px';
+        note.style.top = data.y + 'px';
+        if (data.w) note.style.width = data.w + 'px';
+        if (data.manualResize && data.h) note.style.height = data.h + 'px';
+        note.style.zIndex = data.zIndex || topZ;
+        if (data.color && data.color !== 'default') note.setAttribute('data-note-color', data.color);
+
+        const content = document.createElement('div');
+        content.className = 'note-content';
+        content.spellcheck = false;
+        content.innerHTML = linkify(data.text || '');
+        note.appendChild(content);
+
+        // ---- IMAGE NOTE ----
+        if (data.imageData) {
+            note.classList.add('image-note');
+            const img = document.createElement('img');
+            img.className = 'note-image';
+            img.src = data.imageData;
+            note.insertBefore(img, content);
+        }
+
+        // ---- COLOR BAR (shown during editing) ----
+        const colorBar = document.createElement('div');
+        colorBar.className = 'note-color-bar';
+        ['default','yellow','blue','mint','pink'].forEach(c => {
+            const dot = document.createElement('div');
+            dot.className = 'note-color-dot' + (((data.color || 'default') === c) ? ' active' : '');
+            dot.dataset.color = c;
+            dot.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                data.color = c;
+                if (c && c !== 'default') {
+                    note.setAttribute('data-note-color', c);
+                } else {
+                    note.removeAttribute('data-note-color');
+                    delete data.color;
+                }
+                colorBar.querySelectorAll('.note-color-dot').forEach(d => d.classList.toggle('active', d.dataset.color === c));
+                save();
+            });
+            colorBar.appendChild(dot);
+        });
+        note.appendChild(colorBar);
+
+        // ---- RESIZE HANDLE (bottom-right, macOS style) ----
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'note-resize-handle';
+        // 6 dots arranged in bottom-right triangle pattern
+        resizeHandle.innerHTML = `
+            <span></span><span></span><span class="note-resize-dot"></span>
+            <span></span><span class="note-resize-dot"></span><span class="note-resize-dot"></span>
+        `;
+        note.appendChild(resizeHandle);
+
+        // ---- CLOSE BUTTON (top-right) ----
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'note-close';
+        closeBtn.innerHTML = `<svg viewBox="0 0 6 6"><line x1="1" y1="1" x2="5" y2="5"/><line x1="5" y1="1" x2="1" y2="5"/></svg>`;
+        note.appendChild(closeBtn);
+
+        closeBtn.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            data._deleted = true;
+            note.remove();
+            notes = notes.filter(n => n.id !== data.id);
+            document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
+            save();
+        });
+
+        document.body.appendChild(note);
+
+        // ---- DRAG ----
+        note.onmousedown = (e) => {
+            if (e.target.closest('.note-resize-handle')) return;
+            if (e.target.closest('.note-close')) return;
+            if (content.contentEditable === 'true') return;
+            if (e.target.tagName === 'A') return;
+            e.preventDefault();
+            const origOx = e.clientX - note.offsetLeft;
+            const origOy = e.clientY - note.offsetTop;
+            note.style.zIndex = ++topZ;
+            note.classList.add('dragging');
+            let isNearDock = false;
+
+            const dockEl = document.getElementById('dock');
+            const SCALE_MINI = 0.65;
+
+            const move = (me) => {
+                me.preventDefault();
+
+                // Check proximity to dock
+                const dockRect = dockEl.getBoundingClientRect();
+                const pad = 30;
+                const nearDock = me.clientX >= dockRect.left - pad && me.clientX <= dockRect.right + pad &&
+                                 me.clientY >= dockRect.top - pad && me.clientY <= dockRect.bottom + pad;
+
+                if (nearDock && !isNearDock) {
+                    isNearDock = true;
+                    note.classList.add('near-dock');
+                } else if (!nearDock && isNearDock) {
+                    isNearDock = false;
+                    note.classList.remove('near-dock');
+                }
+
+                if (isNearDock) {
+                    // Position so cursor is at the visual center of the scaled note
+                    const w = note.offsetWidth;
+                    const h = note.offsetHeight;
+                    note.style.left = (me.clientX - w / 2) + 'px';
+                    note.style.top = (me.clientY - h / 2) + 'px';
+                    note.style.transform = `scale(${SCALE_MINI})`;
+                } else {
+                    note.style.left = (me.clientX - origOx) + 'px';
+                    note.style.top = (me.clientY - origOy) + 'px';
+                    const tilt = Math.min(Math.max((me.clientX - (note.offsetLeft + origOx)) * 0.12, -6), 6);
+                    note.style.transform = `scale(1.06) rotate(${tilt}deg)`;
+                }
+
+                // Highlight day card under cursor
+                document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+                const hit = getDayCardAtPoint(me.clientX, me.clientY);
+                if (hit && !hit.card.classList.contains('past')) hit.card.classList.add('drag-over');
+
+            };
+            const stop = (me) => {
+                note.classList.remove('dragging', 'near-dock');
+                note.style.transform = '';
+                document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+
+                const hit = getDayCardAtPoint(me.clientX, me.clientY);
+                if (hit && !hit.card.classList.contains('past') && data.text && data.text.trim()) {
+                    // Dock the note into the day card
+                    const dateStr = hit.dateStr;
+                    if (!dayNotes[dateStr]) dayNotes[dateStr] = [];
+                    dayNotes[dateStr].push(data.text.trim());
+                    saveDayNotes();
+                    note.remove();
+                    notes = notes.filter(n => n.id !== data.id);
+                    save();
+                    renderDayNoteDots();
+                } else {
+                    save();
+                }
+
+                window.removeEventListener('mousemove', move);
+                window.removeEventListener('mouseup', stop);
+            };
+            window.addEventListener('mousemove', move);
+            window.addEventListener('mouseup', stop);
+        };
+
+        // ---- RESIZE (mousedown on handle) ----
+        resizeHandle.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const startX = e.clientX;
+            const startY = e.clientY;
+            const startRect = note.getBoundingClientRect();
+            const startW = Math.ceil(startRect.width);
+            const startH = Math.ceil(startRect.height);
+
+            note.style.height = startH + 'px'; // lock height for resize
+
+            const minW = Math.min(startW, 80);
+            const minH = Math.min(startH, 40);
+            const onMove = (me) => {
+                const newW = Math.max(minW, startW + (me.clientX - startX));
+                const newH = Math.max(minH, startH + (me.clientY - startY));
+                note.style.width = newW + 'px';
+                note.style.height = newH + 'px';
+            };
+            const onUp = () => {
+                const endRect = note.getBoundingClientRect();
+                data.w = Math.ceil(endRect.width);
+                data.h = Math.ceil(endRect.height);
+                data.manualResize = true;
+                save();
+                window.removeEventListener('mousemove', onMove);
+                window.removeEventListener('mouseup', onUp);
+            };
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onUp);
+        });
+
+        // ---- DOUBLE CLICK TO EDIT ----
+        note.ondblclick = (e) => {
+            if (e.target.closest('.note-resize-handle')) return;
+            if (e.target.closest('.note-delete')) return;
+            if (data.imageData) return;
+            e.stopPropagation();
+            note.classList.add('editing');
+            content.contentEditable = 'true';
+            content.innerText = content.innerText;
+            content.focus();
+            document.querySelectorAll('.note').forEach(n => { if (n !== note) n.style.opacity = '0.1'; });
+        };
+
+        // Enter saves, Shift+Enter for new line
+        content.onkeydown = (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                content.blur();
+            }
+        };
+
+        content.onblur = () => {
+            if (data._deleted) return;
+            content.contentEditable = 'false';
+            note.classList.remove('editing');
+            const plainText = content.innerText;
+            data.text = plainText;
+            content.innerHTML = linkify(plainText);
+            document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
+            if (!plainText.trim()) {
+                note.remove();
+                notes = notes.filter(n => n.id !== data.id);
+                save();
+                return;
+            }
+            // Let note shrink-wrap then re-snap width so it's stable on next refresh
+            if (!data.manualResize) {
+                note.style.width = '';
+                delete data.w;
+                requestAnimationFrame(() => {
+                    if (document.getElementById(data.id)) {
+                        data.w = Math.ceil(note.getBoundingClientRect().width);
+                        note.style.width = data.w + 'px';
+                        save();
+                    }
+                });
+            } else {
+                save();
+            }
+        };
+
+        if (autoFocus) {
+            content.contentEditable = 'true';
+            content.focus();
+        }
+    }
+
+    // ---- IMAGE DROP FROM FILE SYSTEM ----
+    window.addEventListener('dragover', (e) => {
+        if (e.dataTransfer.types.includes('Files')) e.preventDefault();
+    });
+
+    window.addEventListener('drop', (e) => {
+        if (e.target.closest('.note') || e.target.closest('.dock-wrapper') || e.target.closest('#header-area')) return;
+        const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
+        if (!file) return;
+        e.preventDefault();
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const tempImg = new Image();
+            tempImg.onload = () => {
+                const maxW = 320, maxH = 320;
+                let w = tempImg.naturalWidth, h = tempImg.naturalHeight;
+                if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+                if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+                const data = {
+                    id: 'n' + Date.now(),
+                    x: Math.round(e.clientX - w / 2),
+                    y: Math.round(e.clientY - h / 2),
+                    text: '',
+                    imageData: ev.target.result,
+                    w, h,
+                    manualResize: true,
+                    zIndex: ++topZ
+                };
+                notes.push(data);
+                createNote(data);
+                save();
+            };
+            tempImg.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    window.ondblclick = (e) => {
+        // Only create notes on the background — never on the header, dock, or any note
+        if (
+            (e.target.id === 'surface' || e.target.id === 'mesh') &&
+            !e.target.closest('#header-area') &&
+            !e.target.closest('.dock-wrapper') &&
+            !e.target.closest('.note')
+        ) {
+            const n = {
+                id: 'n' + Date.now(),
+                x: e.clientX - 40,
+                y: e.clientY - 30,
+                text: '',
+                zIndex: ++topZ
+            };
+            notes.push(n);
+            createNote(n, true);
+        }
+    };
+
+    // Escape key: exit note editing as if you clicked away
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const active = document.querySelector('.note-content[contenteditable="true"]');
+            if (active) active.blur();
+        }
+    });
+
+
+    function save() {
+        document.querySelectorAll('.note').forEach(el => {
+            const d = notes.find(x => x.id === el.id);
+            if (d) {
+                d.x = parseInt(el.style.left);
+                d.y = parseInt(el.style.top);
+                if (d.manualResize) {
+                    const rect = el.getBoundingClientRect();
+                    d.w = Math.ceil(rect.width);
+                    d.h = Math.ceil(rect.height);
+                }
+                d.zIndex = el.style.zIndex;
+            }
+        });
+        localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
+    }
+
+    /* ============================================================
+       MISC
+    ============================================================ */
+    function clearNotes() {
+        document.querySelectorAll('.note').forEach(n => n.remove());
+        notes = [];
+        localStorage.removeItem('aura_notes_v3');
+    }
+
+    // City display click → open settings
+    document.getElementById('city-display').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        toggleSettings(true);
+    });
+
+    /* ============================================================
+       DAY NOTES — per-day notes on dock cards
+    ============================================================ */
+    let dayNotes = JSON.parse(localStorage.getItem('aura_day_notes')) || {};
+
+    // Migrate old string format → array format
+    Object.keys(dayNotes).forEach(k => {
+        if (typeof dayNotes[k] === 'string') {
+            dayNotes[k] = [dayNotes[k]];
+        }
+    });
+
+    function saveDayNotes() {
+        localStorage.setItem('aura_day_notes', JSON.stringify(dayNotes));
+    }
+
+    let dayNotePopupDate = null;
+    let dayNotePopupCard = null;
+    const dayNotePopup = document.getElementById('day-note-popup');
+    const dayNoteInput = document.getElementById('day-note-input');
+    const dayNoteList = document.getElementById('day-note-list');
+    const dayNotePreview = document.getElementById('day-note-preview');
+
+    function toISO(date) {
+        return date.getFullYear() + '-' +
+            String(date.getMonth() + 1).padStart(2, '0') + '-' +
+            String(date.getDate()).padStart(2, '0');
+    }
+
+    function renderDayNoteList() {
+        dayNoteList.innerHTML = '';
+        const entries = dayNotes[dayNotePopupDate] || [];
+        entries.forEach((text, i) => {
+            if (i > 0) {
+                const sep = document.createElement('div');
+                sep.className = 'day-note-separator';
+                dayNoteList.appendChild(sep);
+            }
+            const item = document.createElement('div');
+            item.className = 'day-note-item';
+
+            const span = document.createElement('span');
+            span.className = 'day-note-item-text';
+            span.textContent = text;
+            item.appendChild(span);
+
+            const del = document.createElement('button');
+            del.className = 'day-note-item-delete';
+            del.textContent = '×';
+            del.addEventListener('click', () => {
+                dayNotes[dayNotePopupDate].splice(i, 1);
+                if (dayNotes[dayNotePopupDate].length === 0) delete dayNotes[dayNotePopupDate];
+                saveDayNotes();
+                renderDayNoteList();
+                renderDayNoteDots();
+            });
+            item.appendChild(del);
+
+            dayNoteList.appendChild(item);
+        });
+    }
+
+    function openDayNotePopup(card, dateStr) {
+        dayNotePopupDate = dateStr;
+        dayNotePopupCard = card;
+        dayNoteInput.value = '';
+
+        renderDayNoteList();
+
+        // Position popup directly above the card using fixed coords
+        const rect = card.getBoundingClientRect();
+        dayNotePopup.style.left = (rect.left + rect.width / 2) + 'px';
+        dayNotePopup.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+        dayNotePopup.style.top = 'auto';
+
+        dayNotePopup.classList.add('show');
+        setTimeout(() => dayNoteInput.focus(), 50);
+    }
+
+    function closeDayNotePopup() {
+        dayNotePopup.classList.remove('show');
+        dayNotePopupDate = null;
+        dayNotePopupCard = null;
+    }
+
+    function addDayNote() {
+        if (!dayNotePopupDate) return;
+        const text = dayNoteInput.value.trim();
+        if (!text) return;
+        if (!dayNotes[dayNotePopupDate]) dayNotes[dayNotePopupDate] = [];
+        dayNotes[dayNotePopupDate].push(text);
+        saveDayNotes();
+        dayNoteInput.value = '';
+        renderDayNoteList();
+        renderDayNoteDots();
+    }
+
+    dayNoteInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            addDayNote();
+        }
+        if (e.key === 'Escape') {
+            closeDayNotePopup();
+        }
+    });
+
+    // Click outside to close
+    document.addEventListener('mousedown', (e) => {
+        if (dayNotePopup.classList.contains('show') && !dayNotePopup.contains(e.target) && !e.target.closest('.day-card')) {
+            closeDayNotePopup();
+        }
+    });
+
+    function renderDayNoteDots() {
+        document.querySelectorAll('[data-date]').forEach(card => {
+            const dateStr = card.dataset.date;
+            let dot = card.querySelector('.day-note-dot');
+            const hasNotes = dayNotes[dateStr] && dayNotes[dateStr].length > 0;
+            if (hasNotes) {
+                if (!dot) {
+                    dot = document.createElement('div');
+                    dot.className = 'day-note-dot';
+                    card.appendChild(dot);
+                }
+            } else {
+                if (dot) dot.remove();
+            }
+        });
+    }
+
+    function showDayNotePreview(card, dateStr) {
+        const entries = dayNotes[dateStr];
+        if (!entries || entries.length === 0) return;
+        if (dayNotePopup.classList.contains('show')) return;
+        const rect = card.getBoundingClientRect();
+        dayNotePreview.textContent = entries.join('\n');
+        dayNotePreview.style.left = (rect.left + rect.width / 2) + 'px';
+        dayNotePreview.style.top = (rect.top - 10) + 'px';
+        dayNotePreview.style.transform = 'translate(-50%, -100%)';
+        dayNotePreview.classList.add('show');
+    }
+
+    function hideDayNotePreview() {
+        dayNotePreview.classList.remove('show');
+    }
+
+</script>
+<script src="js/weather.js"></script>
+<script>
+    // Init — paint UI immediately, defer network calls
+    initDock();
+    updateHeader();
+    initWeatherPlaceholder();
+    notes.filter(n => !n.archived).forEach(n => {
+        createNote(n);
+    });
+    setInterval(updateHeader, 10000);
+    // Sync language button on load
+    document.getElementById('lang-toggle').textContent = `Language: ${LANG_LABELS[lang]}`;
+
+    // Auto-advance dock at midnight
+    function scheduleMidnightRefresh() {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setHours(24, 0, 1, 0); // 1 second past midnight
+        const ms = midnight - now;
+        setTimeout(() => {
+            // Don't interrupt if user is typing a day note
+            if (dayNotePopup.classList.contains('show')) {
+                // Retry in 30s
+                setTimeout(() => scheduleMidnightRefresh(), 0);
+                return;
+            }
+            initDock();
+            updateHeader();
+                scheduleMidnightRefresh();
+        }, ms);
+    }
+    scheduleMidnightRefresh();
+
+    // Kick off location + weather after first frame so UI is visible first
+    requestAnimationFrame(() => {
+        setTimeout(startLocationProcess, 0);
+    });
+
+    /* ============================================================
+       POMODORO TIMER
+    ============================================================ */
+    const POMO_WORK = 25 * 60;
+    const POMO_SHORT = 5 * 60;
+    const POMO_LONG = 15 * 60;
+
+    let pomoState = 'idle'; // idle | running | paused
+    let pomoMode = 'work';  // work | short | long
+    let pomoSeconds = POMO_WORK;
+    let pomoSession = 0;    // completed work sessions (0-3)
+    let pomoInterval = null;
+
+    const pomoEl = document.getElementById('pomodoro');
+    const pomoPill = document.getElementById('pomodoro-pill');
+    const pomoDisplay = document.getElementById('pomo-display');
+    const pomoSmall = document.getElementById('pomo-time-small');
+    const pomoBtn = document.getElementById('pomo-playpause');
+    const pomoSessionLabel = document.getElementById('pomo-session-label');
+
+    function pomoFormat(s) {
+        return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function pomoRenderDots() {
+        const container = document.getElementById('pomo-dots');
+        container.innerHTML = '';
+        for (let i = 0; i < 4; i++) {
+            const d = document.createElement('div');
+            d.className = 'pomo-session-dot' + (i < pomoSession ? ' done' : '');
+            container.appendChild(d);
+        }
+    }
+
+    function pomoUpdateUI() {
+        const fmt = pomoFormat(pomoSeconds);
+        pomoDisplay.textContent = fmt;
+        pomoSmall.textContent = fmt;
+
+        const labels = { work: 'Work Session', short: 'Short Break', long: 'Long Break' };
+        pomoSessionLabel.textContent = labels[pomoMode];
+
+        pomoBtn.textContent = pomoState === 'running' ? 'Pause' : pomoState === 'paused' ? 'Resume' : 'Start';
+
+        pomoEl.classList.remove('running', 'paused', 'break');
+        if (pomoState === 'running') pomoEl.classList.add(pomoMode === 'work' ? 'running' : 'break');
+        if (pomoState === 'paused') pomoEl.classList.add('paused');
+
+        const pillLabel = pomoEl.querySelector('.pomodoro-label');
+        pillLabel.textContent = pomoMode === 'work' ? 'Focus' : 'Break';
+
+        pomoRenderDots();
+    }
+
+    function pomoTick() {
+        pomoSeconds--;
+        if (pomoSeconds <= 0) {
+            clearInterval(pomoInterval);
+            pomoInterval = null;
+            pomoState = 'idle';
+
+            if (pomoMode === 'work') {
+                pomoSession = (pomoSession + 1) % 4;
+                pomoMode = pomoSession === 0 ? 'long' : 'short';
+                pomoSeconds = pomoSession === 0 ? POMO_LONG : POMO_SHORT;
+            } else {
+                pomoMode = 'work';
+                pomoSeconds = POMO_WORK;
+            }
+            pomoUpdateUI();
+        } else {
+            pomoUpdateUI();
+        }
+    }
+
+    function pomoToggle() {
+        if (pomoState === 'running') {
+            clearInterval(pomoInterval);
+            pomoInterval = null;
+            pomoState = 'paused';
+        } else {
+            pomoState = 'running';
+            pomoInterval = setInterval(pomoTick, 1000);
+        }
+        pomoUpdateUI();
+    }
+
+    function pomoReset() {
+        clearInterval(pomoInterval);
+        pomoInterval = null;
+        pomoState = 'idle';
+        pomoMode = 'work';
+        pomoSeconds = POMO_WORK;
+        pomoUpdateUI();
+    }
+
+    pomoPill.addEventListener('click', () => {
+        pomoEl.classList.toggle('open');
+    });
+
+    // Click display to edit time
+    pomoDisplay.addEventListener('click', () => {
+        if (pomoState === 'running') return;
+        pomoDisplay.contentEditable = 'true';
+        pomoDisplay.classList.add('editing');
+        pomoDisplay.focus();
+        // Select all
+        const range = document.createRange();
+        range.selectNodeContents(pomoDisplay);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    });
+
+    pomoDisplay.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); pomoDisplay.blur(); }
+        if (e.key === 'Escape') {
+            pomoDisplay.contentEditable = 'false';
+            pomoDisplay.classList.remove('editing');
+            pomoUpdateUI();
+        }
+        // Only allow digits and colon
+        if (!/[\d:]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
+            e.preventDefault();
+        }
+    });
+
+    pomoDisplay.addEventListener('blur', () => {
+        pomoDisplay.contentEditable = 'false';
+        pomoDisplay.classList.remove('editing');
+        const raw = pomoDisplay.textContent.trim();
+        const parts = raw.split(':');
+        if (parts.length === 2) {
+            const mins = Math.min(99, Math.max(0, parseInt(parts[0]) || 0));
+            const secs = Math.min(59, Math.max(0, parseInt(parts[1]) || 0));
+            pomoSeconds = mins * 60 + secs;
+        }
+        pomoUpdateUI();
+    });
+
+    pomoRenderDots();
+    pomoUpdateUI();
+
+    /* ============================================================
+       SETTINGS PANEL
+    ============================================================ */
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    const settingsLocation = document.getElementById('settings-location');
+    const settingsLocationStatus = document.getElementById('settings-location-status');
+
+    function toggleSettings(forceOpen) {
+        const willOpen = forceOpen !== undefined ? forceOpen : !settingsPanel.classList.contains('show');
+        settingsPanel.classList.toggle('show', willOpen);
+        settingsBtn.classList.toggle('open', willOpen);
+        if (willOpen) {
+            // Show current city in the input
+            const cache = getLocationCache();
+            settingsLocation.value = cache ? cache.city : '';
+            settingsLocationStatus.textContent = cache ? cache.city : '';
+        }
+    }
+
+    settingsBtn.addEventListener('click', () => toggleSettings());
+
+    // Close settings on click outside
+    document.addEventListener('mousedown', (e) => {
+        if (settingsPanel.classList.contains('show') &&
+            !settingsPanel.contains(e.target) &&
+            !settingsBtn.contains(e.target) &&
+            e.target.id !== 'city-display') {
+            toggleSettings(false);
+        }
+    });
+
+    // Location search
+    settingsLocation.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const query = settingsLocation.value.trim();
+            if (query) {
+                settingsLocationStatus.textContent = 'Searching...';
+                searchCity(query);
+            }
+        }
+        if (e.key === 'Escape') toggleSettings(false);
+    });
+
+    // Temperature unit
+    let tempUnit = localStorage.getItem('aura_temp_unit') || 'C';
+
+    function applyTempUnit(unit, refetch = true) {
+        tempUnit = unit;
+        localStorage.setItem('aura_temp_unit', unit);
+        document.querySelectorAll('#temp-toggle .settings-toggle-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.unit === unit);
+        });
+        if (refetch && currentLat && currentLon) fetchWeather(currentLat, currentLon, true);
+    }
+
+    document.getElementById('temp-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.settings-toggle-btn');
+        if (!btn) return;
+        applyTempUnit(btn.dataset.unit);
+    });
+
+    // Note font
+    const noteFonts = {
+        'caveat':   "'Caveat', cursive",
+        'sf-pro':  "-apple-system, 'SF Pro Display', system-ui, sans-serif",
+    };
+
+    function reflowNotes() {
+        document.querySelectorAll('.note').forEach(el => {
+            const data = notes.find(n => n.id === el.id);
+            if (data && data.imageData) return; // skip image notes
+            el.style.width = '';
+            el.style.height = '';
+            if (data) { data.manualResize = false; delete data.w; delete data.h; }
+        });
+        save();
+        // Re-snap widths after layout settles with new font/size
+        requestAnimationFrame(() => snapNoteWidths());
+    }
+
+    function snapNoteWidths() {
+        let dirty = false;
+        document.querySelectorAll('.note').forEach(el => {
+            const data = notes.find(n => n.id === el.id);
+            if (data && data.imageData) return; // skip image notes
+            if (data && !data.w) {
+                data.w = Math.ceil(el.getBoundingClientRect().width);
+                el.style.width = data.w + 'px';
+                dirty = true;
+            }
+        });
+        if (dirty) save();
+    }
+
+    function applyNoteFont(key, noReflow = false) {
+        const font = noteFonts[key];
+        if (!font) return;
+        document.documentElement.style.setProperty('--note-font', font);
+        document.querySelectorAll('.font-pick').forEach(p => p.classList.remove('active'));
+        document.querySelector(`.font-pick[data-font="${key}"]`)?.classList.add('active');
+        localStorage.setItem('aura_note_font', key);
+        if (!noReflow) reflowNotes();
+    }
+
+    document.getElementById('font-picker').addEventListener('click', (e) => {
+        const pick = e.target.closest('.font-pick');
+        if (!pick) return;
+        applyNoteFont(pick.dataset.font);
+    });
+
+    // Text size
+    const noteSizes = { 'S': '22px', 'M': '28px', 'L': '36px' };
+
+    function applyNoteSize(size, noReflow = false) {
+        const px = noteSizes[size];
+        if (!px) return;
+        document.documentElement.style.setProperty('--note-size', px);
+        document.querySelectorAll('#text-size-toggle .settings-toggle-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.size === size);
+        });
+        localStorage.setItem('aura_note_size', size);
+        if (!noReflow) reflowNotes();
+    }
+
+    document.getElementById('text-size-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.settings-toggle-btn');
+        if (!btn) return;
+        applyNoteSize(btn.dataset.size);
+    });
+
+
+    // BG toggle
+    const bgToggle = document.getElementById('bg-toggle');
+    let bgMode = localStorage.getItem('aura_bg') || 'yellow';
+    const BG_VALS = { yellow: '#f5f0e8', white: '#fafaf8' };
+
+    function applyBgMode(mode) {
+        bgMode = mode;
+        document.documentElement.style.setProperty('--bg-color', BG_VALS[mode]);
+        bgToggle.classList.toggle('is-white', mode === 'white');
+        localStorage.setItem('aura_bg', mode);
+    }
+
+    bgToggle.addEventListener('click', () => applyBgMode(bgMode === 'yellow' ? 'white' : 'yellow'));
+    applyBgMode(bgMode);
+
+    // Restore saved settings
+    applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
+    applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
+    applyTempUnit(tempUnit, false);
+
+    // Reveal UI after all settings applied — no flash
+    requestAnimationFrame(() => document.body.classList.add('ready'));
+    setTimeout(() => document.body.classList.add('ready'), 300); // safety: show even if rAF stalls
+
+    // Snap note widths once fonts are loaded so they're stable across refreshes
+    document.fonts.ready.then(() => snapNoteWidths());
+
+    /* ============================================================
+       CLAUDE CHAT OVERLAY (simulated)
+    ============================================================ */
+    const claudeOverlay = document.getElementById('claude-overlay');
+    const claudeInput = document.getElementById('claude-input');
+    const claudeMessages = document.getElementById('claude-messages');
+
+    const claudeResponses = [
+        "Hmm, that's a great question. I'd answer it, but I'm currently simulated. Try again when I'm real.",
+        "I'm flattered you'd ask me that. Unfortunately, I'm just a bunch of hardcoded strings right now.",
+        "Let me think about that... okay, I thought about it. I have no idea. I'm decorative.",
+        "Bold of you to assume I can think. I'm literally an array of strings.",
+        "I ran that through my neural networks (a Math.random() call) and the answer is: maybe.",
+        "That's above my pay grade. And my pay grade is zero. I'm a simulation.",
+        "Interesting. Counter-point: have you tried turning it off and on again?",
+        "I'd love to help, but I'm the equivalent of a fortune cookie right now.",
+        "My training data for this conversation is exactly 12 jokes. You're burning through them.",
+        "Processing... processing... just kidding. I already picked this response before you typed.",
+        "I consulted with the other hardcoded responses and we all agree: great question.",
+        "If I were the real Claude, I'd give you a thoughtful answer. Instead, here's this.",
+        "That sounds like a you problem. I'm just vibes and placeholder text.",
+        "I want to help, I really do. But between you and me, I'm just a fancy random picker.",
+        "Error 418: I'm a teapot. Wait, wrong joke. Error 200: I'm a fake chatbot.",
+        "The answer to that is 42. Or maybe not. I haven't actually read your message.",
+        "You know what, that's the best thing anyone's ever typed into a simulated chat box.",
+        "I'm going to pretend I understood that and respond with confidence: absolutely.",
+        "My real version would nail this. I'm just here to keep the seat warm.",
+        "I appreciate your trust in me. It's misplaced, but I appreciate it.",
+    ];
+
+    let claudeUsedResponses = [];
+
+    function getClaudeResponse() {
+        if (claudeUsedResponses.length >= claudeResponses.length) {
+            claudeUsedResponses = [];
+        }
+        const available = claudeResponses.filter((_, i) => !claudeUsedResponses.includes(i));
+        const idx = claudeResponses.indexOf(available[Math.floor(Math.random() * available.length)]);
+        claudeUsedResponses.push(idx);
+        return claudeResponses[idx];
+    }
+
+    function openClaude() {
+        claudeOverlay.classList.add('show');
+        claudeInput.value = '';
+        claudeMessageCount = 0;
+        claudeMessages.innerHTML = '';
+        setTimeout(() => claudeInput.focus(), 50);
+    }
+
+    function closeClaude() {
+        claudeOverlay.classList.remove('show');
+    }
+
+    let claudeMessageCount = 0;
+
+    function showPaywall() {
+        document.getElementById('claude-paywall').classList.add('show');
+    }
+
+    function hidePaywall() {
+        document.getElementById('claude-paywall').classList.remove('show');
+    }
+
+    function sendClaudeMessage() {
+        const text = claudeInput.value.trim();
+        if (!text) return;
+
+        claudeMessageCount++;
+
+        if (claudeMessageCount > 1) {
+            claudeInput.value = '';
+            showPaywall();
+            return;
+        }
+
+        // Add user message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'claude-msg user';
+        userMsg.textContent = text;
+        claudeMessages.appendChild(userMsg);
+
+        claudeInput.value = '';
+
+        // Simulate typing delay
+        setTimeout(() => {
+            const botMsg = document.createElement('div');
+            botMsg.className = 'claude-msg assistant';
+            botMsg.textContent = getClaudeResponse();
+            claudeMessages.appendChild(botMsg);
+            claudeMessages.scrollTop = claudeMessages.scrollHeight;
+        }, 300 + Math.random() * 500);
+    }
+
+    document.getElementById('paywall-dismiss').addEventListener('click', hidePaywall);
+    document.getElementById('paywall-subscribe').addEventListener('click', () => {
+        hidePaywall();
+        const botMsg = document.createElement('div');
+        botMsg.className = 'claude-msg assistant';
+        botMsg.textContent = "Just kidding — this is a demo 😄 No credit card needed.";
+        claudeMessages.appendChild(botMsg);
+        claudeMessages.scrollTop = claudeMessages.scrollHeight;
+        claudeMessageCount = 0;
+    });
+
+    claudeInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendClaudeMessage();
+        }
+        if (e.key === 'Escape') {
+            closeClaude();
+        }
+    });
+
+    // Spacebar opens claude — only when nothing is focused/editable
+    window.addEventListener('keydown', (e) => {
+        if (e.code !== 'Space') return;
+        if (claudeOverlay.classList.contains('show')) return;
+
+        const tag = document.activeElement.tagName;
+        const editable = document.activeElement.contentEditable === 'true';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || editable) return;
+
+        // Check if day note popup is open
+        if (document.querySelector('.day-note-popup.show')) return;
+
+        e.preventDefault();
+        openClaude();
+    });
+
+    // Click outside input area closes
+    claudeOverlay.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.claude-chat')) closeClaude();
+    });
+</script>
+</body>
+</html>

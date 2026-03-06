@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>weekDash — Weekly Planner & Calendar</title>
-<meta name="description" content="weekDash is a free browser-based weekly planner. It shows your current week, a 7-day weather forecast, and lets you create sticky notes — no account, no install, no backend required.">
+<title>WeekDash</title>
+<meta name="description" content="Day planning dashboard for quick thoughts capture, mood boards and prompt planning.">
 <meta name="author" content="weekDash">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#ffffff">
@@ -13,9 +13,9 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://weekdash.com/">
-<meta property="og:title" content="weekDash — Weekly Planner & Calendar">
-<meta property="og:description" content="Free browser-based weekly planner with 7-day weather, sticky notes, and a year progress bar. No account or install needed.">
-<meta property="og:image" content="https://weekdash.com/og.png">
+<meta property="og:title" content="WeekDash">
+<meta property="og:description" content="Day planning dashboard for quick thoughts capture, mood boards and prompt planning.">
+<meta property="og:image" content="https://weekdash.com/img/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:site_name" content="weekDash">
@@ -23,9 +23,9 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="weekDash — Weekly Planner & Calendar">
-<meta name="twitter:description" content="Free browser-based weekly planner with weather, sticky notes, and year progress bar. No account needed.">
-<meta name="twitter:image" content="https://weekdash.com/og.png">
+<meta name="twitter:title" content="WeekDash">
+<meta name="twitter:description" content="Day planning dashboard for quick thoughts capture, mood boards and prompt planning.">
+<meta name="twitter:image" content="https://weekdash.com/img/og.png">
 
 <!-- FAQ structured data -->
 <script type="application/ld+json">
@@ -117,8 +117,8 @@
 }
 </script>
 
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,54 +152,28 @@
 
 
 /* Note color bar — shown below note in editing mode */
-.note-color-bar {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 100%);
-    display: flex;
-    gap: 6px;
-    padding: 8px 12px;
-    background: var(--card-bg);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border: 0.5px solid rgba(255,255,255,0.2);
-    border-radius: 14px;
-    margin-top: 4px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-
-.note.editing .note-color-bar {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.note-color-dot {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: transform 0.2s var(--spring-easing), border-color 0.2s;
-}
-
-.note-color-dot:hover {
-    transform: scale(1.25);
-}
-
-.note-color-dot.active {
-    border-color: var(--text-color);
-}
-
-.note-color-dot[data-color="default"] {
-    background: rgba(0,0,0,0.08);
-}
+.note-color-dot[data-color="default"] { background: rgba(0,0,0,0.08); }
 .note-color-dot[data-color="yellow"] { background: #fbbf24; }
 .note-color-dot[data-color="blue"] { background: #60a5fa; }
 .note-color-dot[data-color="mint"] { background: #34d399; }
 .note-color-dot[data-color="pink"] { background: #f472b6; }
+
+.bar-color-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s var(--spring-easing), border-color 0.15s;
+    flex-shrink: 0;
+}
+.bar-color-dot:hover { transform: scale(1.25); }
+.bar-color-dot.active { border-color: var(--text-color); }
+.bar-color-dot[data-color="default"] { background: rgba(128,128,128,0.25); }
+.bar-color-dot[data-color="yellow"] { background: #fbbf24; }
+.bar-color-dot[data-color="blue"] { background: #60a5fa; }
+.bar-color-dot[data-color="mint"] { background: #34d399; }
+.bar-color-dot[data-color="pink"] { background: #f472b6; }
 
 
 /* Note color tints */
@@ -835,6 +809,27 @@ body.note-font-sf-mono .note-content {
     word-break: normal;
 }
 
+.note-edit-ta {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: var(--note-font);
+    font-size: var(--note-size);
+    line-height: 1.1;
+    color: inherit;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    field-sizing: content;
+}
+body.note-font-sf-mono .note-edit-ta {
+    font-size: calc(var(--note-size) * 0.72);
+}
+
 .note-content a {
     color: var(--accent-color);
     text-decoration: none;
@@ -869,6 +864,99 @@ body.note-font-sf-mono .note-content {
     -webkit-user-select: none;
 }
 
+
+/* ── Screenshot mode (Option+D) ── */
+.screenshot-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1098;
+    backdrop-filter: blur(28px) saturate(120%) brightness(0.88);
+    -webkit-backdrop-filter: blur(28px) saturate(120%) brightness(0.88);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+body.screenshot-mode .screenshot-overlay { opacity: 1; }
+body.screenshot-mode .note,
+body.screenshot-mode .settings-btn,
+body.screenshot-mode .capsule,
+body.screenshot-mode .bottom-watermark,
+body.screenshot-mode .dev-export-btn,
+body.screenshot-mode .note-edit-overlay,
+body.screenshot-mode .note-arrow-bar {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.3s ease !important;
+}
+body.screenshot-mode .dock-wrapper {
+    position: relative;
+    z-index: 1200;
+}
+
+/* ── Note editing mode — page blur + arrow bar ── */
+.note-edit-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1099;
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    background: rgba(0,0,0,0.08);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+body.note-editing-mode .note-edit-overlay { opacity: 1; }
+body.note-editing-mode .note.editing { z-index: 2000 !important; }
+
+.note-arrow-bar {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--card-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 0.5px solid rgba(255,255,255,0.35);
+    border-radius: 18px;
+    padding: 6px 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.25s var(--spring-easing);
+}
+body.note-editing-mode .note-arrow-bar {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+.note-arrow-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-color);
+    opacity: 0.7;
+    transition: background 0.15s, opacity 0.15s;
+    user-select: none;
+    font-family: 'Inter', sans-serif;
+}
+.note-arrow-btn:hover { background: rgba(128,128,128,0.12); opacity: 1; }
+.note-arrow-btn:active { transform: scale(0.88); }
+.note-arrow-sep {
+    width: 1px;
+    height: 18px;
+    background: rgba(128,128,128,0.18);
+    margin: 0 4px;
+    flex-shrink: 0;
+}
 
 /* SVG arc resize handle */
 .note-resize-handle {
@@ -919,6 +1007,89 @@ body.note-font-sf-mono .note-content {
     transition: transform 0.5s var(--spring-easing);
 }
 .settings-btn:hover svg { transform: rotate(45deg); }
+
+/* Dev export */
+.dev-export-btn {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 10001;
+    display: none;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    opacity: 0.8;
+    letter-spacing: 0.02em;
+}
+.dev-export-btn:hover { opacity: 1; }
+body.dev-mode .dev-export-btn { display: block; }
+.dev-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+.dev-modal.open { display: flex; }
+.dev-modal-box {
+    background: #1a1a1a;
+    border-radius: 16px;
+    padding: 20px;
+    width: 560px;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.dev-modal-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.05em;
+}
+.dev-modal textarea {
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: #a8ff78;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 12px;
+    resize: none;
+    height: 280px;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+.dev-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.dev-modal-copy {
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+}
+.dev-modal-close {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+}
 
 .settings-panel {
     position: fixed;
@@ -1826,6 +1997,24 @@ body.note-font-sf-mono .note-content {
 </noscript>
 
 <div id="desktop-only" style="display:none">Desktop only</div>
+<div class="screenshot-overlay" id="screenshot-overlay"></div>
+<div class="note-edit-overlay" id="note-edit-overlay"></div>
+<div class="note-arrow-bar" id="note-arrow-bar">
+    <div class="note-arrow-btn" data-insert="→">→</div>
+    <div class="note-arrow-btn" data-insert="↗">↗</div>
+    <div class="note-arrow-btn" data-insert="↑">↑</div>
+    <div class="note-arrow-btn" data-insert="↓">↓</div>
+    <div class="note-arrow-sep"></div>
+    <div class="note-arrow-btn" data-insert="—">—</div>
+    <div class="note-arrow-btn" data-insert="·">·</div>
+    <div class="note-arrow-btn" data-insert="×">×</div>
+    <div class="note-arrow-sep"></div>
+    <div class="bar-color-dot" data-color="default"></div>
+    <div class="bar-color-dot" data-color="yellow"></div>
+    <div class="bar-color-dot" data-color="blue"></div>
+    <div class="bar-color-dot" data-color="mint"></div>
+    <div class="bar-color-dot" data-color="pink"></div>
+</div>
 
 <div class="search-overlay" id="search-overlay">
     <div class="search-container">
@@ -1849,6 +2038,17 @@ body.note-font-sf-mono .note-content {
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
     </svg>
 </button>
+<button class="dev-export-btn" id="dev-export-btn">export notes</button>
+<div class="dev-modal" id="dev-modal">
+    <div class="dev-modal-box">
+        <div class="dev-modal-label">NOTES STATE — paste this to Claude</div>
+        <textarea id="dev-modal-output" readonly></textarea>
+        <div class="dev-modal-actions">
+            <button class="dev-modal-close" id="dev-modal-close">close</button>
+            <button class="dev-modal-copy" id="dev-modal-copy">copy</button>
+        </div>
+    </div>
+</div>
 <div class="settings-panel" id="settings-panel">
     <div>
         <div class="settings-section-label">Location</div>
@@ -1954,10 +2154,10 @@ body.note-font-sf-mono .note-content {
     // First time — seed hint notes
     if (notes.length === 0) {
         notes = [
-            { id: 'n_s1', x: 75,  y: 40,  text: 'this is a note',                  color: 'pink', zIndex: 100 },
-            { id: 'n_s2', x: 455, y: 35,  text: 'try double click\nin empty space', zIndex: 101 },
-            { id: 'n_s3', x: 88,  y: 285, text: 'weekdash.com',                     zIndex: 102 },
-            { id: 'n_s4', x: 285, y: 455, text: 'drag me 🤪',                       color: 'mint', zIndex: 103 },
+            { id: 'n_s1', x: 56,   y: 18,  w: 192, text: 'this week\n— finish the landing page\n— reply to Jonas re: collab\n— gym mon · wed · fri\n— read before sleep\n— call mom (overdue)', zIndex: 100 },
+            { id: 'n_s2', x: 314,  y: 53,  w: 231, text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8',                                                   color: 'mint',   zIndex: 101 },
+            { id: 'n_s4', x: 1009, y: 37,  w: 150, text: 'book flights\n↗ tokyo, april\nbefore prices jump',                                                                   color: 'yellow', zIndex: 102 },
+            { id: 'n_s5', x: 708,  y: 160, w: 218, text: 'ship it.\ndon\'t wait.',                                                                                             color: 'blue',   zIndex: 103 },
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
@@ -2259,29 +2459,6 @@ function createNote(data, autoFocus = false) {
             note.insertBefore(img, content);
         }
 
-        // ---- COLOR BAR (shown during editing) ----
-        const colorBar = document.createElement('div');
-        colorBar.className = 'note-color-bar';
-        ['default','yellow','blue','mint','pink'].forEach(c => {
-            const dot = document.createElement('div');
-            dot.className = 'note-color-dot' + (((data.color || 'default') === c) ? ' active' : '');
-            dot.dataset.color = c;
-            dot.addEventListener('mousedown', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                data.color = c;
-                if (c && c !== 'default') {
-                    note.setAttribute('data-note-color', c);
-                } else {
-                    note.removeAttribute('data-note-color');
-                    delete data.color;
-                }
-                colorBar.querySelectorAll('.note-color-dot').forEach(d => d.classList.toggle('active', d.dataset.color === c));
-                save();
-            });
-            colorBar.appendChild(dot);
-        });
-        note.appendChild(colorBar);
 
         // ---- RESIZE HANDLE (bottom-right, iOS style) ----
         const resizeHandle = document.createElement('div');
@@ -2305,7 +2482,9 @@ function createNote(data, autoFocus = false) {
             data._deleted = true;
             note.remove();
             notes = notes.filter(n => n.id !== data.id);
-            document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
+            document.body.classList.remove('note-editing-mode');
+            activeNoteRef = { note: null, data: null };
+            document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
             save();
         });
 
@@ -2315,7 +2494,7 @@ function createNote(data, autoFocus = false) {
         note.onmousedown = (e) => {
             if (e.target.closest('.note-resize-handle')) return;
             if (e.target.closest('.note-close')) return;
-            if (content.contentEditable === 'true') return;
+            if (note.querySelector('.note-edit-ta')) return;
             if (e.target.tagName === 'A') return;
             e.preventDefault();
             
@@ -2445,53 +2624,124 @@ function createNote(data, autoFocus = false) {
             if (data.imageData) return;
             e.stopPropagation();
             note.classList.add('editing');
-            content.contentEditable = 'true';
-            content.innerText = content.innerText;
-            content.focus();
-            document.querySelectorAll('.note').forEach(n => { if (n !== note) n.style.opacity = '0.1'; });
-        };
+            document.body.classList.add('note-editing-mode');
+            document.querySelectorAll('.note').forEach(n => { if (n !== note) n.style.opacity = '0'; });
+            activeNoteRef = { note, data };
+            const activeColor = data.color || 'default';
+            document.querySelectorAll('#note-arrow-bar .bar-color-dot').forEach(d =>
+                d.classList.toggle('active', d.dataset.color === activeColor)
+            );
 
-        // Enter saves, Shift+Enter for new line
-        content.onkeydown = (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                content.blur();
-            }
-        };
+            const ta = document.createElement('textarea');
+            ta.className = 'note-edit-ta';
+            ta.rows = 1;
+            ta.value = data.text || '';
+            ta.spellcheck = false;
+            content.style.display = 'none';
+            note.insertBefore(ta, content);
 
-        content.onblur = () => {
-            if (data._deleted) return;
-            content.contentEditable = 'false';
-            note.classList.remove('editing');
-            const plainText = content.innerText;
-            data.text = plainText;
-            content.innerHTML = linkify(plainText);
-            document.querySelectorAll('.note').forEach(n => n.style.opacity = '1');
-            if (!plainText.trim()) {
-                note.remove();
-                notes = notes.filter(n => n.id !== data.id);
-                save();
-                return;
-            }
-            // Let note shrink-wrap then re-snap width so it's stable on next refresh
-            if (!data.manualResize) {
-                note.style.width = '';
-                delete data.w;
-                requestAnimationFrame(() => {
-                    if (document.getElementById(data.id)) {
-                        data.w = Math.ceil(note.getBoundingClientRect().width);
-                        note.style.width = data.w + 'px';
-                        save();
+            // Mirror div to measure natural text width (longest line)
+            const mirror = document.createElement('div');
+            mirror.style.cssText = 'position:fixed;top:-9999px;left:-9999px;white-space:pre;visibility:hidden;pointer-events:none;';
+            const taCs = getComputedStyle(ta);
+            mirror.style.fontFamily = taCs.fontFamily;
+            mirror.style.fontSize   = taCs.fontSize;
+            mirror.style.lineHeight = taCs.lineHeight;
+            document.body.appendChild(mirror);
+
+            const NOTE_PAD = 52; // 26px padding each side
+            const NOTE_MAX = 574; // max-width 600 - padding
+            const NOTE_MIN = 80;
+
+            const taResize = () => {
+                if (!data.manualResize) {
+                    const longestLine = (ta.value || ' ').split('\n').reduce((a, b) => a.length > b.length ? a : b, '');
+                    mirror.textContent = longestLine || ' ';
+                    const naturalW = mirror.getBoundingClientRect().width;
+                    note.style.width = Math.max(Math.min(Math.ceil(naturalW) + NOTE_PAD, NOTE_MAX + NOTE_PAD), NOTE_MIN) + 'px';
+                }
+                ta.style.height = 'auto';
+                ta.style.height = ta.scrollHeight + 'px';
+            };
+            taResize();
+            ta.focus();
+            ta.setSelectionRange(ta.value.length, ta.value.length);
+
+            ta.oninput = () => {
+                taResize();
+                const pos = ta.selectionStart;
+                const before = ta.value.slice(0, pos);
+                if (before.endsWith('- ')) {
+                    ta.value = ta.value.slice(0, pos - 2) + '→ ' + ta.value.slice(pos);
+                    ta.selectionStart = ta.selectionEnd = pos;
+                } else if (before.endsWith('/ ')) {
+                    ta.value = ta.value.slice(0, pos - 2) + '↗ ' + ta.value.slice(pos);
+                    ta.selectionStart = ta.selectionEnd = pos;
+                } else if (before.endsWith('->')) {
+                    ta.value = ta.value.slice(0, pos - 2) + '→' + ta.value.slice(pos);
+                    ta.selectionStart = ta.selectionEnd = pos - 1;
+                }
+            };
+
+            ta.onkeydown = (e) => {
+                if (e.key === 'Escape') { e.preventDefault(); ta.blur(); return; }
+                if (e.key === 'Enter') {
+                    const listMode = ta.value.trimStart().startsWith('→');
+                    if (listMode) {
+                        e.preventDefault();
+                        const pos = ta.selectionStart;
+                        const currentLine = ta.value.slice(0, pos).split('\n').pop();
+                        const prefix = currentLine.match(/^(→\s*)/) ? currentLine.match(/^(→\s*)/)[1] : '→ ';
+                        const insert = '\n' + prefix;
+                        ta.value = ta.value.slice(0, pos) + insert + ta.value.slice(ta.selectionEnd);
+                        ta.selectionStart = ta.selectionEnd = pos + insert.length;
+                        taResize();
                     }
-                });
-            } else {
-                save();
-            }
+                }
+            };
+
+            ta.onblur = () => {
+                mirror.remove();
+                if (data._deleted) {
+                    document.body.classList.remove('note-editing-mode');
+                    activeNoteRef = { note: null, data: null };
+                    document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
+                    return;
+                }
+                const plainText = ta.value;
+                ta.remove();
+                content.style.display = '';
+                note.classList.remove('editing');
+                document.body.classList.remove('note-editing-mode');
+                activeNoteRef = { note: null, data: null };
+                data.text = plainText;
+                content.innerHTML = linkify(plainText);
+                document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
+                if (!plainText.trim()) {
+                    note.remove();
+                    notes = notes.filter(n => n.id !== data.id);
+                    save();
+                    return;
+                }
+                if (!data.manualResize) {
+                    note.style.width = '';
+                    delete data.w;
+                    requestAnimationFrame(() => {
+                        if (document.getElementById(data.id)) {
+                            data.w = Math.ceil(note.getBoundingClientRect().width);
+                            note.style.width = data.w + 'px';
+                            save();
+                        }
+                    });
+                } else {
+                    save();
+                }
+            };
         };
 
         if (autoFocus) {
-            content.contentEditable = 'true';
-            content.focus();
+            // Append to DOM first so getBoundingClientRect works, then open editor
+            requestAnimationFrame(() => note.ondblclick({ target: note, stopPropagation: () => {}, closest: () => null }));
         }
     }
 
@@ -2555,8 +2805,16 @@ function createNote(data, autoFocus = false) {
     // Escape key: exit note editing as if you clicked away
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            const active = document.querySelector('.note-content[contenteditable="true"]');
+            const active = document.querySelector('.note-edit-ta');
             if (active) active.blur();
+            if (document.body.classList.contains('screenshot-mode')) {
+                document.body.classList.remove('screenshot-mode');
+            }
+        }
+        // Shift+D — screenshot mode
+        if (e.shiftKey && e.key.toLowerCase() === 'd') {
+            e.preventDefault();
+            document.body.classList.toggle('screenshot-mode');
         }
     });
 
@@ -2585,6 +2843,74 @@ function createNote(data, autoFocus = false) {
         document.querySelectorAll('.note').forEach(n => n.remove());
         notes = [];
         localStorage.removeItem('aura_notes_v3');
+    }
+
+    // Track which note is being edited for the color bar
+    let activeNoteRef = { note: null, data: null };
+
+    // Arrow bar — insert characters or change color
+    document.getElementById('note-arrow-bar').addEventListener('mousedown', (e) => {
+        e.preventDefault(); // don't blur the textarea
+        const btn = e.target.closest('.note-arrow-btn');
+        const dot = e.target.closest('.bar-color-dot');
+        if (btn) {
+            const ta = document.querySelector('.note-edit-ta');
+            if (!ta) return;
+            const pos = ta.selectionStart;
+            const char = btn.dataset.insert;
+            ta.value = ta.value.slice(0, pos) + char + ta.value.slice(ta.selectionEnd);
+            ta.selectionStart = ta.selectionEnd = pos + char.length;
+            ta.focus();
+            ta.dispatchEvent(new Event('input'));
+        } else if (dot && activeNoteRef.note) {
+            const c = dot.dataset.color;
+            const { note, data } = activeNoteRef;
+            data.color = c;
+            if (c && c !== 'default') {
+                note.setAttribute('data-note-color', c);
+            } else {
+                note.removeAttribute('data-note-color');
+                delete data.color;
+            }
+            document.querySelectorAll('#note-arrow-bar .bar-color-dot').forEach(d =>
+                d.classList.toggle('active', d.dataset.color === (c || 'default'))
+            );
+            save();
+        }
+    });
+
+    // Dev mode — activate with ?dev in URL
+    if (location.search.includes('dev')) {
+        document.body.classList.add('dev-mode');
+        const devBtn    = document.getElementById('dev-export-btn');
+        const devModal  = document.getElementById('dev-modal');
+        const devOutput = document.getElementById('dev-modal-output');
+        const devCopy   = document.getElementById('dev-modal-copy');
+        const devClose  = document.getElementById('dev-modal-close');
+
+        devBtn.addEventListener('click', () => {
+            const snapshot = notes.map(d => {
+                const el = document.getElementById(d.id);
+                const rect = el ? el.getBoundingClientRect() : null;
+                return {
+                    id: d.id,
+                    x: Math.round(d.x),
+                    y: Math.round(d.y),
+                    w: rect ? Math.round(rect.width) : d.w,
+                    text: d.text,
+                    ...(d.color && d.color !== 'default' ? { color: d.color } : {}),
+                };
+            });
+            devOutput.value = JSON.stringify(snapshot, null, 4);
+            devModal.classList.add('open');
+        });
+        devCopy.addEventListener('click', () => {
+            navigator.clipboard.writeText(devOutput.value);
+            devCopy.textContent = 'copied!';
+            setTimeout(() => devCopy.textContent = 'copy', 1500);
+        });
+        devClose.addEventListener('click', () => devModal.classList.remove('open'));
+        devModal.addEventListener('click', e => { if (e.target === devModal) devModal.classList.remove('open'); });
     }
 
     // City display click → open settings
