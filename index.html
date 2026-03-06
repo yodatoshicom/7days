@@ -787,45 +787,22 @@ body.note-font-sf-mono .note-content {
 }
 
 
-/* iOS-style 'Bean' resize handle — nested into bottom-right corner */
+/* SVG arc resize handle */
 .note-resize-handle {
     position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 28px;
-    height: 28px;
+    bottom: -5px;
+    right: -5px;
+    width: 38px;
+    height: 38px;
     cursor: nwse-resize;
     z-index: 10;
     opacity: 0;
-    background: rgba(0, 0, 0, 0.04);
-    /* The 'Bean' structure: 1/4 of a rounded rectangle nested in the corner */
-    border-radius: 20px 0 30px 0; /* 30px matches note corner radius */
-    transition: all 0.3s var(--sf-easing);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.note-resize-handle::after {
-    content: '';
-    width: 10px;
-    height: 10px;
-    border-right: 1.5px solid var(--text-color);
-    border-bottom: 1.5px solid var(--text-color);
-    border-radius: 0 0 3px 0;
-    opacity: 0.15;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s var(--sf-easing);
 }
 
 .note:hover .note-resize-handle { opacity: 1; }
 
-.note-resize-handle:hover {
-    background: rgba(0, 0, 0, 0.08);
-}
-
-.note-resize-handle:hover::after {
-    opacity: 0.4;
-}
+.note-resize-handle .rh-fill { }
 
 
 
@@ -1636,19 +1613,19 @@ body.note-font-sf-mono .note-content {
     top: 100%;
     transform: translateX(-50%);
     font-family: 'Inter', sans-serif;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--text-color);
-    opacity: 0.25;
-    padding-top: 12px;
+    opacity: 0.4;
+    padding-top: 10px;
     white-space: nowrap;
     transition: opacity 0.3s ease;
 }
 
 .season-name.current {
-    opacity: 0.7;
+    opacity: 0.8;
     color: #6366F1;
 }
 
@@ -1658,7 +1635,7 @@ body.note-font-sf-mono .note-content {
     top: 100%;
     width: 1px;
     height: 10px;
-    background: rgba(0, 0, 0, 0.35);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
     transform: translateX(-50%);
     z-index: 5;
 }
@@ -2205,6 +2182,11 @@ function createNote(data, autoFocus = false) {
         // ---- RESIZE HANDLE (bottom-right, iOS style) ----
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'note-resize-handle';
+        // SVG arc — quarter circle matching note's 30px border-radius, convex toward corner
+        // Arc: center at (4,4), radius 30, from (34,4) to (4,34), sweep clockwise
+        resizeHandle.innerHTML = `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="rh-fill" d="M 33.0,11.8 A 30,30 0 0,1 11.8,33.0" stroke="rgba(255,255,255,0.92)" stroke-width="7" stroke-linecap="round"/>
+        </svg>`;
         note.appendChild(resizeHandle);
 
         // ---- CLOSE BUTTON (top-right) ----
@@ -3088,6 +3070,15 @@ function createNote(data, autoFocus = false) {
             return { head: [P0, Q0, M], tail: [M, Q1, P2] };
         }
 
+        // ── Extract sub-segment [ta..tb] of a quadratic bezier ──
+        function bezierSeg(P0, P1, P2, ta, tb) {
+            if (ta <= 0 && tb >= 1) return [P0, P1, P2];
+            if (ta <= 0) return splitQ(P0, P1, P2, tb).head;
+            if (tb >= 1) return splitQ(P0, P1, P2, ta).tail;
+            const tail = splitQ(P0, P1, P2, ta).tail;
+            return splitQ(tail[0], tail[1], tail[2], (tb - ta) / (1 - ta)).head;
+        }
+
         // ── Arc guide SVG ──
         const bgSvg = document.createElementNS(NS, 'svg');
         bgSvg.id    = 'sun-arc-bg';
@@ -3151,16 +3142,18 @@ function createNote(data, autoFocus = false) {
 
         function createStars(width, height) {
             starGroup.innerHTML = '';
-            const count = 120;
+            const count = 130;
             for (let i = 0; i < count; i++) {
                 const star = document.createElementNS(NS, 'circle');
                 const x = Math.random() * width;
                 const y = Math.random() * height;
                 star.setAttribute('cx', x.toFixed(1));
                 star.setAttribute('cy', y.toFixed(1));
-                star.setAttribute('r', (Math.random() * 0.9 + 0.5).toFixed(1));
+                // Mix of faint background stars and a few prominent bright ones
+                const isBright = i < 8;
+                star.setAttribute('r', isBright ? (Math.random() * 0.8 + 1.2).toFixed(1) : (Math.random() * 0.8 + 0.4).toFixed(1));
                 star.setAttribute('fill', '#fff');
-                const op = (Math.random() * 0.6 + 0.2).toFixed(2);
+                const op = isBright ? (Math.random() * 0.35 + 0.6).toFixed(2) : (Math.random() * 0.5 + 0.15).toFixed(2);
                 star.setAttribute('opacity', op);
                 starGroup.appendChild(star);
             }
@@ -3178,27 +3171,24 @@ function createNote(data, autoFocus = false) {
         const tickGroup = document.createElementNS(NS, 'g');
         bgSvg.appendChild(tickGroup);
 
-        // Past path — solid, fades in from left
-        const pastPath = document.createElementNS(NS, 'path');
-        pastPath.setAttribute('fill', 'none');
-        pastPath.setAttribute('stroke', 'url(#sa-past)');
-        pastPath.setAttribute('stroke-width', '0.85');
-        pastPath.setAttribute('stroke-linecap', 'round');
+        // Glow layer (wide soft) + crisp layer for past and future wing arcs
+        function makeArcPath(stroke, strokeWidth, linecap) {
+            const p = document.createElementNS(NS, 'path');
+            p.setAttribute('fill', 'none');
+            p.setAttribute('stroke', stroke);
+            p.setAttribute('stroke-width', strokeWidth);
+            p.setAttribute('stroke-linecap', linecap || 'round');
+            return p;
+        }
+        const pastPath   = makeArcPath('url(#sa-past)',   '1.6', 'round');
+        const futurePath = makeArcPath('url(#sa-future)', '1.6', 'round');
         bgSvg.appendChild(pastPath);
-
-        // Future path — dashed, fades out to right
-        const futurePath = document.createElementNS(NS, 'path');
-        futurePath.setAttribute('fill', 'none');
-        futurePath.setAttribute('stroke', 'url(#sa-future)');
-        futurePath.setAttribute('stroke-width', '0.85');
-        futurePath.setAttribute('stroke-linecap', 'round');
-        futurePath.setAttribute('stroke-dasharray', '2 5');
         bgSvg.appendChild(futurePath);
 
         document.body.appendChild(bgSvg);
 
         // ── Sun & Moon icon ──
-        const SIZE = 24, C = SIZE / 2;
+        const SIZE = 28, C = SIZE / 2;
         const astroSvg = document.createElementNS(NS, 'svg');
         astroSvg.setAttribute('width', SIZE); astroSvg.setAttribute('height', SIZE);
         astroSvg.setAttribute('viewBox', `0 0 ${SIZE} ${SIZE}`);
@@ -3209,8 +3199,8 @@ function createNote(data, autoFocus = false) {
         const astroDefs = document.createElementNS(NS, 'defs');
         astroDefs.innerHTML = `
             <mask id="moon-mask">
-                <circle cx="${C}" cy="${C}" r="${C * 0.45}" fill="white" />
-                <circle cx="${C + 5}" cy="${C - 4}" r="${C * 0.45}" fill="black" />
+                <circle cx="${C}" cy="${C}" r="${C * 0.42}" fill="white" />
+                <circle cx="${(C + C * 0.38).toFixed(1)}" cy="${(C - C * 0.28).toFixed(1)}" r="${C * 0.42}" fill="black" />
             </mask>
         `;
         astroSvg.appendChild(astroDefs);
@@ -3223,12 +3213,12 @@ function createNote(data, autoFocus = false) {
 
         const core = document.createElementNS(NS, 'circle');
         core.setAttribute('cx', C); core.setAttribute('cy', C);
-        core.setAttribute('r', C * 0.45);
+        core.setAttribute('r', C * 0.42);
         astroSvg.appendChild(core);
 
         const rayGroup = document.createElementNS(NS, 'g');
         rayGroup.setAttribute('class', 'sa-rays');
-        const R1 = C * 0.44, R2 = C * 0.70;
+        const R1 = C * 0.44, R2 = C * 0.78;
         for (let i = 0; i < 8; i++) {
             const a   = (i * Math.PI / 4) - Math.PI / 2;
             const r2i = (i % 2 === 0) ? R2 : R2 * 0.88;
@@ -3335,33 +3325,39 @@ function createNote(data, autoFocus = false) {
                   P1 = { x: effW/2, y: 0         },
                   P2 = { x: effW,   y: H - LIFT  };
 
-            const DAY_COLORS = { dawn: [255, 88, 28], golden: [255, 150, 40], peak: [255, 215, 65] };
-            const NIGHT_COLORS = { dawn: [180, 180, 190], golden: [180, 180, 190], peak: [180, 180, 190] };
-            
+            const DAY_COLORS   = { dawn: [255, 88, 28],   golden: [255, 150, 40],  peak: [255, 215, 65]  };
+            const NIGHT_COLORS = { dawn: [130, 155, 210], golden: [175, 195, 232], peak: [212, 226, 248] };
+
             const C_set = type === 'sun' ? DAY_COLORS : NIGHT_COLORS;
             const color = arc < 0.3 ? lerpColor(C_set.dawn, C_set.golden, arc / 0.3) : lerpColor(C_set.golden, C_set.peak, (arc - 0.3) / 0.7);
             const colorStr = `rgb(${color})`;
 
-            const tPre  = Math.max(0.001, t - GAP);
-            const tPost = Math.min(0.999, t + GAP);
-            const { head: pastSeg }   = splitQ(P0, P1, P2, tPre);
-            const { tail: futureSeg } = splitQ(P0, P1, P2, tPost);
+            // Curved wing arcs — follow bezier, gap at icon, taper from thick→thin at tip
+            const WING  = 0.32; // length of each wing in t-space
+            const GAP_T = 0.038; // break around the icon
+            const tA      = Math.max(0.001, t - WING - GAP_T);
+            const tB      = Math.min(0.999, t + WING + GAP_T);
+            const tInnerL = Math.max(0.001, t - GAP_T);
+            const tInnerR = Math.min(0.999, t + GAP_T);
+            const qd = seg => `M ${f(seg[0].x)},${f(seg[0].y)} Q ${f(seg[1].x)},${f(seg[1].y)} ${f(seg[2].x)},${f(seg[2].y)}`;
+            pastPath.setAttribute('d',   qd(bezierSeg(P0, P1, P2, tA, tInnerL)));
+            futurePath.setAttribute('d', qd(bezierSeg(P0, P1, P2, tInnerR, tB)));
 
-            pastPath.setAttribute('d', `M ${f(pastSeg[0].x)},${f(pastSeg[0].y)} Q ${f(pastSeg[1].x)},${f(pastSeg[1].y)} ${f(pastSeg[2].x)},${f(pastSeg[2].y)}`);
-            futurePath.setAttribute('d', `M ${f(futureSeg[0].x)},${f(futureSeg[0].y)} Q ${f(futureSeg[1].x)},${f(futureSeg[1].y)} ${f(futureSeg[2].x)},${f(futureSeg[2].y)}`);
-
+            // Gradients: transparent at tip → opaque at sun-facing end
+            const maxOp = type === 'moon' ? 0.45 : 0.62;
             pastGrad.s0.setAttribute('stop-color', colorStr); pastGrad.s0.setAttribute('stop-opacity', '0');
-            pastGrad.s1.setAttribute('stop-color', colorStr); pastGrad.s1.setAttribute('stop-opacity', '0.32');
-            pastGrad.grad.setAttribute('x1', '0');          pastGrad.grad.setAttribute('x2', f(tPre * effW));
-            futureGrad.s0.setAttribute('stop-color', colorStr); futureGrad.s0.setAttribute('stop-opacity', '0.14');
+            pastGrad.s1.setAttribute('stop-color', colorStr); pastGrad.s1.setAttribute('stop-opacity', f(maxOp));
+            pastGrad.grad.setAttribute('x1', f(tA * effW));      pastGrad.grad.setAttribute('x2', f(tInnerL * effW));
+            futureGrad.s0.setAttribute('stop-color', colorStr); futureGrad.s0.setAttribute('stop-opacity', f(maxOp));
             futureGrad.s1.setAttribute('stop-color', colorStr); futureGrad.s1.setAttribute('stop-opacity', '0');
-            futureGrad.grad.setAttribute('x1', f(tPost * effW)); futureGrad.grad.setAttribute('x2', f(effW));
+            futureGrad.grad.setAttribute('x1', f(tInnerR * effW)); futureGrad.grad.setAttribute('x2', f(tB * effW));
 
             bgSvg.style.opacity = '1';
             const domeBottom = H + 6;
             domeGrad.setAttribute('y1', '0'); domeGrad.setAttribute('y2', f(H - LIFT));
             domeS0.setAttribute('stop-color', colorStr);
-            domeS0.setAttribute('stop-opacity', f(0.035 + arc * 0.045));
+            // Night dome slightly more atmospheric; day keeps a soft amber wash
+            domeS0.setAttribute('stop-opacity', f(type === 'moon' ? 0.05 + arc * 0.06 : 0.035 + arc * 0.045));
             const dPath = `M ${f(P0.x)},${f(P0.y)} Q ${f(P1.x)},${f(P1.y)} ${f(P2.x)},${f(P2.y)} L ${f(P2.x)},${domeBottom} L ${f(P0.x)},${domeBottom} Z`;
             domePath.setAttribute('d', dPath);
             if (starClipPath) starClipPath.setAttribute('d', dPath);
@@ -3370,24 +3366,22 @@ function createNote(data, autoFocus = false) {
                 rayGroup.style.display = 'block';
                 core.removeAttribute('mask');
                 halo.style.display = 'block';
-                halo.setAttribute('r', (SIZE/2) * 0.60);
+                halo.setAttribute('r', (SIZE/2) * 0.52);
+                halo.setAttribute('opacity', '0.12');
             } else {
                 rayGroup.style.display = 'none';
                 core.setAttribute('mask', 'url(#moon-mask)');
-                halo.style.display = 'none';
+                // Soft silver-blue halo around the moon
+                halo.style.display = 'block';
+                halo.setAttribute('r', (SIZE/2) * 0.80);
+                halo.setAttribute('opacity', '0.18');
             }
 
             const x  = dr.left + INSET + t * effW;
             const By = (H - LIFT) * (1 - 2 * t * (1 - t));
             const y  = (dr.top - H - 4) + By;
 
-            const glowSize = 90 + arc * 70;
-            skyGlow.style.left   = x + 'px';
-            skyGlow.style.top    = y + 'px';
-            skyGlow.style.width  = glowSize + 'px';
-            skyGlow.style.height = glowSize + 'px';
-            skyGlow.style.background = `radial-gradient(circle, rgba(${color},${(0.07 + arc*0.07).toFixed(2)}) 0%, transparent 70%)`;
-            skyGlow.style.opacity = '1';
+            skyGlow.style.opacity = '0';
 
             horizGlow.style.left    = x + 'px';
             horizGlow.style.top     = dr.top + 'px';
@@ -3400,12 +3394,12 @@ function createNote(data, autoFocus = false) {
             core.setAttribute('fill', colorStr);
             astroSvg.querySelectorAll('line').forEach(l => l.setAttribute('stroke', colorStr));
 
-            const ga = (0.5 + arc * 0.3).toFixed(2);
-            const scale = (0.74 + 0.26 * arc).toFixed(3);
+            const ga = (0.52 + arc * 0.3).toFixed(2);
+            const scale = (0.76 + 0.24 * arc).toFixed(3);
             if (!animate) { astroEl.style.transition = 'none'; }
             astroEl.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%,-50%) scale(${scale})`;
-            astroEl.style.filter    = `drop-shadow(0 0 ${(6 + arc * 10).toFixed(1)}px rgba(${color},${ga}))`;
-            astroEl.style.opacity   = (0.55 + arc * 0.45).toFixed(2);
+            astroEl.style.filter    = `drop-shadow(0 0 ${(type === 'moon' ? 5 + arc * 8 : 6 + arc * 12).toFixed(1)}px rgba(${color},${ga}))`;
+            astroEl.style.opacity   = (0.6 + arc * 0.4).toFixed(2);
             if (!animate) requestAnimationFrame(() => { astroEl.style.transition = ''; });
         }
 
