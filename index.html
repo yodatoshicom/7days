@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>weekDash — Weekly Planner & Calendar</title>
-<meta name="description" content="A beautiful minimal weekly planner and web calendar. See your week at a glance, track the weather, write sticky notes, and stay focused. Free, no account needed.">
+<meta name="description" content="weekDash is a free browser-based weekly planner. It shows your current week, a 7-day weather forecast, and lets you create sticky notes — no account, no install, no backend required.">
 <meta name="author" content="weekDash">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#ffffff">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://weekdash.com/">
 <meta property="og:title" content="weekDash — Weekly Planner & Calendar">
-<meta property="og:description" content="A beautiful minimal weekly planner and web calendar. See your week at a glance, track the weather, write notes, and stay focused.">
+<meta property="og:description" content="Free browser-based weekly planner with 7-day weather, sticky notes, and a year progress bar. No account or install needed.">
 <meta property="og:image" content="https://weekdash.com/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -24,7 +24,7 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="weekDash — Weekly Planner & Calendar">
-<meta name="twitter:description" content="A beautiful minimal weekly planner and web calendar. Free, no account needed.">
+<meta name="twitter:description" content="Free browser-based weekly planner with weather, sticky notes, and year progress bar. No account needed.">
 <meta name="twitter:image" content="https://weekdash.com/og.png">
 
 <!-- Structured data -->
@@ -33,13 +33,28 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "weekDash",
+  "alternateName": "weekdash",
   "url": "https://weekdash.com/",
-  "description": "A minimal weekly planner and web calendar with weather forecast, sticky notes, and a clean week view.",
+  "sameAs": "https://yodatoshii.github.io/7days/",
+  "description": "weekDash is a free, minimal weekly planner that runs entirely in the browser. It shows the current week as a calendar, fetches a 7-day weather forecast via Open-Meteo, and lets users create sticky notes and image notes that are saved in localStorage. No account, no install, and no backend required.",
   "applicationCategory": "ProductivityApplication",
-  "operatingSystem": "Any",
-  "browserRequirements": "Requires a modern desktop browser",
-  "featureList": ["7-day weather forecast", "Sticky notes", "Weekly calendar view", "Year progress bar", "Multi-language support"],
+  "applicationSubCategory": "Calendar",
+  "operatingSystem": "Web",
+  "browserRequirements": "Requires a modern desktop browser with JavaScript enabled",
+  "featureList": [
+    "Weekly calendar view with today highlighted",
+    "7-day weather forecast with automatic location detection",
+    "Celsius and Fahrenheit temperature toggle",
+    "Sticky notes: create, drag, resize, and color",
+    "Image notes via drag-and-drop",
+    "Year progress bar with month and season labels",
+    "Sun and moon arc showing daylight position",
+    "Multiple visual themes and font options",
+    "Multi-language support: English, Spanish, Portuguese",
+    "All data stored locally in localStorage"
+  ],
   "inLanguage": ["en", "es", "pt"],
+  "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
 </script>

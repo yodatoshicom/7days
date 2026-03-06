@@ -1,0 +1,39 @@
+# weekDash
+
+> weekDash is a free, minimal weekly planner that runs entirely in the browser. No account, no install, no backend — just open the URL and start using it.
+
+## What it does
+
+weekDash shows your current week as a clean calendar dock. Today is always highlighted. You can navigate forward and backward by week to plan ahead or review the past. A year progress bar shows how far through the year you are, with seasons and months marked.
+
+The app fetches a 7-day weather forecast automatically based on your location using the Open-Meteo API (no API key required). It detects your city via IP geolocation and caches the result locally. You can override the location manually in settings.
+
+You can create sticky notes by double-clicking anywhere on the page. Notes can be dragged, resized, colored, and edited inline. Images can be dropped onto the page and become pinned image notes. All notes are saved in localStorage — nothing leaves your browser.
+
+## Features
+
+- Weekly calendar view with today highlighted and week navigation
+- 7-day weather forecast with temperature, wind, and conditions
+- Automatic location detection with manual city override
+- Celsius / Fahrenheit toggle
+- Sticky notes: create by double-clicking, drag to reposition, resize, choose colors
+- Image notes: drag any image from your desktop onto the page
+- Year progress bar with month labels and season markers
+- Multiple visual themes and font options
+- Multi-language support: English, Spanish, Portuguese
+- Sun and moon arc showing daylight and position throughout the day
+- Everything stored in localStorage — no account, no server, no tracking
+
+## Technical details
+
+- Single HTML file app — no framework, no build step, no dependencies
+- Vanilla JavaScript and CSS only
+- Data persisted in localStorage
+- Weather from Open-Meteo (free, no key)
+- Location from ipapi.co with ipwho.is as fallback
+- Works on any modern desktop browser
+
+## Links
+
+- App: https://yodatoshii.github.io/7days/
+- Source: https://github.com/yodatoshii/7days
