@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>weekDash — Weekly Planner & Calendar</title>
-<meta name="description" content="A beautiful minimal weekly planner and web calendar. See your week at a glance, track the weather, write notes, and stay focused. Free, no account needed.">
-<meta name="keywords" content="weekly planner, web calendar, week view, daily planner, online planner, sticky notes, weather forecast, minimal calendar, productivity, schedule">
+<meta name="description" content="A beautiful minimal weekly planner and web calendar. See your week at a glance, track the weather, write sticky notes, and stay focused. Free, no account needed.">
 <meta name="author" content="weekDash">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://weekdash.com/">
 
 <!-- Open Graph -->
@@ -14,13 +15,17 @@
 <meta property="og:url" content="https://weekdash.com/">
 <meta property="og:title" content="weekDash — Weekly Planner & Calendar">
 <meta property="og:description" content="A beautiful minimal weekly planner and web calendar. See your week at a glance, track the weather, write notes, and stay focused.">
-<meta property="og:image" content="https://weekdash.com/favicon.png">
+<meta property="og:image" content="https://weekdash.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="weekDash">
+<meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="weekDash — Weekly Planner & Calendar">
 <meta name="twitter:description" content="A beautiful minimal weekly planner and web calendar. Free, no account needed.">
-<meta name="twitter:image" content="https://weekdash.com/favicon.png">
+<meta name="twitter:image" content="https://weekdash.com/og.png">
 
 <!-- Structured data -->
 <script type="application/ld+json">
@@ -32,11 +37,16 @@
   "description": "A minimal weekly planner and web calendar with weather forecast, sticky notes, and a clean week view.",
   "applicationCategory": "ProductivityApplication",
   "operatingSystem": "Any",
+  "browserRequirements": "Requires a modern desktop browser",
+  "featureList": ["7-day weather forecast", "Sticky notes", "Weekly calendar view", "Year progress bar", "Multi-language support"],
+  "inLanguage": ["en", "es", "pt"],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
 }
 </script>
 
 <link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link rel="manifest" href="manifest.json">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2098,6 +2108,7 @@ body.note-font-sf-mono .note-content {
     function applyLang(newLang) {
         lang = newLang;
         localStorage.setItem('aura_lang', lang);
+        document.documentElement.lang = lang;
 
         // Update picker buttons
         document.querySelectorAll('#lang-picker .settings-toggle-btn').forEach(b => {

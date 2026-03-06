@@ -1,0 +1,18 @@
+{
+  "name": "weekDash",
+  "short_name": "weekDash",
+  "description": "A minimal weekly planner with weather, sticky notes, and a clean week view.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f0f0",
+  "theme_color": "#ffffff",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["productivity", "lifestyle"]
+}
