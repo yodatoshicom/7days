@@ -404,6 +404,7 @@ body.ready {
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    margin-top: 130px;
 }
 
 .dock-row {
@@ -643,7 +644,7 @@ body.ready {
 
 .bottom-controls {
     position: fixed;
-    bottom: 30px;
+    bottom: 6px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
@@ -668,7 +669,7 @@ body.ready {
 
 .city-tooltip {
     position: fixed;
-    bottom: 30px;
+    bottom: 6px;
     right: 30px;
     font-size: 10px;
     font-weight: 700;
@@ -799,6 +800,9 @@ body.ready {
     font-size: var(--note-size);
     line-height: 1.1;
     outline: none;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: normal;
 }
 body.note-font-sf-mono .note-content {
     font-size: calc(var(--note-size) * 0.72);
@@ -1637,7 +1641,7 @@ body.dev-mode .dev-export-btn { display: block; }
 /* ── Time Capsule ── */
 .capsule {
     position: fixed;
-    bottom: 30px;
+    bottom: 6px;
     left: 30px;
     z-index: 9999;
     display: flex;
@@ -1727,7 +1731,7 @@ body.dev-mode .dev-export-btn { display: block; }
 /* Year progress bar — Clean Data Rail */
 .year-bar-wrapper {
     position: fixed;
-    bottom: 24px;
+    bottom: 6px;
     left: 50%;
     transform: translateX(-50%);
     width: 88%;
@@ -2154,10 +2158,10 @@ body.dev-mode .dev-export-btn { display: block; }
     // First time — seed hint notes
     if (notes.length === 0) {
         notes = [
-            { id: 'n_s1', x: 56,   y: 18,  w: 192, text: 'this week\n— finish the landing page\n— reply to Jonas re: collab\n— gym mon · wed · fri\n— read before sleep\n— call mom (overdue)', zIndex: 100 },
-            { id: 'n_s2', x: 314,  y: 53,  w: 231, text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8',                                                   color: 'mint',   zIndex: 101 },
+            { id: 'n_s1', x: 56,   y: 18,  w: 278, text: 'this week\n— finish the landing page\n— reply to Jonas re: collab\n— gym mon · wed · fri\n— read before sleep\n— call mom (overdue)', zIndex: 100 },
+            { id: 'n_s2', x: 316,  y: 44,  w: 268, text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8',                                                   color: 'mint',   zIndex: 101 },
             { id: 'n_s4', x: 1009, y: 37,  w: 150, text: 'book flights\n↗ tokyo, april\nbefore prices jump',                                                                   color: 'yellow', zIndex: 102 },
-            { id: 'n_s5', x: 708,  y: 160, w: 218, text: 'ship it.\ndon\'t wait.',                                                                                             color: 'blue',   zIndex: 103 },
+            { id: 'n_s5', x: 699,  y: 240, w: 205, text: 'ship it. don\'t wait.',                                                                                              color: 'blue',   zIndex: 103 },
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
@@ -2816,6 +2820,11 @@ function createNote(data, autoFocus = false) {
             e.preventDefault();
             document.body.classList.toggle('screenshot-mode');
         }
+        // Shift+F — dev mode
+        if (e.shiftKey && e.key.toLowerCase() === 'f') {
+            e.preventDefault();
+            document.body.classList.toggle('dev-mode');
+        }
     });
 
 
@@ -2879,39 +2888,39 @@ function createNote(data, autoFocus = false) {
         }
     });
 
-    // Dev mode — activate with ?dev in URL
+    // Dev mode — activate with ?dev in URL or Shift+F
     if (location.search.includes('dev')) {
         document.body.classList.add('dev-mode');
-        const devBtn    = document.getElementById('dev-export-btn');
-        const devModal  = document.getElementById('dev-modal');
-        const devOutput = document.getElementById('dev-modal-output');
-        const devCopy   = document.getElementById('dev-modal-copy');
-        const devClose  = document.getElementById('dev-modal-close');
-
-        devBtn.addEventListener('click', () => {
-            const snapshot = notes.map(d => {
-                const el = document.getElementById(d.id);
-                const rect = el ? el.getBoundingClientRect() : null;
-                return {
-                    id: d.id,
-                    x: Math.round(d.x),
-                    y: Math.round(d.y),
-                    w: rect ? Math.round(rect.width) : d.w,
-                    text: d.text,
-                    ...(d.color && d.color !== 'default' ? { color: d.color } : {}),
-                };
-            });
-            devOutput.value = JSON.stringify(snapshot, null, 4);
-            devModal.classList.add('open');
-        });
-        devCopy.addEventListener('click', () => {
-            navigator.clipboard.writeText(devOutput.value);
-            devCopy.textContent = 'copied!';
-            setTimeout(() => devCopy.textContent = 'copy', 1500);
-        });
-        devClose.addEventListener('click', () => devModal.classList.remove('open'));
-        devModal.addEventListener('click', e => { if (e.target === devModal) devModal.classList.remove('open'); });
     }
+    const devBtn    = document.getElementById('dev-export-btn');
+    const devModal  = document.getElementById('dev-modal');
+    const devOutput = document.getElementById('dev-modal-output');
+    const devCopy   = document.getElementById('dev-modal-copy');
+    const devClose  = document.getElementById('dev-modal-close');
+
+    devBtn.addEventListener('click', () => {
+        const snapshot = notes.map(d => {
+            const el = document.getElementById(d.id);
+            const rect = el ? el.getBoundingClientRect() : null;
+            return {
+                id: d.id,
+                x: Math.round(d.x),
+                y: Math.round(d.y),
+                w: rect ? Math.round(rect.width) : d.w,
+                text: d.text,
+                ...(d.color && d.color !== 'default' ? { color: d.color } : {}),
+            };
+        });
+        devOutput.value = JSON.stringify(snapshot, null, 4);
+        devModal.classList.add('open');
+    });
+    devCopy.addEventListener('click', () => {
+        navigator.clipboard.writeText(devOutput.value);
+        devCopy.textContent = 'copied!';
+        setTimeout(() => devCopy.textContent = 'copy', 1500);
+    });
+    devClose.addEventListener('click', () => devModal.classList.remove('open'));
+    devModal.addEventListener('click', e => { if (e.target === devModal) devModal.classList.remove('open'); });
 
     // City display click → open settings
     document.getElementById('city-display').addEventListener('mousedown', (e) => {
@@ -3595,6 +3604,7 @@ function createNote(data, autoFocus = false) {
 
         function createStars(width, height) {
             starGroup.innerHTML = '';
+            return; // No stars
             const count = 130;
             for (let i = 0; i < count; i++) {
                 const star = document.createElementNS(NS, 'circle');
@@ -3825,7 +3835,7 @@ function createNote(data, autoFocus = false) {
                 rayGroup.style.display = 'none';
                 core.setAttribute('mask', 'url(#moon-mask)');
                 // Soft silver-blue halo around the moon
-                halo.style.display = 'block';
+                halo.style.display = 'none';
                 halo.setAttribute('r', (SIZE/2) * 0.80);
                 halo.setAttribute('opacity', '0.18');
             }
