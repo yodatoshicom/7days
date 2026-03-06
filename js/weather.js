@@ -253,6 +253,7 @@ function renderWeather(daily) {
     // Expose today's sunrise/sunset for the time ruler
     if (daily.sunrise && daily.sunset) {
         window.todaySunTimes = { rise: daily.sunrise[0], set: daily.sunset[0] };
+        window.allSunTimes = { sunrise: daily.sunrise, sunset: daily.sunset };
         if (typeof drawSunriseSunset === 'function') drawSunriseSunset();
     }
     daily.time.forEach((day, i) => {
