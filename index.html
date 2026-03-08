@@ -2022,18 +2022,21 @@ body.dev-mode .dev-export-btn { display: block; }
     #desktop-only { display: none !important; }
 
     .dock-row {
-        padding: 0 20px;
+        max-width: calc(100vw - 40px);
     }
     .dock-container {
         padding: 7px;
         gap: 2px;
         border-radius: 24px;
+        flex-shrink: 1;
+        min-width: 0;
     }
-    .dock-nav { padding: 3px; }
+    .dock-nav { padding: 3px; flex-shrink: 0; }
     .day-card {
-        width: 42px;
+        width: 38px;
         height: 60px;
-        border-radius: 22px;
+        border-radius: 20px;
+        flex-shrink: 1;
     }
     .day-card:hover { transform: none; }
     .day-name { font-size: 9px; }
