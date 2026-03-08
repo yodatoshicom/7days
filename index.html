@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Year Progress Dashboard</title>
 <meta name="description" content="Day planning dashboard, plans, sticky notes, and 7 days weather forecast.">
 <meta name="author" content="Year Progress Dashboard">
@@ -2003,22 +2003,64 @@ body.dev-mode .dev-export-btn { display: block; }
     pointer-events: none;
 }
 
-/* ── Mobile base ── */
-@media (max-width: 768px) {
-    body > *:not(#desktop-only) { display: none !important; }
-    #desktop-only {
-        display: flex !important;
-        position: fixed;
-        inset: 0;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Inter', system-ui, sans-serif;
-        font-size: 13px;
-        font-weight: 500;
-        color: rgba(0,0,0,0.35);
-        letter-spacing: 0.02em;
-        pointer-events: none;
+/* ── Safe area insets for fixed bottom elements ── */
+.bottom-controls {
+    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
+}
+.city-tooltip {
+    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
+}
+.note-arrow-bar {
+    bottom: max(28px, calc(28px + env(safe-area-inset-bottom)));
+}
+.note-edit-tip {
+    bottom: max(86px, calc(86px + env(safe-area-inset-bottom)));
+}
+
+/* ── Phone layout (≤ 500px) ── */
+@media (max-width: 500px) {
+    #desktop-only { display: none !important; }
+
+    .dock-container {
+        padding: 7px;
+        gap: 2px;
+        border-radius: 24px;
     }
+    .dock-nav { padding: 3px; }
+    .day-card {
+        width: 42px;
+        height: 60px;
+        border-radius: 22px;
+    }
+    .day-card:hover { transform: none; }
+    .day-name { font-size: 9px; }
+    .day-number { font-size: 20px; }
+    .weather-icon { font-size: 11px; }
+    .weather-temp { font-size: 9px; }
+    .day-separator { height: 28px; }
+    .day-main-row { gap: 2px; }
+    .day-weather { gap: 0; }
+
+    .year-progress-label { font-size: 11px; }
+
+    .time-ruler { margin-bottom: -10px; }
+    .time-ruler-now-label { font-size: 10px; padding: 2px 8px; }
+
+    .settings-panel {
+        right: 8px;
+        left: 8px;
+        width: auto;
+        top: 58px;
+    }
+
+    .weather-tooltip { font-size: 22px; }
+
+    /* notes: disable drag on mobile, keep them scrollable */
+    .note { cursor: default; max-width: calc(100vw - 32px); }
+    .note-resize-handle { display: none; }
+
+    /* style bar and tip: account for keyboard */
+    .note-arrow-bar { max-width: calc(100vw - 32px); }
 }
 </style>
 </head>
