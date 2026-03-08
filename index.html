@@ -841,6 +841,24 @@ body.note-font-sf-mono .note-edit-ta {
     font-size: calc(var(--note-size) * 0.72);
 }
 
+.note-edit-tip {
+    position: fixed;
+    bottom: 86px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-color);
+    opacity: 0.3;
+    pointer-events: none;
+    user-select: none;
+    z-index: 3000;
+    white-space: nowrap;
+}
+
 .note-content a {
     color: var(--accent-color);
     text-decoration: none;
@@ -917,9 +935,13 @@ body.screenshot-mode .dock-wrapper {
 }
 body.note-editing-mode .note-edit-overlay { opacity: 1; }
 body.note-editing-mode .note.editing { z-index: 2000 !important; }
+body.note-editing-mode .note:not(.editing) { z-index: 50 !important; }
 
 .note-arrow-bar {
     position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -933,13 +955,12 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
     box-shadow: 0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5);
     opacity: 0;
     pointer-events: none;
-    transform: translateY(6px);
     transition: opacity 0.2s ease, transform 0.25s var(--spring-easing);
 }
 body.note-editing-mode .note-arrow-bar {
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0px);
 }
 .note-arrow-btn {
     width: 34px;
@@ -2676,8 +2697,6 @@ function createNote(data, autoFocus = false) {
             e.stopPropagation();
             note.classList.add('editing');
             document.body.classList.add('note-editing-mode');
-            document.querySelectorAll('.note').forEach(n => { if (n !== note) n.style.opacity = '0'; });
-            requestAnimationFrame(() => positionArrowBar(note));
             activeNoteRef = { note, data };
             const activeColor = data.color || 'default';
             document.querySelectorAll('#note-arrow-bar .bar-color-dot').forEach(d =>
@@ -2691,6 +2710,16 @@ function createNote(data, autoFocus = false) {
             ta.spellcheck = false;
             content.style.display = 'none';
             note.insertBefore(ta, content);
+
+            // Tip shown only on new (empty) notes
+            let tipEl = null;
+            if (!data.text) {
+                tipEl = document.createElement('div');
+                tipEl.className = 'note-edit-tip';
+                tipEl.textContent = 'shift + enter for new line';
+                document.body.appendChild(tipEl);
+                ta.addEventListener('input', () => { if (tipEl) { tipEl.remove(); tipEl = null; } }, { once: true });
+            }
 
             // Mirror div to measure natural text width (longest line)
             const mirror = document.createElement('div');
@@ -2738,22 +2767,31 @@ function createNote(data, autoFocus = false) {
             ta.onkeydown = (e) => {
                 if (e.key === 'Escape') { e.preventDefault(); ta.blur(); return; }
                 if (e.key === 'Enter') {
-                    const listMode = ta.value.trimStart().startsWith('→');
-                    if (listMode) {
+                    if (e.shiftKey) {
+                        // Shift+Enter: new line (with list continuation)
+                        const listMode = ta.value.trimStart().startsWith('→');
+                        if (listMode) {
+                            e.preventDefault();
+                            const pos = ta.selectionStart;
+                            const currentLine = ta.value.slice(0, pos).split('\n').pop();
+                            const prefix = currentLine.match(/^(→\s*)/) ? currentLine.match(/^(→\s*)/)[1] : '→ ';
+                            const insert = '\n' + prefix;
+                            ta.value = ta.value.slice(0, pos) + insert + ta.value.slice(ta.selectionEnd);
+                            ta.selectionStart = ta.selectionEnd = pos + insert.length;
+                            taResize();
+                        }
+                        // non-list shift+enter: browser default (inserts newline)
+                    } else {
+                        // Enter alone: finish editing
                         e.preventDefault();
-                        const pos = ta.selectionStart;
-                        const currentLine = ta.value.slice(0, pos).split('\n').pop();
-                        const prefix = currentLine.match(/^(→\s*)/) ? currentLine.match(/^(→\s*)/)[1] : '→ ';
-                        const insert = '\n' + prefix;
-                        ta.value = ta.value.slice(0, pos) + insert + ta.value.slice(ta.selectionEnd);
-                        ta.selectionStart = ta.selectionEnd = pos + insert.length;
-                        taResize();
+                        ta.blur();
                     }
                 }
             };
 
             ta.onblur = () => {
                 mirror.remove();
+                if (tipEl) { tipEl.remove(); tipEl = null; }
                 if (data._deleted) {
                     document.body.classList.remove('note-editing-mode');
                     activeNoteRef = { note: null, data: null };
