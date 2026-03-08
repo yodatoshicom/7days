@@ -400,11 +400,11 @@ body.ready {
 
 /* THE PRO STUDIO DOCK */
 .dock-wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    margin-top: 130px;
 }
 
 .dock-row {
@@ -467,7 +467,7 @@ body.ready {
 }
 
 .day-card {
-    width: 68px;
+    width: 74px;
     height: 76px;
     display: flex;
     flex-direction: column;
@@ -548,12 +548,24 @@ body.ready {
     color: var(--bg-color);
 }
 
-/* WEATHER ROW */
-.weather-row { 
-    display: flex; 
-    gap: 0; 
-    padding: 0; 
-    pointer-events: none; 
+.day-card.active .day-weather { opacity: 0.75; }
+
+/* WEATHER ROW — hidden, weather now lives inside day cards */
+.weather-row { display: none; }
+
+/* Inline weather inside day cards */
+.day-main-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.day-weather {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.65;
+    pointer-events: auto;
+    cursor: pointer;
 }
 
 .weather-day {
@@ -584,15 +596,11 @@ body.ready {
     background: rgba(29, 29, 31, 0.12);
 }
 
-.weather-icon { 
-    font-size: 18px; 
-    margin-bottom: 2px; 
-    position: relative; 
-    z-index: 1; 
-    text-shadow: 
-        0 0 20px rgba(255, 255, 255, 0.8),
-        0 0 30px rgba(255, 255, 255, 0.6),
-        0 0 40px rgba(255, 255, 255, 0.4);
+.weather-icon {
+    font-size: 14px;
+    margin-bottom: 1px;
+    position: relative;
+    z-index: 1;
 }
 
 .weather-temp { 
@@ -622,7 +630,6 @@ body.ready {
 
 .weather-tooltip {
     position: fixed;
-    bottom: 72px;
     left: 50%;
     transform: translateX(-50%);
     font-family: 'Caveat', cursive;
@@ -644,7 +651,7 @@ body.ready {
 
 .bottom-controls {
     position: fixed;
-    bottom: 6px;
+    bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
@@ -669,7 +676,7 @@ body.ready {
 
 .city-tooltip {
     position: fixed;
-    bottom: 6px;
+    bottom: 16px;
     right: 30px;
     font-size: 10px;
     font-weight: 700;
@@ -710,7 +717,7 @@ body.ready {
 }
 
 .note:active:not(:has(.note-resize-handle:active)) {
-    transform: scale(0.88);
+    transform: none;
 }
 
 .note.dragging {
@@ -893,7 +900,6 @@ body.screenshot-mode .note-arrow-bar {
     transition: opacity 0.3s ease !important;
 }
 body.screenshot-mode .dock-wrapper {
-    position: relative;
     z-index: 1200;
 }
 
@@ -914,9 +920,6 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
 
 .note-arrow-bar {
     position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%) translateY(12px);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -930,12 +933,13 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
     box-shadow: 0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5);
     opacity: 0;
     pointer-events: none;
+    transform: translateY(6px);
     transition: opacity 0.2s ease, transform 0.25s var(--spring-easing);
 }
 body.note-editing-mode .note-arrow-bar {
     opacity: 1;
     pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
 }
 .note-arrow-btn {
     width: 34px;
@@ -1399,6 +1403,7 @@ body.dev-mode .dev-export-btn { display: block; }
 
 /* Bottom watermark — Alcove-style fading text */
 .bottom-watermark {
+    display: none;
     position: fixed;
     bottom: -0.12em;
     left: 50%;
@@ -1641,7 +1646,7 @@ body.dev-mode .dev-export-btn { display: block; }
 /* ── Time Capsule ── */
 .capsule {
     position: fixed;
-    bottom: 6px;
+    bottom: 16px;
     left: 30px;
     z-index: 9999;
     display: flex;
@@ -1960,6 +1965,23 @@ body.dev-mode .dev-export-btn { display: block; }
 }
 
 
+/* Year Progress label under dock */
+.year-progress-label {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-color);
+    opacity: 0.4;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+}
+
 /* ── Mobile base ── */
 @media (max-width: 768px) {
     body > *:not(#desktop-only) { display: none !important; }
@@ -2158,10 +2180,9 @@ body.dev-mode .dev-export-btn { display: block; }
     // First time — seed hint notes
     if (notes.length === 0) {
         notes = [
-            { id: 'n_s1', x: 56,   y: 18,  text: 'this week\n— finish the landing page\n— reply to Jonas re: collab\n— gym mon · wed · fri\n— read before sleep\n— call mom (overdue)', zIndex: 100 },
-            { id: 'n_s2', x: 316,  y: 44,  text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8',                                                            color: 'mint',   zIndex: 101 },
-            { id: 'n_s4', x: 1009, y: 37,  text: 'book flights\n↗ tokyo, april\nbefore prices jump',                                                                            color: 'yellow', zIndex: 102 },
-            { id: 'n_s5', x: 699,  y: 240, text: 'ship it. don\'t wait.',                                                                                                       color: 'blue',   zIndex: 103 },
+            { id: 'n_s2', x: 40,  y: 38,  w: 260, text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8', color: 'mint',  zIndex: 100 },
+            { id: 'n_s4', x: 175, y: 235, w: 223, text: 'book flights\n↗ tokyo, april\nbefore prices jump',                 color: 'pink',  zIndex: 101 },
+            { id: 'n_s5', x: 712, y: 213, w: 224, text: 'ship it. don\'t wait.',                                            color: 'blue',  zIndex: 102 },
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
@@ -2213,7 +2234,10 @@ body.dev-mode .dev-export-btn { display: block; }
             card.dataset.date = dateStr;
             card.innerHTML = `
                 <span class="day-name">${(dayNames[lang] || dayNames['en'])[date.getDay()]}</span>
-                <span class="day-number">${date.getDate()}</span>
+                <div class="day-main-row">
+                    <span class="day-number">${date.getDate()}</span>
+                    <div class="day-weather" id="dw-${dateStr}"></div>
+                </div>
             `;
             if (!isPast) {
                 card.addEventListener('click', () => openDayNotePopup(card, dateStr));
@@ -2236,6 +2260,7 @@ body.dev-mode .dev-export-btn { display: block; }
         }
 
         renderDayNoteDots();
+        if (window.populateDockWeather) window.populateDockWeather();
     }
 
     document.getElementById('dock-prev').addEventListener('click', () => {
@@ -2437,6 +2462,28 @@ body.dev-mode .dev-export-btn { display: block; }
         return null;
     }
 
+    function positionArrowBar(noteEl) {
+        const bar = document.getElementById('note-arrow-bar');
+        const noteRect = noteEl.getBoundingClientRect();
+        const barW = bar.offsetWidth || 300;
+        const barH = bar.offsetHeight || 50;
+        const gap = 10;
+        const vp = { w: window.innerWidth, h: window.innerHeight };
+
+        // Horizontal: center on note, clamped to viewport
+        let left = noteRect.left + noteRect.width / 2 - barW / 2;
+        left = Math.max(8, Math.min(left, vp.w - barW - 8));
+
+        // Vertical: below if space, else above
+        const spaceBelow = vp.h - noteRect.bottom - gap;
+        const top = spaceBelow >= barH
+            ? noteRect.bottom + gap
+            : noteRect.top - gap - barH;
+
+        bar.style.left = left + 'px';
+        bar.style.top  = Math.max(8, top) + 'px';
+    }
+
 function createNote(data, autoFocus = false) {
         const note = document.createElement('div');
         note.className = 'note';
@@ -2630,6 +2677,7 @@ function createNote(data, autoFocus = false) {
             note.classList.add('editing');
             document.body.classList.add('note-editing-mode');
             document.querySelectorAll('.note').forEach(n => { if (n !== note) n.style.opacity = '0'; });
+            requestAnimationFrame(() => positionArrowBar(note));
             activeNoteRef = { note, data };
             const activeColor = data.color || 'default';
             document.querySelectorAll('#note-arrow-bar .bar-color-dot').forEach(d =>
@@ -3348,161 +3396,37 @@ function createNote(data, autoFocus = false) {
         if (!e.target.closest('.search-container')) closeSearch();
     });
 
-    // Year progress bar — Clean Data Rail
+    // ── Year Progress pinned note ──
     (function() {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'year-bar-wrapper';
-        wrapper.innerHTML = `
-            <div class="year-bar-year" id="year-bar-year"></div>
-            <div class="year-bar" id="year-bar-rail">
-                <div class="year-bar-fill" id="year-bar-fill"></div>
-            </div>
-            <div class="year-bar-pct" id="year-bar-pct"></div>
-        `;
-        document.body.appendChild(wrapper);
-
-        const rail = document.getElementById('year-bar-rail');
-
-        // Year & Date system
-        const now = new Date();
-        const yr = now.getFullYear();
-        const yStart = new Date(yr, 0, 1), yEnd = new Date(yr + 1, 0, 1), ySpan = yEnd - yStart;
-
-        // --- Months & Days ---
-        const MONTH_NAMES = {
-            en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-            es: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-            pt: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
-        };
-        const SEASON_NAMES = {
-            en: { winter: 'winter', spring: 'spring', summer: 'summer', fall: 'fall' },
-            es: { winter: 'invierno', spring: 'primavera', summer: 'verano', fall: 'otoño' },
-            pt: { winter: 'inverno', spring: 'primavera', summer: 'verão', fall: 'outono' },
-        };
-
-        window.updateYearBarLang = function() {
-            const l = localStorage.getItem('aura_lang') || 'en';
-            const mn = MONTH_NAMES[l] || MONTH_NAMES.en;
-            const sn = SEASON_NAMES[l] || SEASON_NAMES.en;
-            rail.querySelectorAll('.month-name').forEach(el => {
-                el.textContent = mn[+el.dataset.month];
-            });
-            rail.querySelectorAll('.season-name').forEach(el => {
-                el.textContent = sn[el.dataset.season] || el.dataset.season;
-            });
-        };
-
-        let runningDate = new Date(yStart);
-        for (let m = 0; m < 12; m++) {
-            const mStart = new Date(runningDate);
-            const mEnd = new Date(yr, m + 1, 1);
-            const startPct = (mStart - yStart) / ySpan * 100;
-            const endPct   = (mEnd - yStart) / ySpan * 100;
-            const midPct   = (startPct + endPct) / 2;
-
-            // Month Label
-            const lbl = document.createElement('div');
-            lbl.className = 'month-name' + (now.getMonth() === m ? ' current' : '');
-            lbl.style.left = midPct + '%';
-            lbl.dataset.month = m;
-            rail.appendChild(lbl);
-
-            // Day Ticks
-            const daysInMonth = (mEnd - mStart) / (24 * 3600 * 1000);
-            for (let d = 1; d < daysInMonth; d++) {
-                const dDate = new Date(mStart);
-                dDate.setDate(dDate.getDate() + d);
-                const dPct = (dDate - yStart) / ySpan * 100;
-                const dTick = document.createElement('div');
-                dTick.className = 'day-tick';
-                dTick.style.left = dPct + '%';
-                rail.appendChild(dTick);
-            }
-
-            // Month Tick (at start of each month except Jan)
-            if (m > 0) {
-                const tick = document.createElement('div');
-                tick.className = 'month-tick';
-                tick.style.left = startPct + '%';
-                rail.appendChild(tick);
-            }
-            runningDate = mEnd;
-        }
-
-        // --- Seasons ---
-        const springD = new Date(yr, 2, 20), summerD = new Date(yr, 5, 21),
-              fallD   = new Date(yr, 8, 22), winterD  = new Date(yr, 11, 21);
-
-        const seasons = [
-            { name: 'winter', s: yStart,  e: springD, tick: false },
-            { name: 'spring', s: springD, e: summerD, tick: true },
-            { name: 'summer', s: summerD, e: fallD,   tick: true },
-            { name: 'fall',   s: fallD,   e: winterD, tick: true },
-            { name: 'winter', s: winterD, e: yEnd,    tick: true },
-        ];
-
-        const isCurrent = s => now >= s.s && now < s.e;
-
-        seasons.forEach((s, idx) => {
-            const startPct = (s.s - yStart) / ySpan * 100;
-            const endPct   = (s.e - yStart) / ySpan * 100;
-            const midPct   = (startPct + endPct) / 2;
-
-            // Season name label — Skip the trailing winter label as requested
-            if (idx < seasons.length - 1) {
-                const lbl = document.createElement('div');
-                lbl.className = 'season-name' + (isCurrent(s) ? ' current' : '');
-                lbl.style.left = midPct + '%';
-                lbl.dataset.season = s.name;
-                rail.appendChild(lbl);
-            }
-
-            // Divider Tick
-            if (s.tick) {
-                const tickPct = (s.s - yStart) / ySpan * 100;
-                const tick = document.createElement('div');
-                tick.className = 'season-tick';
-                tick.style.left = tickPct + '%';
-                rail.appendChild(tick);
-            }
-        });
-
-        // --- Holidays ---
-        const holidays = [
-            { name: "New Year's Day", m: 0, d: 1 },
-            { name: "Valentine's Day", m: 1, d: 14 },
-            { name: "St. Patrick's Day", m: 2, d: 17 },
-            { name: "Earth Day", m: 3, d: 22 },
-            { name: "Halloween", m: 9, d: 31 },
-            { name: "Christmas", m: 11, d: 25 },
-            { name: "New Year's Eve", m: 11, d: 31 }
-        ];
-
-        holidays.forEach(h => {
-            const hDate = new Date(yr, h.m, h.d);
-            const hPct = (hDate - yStart) / ySpan * 100;
-            const pin = document.createElement('div');
-            pin.className = 'holiday-pin';
-            pin.style.left = hPct + '%';
-            pin.innerHTML = `<div class="holiday-label">${h.name}</div>`;
-            rail.appendChild(pin);
-        });
-
-        function updateYearBar() {
+        function calcYearPct() {
             const now = new Date();
             const start = new Date(now.getFullYear(), 0, 1);
             const end   = new Date(now.getFullYear() + 1, 0, 1);
-            const pct   = (now - start) / (end - start);
-            const pctDisplay = Math.floor(pct * 100);
-            
-            document.getElementById('year-bar-year').textContent = now.getFullYear();
-            document.getElementById('year-bar-fill').style.width = (pct * 100) + '%';
-            document.getElementById('year-bar-pct').textContent = pctDisplay + '%';
+            return (now - start) / (end - start);
         }
 
-        updateYearBar();
-        window.updateYearBarLang();
-        setInterval(updateYearBar, 60000);
+        function makeProgressText() {
+            const pct = calcYearPct();
+            const pctDisplay = Math.floor(pct * 100);
+            const filled = Math.round(pct * 31);
+            const bar = '▓'.repeat(filled) + '░'.repeat(31 - filled);
+            return 'Year Progress: ' + bar + ' ' + pctDisplay + '%';
+        }
+
+        const ypLabel = document.createElement('div');
+        ypLabel.className = 'year-progress-label';
+        ypLabel.id = 'year-progress-text';
+        ypLabel.textContent = makeProgressText();
+        document.querySelector('.dock-wrapper').appendChild(ypLabel);
+
+        function updateYearProgressNote() {
+            const el = document.getElementById('year-progress-text');
+            if (el) el.textContent = makeProgressText();
+        }
+        setInterval(updateYearProgressNote, 60000);
+
+        // stub so applyLang doesn't throw
+        window.updateYearBarLang = function() {};
     })();
 
     // ── Sun Arc ──

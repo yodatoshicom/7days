@@ -231,44 +231,41 @@ async function fetchWeather(lat, lon, forceRefresh = false) {
 }
 
 function showWeatherError() {
-    const weatherRow = document.getElementById('weather');
-    weatherRow.innerHTML = '';
-    for (let i = 0; i < 7; i++) {
-        const wItem = document.createElement('div');
-        wItem.className = 'weather-day';
-        if (i === 0) wItem.classList.add('highlight-light');
-        wItem.innerHTML = `<span class="weather-icon" style="opacity:0.3;">✕</span><span class="weather-temp" style="opacity:0.3;">--</span>`;
-        weatherRow.appendChild(wItem);
-    }
+    document.querySelectorAll('.day-weather').forEach(el => {
+        el.innerHTML = `<span class="weather-icon" style="opacity:0.3;">✕</span><span class="weather-temp" style="opacity:0.3;">--</span>`;
+    });
 }
 
 function renderWeather(daily) {
-    const weatherRow = document.getElementById('weather');
-    weatherRow.innerHTML = '';
     weatherData = daily.time.map((day, i) => ({
         temp: Math.round(daily.temperature_2m_max[i]),
         code: daily.weathercode[i],
-        date: new Date(day)
+        date: new Date(day + 'T00:00:00'),
+        dateStr: day
     }));
-    // Expose today's sunrise/sunset for the time ruler
     if (daily.sunrise && daily.sunset) {
         window.todaySunTimes = { rise: daily.sunrise[0], set: daily.sunset[0] };
         window.allSunTimes = { sunrise: daily.sunrise, sunset: daily.sunset };
         if (typeof drawSunriseSunset === 'function') drawSunriseSunset();
     }
-    daily.time.forEach((day, i) => {
-        const temp = Math.round(daily.temperature_2m_max[i]);
-        const icon = mapWmoToEmoji(daily.weathercode[i]);
-        const wItem = document.createElement('div');
-        wItem.className = 'weather-day';
-        wItem.dataset.index = i;
-        if (i === 0) wItem.classList.add('highlight-light');
-        wItem.innerHTML = `<span class="weather-icon">${icon}</span><span class="weather-temp">${temp}°</span>`;
-        wItem.addEventListener('mouseenter', () => showWeatherTooltip(i));
-        wItem.addEventListener('mouseleave', hideWeatherTooltip);
-        weatherRow.appendChild(wItem);
-    });
+    weatherLoaded = true;
+    window.populateDockWeather();
 }
+
+window.populateDockWeather = function() {
+    if (!weatherData.length) return;
+    weatherData.forEach((item, i) => {
+        const slot = document.getElementById('dw-' + item.dateStr);
+        if (!slot) return;
+        const icon = mapWmoToEmoji(item.code);
+        slot.innerHTML = `<span class="weather-icon">${icon}</span><span class="weather-temp">${item.temp}°</span>`;
+        const card = slot.closest('.day-card');
+        if (card) {
+            card.onmouseenter = () => showWeatherTooltip(i);
+            card.onmouseleave = hideWeatherTooltip;
+        }
+    });
+};
 
 function mapWmoToEmoji(code) {
     if (code === 0) return '☀️';
@@ -304,6 +301,12 @@ function showWeatherTooltip(index) {
     if (!weatherData[index]) return;
     const tooltip = document.getElementById('weather-tooltip');
     tooltip.textContent = getWeatherDescription(weatherData[index].code, index);
+    const dock = document.querySelector('.dock-wrapper');
+    if (dock) {
+        const rect = dock.getBoundingClientRect();
+        tooltip.style.top = (rect.bottom + 72) + 'px';
+        tooltip.style.bottom = 'auto';
+    }
     tooltip.classList.add('show');
     const greetingSub = document.getElementById('greeting-sub');
     if (greetingSub) greetingSub.classList.add('hidden');
@@ -316,13 +319,5 @@ function hideWeatherTooltip() {
 }
 
 function initWeatherPlaceholder() {
-    const weather = document.getElementById('weather');
-    weather.innerHTML = '';
-    for (let i = 0; i < 7; i++) {
-        const wItem = document.createElement('div');
-        wItem.className = 'weather-day';
-        if (i === 0) wItem.classList.add('highlight-light');
-        wItem.innerHTML = `<span class="weather-icon">--</span><span class="weather-temp">--</span>`;
-        weather.appendChild(wItem);
-    }
+    // Weather slots are created inline in day cards by initDock()
 }
