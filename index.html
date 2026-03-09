@@ -141,7 +141,7 @@
 :root {
     --sf-easing: cubic-bezier(0.32, 0.72, 0, 1);
     --spring-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --bg-color: #e8e2d8;
+    --bg-color: #e3dde6;
     --text-color: #1d1d1f;
     --accent-color: #007AFF;
     --card-bg: rgba(255, 255, 255, 0.3);
@@ -206,6 +206,10 @@
 
 html {
     background-color: #fbfbfb;
+    background-image: url('bg2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 body {
@@ -377,6 +381,30 @@ body.ready {
     animation: yearDotPulse 3s ease-in-out infinite;
     flex-shrink: 0;
 }
+
+.time-ruler-hover-label {
+    position: absolute;
+    top: 0;
+    pointer-events: none;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0.5px solid rgba(255,255,255,0.18);
+    border-radius: 20px;
+    padding: 3px 10px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 20;
+}
+.time-ruler-hover-label.visible { opacity: 1; }
 
 .time-ruler-now-label {
     font-family: 'Inter', sans-serif;
@@ -1126,15 +1154,15 @@ body.dev-mode .dev-export-btn { display: block; }
     top: 58px;
     right: 20px;
     z-index: 10000;
-    background: var(--card-bg);
-    backdrop-filter: blur(60px) saturate(210%);
-    -webkit-backdrop-filter: blur(60px) saturate(210%);
-    border: 0.5px solid rgba(255, 255, 255, 0.25);
+    background: rgba(22, 22, 24, 0.88);
+    backdrop-filter: blur(60px) saturate(180%);
+    -webkit-backdrop-filter: blur(60px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
     border-radius: 18px;
     padding: 18px;
     box-shadow:
-        0 20px 50px rgba(0,0,0,0.12),
-        inset 0 1px 0 0 rgba(255,255,255,0.35);
+        0 20px 50px rgba(0,0,0,0.4),
+        inset 0 1px 0 0 rgba(255,255,255,0.08);
     width: 220px;
     max-height: calc(100vh - 80px);
     overflow-y: auto;
@@ -1160,8 +1188,8 @@ body.dev-mode .dev-export-btn { display: block; }
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    opacity: 0.3;
-    color: var(--text-color);
+    opacity: 0.4;
+    color: rgba(255,255,255,0.9);
     margin-bottom: 6px;
 }
 
@@ -1176,9 +1204,9 @@ body.dev-mode .dev-export-btn { display: block; }
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.02em;
-    color: var(--text-color);
-    background: rgba(0,0,0,0.03);
-    border: 1px solid rgba(0,0,0,0.06);
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 10px;
     padding: 8px 12px;
     width: 100%;
@@ -1186,9 +1214,11 @@ body.dev-mode .dev-export-btn { display: block; }
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.settings-location-input::placeholder { color: rgba(255,255,255,0.3); }
+
 .settings-location-input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
 }
 
 .settings-toggle {
@@ -1196,7 +1226,7 @@ body.dev-mode .dev-export-btn { display: block; }
     gap: 2px;
     padding: 2px;
     border-radius: 10px;
-    background: rgba(0,0,0,0.04);
+    background: rgba(255,255,255,0.06);
 }
 
 .settings-toggle-btn {
@@ -1208,7 +1238,7 @@ body.dev-mode .dev-export-btn { display: block; }
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 11px;
     font-weight: 600;
-    color: var(--text-color);
+    color: rgba(255,255,255,0.9);
     opacity: 0.4;
     cursor: pointer;
     transition: opacity 0.2s, background 0.2s, box-shadow 0.2s;
@@ -1216,8 +1246,8 @@ body.dev-mode .dev-export-btn { display: block; }
 
 .settings-toggle-btn.active {
     opacity: 1;
-    background: var(--bg-color);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 
@@ -1226,7 +1256,7 @@ body.dev-mode .dev-export-btn { display: block; }
     height: 30px;
     border-radius: 8px;
     border: 1.5px solid transparent;
-    background: rgba(0,0,0,0.03);
+    background: rgba(255,255,255,0.06);
     cursor: pointer;
     opacity: 0.4;
     transition: opacity 0.2s, transform 0.2s var(--spring-easing), border-color 0.2s, background 0.2s;
@@ -1235,7 +1265,7 @@ body.dev-mode .dev-export-btn { display: block; }
     justify-content: center;
     font-size: 13px;
     font-weight: 400;
-    color: var(--text-color);
+    color: rgba(255,255,255,0.9);
     line-height: 1;
 }
 
@@ -1246,8 +1276,8 @@ body.dev-mode .dev-export-btn { display: block; }
 
 .font-pick.active {
     opacity: 1;
-    border-color: var(--accent-color);
-    background: rgba(0, 122, 255, 0.06);
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.12);
 }
 
 /* DAY NOTE POPUP */
@@ -1932,6 +1962,8 @@ body.dev-mode .dev-export-btn { display: block; }
     overflow: visible;
     transition: opacity 2s ease;
 }
+#mobile-time { display: none; }
+
 #sun-arc {
     position: fixed;
     left: 0; top: 0;
@@ -2000,8 +2032,9 @@ body.dev-mode .dev-export-btn { display: block; }
     opacity: 0.4;
     letter-spacing: 0.02em;
     white-space: nowrap;
+    cursor: pointer;
     user-select: none;
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 /* ── Safe area insets for fixed bottom elements ── */
@@ -2035,7 +2068,7 @@ body.dev-mode .dev-export-btn { display: block; }
 @supports not (backdrop-filter: blur(1px)) {
     .dock-container  { background: rgba(240, 240, 240, 0.92); }
     .note            { background: rgba(245, 245, 245, 0.96); }
-    .settings-panel  { background: rgba(240, 240, 240, 0.96); }
+    .settings-panel  { background: rgba(22, 22, 24, 0.95); }
     .note-arrow-bar  { background: rgba(240, 240, 240, 0.96); }
     .note-edit-overlay { background: rgba(0,0,0,0.35); }
 }
@@ -2044,14 +2077,18 @@ body.dev-mode .dev-export-btn { display: block; }
 @media (max-width: 480px) {
     #desktop-only { display: none !important; }
 
+    .dock-wrapper { width: calc(100% - 32px); }
+    .dock-row { width: 100%; }
     .dock-container {
+        flex: 1;
         padding: 8px;
         gap: 3px;
         border-radius: 28px;
     }
     .dock-nav { display: none; }
     .day-card {
-        width: 44px;
+        flex: 1;
+        width: auto;
         height: 70px;
         border-radius: 22px;
     }
@@ -2070,9 +2107,33 @@ body.dev-mode .dev-export-btn { display: block; }
     .city-tooltip { display: none; }
     .capsule { display: none; }
 
-    .year-progress-label { font-size: 11px; }
-    .time-ruler { margin-bottom: -10px; }
-    .time-ruler-now-label { font-size: 10px; padding: 2px 8px; }
+    .year-progress-label { top: auto; bottom: calc(100% + 10px); font-size: 10px; }
+    /* Collapse ruler to zero height but keep label visible via fixed positioning */
+    .time-ruler { height: 0; overflow: visible; margin: 0; }
+    .time-ruler-track, .time-ruler-past,
+    .time-ruler-tick, .sun-label { display: none; }
+    #sun-arc, #sun-arc-bg { display: none; }
+    .time-ruler-now, .time-ruler-now-label { display: none; }
+    #mobile-time { display: block; }
+    #mobile-time {
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: #7B52B0;
+        background: rgba(167,139,202,0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 0.5px solid rgba(167,139,202,0.3);
+        border-radius: 20px;
+        padding: 3px 10px;
+        position: fixed;
+        top: max(20px, env(safe-area-inset-top, 20px));
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        pointer-events: none;
+    }
 
     .settings-panel {
         right: 8px;
@@ -2166,7 +2227,7 @@ body.dev-mode .dev-export-btn { display: block; }
     <div>
         <div class="settings-section-label">Location</div>
         <input class="settings-location-input" id="settings-location" type="text" placeholder="city or postal code...">
-        <div id="settings-location-status" style="font-size:9px;opacity:0.4;margin-top:4px;color:var(--text-color)"></div>
+        <div id="settings-location-status" style="font-size:9px;opacity:0.5;margin-top:4px;color:rgba(255,255,255,0.9)"></div>
     </div>
     <div>
         <div class="settings-section-label">Language</div>
@@ -2232,7 +2293,9 @@ body.dev-mode .dev-export-btn { display: block; }
             <div class="time-ruler-now-line"></div>
             <div class="time-ruler-now-dot"></div>
         </div>
+        <div class="time-ruler-hover-label" id="time-ruler-hover-label"></div>
     </div>
+    <div id="mobile-time"></div>
     <div class="dock-row">
         <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="dock-container" id="dock"></div>
@@ -2306,12 +2369,14 @@ body.dev-mode .dev-export-btn { display: block; }
             pt: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
         };
         const now = new Date();
+        const isMobile = window.innerWidth <= 480;
+        const numDays = isMobile ? 5 : 7;
         const weekStart = new Date(now);
         weekStart.setHours(0, 0, 0, 0);
-        weekStart.setDate(now.getDate() + dockOffset);
+        weekStart.setDate(now.getDate() + dockOffset - (isMobile ? 0 : 0));
 
         dock.innerHTML = '';
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < numDays; i++) {
             const date = new Date(weekStart);
             date.setDate(weekStart.getDate() + i);
             const dateStr = toISO(date);
@@ -2364,7 +2429,7 @@ body.dev-mode .dev-export-btn { display: block; }
     /* ============================================================
        TIME RULER
     ============================================================ */
-    const RULER_START = 6;   // 6am
+    const RULER_START = 0;   // midnight
     const RULER_END   = 24;  // midnight
     const RULER_SPAN  = RULER_END - RULER_START;
 
@@ -2483,6 +2548,24 @@ body.dev-mode .dev-export-btn { display: block; }
         return h.toString().padStart(2, '0') + ':' + mm;
     }
 
+    (function() {
+        const ruler = document.getElementById('time-ruler');
+        const hoverLabel = document.getElementById('time-ruler-hover-label');
+        ruler.addEventListener('mousemove', (e) => {
+            const rr = ruler.getBoundingClientRect();
+            const frac = Math.max(0, Math.min(1, (e.clientX - rr.left) / rr.width));
+            const totalH = RULER_START + frac * RULER_SPAN;
+            const h = Math.floor(totalH);
+            const m = Math.round((totalH - h) * 60);
+            hoverLabel.textContent = formatTime(h === 24 ? 0 : h, m === 60 ? 0 : m);
+            hoverLabel.style.left = (frac * 100) + '%';
+            hoverLabel.classList.add('visible');
+        });
+        ruler.addEventListener('mouseleave', () => {
+            hoverLabel.classList.remove('visible');
+        });
+    })();
+
     document.getElementById('time-ruler-now-label').addEventListener('click', () => {
         timeFormatIdx = (timeFormatIdx + 1) % 2;
         localStorage.setItem('aura_time_format', timeFormatIdx);
@@ -2498,15 +2581,22 @@ body.dev-mode .dev-export-btn { display: block; }
         const labelEl = document.getElementById('time-ruler-now-label');
         const pastEl = document.getElementById('time-ruler-past');
 
-        labelEl.textContent = formatTime(now.getHours(), now.getMinutes());
+        const timeStr = formatTime(now.getHours(), now.getMinutes());
+        labelEl.textContent = timeStr;
+        const mobileTime = document.getElementById('mobile-time');
+        if (mobileTime) mobileTime.textContent = timeStr;
 
+        nowEl.style.display = 'flex';
         if (hours < RULER_START || hours > RULER_END) {
-            nowEl.style.display = 'none';
+            document.querySelector('.time-ruler-now-line').style.display = 'none';
+            document.querySelector('.time-ruler-now-dot').style.display = 'none';
+            nowEl.style.left = hours < RULER_START ? '0%' : '100%';
             pastEl.style.width = hours < RULER_START ? '0%' : '100%';
             return;
         }
+        document.querySelector('.time-ruler-now-line').style.display = '';
+        document.querySelector('.time-ruler-now-dot').style.display = '';
         const pct = (hours - RULER_START) / RULER_SPAN * 100;
-        nowEl.style.display = 'flex';
         nowEl.style.left = pct + '%';
         pastEl.style.width = pct + '%';
     }
@@ -2577,12 +2667,15 @@ function createNote(data, autoFocus = false) {
         const note = document.createElement('div');
         note.className = 'note';
         note.id = data.id;
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const clampedX = Math.min(Math.max(data.x, 10), vw - (data.w || 200) - 10);
-        const clampedY = Math.min(Math.max(data.y, 10), vh - 120);
-        note.style.left = clampedX + 'px';
-        note.style.top = clampedY + 'px';
+        note.style.left = Math.max(data.x, 20) + 'px';
+        note.style.top  = Math.max(data.y, 20) + 'px';
+        requestAnimationFrame(() => {
+            const margin = 20;
+            const nx = parseFloat(note.style.left);
+            const ny = parseFloat(note.style.top);
+            note.style.left = Math.min(nx, window.innerWidth  - note.offsetWidth  - margin) + 'px';
+            note.style.top  = Math.min(ny, window.innerHeight - note.offsetHeight - margin) + 'px';
+        });
         if (data.w) note.style.width = data.w + 'px';
         if (data.manualResize && data.h) note.style.height = data.h + 'px';
         note.style.zIndex = data.zIndex || topZ;
@@ -2633,6 +2726,17 @@ function createNote(data, autoFocus = false) {
         });
 
         document.body.appendChild(note);
+
+        // ---- CLAMP NOTE TO VIEWPORT ----
+        const clampNote = (x, y) => {
+            const margin = 20;
+            const w = note.offsetWidth;
+            const h = note.offsetHeight;
+            return {
+                x: Math.min(Math.max(x, margin), window.innerWidth  - w - margin),
+                y: Math.min(Math.max(y, margin), window.innerHeight - h - margin)
+            };
+        };
 
         // ---- DRAG (mouse + touch) ----
         const startDrag = (clientX, clientY) => {
@@ -3499,6 +3603,9 @@ function createNote(data, autoFocus = false) {
 
     // ── Year Progress pinned note ──
     (function() {
+        const BAR_TYPES = ['year', 'season', 'life'];
+        let barType = localStorage.getItem('aura_bar_type') || 'year';
+
         function calcYearPct() {
             const now = new Date();
             const start = new Date(now.getFullYear(), 0, 1);
@@ -3506,18 +3613,139 @@ function createNote(data, autoFocus = false) {
             return (now - start) / (end - start);
         }
 
-        function makeProgressText() {
-            const pct = calcYearPct();
+        function calcSeasonPct() {
+            const now = new Date(), y = now.getFullYear();
+            const seasons = [
+                { name: 'Spring', start: new Date(y, 2, 20),  end: new Date(y, 5, 21) },
+                { name: 'Summer', start: new Date(y, 5, 21),  end: new Date(y, 8, 23) },
+                { name: 'Autumn', start: new Date(y, 8, 23),  end: new Date(y, 11, 21) },
+                { name: 'Winter', start: new Date(y, 11, 21), end: new Date(y + 1, 2, 20) },
+                { name: 'Winter', start: new Date(y - 1, 11, 21), end: new Date(y, 2, 20) },
+            ];
+            for (const s of seasons) {
+                if (now >= s.start && now < s.end)
+                    return { name: s.name, pct: (now - s.start) / (s.end - s.start) };
+            }
+            return { name: 'Season', pct: 0 };
+        }
+
+        function calcDecadePct() {
+            const now = new Date();
+            const decade = Math.floor(now.getFullYear() / 10) * 10;
+            const start = new Date(decade, 0, 1);
+            const end   = new Date(decade + 10, 0, 1);
+            return { name: decade + 's', pct: (now - start) / (end - start) };
+        }
+
+        function calcCenturyPct() {
+            const now = new Date();
+            const century = Math.floor(now.getFullYear() / 100) * 100;
+            const start = new Date(century, 0, 1);
+            const end   = new Date(century + 100, 0, 1);
+            return { name: century + 's', pct: (now - start) / (end - start) };
+        }
+
+        function calcLifePct() {
+            const birthYear = parseInt(localStorage.getItem('aura_birth_year'));
+            if (!birthYear) return null;
+            const now = new Date();
+            const born = new Date(birthYear, 0, 1);
+            const end  = new Date(birthYear + 80, 0, 1);
+            return Math.max(0, Math.min(1, (now - born) / (end - born)));
+        }
+
+        function makeBar(pct, label) {
             const pctDisplay = Math.floor(pct * 100);
             const filled = Math.round(pct * 31);
             const bar = '▓'.repeat(filled) + '░'.repeat(31 - filled);
-            return 'Year Progress: ' + bar + ' ' + pctDisplay + '%';
+            return label + ': ' + bar + ' ' + pctDisplay + '%';
+        }
+
+        function makeProgressText() {
+            if (barType === 'year') {
+                return makeBar(calcYearPct(), 'Year Progress');
+            } else if (barType === 'season') {
+                const { name, pct } = calcSeasonPct();
+                return makeBar(pct, name + ' Progress');
+            } else if (barType === 'decade') {
+                const { name, pct } = calcDecadePct();
+                return makeBar(pct, name + ' Progress');
+            } else if (barType === 'century') {
+                const { name, pct } = calcCenturyPct();
+                return makeBar(pct, name + ' Progress');
+            } else if (barType === 'life') {
+                const pct = calcLifePct();
+                if (pct === null) return 'Life Progress: tap to set age';
+                return makeBar(pct, 'Life Progress');
+            }
+            return '';
+        }
+
+        function showAgePopup() {
+            const existing = document.getElementById('age-popup');
+            if (existing) { existing.remove(); return; }
+
+            const popup = document.createElement('div');
+            popup.id = 'age-popup';
+            popup.style.cssText = `
+                position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%);
+                background: var(--card-bg); backdrop-filter: blur(60px) saturate(210%);
+                -webkit-backdrop-filter: blur(60px) saturate(210%);
+                border: 0.5px solid rgba(255,255,255,0.25); border-radius: 18px;
+                padding: 16px 20px; z-index: 9999; display: flex; flex-direction: column;
+                gap: 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+                font-family: 'Inter', system-ui, sans-serif;
+            `;
+            popup.innerHTML = `
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;opacity:0.4;color:var(--text-color)">What year were you born?</div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input id="age-input" type="number" min="1900" max="2020" placeholder="${new Date().getFullYear() - 25}"
+                        style="font-family:'Inter',system-ui,sans-serif;font-size:22px;font-weight:700;
+                        width:100px;border:none;outline:none;background:transparent;color:var(--text-color);">
+                    <button id="age-save" style="font-family:'Inter',system-ui,sans-serif;font-size:11px;font-weight:700;
+                        text-transform:uppercase;letter-spacing:0.08em;border:none;background:var(--text-color);
+                        color:var(--bg-color);border-radius:10px;padding:7px 14px;cursor:pointer;">Save</button>
+                </div>
+            `;
+            document.body.appendChild(popup);
+            document.getElementById('age-input').focus();
+
+            document.getElementById('age-save').onclick = () => {
+                const val = parseInt(document.getElementById('age-input').value);
+                if (val >= 1900 && val <= new Date().getFullYear()) {
+                    localStorage.setItem('aura_birth_year', val);
+                    popup.remove();
+                    updateYearProgressNote();
+                }
+            };
+            document.getElementById('age-input').onkeydown = (e) => {
+                if (e.key === 'Enter') document.getElementById('age-save').click();
+                if (e.key === 'Escape') popup.remove();
+            };
+            setTimeout(() => {
+                document.addEventListener('mousedown', function dismiss(e) {
+                    if (!popup.contains(e.target) && e.target !== ypLabel) {
+                        popup.remove();
+                        document.removeEventListener('mousedown', dismiss);
+                    }
+                });
+            }, 100);
         }
 
         const ypLabel = document.createElement('div');
         ypLabel.className = 'year-progress-label';
         ypLabel.id = 'year-progress-text';
         ypLabel.textContent = makeProgressText();
+        ypLabel.title = 'Click to switch bar';
+        ypLabel.addEventListener('click', () => {
+            const idx = BAR_TYPES.indexOf(barType);
+            barType = BAR_TYPES[(idx + 1) % BAR_TYPES.length];
+            localStorage.setItem('aura_bar_type', barType);
+            updateYearProgressNote();
+            if (barType === 'life' && !localStorage.getItem('aura_birth_year')) {
+                showAgePopup();
+            }
+        });
         document.querySelector('.dock-wrapper').appendChild(ypLabel);
 
         function updateYearProgressNote() {
@@ -3785,7 +4013,7 @@ function createNote(data, autoFocus = false) {
             const INSET = 28, LIFT = 14, GAP = 0.028;
             const effW  = dr.width - INSET * 2;
             let H       = Math.min(effW * 0.38, 160);
-            
+
             // Squeeze the moon arc to be flatter
             if (type === 'moon') H *= 0.7;
 
@@ -3795,12 +4023,12 @@ function createNote(data, autoFocus = false) {
             bgSvg.setAttribute('height', H + 8);
 
             let t = (now - start) / (end - start);
-            t = Math.max(0, Math.min(1, t)); 
+            t = Math.max(0, Math.min(1, t));
             const arc = Math.sin(t * Math.PI);
 
             // Re-populate stars if needed (or if dimensions changed significantly)
             const lastH = parseFloat(starGroup.dataset.h || 0);
-            if (starGroup.children.length === 0 || 
+            if (starGroup.children.length === 0 ||
                 Math.abs(parseFloat(starGroup.dataset.w || 0) - effW) > 10 ||
                 Math.abs(lastH - H) > 5) {
                 createStars(effW, H);
