@@ -223,6 +223,7 @@ body {
     justify-content: center;
     opacity: 0;
     transition: opacity 0.5s ease;
+    min-width: 360px;
 }
 
 body.ready {
@@ -2017,38 +2018,59 @@ body.dev-mode .dev-export-btn { display: block; }
     bottom: max(86px, calc(86px + env(safe-area-inset-bottom)));
 }
 
-/* ── Phone layout (≤ 500px) ── */
-@media (max-width: 500px) {
+/* ── 1x (non-retina) screens: thicken hairline borders ── */
+@media (-webkit-max-device-pixel-ratio: 1), (max-resolution: 1dppx) {
+    .dock-container,
+    .note,
+    .settings-panel,
+    .note-arrow-bar,
+    .day-note-popup,
+    .time-ruler-now-label,
+    .sun-tooltip-bubble {
+        border-width: 1px;
+    }
+}
+
+/* ── backdrop-filter unsupported fallback (Firefox, some Windows) ── */
+@supports not (backdrop-filter: blur(1px)) {
+    .dock-container  { background: rgba(240, 240, 240, 0.92); }
+    .note            { background: rgba(245, 245, 245, 0.96); }
+    .settings-panel  { background: rgba(240, 240, 240, 0.96); }
+    .note-arrow-bar  { background: rgba(240, 240, 240, 0.96); }
+    .note-edit-overlay { background: rgba(0,0,0,0.35); }
+}
+
+/* ── Mobile layout (≤ 480px) ── */
+@media (max-width: 480px) {
     #desktop-only { display: none !important; }
 
-    .dock-row {
-        max-width: calc(100vw - 40px);
-    }
     .dock-container {
-        padding: 7px;
-        gap: 2px;
-        border-radius: 24px;
-        flex-shrink: 1;
-        min-width: 0;
+        padding: 8px;
+        gap: 3px;
+        border-radius: 28px;
     }
-    .dock-nav { padding: 3px; flex-shrink: 0; }
+    .dock-nav { display: none; }
     .day-card {
-        width: 38px;
-        height: 60px;
-        border-radius: 20px;
-        flex-shrink: 1;
+        width: 44px;
+        height: 70px;
+        border-radius: 22px;
     }
     .day-card:hover { transform: none; }
     .day-name { font-size: 9px; }
-    .day-number { font-size: 20px; }
-    .weather-icon { font-size: 11px; }
+    .day-number { font-size: 22px; }
+
+    .day-separator { display: none; }
+    .day-main-row { gap: 3px; }
+    .day-weather { opacity: 0.6; }
+    .weather-icon { font-size: 12px; }
     .weather-temp { font-size: 9px; }
-    .day-separator { height: 28px; }
-    .day-main-row { gap: 2px; }
-    .day-weather { gap: 0; }
+
+    body { justify-content: flex-end; padding-bottom: max(32px, calc(24px + env(safe-area-inset-bottom))); }
+    .bottom-controls { display: none; }
+    .city-tooltip { display: none; }
+    .capsule { display: none; }
 
     .year-progress-label { font-size: 11px; }
-
     .time-ruler { margin-bottom: -10px; }
     .time-ruler-now-label { font-size: 10px; padding: 2px 8px; }
 
@@ -2060,12 +2082,8 @@ body.dev-mode .dev-export-btn { display: block; }
     }
 
     .weather-tooltip { font-size: 22px; }
-
-    /* notes: disable drag on mobile, keep them scrollable */
-    .note { cursor: default; max-width: calc(100vw - 32px); }
+    .note { max-width: calc(100vw - 32px); }
     .note-resize-handle { display: none; }
-
-    /* style bar and tip: account for keyboard */
     .note-arrow-bar { max-width: calc(100vw - 32px); }
 }
 </style>
@@ -2249,9 +2267,11 @@ body.dev-mode .dev-export-btn { display: block; }
     // First time — seed hint notes
     if (notes.length === 0) {
         notes = [
-            { id: 'n_s2', x: 40,  y: 38,  w: 260, text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8', color: 'mint',  zIndex: 100 },
-            { id: 'n_s4', x: 175, y: 235, w: 223, text: 'book flights\n↗ tokyo, april\nbefore prices jump',                 color: 'pink',  zIndex: 101 },
-            { id: 'n_s5', x: 712, y: 213, w: 224, text: 'ship it. don\'t wait.',                                            color: 'blue',  zIndex: 102 },
+            { id: 'n_s2', x: Math.min(40,  window.innerWidth * 0.04), y: 38,  w: Math.min(260, window.innerWidth * 0.45), text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8', color: 'mint',  zIndex: 100 },
+            ...(window.innerWidth > 600 ? [
+            { id: 'n_s4', x: Math.min(175, window.innerWidth * 0.30), y: 38,  w: Math.min(223, window.innerWidth * 0.40), text: 'book flights\n↗ tokyo, april\nbefore prices jump',                 color: 'pink',  zIndex: 101 },
+            { id: 'n_s5', x: Math.min(712, window.innerWidth * 0.55), y: 38,  w: Math.min(224, window.innerWidth * 0.38), text: 'ship it. don\'t wait.',                                            color: 'blue',  zIndex: 102 },
+            ] : []),
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
@@ -2557,8 +2577,12 @@ function createNote(data, autoFocus = false) {
         const note = document.createElement('div');
         note.className = 'note';
         note.id = data.id;
-        note.style.left = data.x + 'px';
-        note.style.top = data.y + 'px';
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const clampedX = Math.min(Math.max(data.x, 10), vw - (data.w || 200) - 10);
+        const clampedY = Math.min(Math.max(data.y, 10), vh - 120);
+        note.style.left = clampedX + 'px';
+        note.style.top = clampedY + 'px';
         if (data.w) note.style.width = data.w + 'px';
         if (data.manualResize && data.h) note.style.height = data.h + 'px';
         note.style.zIndex = data.zIndex || topZ;
@@ -2610,76 +2634,46 @@ function createNote(data, autoFocus = false) {
 
         document.body.appendChild(note);
 
-        // ---- DRAG ----
-        note.onmousedown = (e) => {
-            if (e.target.closest('.note-resize-handle')) return;
-            if (e.target.closest('.note-close')) return;
-            if (note.querySelector('.note-edit-ta')) return;
-            if (e.target.tagName === 'A') return;
-            e.preventDefault();
-            
-            const origOx = e.clientX - note.offsetLeft;
-            const origOy = e.clientY - note.offsetTop;
+        // ---- DRAG (mouse + touch) ----
+        const startDrag = (clientX, clientY) => {
+            const origOx = clientX - note.offsetLeft;
+            const origOy = clientY - note.offsetTop;
             note.style.zIndex = ++topZ;
             note.classList.add('dragging');
-            
             let isNearDock = false;
-            let lastX = e.clientX;
-            let lastY = e.clientY;
-            let velX = 0;
-            let velY = 0;
-            let rotation = 0;
-
             const dockEl = document.getElementById('dock');
             const SCALE_MINI = 0.65;
 
-            const move = (me) => {
-                me.preventDefault();
-
-                // Check proximity to dock
+            const move = (cx, cy) => {
                 const dockRect = dockEl.getBoundingClientRect();
                 const pad = 40;
-                const nearDock = me.clientX >= dockRect.left - pad && me.clientX <= dockRect.right + pad &&
-                                 me.clientY >= dockRect.top - pad && me.clientY <= dockRect.bottom + pad;
-
-                if (nearDock && !isNearDock) {
-                    isNearDock = true;
-                    note.classList.add('near-dock');
-                } else if (!nearDock && isNearDock) {
-                    isNearDock = false;
-                    note.classList.remove('near-dock');
-                }
-
+                const nearDock = cx >= dockRect.left - pad && cx <= dockRect.right + pad &&
+                                 cy >= dockRect.top - pad && cy <= dockRect.bottom + pad;
+                if (nearDock && !isNearDock) { isNearDock = true; note.classList.add('near-dock'); }
+                else if (!nearDock && isNearDock) { isNearDock = false; note.classList.remove('near-dock'); }
                 if (isNearDock) {
-                    const w = note.offsetWidth;
-                    const h = note.offsetHeight;
-                    note.style.left = (me.clientX - w / 2) + 'px';
-                    note.style.top = (me.clientY - h / 2) + 'px';
+                    note.style.left = (cx - note.offsetWidth / 2) + 'px';
+                    note.style.top  = (cy - note.offsetHeight / 2) + 'px';
                     note.style.transform = `scale(${SCALE_MINI})`;
                 } else {
-                    note.style.left = (me.clientX - origOx) + 'px';
-                    note.style.top = (me.clientY - origOy) + 'px';
+                    note.style.left = (cx - origOx) + 'px';
+                    note.style.top  = (cy - origOy) + 'px';
                     note.style.transform = `scale(1.02)`;
                 }
-
-                // Highlight day card under cursor
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
-                const hit = getDayCardAtPoint(me.clientX, me.clientY);
+                const hit = getDayCardAtPoint(cx, cy);
                 if (hit && !hit.card.classList.contains('past')) hit.card.classList.add('drag-over');
             };
 
-            const stop = (me) => {
+            const stop = (cx, cy) => {
                 note.classList.remove('dragging', 'near-dock');
                 note.style.transform = '';
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
-
-                const hit = getDayCardAtPoint(me.clientX, me.clientY);
+                const hit = getDayCardAtPoint(cx, cy);
                 if (hit && !hit.card.classList.contains('past') && data.text && data.text.trim()) {
-                    // Satisfaction "pop" before docking
                     note.style.transition = 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease';
                     note.style.transform = 'scale(0.2)';
                     note.style.opacity = '0';
-                    
                     setTimeout(() => {
                         const dateStr = hit.dateStr;
                         if (!dayNotes[dateStr]) dayNotes[dateStr] = [];
@@ -2691,17 +2685,38 @@ function createNote(data, autoFocus = false) {
                         renderDayNoteDots();
                     }, 150);
                 } else {
-                    // Settle back down with a bounce
                     note.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease';
                     save();
                 }
-
-                window.removeEventListener('mousemove', move);
-                window.removeEventListener('mouseup', stop);
             };
-            window.addEventListener('mousemove', move);
-            window.addEventListener('mouseup', stop);
+            return { move, stop };
         };
+
+        note.onmousedown = (e) => {
+            if (e.target.closest('.note-resize-handle')) return;
+            if (e.target.closest('.note-close')) return;
+            if (note.querySelector('.note-edit-ta')) return;
+            if (e.target.tagName === 'A') return;
+            e.preventDefault();
+            const { move, stop } = startDrag(e.clientX, e.clientY);
+            const onMove = (me) => { me.preventDefault(); move(me.clientX, me.clientY); };
+            const onUp   = (me) => { stop(me.clientX, me.clientY); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onUp);
+        };
+
+        note.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.note-resize-handle')) return;
+            if (e.target.closest('.note-close')) return;
+            if (note.querySelector('.note-edit-ta')) return;
+            if (e.target.tagName === 'A') return;
+            const t = e.touches[0];
+            const { move, stop } = startDrag(t.clientX, t.clientY);
+            const onMove = (te) => { te.preventDefault(); const t = te.touches[0]; move(t.clientX, t.clientY); };
+            const onEnd  = (te) => { const t = te.changedTouches[0]; stop(t.clientX, t.clientY); window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd); };
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
+        }, { passive: true });
 
         // ---- RESIZE (mousedown on handle) ----
         resizeHandle.addEventListener('mousedown', (e) => {
