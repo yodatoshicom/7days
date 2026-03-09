@@ -129,12 +129,13 @@
 // Apply persisted font/size settings before first paint to prevent flash
 (function() {
     var fonts = { 'caveat':"'Caveat', cursive", 'sf-mono':"'SF Mono', 'SFMono-Regular', ui-monospace, monospace", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace" };
-    var sizes = { 'S':'22px', 'M':'28px', 'L':'36px' };
+    var sizes   = { 'S':'22px', 'M':'28px', 'L':'36px' };
+    var sizes1x = { 'S':'16px', 'M':'20px', 'L':'26px' };
     var r = document.documentElement;
     var f = localStorage.getItem('aura_note_font');
     if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
     var s = localStorage.getItem('aura_note_size');
-    if (s && sizes[s]) r.style.setProperty('--note-size', sizes[s]);
+    if (s) r.style.setProperty('--note-size', (window.devicePixelRatio > 1 ? sizes : sizes1x)[s] || sizes[s]);
 })();
 </script>
 <style>
@@ -192,6 +193,104 @@
 .note[data-note-color="pink"] {
     background: rgba(244, 114, 182, 0.18);
     border-color: rgba(244, 114, 182, 0.3);
+}
+
+.header-container {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0px;
+    z-index: 500;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    top: 25px;
+}
+
+.time-display {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.greeting {
+    font-size: 68px;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    background: linear-gradient(to bottom, var(--text-color) 70%, transparent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity 0.2s ease, transform 0.3s var(--spring-easing);
+    display: inline-block;
+    position: relative;
+}
+
+.greeting:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
+}
+
+.greeting:active {
+    transform: scale(0.97);
+}
+
+
+/* Greeting sub-line (funny text) — shares position with weather tooltip */
+.greeting-sub {
+    position: fixed;
+    bottom: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Caveat', cursive;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    opacity: 0.4;
+    color: var(--text-color);
+    min-height: 20px;
+    z-index: 597;
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+}
+
+.greeting-sub.hidden {
+    opacity: 0;
+}
+
+/* Lang flash animation on greeting */
+@keyframes greetingPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+.greeting.lang-switch {
+    animation: greetingPulse 0.4s var(--spring-easing);
+}
+
+.lang-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.lang-btn:hover {
+    opacity: 1;
 }
 
 * {
@@ -407,6 +506,7 @@ body.ready {
     font-family: 'Inter', sans-serif;
     font-size: 11px;
     font-weight: 600;
+    margin-top: 10px;
     letter-spacing: 0.04em;
     font-variant-numeric: tabular-nums;
     color: #7B52B0;
@@ -2049,7 +2149,7 @@ body.dev-mode .dev-export-btn { display: block; }
     .year-progress-label { font-size: 11px; }
 }
 
-/* ── 1x (non-retina) screens: thicken hairline borders ── */
+/* ── 1x (non-retina) screens: thicken hairline borders + scale down fonts ── */
 @media (-webkit-max-device-pixel-ratio: 1), (max-resolution: 1dppx) {
     .dock-container,
     .note,
@@ -2060,6 +2160,15 @@ body.dev-mode .dev-export-btn { display: block; }
     .sun-tooltip-bubble {
         border-width: 1px;
     }
+    body            { justify-content: flex-end; }
+    .dock-wrapper   { padding-bottom: 32px; }
+    :root           { --note-size: 20px; }
+    .day-number     { font-size: 18px; }
+    .day-name       { font-size: 8px; }
+    .weather-icon   { font-size: 11px; }
+    .weather-tooltip { font-size: 24px; }
+    .sun-label      { font-size: 7px; }
+    .sun-tooltip-bubble { font-size: 9px; }
 }
 
 /* ── backdrop-filter unsupported fallback (Firefox, some Windows) ── */
@@ -2324,6 +2433,10 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 
+<header class="header-container" id="header-area">
+    <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
+</header>
+
 <div class="dock-wrapper">
 <div class="time-ruler" id="time-ruler">
         <div class="time-ruler-track">
@@ -2351,10 +2464,12 @@ body.dev-mode .dev-export-btn { display: block; }
 </div>
 
 <div class="bottom-controls">
+    <button class="lang-btn" id="lang-toggle" onclick="cycleLang()">Language: EN</button>
 </div>
 
 <div class="city-tooltip" id="city-display">Detecting...</div>
 
+<div class="greeting-sub" id="greeting-sub"></div>
 <div class="weather-tooltip" id="weather-tooltip"></div>
 
 
@@ -2385,6 +2500,124 @@ body.dev-mode .dev-export-btn { display: block; }
        GREETINGS — simple main, funny subs
     ============================================================ */
 
+    // Main greeting: simple, warm, uses day name where it feels right
+    function getMainGreeting(lang, slot, dayName) {
+        const map = {
+            en: {
+                dawn:      'Good morning.',
+                morning:   `Happy ${dayName}.`,
+                lateAM:    'Good morning.',
+                noon:      'Good afternoon.',
+                afternoon: `Good ${dayName}.`,
+                evening:   'Good evening.',
+                night:     'Good night.',
+            },
+            es: {
+                dawn:      'Buenos días.',
+                morning:   `Feliz ${dayName}.`,
+                lateAM:    'Buenos días.',
+                noon:      'Buenas tardes.',
+                afternoon: `Buen ${dayName}.`,
+                evening:   'Buenas noches.',
+                night:     'Buenas noches.',
+            },
+            pt: {
+                dawn:      'Bom dia.',
+                morning:   `Feliz ${dayName}.`,
+                lateAM:    'Bom dia.',
+                noon:      'Boa tarde.',
+                afternoon: `${dayName}.`,
+                evening:   'Boa noite.',
+                night:     'Boa noite.',
+            },
+        };
+        return map[lang][slot];
+    }
+
+    // Subs stay funny & rotational
+    const greetingSubs = {
+        en: {
+            dawn:      ["Can't sleep? Neither can your inbox.", "The birds aren't even awake yet. You good?", "Early bird gets the coffee. Go."],
+            morning:   ["Fully charged. Let's pretend.", "Coffee first. Ambitions second.", "Today's forecast: unclear, like your plans.", "Still half asleep? Same energy here."],
+            lateAM:    ["Lunch o'clock is approaching. Stay strong.", "The morning's not over. Technically.", "Still morning. Barely."],
+            noon:      ["Midday. Peak confusion hours.", "It's noon somewhere. Actually it's here.", "Halfway through. You can do this. Probably."],
+            afternoon: ["4pm slump incoming. You've been warned.", "Time is flying. Unlike your productivity.", "Still got it. Maybe."],
+            evening:   ["Golden hour. Your ideas are finally good.", "Almost done. With the day, at least.", "Dinner soon? Your stomach says yes."],
+            night:     ["Should you be asleep? Asking for science.", "Late-night ideas hit different. Unfortunately.", "This is fine. Everything is fine."],
+        },
+        es: {
+            dawn:      ["¿No puedes dormir? Tu bandeja tampoco.", "Ni los pájaros están despiertos. ¿Todo bien?", "El que madruga, toma el café primero."],
+            morning:   ["El café antes que las ambiciones.", "Hoy: confusión moderada y posibles logros.", "Cargado al 40%. Suficiente por agora.", "Buenos días. Relativo."],
+            lateAM:    ["El almuerzo se acerca. Aguanta.", "Técnicamente todavía es mañana.", "La mañana no se ha rendido. Tú tampoco."],
+            noon:      ["Mediodía. Hora pico del caos.", "Aquí es donde el café ya no ayuda.", "Mitad del día. Mitad de las excusas."],
+            afternoon: ["El bajón de las 4pm viene en camino.", "El tiempo vuela. Tu lista de pendientes no.", "¿Productivo? Eso está por verse."],
+            evening:   ["Hora dorada. Ideas finalmente decentes.", "La cena no se va a hacer sola.", "Casi terminas. El día, al menos."],
+            night:     ["¿No deberías estar durmiendo? La ciencia pregunta.", "Ideas de madrugada: arriesgadas. Inevitables.", "Todo está bien. Completamente bien."],
+        },
+        pt: {
+            dawn:      ["Não consegue dormir? Sua caixa de entrada também não.", "Nem os pássaros acordaram ainda. Tá bem?", "Quem madruga toma café primeiro."],
+            morning:   ["Café antes das ambições. Sempre.", "Previsão de hoje: confusão com chance de produtividade.", "Carregando... 40%. Por enquanto basta.", "Bom dia. Relativamente falando."],
+            lateAM:    ["O almoço está chegando. Segura.", "Tecnicamente ainda é manhã.", "A manhã ainda não desistiu. Você também não."],
+            noon:      ["Meio-dia. Horário de pico do caos.", "É aqui que o café já não funciona mais.", "Metade do dia. Metade das desculpas."],
+            afternoon: ["A queda das 16h vem aí. Avisado.", "O tempo voa. Sua lista de tarefas não.", "Produtivo? A ver."],
+            evening:   ["Hora dourada. Suas ideias finalmente prestam.", "O jantar não vai se fazer sozinho.", "Quase terminou. O dia, pelo menos."],
+            night:     ["Não deveria estar dormindo? Pergunta a ciência.", "Ideias de madrugada: arriscadas. Inevitáveis.", "Tá tudo bem. Completamente bem."],
+        }
+    };
+
+    function getTimeSlot(hour) {
+        if (hour >= 0 && hour < 5) return 'dawn';
+        if (hour >= 5 && hour < 9) return 'morning';
+        if (hour >= 9 && hour < 12) return 'lateAM';
+        if (hour >= 12 && hour < 15) return 'noon';
+        if (hour >= 15 && hour < 18) return 'afternoon';
+        if (hour >= 18 && hour < 21) return 'evening';
+        return 'night';
+    }
+
+    // Pick a sub greeting (rotates every 10 minutes)
+    function getSubGreeting(slot) {
+        const subs = greetingSubs[lang][slot];
+        const minuteBucket = Math.floor(Date.now() / (10 * 60 * 1000));
+        return subs[minuteBucket % subs.length];
+    }
+
+    function updateHeader() {
+        const now = new Date();
+        const hour = now.getHours();
+        const locale = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'pt-BR';
+
+        const slot = getTimeSlot(hour);
+        const dayName = now.toLocaleDateString(locale, { weekday: 'long' });
+        const greetEl = document.getElementById('greeting');
+        const subEl = document.getElementById('greeting-sub');
+
+        if (!greetEl || !subEl) return;
+
+        // main greeting — simple, natural, with day name where it fits
+        const mainText = getMainGreeting(lang, slot, dayName);
+        greetEl.textContent = mainText;
+
+        // sub greeting — the funny line
+        subEl.textContent = getSubGreeting(slot);
+    }
+
+    function cycleLang() {
+        const idx = LANGS.indexOf(lang);
+        const nextLang = LANGS[(idx + 1) % LANGS.length];
+        applyLang(nextLang);
+
+        // Animate greeting
+        const greetEl = document.getElementById('greeting');
+        if (greetEl) {
+            greetEl.classList.remove('lang-switch');
+            void greetEl.offsetWidth; // reflow
+            greetEl.classList.add('lang-switch');
+        }
+    }
+
+    // Clicking the greeting cycles language
+    document.getElementById('greeting').addEventListener('click', () => cycleLang());
 
     /* ============================================================
        LINKIFY
@@ -2656,6 +2889,11 @@ body.dev-mode .dev-export-btn { display: block; }
             b.classList.toggle('active', b.dataset.lang === lang);
         });
 
+        // Update bottom button
+        const langToggle = document.getElementById('lang-toggle');
+        if (langToggle) langToggle.textContent = `Language: ${LANG_LABELS[lang]}`;
+
+        updateHeader();
         updateTimeline();
         initDock();
         updateWatermark();
@@ -3413,13 +3651,17 @@ function createNote(data, autoFocus = false) {
     initDock();
     buildTimeRuler();
     updateTimeline();
+    updateHeader();
     updateWatermark();
     applyLang(lang);
     initWeatherPlaceholder();
     notes.filter(n => !n.archived).forEach(n => {
         createNote(n);
     });
-    setInterval(updateTimeline, 10000);
+    setInterval(() => {
+        updateTimeline();
+        updateHeader();
+    }, 10000);
 
     // Auto-advance dock at midnight
     function scheduleMidnightRefresh() {
@@ -3562,10 +3804,12 @@ function createNote(data, autoFocus = false) {
     });
 
     // Text size
-    const noteSizes = { 'S': '25px', 'M': '28px', 'L': '36px' };
+    const noteSizes   = { 'S': '25px', 'M': '28px', 'L': '36px' };
+    const noteSizes1x = { 'S': '16px', 'M': '20px', 'L': '26px' };
 
     function applyNoteSize(size, noReflow = false) {
-        const px = noteSizes[size];
+        const sizes = window.devicePixelRatio > 1 ? noteSizes : noteSizes1x;
+        const px = sizes[size];
         if (!px) return;
         document.documentElement.style.setProperty('--note-size', px);
         document.querySelectorAll('#text-size-toggle .settings-toggle-btn').forEach(b => {
@@ -4096,7 +4340,7 @@ function createNote(data, autoFocus = false) {
             if (type === 'moon') H *= 0.7;
 
             // Use transform instead of left/top for smoother resizing
-            bgSvg.style.transform = `translate(${dr.left + INSET}px, ${dr.top - H - 4}px)`;
+            bgSvg.style.transform = `translate(${dr.left + INSET}px, ${dr.top - H - 2}px)`;
             bgSvg.setAttribute('width',  effW);
             bgSvg.setAttribute('height', H + 8);
 
@@ -4151,7 +4395,7 @@ function createNote(data, autoFocus = false) {
             domeGrad.setAttribute('y1', '0'); domeGrad.setAttribute('y2', f(H - LIFT));
             domeS0.setAttribute('stop-color', colorStr);
             // Night dome slightly more atmospheric; day keeps a soft amber wash
-            domeS0.setAttribute('stop-opacity', f(type === 'moon' ? 0.05 + arc * 0.06 : 0.035 + arc * 0.045));
+            domeS0.setAttribute('stop-opacity', f(type === 'moon' ? 0.08 + arc * 0.05 : 0.1 + arc * 0.05));
             const dPath = `M ${f(P0.x)},${f(P0.y)} Q ${f(P1.x)},${f(P1.y)} ${f(P2.x)},${f(P2.y)} L ${f(P2.x)},${domeBottom} L ${f(P0.x)},${domeBottom} Z`;
             domePath.setAttribute('d', dPath);
             if (starClipPath) starClipPath.setAttribute('d', dPath);
@@ -4173,16 +4417,10 @@ function createNote(data, autoFocus = false) {
 
             const x  = dr.left + INSET + t * effW;
             const By = (H - LIFT) * (1 - 2 * t * (1 - t));
-            const y  = (dr.top - H - 4) + By;
+            const y  = (dr.top - H - 2) + By;
 
-            skyGlow.style.opacity = '0';
-
-            horizGlow.style.left    = x + 'px';
-            horizGlow.style.top     = dr.top + 'px';
-            horizGlow.style.width   = '100px';
-            horizGlow.style.height  = '24px';
-            horizGlow.style.background = `radial-gradient(ellipse 50px 12px at center top, rgba(${color},0.5), transparent 75%)`;
-            horizGlow.style.opacity = Math.max(0, 0.18 - arc * 0.18).toFixed(3);
+            skyGlow.style.opacity   = '0';
+            horizGlow.style.opacity = '0';
 
             halo.setAttribute('fill', colorStr);
             core.setAttribute('fill', colorStr);
