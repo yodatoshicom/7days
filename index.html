@@ -210,16 +210,14 @@ html {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 body {
-    background-color: #fbfbfb;
-    background-image: url('bg2.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: none;
     color: var(--text-color);
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -227,7 +225,6 @@ body {
     justify-content: center;
     opacity: 0;
     transition: opacity 0.5s ease;
-    min-width: 360px;
 }
 
 body.ready {
@@ -680,7 +677,7 @@ body.ready {
 
 .bottom-controls {
     position: fixed;
-    bottom: 16px;
+    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
@@ -705,7 +702,7 @@ body.ready {
 
 .city-tooltip {
     position: fixed;
-    bottom: 16px;
+    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
     right: 30px;
     font-size: 10px;
     font-weight: 700;
@@ -872,7 +869,7 @@ body.note-font-sf-mono .note-edit-ta {
 
 .note-edit-tip {
     position: fixed;
-    bottom: 86px;
+    bottom: max(86px, calc(86px + env(safe-area-inset-bottom)));
     left: 50%;
     transform: translateX(-50%);
     font-family: 'Inter', system-ui, sans-serif;
@@ -968,7 +965,7 @@ body.note-editing-mode .note:not(.editing) { z-index: 50 !important; }
 
 .note-arrow-bar {
     position: fixed;
-    bottom: 28px;
+    bottom: max(28px, calc(28px + env(safe-area-inset-bottom)));
     left: 50%;
     transform: translateX(-50%) translateY(12px);
     z-index: 9999;
@@ -2037,18 +2034,19 @@ body.dev-mode .dev-export-btn { display: block; }
     pointer-events: auto;
 }
 
-/* ── Safe area insets for fixed bottom elements ── */
-.bottom-controls {
-    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
-}
-.city-tooltip {
-    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
-}
-.note-arrow-bar {
-    bottom: max(28px, calc(28px + env(safe-area-inset-bottom)));
-}
-.note-edit-tip {
-    bottom: max(86px, calc(86px + env(safe-area-inset-bottom)));
+
+/* ── Scale down on smaller desktop/laptop screens (< 1260px) ── */
+@media (max-width: 1260px) and (min-width: 431px) {
+    .day-card        { width: 60px; height: 62px; border-radius: 24px; }
+    .day-number      { font-size: 22px; }
+    .day-name        { font-size: 9px; }
+    .dock-container  { padding: 7px; gap: 3px; border-radius: 24px; }
+    .dock-wrapper    { gap: 10px; }
+    .day-separator   { height: 28px; }
+    .weather-icon    { font-size: 12px; }
+    .weather-temp    { font-size: 9px; }
+    .time-ruler      { height: 35px; margin-bottom: -11px; }
+    .year-progress-label { font-size: 11px; }
 }
 
 /* ── 1x (non-retina) screens: thicken hairline borders ── */
@@ -2073,80 +2071,123 @@ body.dev-mode .dev-export-btn { display: block; }
     .note-edit-overlay { background: rgba(0,0,0,0.35); }
 }
 
-/* ── Mobile layout (≤ 480px) ── */
-@media (max-width: 480px) {
+/* ── Dock to bottom + fluid width at ≤ 750px ── */
+@media (max-width: 750px) and (min-width: 431px) {
+    body           { justify-content: flex-end; }
+    .dock-wrapper  { width: calc(100% - 32px); padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+    .dock-row      { width: 100%; }
+    .dock-container{ flex: 1; }
+    .day-card      { flex: 1; width: auto; min-width: 0; }
+    .dock-nav      { display: none; }
+    .time-ruler    { width: calc(100% - 32px); }
+}
+
+/* ── Mobile layout — iPhone 13 → current (≤ 430px logical px) ── */
+@media (max-width: 430px) {
     #desktop-only { display: none !important; }
 
-    .dock-wrapper { width: calc(100% - 32px); }
+    /* ── Body: dock at bottom ── */
+    body {
+        justify-content: flex-end;
+    }
+
+    /* ── Dock wrapper: safe-area bottom breathing room ── */
+    .dock-wrapper {
+        width: calc(100% - 24px);
+        gap: 10px;
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
     .dock-row { width: 100%; }
     .dock-container {
         flex: 1;
-        padding: 8px;
-        gap: 3px;
+        padding: 8px 6px;
+        gap: 4px;
         border-radius: 28px;
     }
     .dock-nav { display: none; }
+
+    /* ── Day cards: full-width flex, tall enough for touch ── */
     .day-card {
         flex: 1;
         width: auto;
-        height: 70px;
+        min-width: 0;
+        height: 80px;
         border-radius: 22px;
     }
-    .day-card:hover { transform: none; }
-    .day-name { font-size: 9px; }
-    .day-number { font-size: 22px; }
+    .day-card:hover  { transform: none; }
+    .day-card:active { transform: scale(0.96); }
 
+    /* ── Typography ── */
+    .day-name   { font-size: 10px; letter-spacing: 0; }
+    .day-number { font-size: 24px; }
     .day-separator { display: none; }
-    .day-main-row { gap: 3px; }
-    .day-weather { opacity: 0.6; }
-    .weather-icon { font-size: 12px; }
-    .weather-temp { font-size: 9px; }
+    .day-main-row  { gap: 3px; }
 
-    body { justify-content: flex-end; padding-bottom: max(32px, calc(24px + env(safe-area-inset-bottom))); }
+    /* ── Weather inside card ── */
+    .day-weather  { opacity: 0.65; }
+    .weather-icon { font-size: 13px; }
+    .weather-temp { font-size: 10px; }
+
+    /* ── Hide desktop-only chrome ── */
     .bottom-controls { display: none; }
-    .city-tooltip { display: none; }
-    .capsule { display: none; }
+    .city-tooltip    { display: none; }
+    .capsule         { display: none; }
 
-    .year-progress-label { top: auto; bottom: calc(100% + 10px); font-size: 10px; }
-    /* Collapse ruler to zero height but keep label visible via fixed positioning */
-    .time-ruler { height: 0; overflow: visible; margin: 0; }
-    .time-ruler-track, .time-ruler-past,
-    .time-ruler-tick, .sun-label { display: none; }
-    #sun-arc, #sun-arc-bg { display: none; }
-    .time-ruler-now, .time-ruler-now-label { display: none; }
-    #mobile-time { display: block; }
+    /* ── Year progress: above dock ── */
+    .year-progress-label {
+        top: auto;
+        bottom: calc(100% + 10px);
+        font-size: 11px;
+    }
+
+    /* ── Time ruler: collapse, hide all ruler elements ── */
+    .time-ruler { display: none; }
+
+    /* ── Mobile clock pill: safe-area aware top ── */
     #mobile-time {
+        display: block;
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: 50%;
+        transform: translateX(-50%);
         font-family: 'Inter', sans-serif;
         font-size: 11px;
         font-weight: 600;
         letter-spacing: 0.04em;
         color: #7B52B0;
-        background: rgba(167,139,202,0.1);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(167,139,202,0.12);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border: 0.5px solid rgba(167,139,202,0.3);
         border-radius: 20px;
-        padding: 3px 10px;
-        position: fixed;
-        top: max(20px, env(safe-area-inset-top, 20px));
-        left: 50%;
-        transform: translateX(-50%);
+        padding: 4px 12px;
         z-index: 9999;
         pointer-events: none;
+        white-space: nowrap;
     }
 
+    /* ── Settings button: respect Dynamic Island / notch ── */
+    .settings-btn {
+        top: max(16px, env(safe-area-inset-top, 16px));
+        right: 16px;
+    }
+
+    /* ── Settings panel: open below settings button ── */
     .settings-panel {
         right: 8px;
         left: 8px;
         width: auto;
-        top: 58px;
+        top: max(66px, calc(env(safe-area-inset-top, 0px) + 60px));
+        max-height: calc(100dvh - max(66px, calc(env(safe-area-inset-top, 0px) + 60px)) - 20px);
     }
 
-    .weather-tooltip { font-size: 22px; }
-    .note { max-width: calc(100vw - 32px); }
-    .note-resize-handle { display: none; }
-    .note-arrow-bar { max-width: calc(100vw - 32px); }
+    /* ── Notes ── */
+    .weather-tooltip  { font-size: 20px; }
+    .note             { max-width: calc(100vw - 32px); }
+    .note-resize-handle { opacity: 1; }
+    .note-arrow-bar   { max-width: calc(100vw - 32px); }
 }
+
 </style>
 </head>
 <body id="surface">
@@ -2369,11 +2410,11 @@ body.dev-mode .dev-export-btn { display: block; }
             pt: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
         };
         const now = new Date();
-        const isMobile = window.innerWidth <= 480;
+        const isMobile = window.innerWidth <= 430;
         const numDays = isMobile ? 5 : 7;
         const weekStart = new Date(now);
         weekStart.setHours(0, 0, 0, 0);
-        weekStart.setDate(now.getDate() + dockOffset - (isMobile ? 0 : 0));
+        weekStart.setDate(now.getDate() + dockOffset);
 
         dock.innerHTML = '';
         for (let i = 0; i < numDays; i++) {
@@ -2401,7 +2442,7 @@ body.dev-mode .dev-export-btn { display: block; }
             card.addEventListener('mouseleave', hideDayNotePreview);
             dock.appendChild(card);
 
-            if (i < 6) {
+            if (i < numDays - 1) {
                 const nextDate = new Date(weekStart);
                 nextDate.setDate(weekStart.getDate() + i + 1);
                 const nextIsToday = nextDate.toDateString() === now.toDateString();
@@ -2822,24 +2863,29 @@ function createNote(data, autoFocus = false) {
             window.addEventListener('touchend', onEnd);
         }, { passive: true });
 
-        // ---- RESIZE (mousedown on handle) ----
-        resizeHandle.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-
-            const startX = e.clientX;
-            const startY = e.clientY;
+        // ---- RESIZE (mousedown + touchstart on handle) ----
+        function startResize(clientX, clientY) {
+            const startX = clientX;
+            const startY = clientY;
             const startRect = note.getBoundingClientRect();
             const startW = Math.ceil(startRect.width);
             const startH = Math.ceil(startRect.height);
 
-            note.style.height = startH + 'px'; // lock height for resize
+            note.style.height = startH + 'px';
 
             const minW = Math.min(startW, 80);
             const minH = Math.min(startH, 40);
             const onMove = (me) => {
                 const newW = Math.max(minW, startW + (me.clientX - startX));
                 const newH = Math.max(minH, startH + (me.clientY - startY));
+                note.style.width = newW + 'px';
+                note.style.height = newH + 'px';
+            };
+            const onTouchMove = (te) => {
+                te.preventDefault();
+                const t = te.touches[0];
+                const newW = Math.max(minW, startW + (t.clientX - startX));
+                const newH = Math.max(minH, startH + (t.clientY - startY));
                 note.style.width = newW + 'px';
                 note.style.height = newH + 'px';
             };
@@ -2851,10 +2897,27 @@ function createNote(data, autoFocus = false) {
                 save();
                 window.removeEventListener('mousemove', onMove);
                 window.removeEventListener('mouseup', onUp);
+                window.removeEventListener('touchmove', onTouchMove);
+                window.removeEventListener('touchend', onUp);
             };
             window.addEventListener('mousemove', onMove);
             window.addEventListener('mouseup', onUp);
+            window.addEventListener('touchmove', onTouchMove, { passive: false });
+            window.addEventListener('touchend', onUp);
+        }
+
+        resizeHandle.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            startResize(e.clientX, e.clientY);
         });
+
+        resizeHandle.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            const t = e.touches[0];
+            startResize(t.clientX, t.clientY);
+        }, { passive: false });
 
         // ---- DOUBLE CLICK TO EDIT ----
         note.ondblclick = (e) => {
@@ -3040,24 +3103,39 @@ function createNote(data, autoFocus = false) {
         reader.readAsDataURL(file);
     });
 
-    window.ondblclick = (e) => {
-        // Only create notes on the background — never on the header, dock, or any note
+    function spawnNote(x, y, target) {
         if (
-            (e.target.id === 'surface' || e.target.id === 'mesh') &&
-            !e.target.closest('.dock-wrapper') &&
-            !e.target.closest('.note')
+            (target.id === 'surface' || target.id === 'mesh') &&
+            !target.closest('.dock-wrapper') &&
+            !target.closest('.note')
         ) {
             const n = {
                 id: 'n' + Date.now(),
-                x: e.clientX - 40,
-                y: e.clientY - 30,
+                x: x - 40,
+                y: y - 30,
                 text: '',
                 zIndex: ++topZ
             };
             notes.push(n);
             createNote(n, true);
         }
-    };
+    }
+
+    window.ondblclick = (e) => spawnNote(e.clientX, e.clientY, e.target);
+
+    // Double-tap to create note on touch devices
+    let lastTap = 0, lastTapTarget = null;
+    window.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        const t = e.changedTouches[0];
+        if (now - lastTap < 300 && lastTapTarget === e.target) {
+            spawnNote(t.clientX, t.clientY, e.target);
+            lastTap = 0;
+        } else {
+            lastTap = now;
+            lastTapTarget = e.target;
+        }
+    });
 
     // Escape key: exit note editing as if you clicked away
     window.addEventListener('keydown', (e) => {
@@ -3901,7 +3979,7 @@ function createNote(data, autoFocus = false) {
         bgSvg.appendChild(pastPath);
         bgSvg.appendChild(futurePath);
 
-        document.body.appendChild(bgSvg);
+        document.documentElement.appendChild(bgSvg);
 
         // ── Sun & Moon icon ──
         const SIZE = 28, C = SIZE / 2;
@@ -3953,17 +4031,17 @@ function createNote(data, autoFocus = false) {
         astroEl.id = 'sun-arc';
         astroEl.style.opacity = '0';
         astroEl.appendChild(astroSvg);
-        document.body.appendChild(astroEl);
+        document.documentElement.appendChild(astroEl);
 
         // Atmospheric sky glow
         const skyGlow = document.createElement('div');
         skyGlow.style.cssText = 'position:fixed;pointer-events:none;z-index:596;border-radius:50%;transform:translate(-50%,-55%);transition:opacity 3s ease;opacity:0;';
-        document.body.appendChild(skyGlow);
+        document.documentElement.appendChild(skyGlow);
 
         // Horizon glow
         const horizGlow = document.createElement('div');
         horizGlow.style.cssText = 'position:fixed;pointer-events:none;z-index:597;transform:translateX(-50%);transition:opacity 2.5s ease;opacity:0;';
-        document.body.appendChild(horizGlow);
+        document.documentElement.appendChild(horizGlow);
 
         const starClipPath = document.querySelector('#star-clip path');
 
@@ -4116,7 +4194,12 @@ function createNote(data, autoFocus = false) {
             astroEl.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%,-50%) scale(${scale})`;
             astroEl.style.filter    = `drop-shadow(0 0 ${(type === 'moon' ? 5 + arc * 8 : 6 + arc * 12).toFixed(1)}px rgba(${color},${ga}))`;
             astroEl.style.opacity   = (0.6 + arc * 0.4).toFixed(2);
-            if (!animate) requestAnimationFrame(() => { astroEl.style.transition = ''; });
+            if (!animate) {
+                // Force reflow so Chrome commits the current position before
+                // transition is restored — prevents the fly-from-top-left glitch
+                void astroEl.getBoundingClientRect();
+                requestAnimationFrame(() => { astroEl.style.transition = ''; });
+            }
         }
 
         updateAstroArc(false);
