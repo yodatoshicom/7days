@@ -259,11 +259,10 @@ window.populateDockWeather = function() {
         if (!slot) return;
         const icon = mapWmoToEmoji(item.code);
         slot.innerHTML = `<span class="weather-icon">${icon}</span><span class="weather-temp">${item.temp}°</span>`;
-        const card = slot.closest('.day-card');
-        if (card) {
-            card.onmouseenter = () => showWeatherTooltip(i);
-            card.onmouseleave = hideWeatherTooltip;
-        }
+        
+        // Attach tooltip to the weather slot itself
+        slot.onmouseenter = () => showWeatherTooltip(i);
+        slot.onmouseleave = hideWeatherTooltip;
     });
 };
 

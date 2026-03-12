@@ -117,8 +117,11 @@
 }
 </script>
 
-<link rel="icon" type="image/png" href="img/favicon.png">
-<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="icon" type="image/x-icon" href="img/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="img/favicon-48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -137,10 +140,19 @@
     if (bgVals[bg]) r.style.setProperty('--bg-color', bgVals[bg]);
     if (bg === 'dark') r.classList.add('dark-theme');
     
-    // Initial class for Apple switch
+    // Ruler visibility
+    var showRuler = localStorage.getItem('aura_show_ruler') || 'true';
+    if (showRuler === 'false') {
+        // We'll add a CSS class to hide it early
+        r.classList.add('hide-ruler');
+    }
+    
+    // Initial class for Apple switches
     window.addEventListener('DOMContentLoaded', () => {
         const toggle = document.getElementById('bg-toggle');
         if (toggle && bg === 'dark') toggle.classList.add('is-dark');
+        const rToggle = document.getElementById('ruler-quick-toggle');
+        if (rToggle && showRuler === 'false') rToggle.classList.add('ruler-off');
     });
     
     var f = localStorage.getItem('aura_note_font');
@@ -208,7 +220,7 @@
 
 .header-container {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 110px;
     margin-bottom: 0px;
     z-index: 500;
     user-select: none;
@@ -541,7 +553,7 @@ body.ready {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .dock-row {
@@ -553,16 +565,17 @@ body.ready {
 
 .dock-nav {
     display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
     background: none;
     color: var(--text-color);
     cursor: pointer;
-    align-items: center;
-    justify-content: center;
     opacity: 0.25;
     transition: opacity 0.25s ease, transform 0.25s var(--sf-easing);
     flex-shrink: 0;
-    padding: 6px;
+    width: 40px;
+    height: 40px;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -576,11 +589,12 @@ body.ready {
 }
 
 .dock-container {
+    position: relative;
     padding: 9px;
     background: var(--card-bg);
     backdrop-filter: blur(60px) saturate(210%);
     -webkit-backdrop-filter: blur(60px) saturate(210%);
-    border-radius: 30px;
+    border-radius: 36px;
     border: 0.5px solid rgba(255, 255, 255, 0.15);
     
     box-shadow: 
@@ -604,7 +618,7 @@ body.ready {
 }
 
 .day-card {
-    width: 74px;
+    width: 64px;
     height: 76px;
     display: flex;
     flex-direction: column;
@@ -687,8 +701,14 @@ body.ready {
 
 .day-card.active .day-weather { opacity: 0.75; }
 
-/* WEATHER ROW — hidden, weather now lives inside day cards */
-.weather-row { display: none; }
+/* WEATHER ROW — below the dock */
+.weather-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 54px; /* 9px (dock pad) + 40px (nav btn) + 5px (gap) = 54px to align exactly */
+    opacity: 0.7;
+}
 
 /* Inline weather inside day cards */
 .day-main-row {
@@ -697,40 +717,56 @@ body.ready {
     gap: 4px;
 }
 .day-weather {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    opacity: 0.65;
-    pointer-events: auto;
-    cursor: pointer;
+    /* Hidden inside card now */
+    display: none;
 }
 
 .weather-day {
-    width: 74px;
+    width: 58px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    padding: 4px 0 8px;
-    opacity: 0.6; 
-    position: relative; 
-    transition: 0.3s; 
-    pointer-events: auto; 
-    cursor: pointer; 
+    justify-content: center;
+    opacity: 1;
+    transition: 0.3s;
+    pointer-events: auto;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-color);
 }
 
+.weather-day:hover { opacity: 1; transform: translateY(-1px); }
+
+.weather-day .weather-icon { font-size: 15px; margin-bottom: 0; margin-right: 4px; }
+.weather-day .weather-temp { font-size: 11px; font-weight: 700; opacity: 0.8; }
+
+.weather-separator {
+    width: 1px;
+    height: 10px;
+    background: linear-gradient(to bottom, transparent, rgba(120,120,128,0.3) 50%, transparent);
+    flex-shrink: 0;
+}
+
+.weather-day.today {
+    filter: drop-shadow(0 0 6px rgba(0, 122, 255, 0.5));
+}
+
+@media (max-width: 430px) {
+    .weather-row {
+        width: 100%;
+        padding: 0 16px; /* Match dock-wrapper padding? No, dock-container has padding 8px 6px */
+        padding: 0 6px; /* Match dock-container mobile padding */
+        gap: 4px;
+    }
+    .weather-day {
+        flex: 1;
+        width: auto;
+    }
+    .weather-separator { display: none; }
+}
 .weather-day:not(:last-child) {
     border-right: none;
-}
-
-.weather-day:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1px;
-    height: 30px;
-    background: rgba(29, 29, 31, 0.12);
 }
 
 .weather-icon {
@@ -787,6 +823,7 @@ body.ready {
 }
 
 .bottom-controls {
+    display: none;
     position: fixed;
     bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
     left: 50%;
@@ -812,6 +849,7 @@ body.ready {
 }
 
 .city-tooltip {
+    display: none;
     position: fixed;
     bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
     right: 30px;
@@ -1019,6 +1057,27 @@ body.note-font-sf-mono .note-edit-ta {
     display: none;
 }
 
+.note.spotify-note {
+    width: 300px !important;
+    padding: 6px;
+    border-radius: 16px;
+}
+.note.spotify-note .note-content {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    height: 152px;
+    line-height: 0;
+}
+.note.spotify-note .note-content iframe {
+    display: block;
+    width: 100%;
+    height: 152px;
+    border: none;
+    border-radius: 10px;
+}
+.note.spotify-note .note-color-bar { display: none; }
+
 .note-image {
     width: 100%;
     height: 100%;
@@ -1060,17 +1119,9 @@ body.screenshot-mode .dock-wrapper {
 
 /* ── Note editing mode — page blur + arrow bar ── */
 .note-edit-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1099;
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
-    background: rgba(0,0,0,0.08);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.25s ease;
+    display: none;
 }
-body.note-editing-mode .note-edit-overlay { opacity: 1; }
+body.note-editing-mode .note-edit-overlay { display: none; }
 body.note-editing-mode .note.editing { z-index: 2000 !important; }
 body.note-editing-mode .note:not(.editing) { z-index: 50 !important; }
 
@@ -1143,6 +1194,13 @@ body.note-editing-mode .note-arrow-bar {
 
 
 
+html.hide-ruler .time-ruler {
+    display: none !important;
+}
+html.hide-ruler .dock-wrapper {
+    margin-top: 30px;
+}
+
 html.dark-theme {
     --bg-color: #000000;
     --text-color: #f5f5f7;
@@ -1186,6 +1244,10 @@ html.dark-theme .settings-toggle-btn.active { background: rgba(255, 255, 255, 0.
     box-shadow: inset 0 0.5px 1px rgba(0,0,0,0.05);
 }
 
+.bg-toggle.ruler-toggle {
+    right: 136px; /* Positioned to the left of the theme toggle */
+}
+
 body:hover .bg-toggle { opacity: 1; }
 .bg-toggle:hover { background: rgba(120, 120, 128, 0.18); transform: translateY(-1px); }
 .bg-toggle:active { transform: translateY(0) scale(0.96); }
@@ -1208,7 +1270,9 @@ html.dark-theme .bg-toggle {
 }
 
 .bg-toggle.is-dark .icon-dark,
-.bg-toggle:not(.is-dark) .icon-image {
+.bg-toggle:not(.is-dark) .icon-image,
+.bg-toggle.ruler-off .icon-ruler-off,
+.bg-toggle:not(.ruler-off) .icon-ruler-on {
     opacity: 0.9;
 }
 
@@ -1225,7 +1289,8 @@ html.dark-theme .bg-toggle {
     z-index: 0;
 }
 
-.bg-toggle.is-dark .bg-toggle-knob {
+.bg-toggle.is-dark .bg-toggle-knob,
+.bg-toggle.ruler-off .bg-toggle-knob {
     transform: translateX(22px);
 }
 
@@ -1653,9 +1718,160 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 
+/* Year progress bar — full width bottom */
+.year-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 7px;
+    z-index: 500;
+    background: rgba(0,0,0,0.07);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+    pointer-events: none;
+    overflow: visible;
+}
+.year-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, rgba(167,139,202,0.25), #A78BCA);
+    border-radius: 0 4px 4px 0;
+    position: relative;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.year-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.18), transparent);
+    border-radius: 0 4px 0 0;
+    pointer-events: none;
+}
+.year-bar-marker {
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    pointer-events: none;
+}
+.year-bar-tick {
+    width: 1.5px;
+    height: 22px;
+    background: #A78BCA;
+}
+.year-bar-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #A78BCA;
+    white-space: nowrap;
+    background: rgba(167,139,202,0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0.5px solid rgba(167,139,202,0.3);
+    border-radius: 20px;
+    padding: 2.5px 10px;
+    margin-bottom: 0;
+}
+.season-tick {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    height: 12px;
+    background: linear-gradient(to top, transparent, rgba(167,139,202,0.55) 45%, #A78BCA);
+    transform: translateX(-50%);
+    transform-origin: bottom center;
+    pointer-events: auto;
+    cursor: default;
+    transition: height 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.22s ease;
+}
+.season-tick::before {
+    content: '';
+    position: absolute;
+    left: -14px; right: -14px;
+    top: -28px; bottom: -6px;
+}
+.season-tick::after {
+    content: '';
+    position: absolute;
+    top: -3.6px; left: 50%;
+    transform: translateX(-50%);
+    width: 3.6px; height: 3.6px;
+    border-radius: 50%;
+    background: #A78BCA;
+    opacity: 0.65;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.season-tick:hover { height: 24px; filter: drop-shadow(0 0 4px rgba(167,139,202,0.5)); }
+.season-tick:hover::after { opacity: 1; transform: translateX(-50%) scale(1.4); }
+.season-label {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: #A78BCA;
+    white-space: nowrap;
+    background: rgba(167,139,202,0.09);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 0.5px solid rgba(167,139,202,0.2);
+    border-radius: 20px;
+    padding: 3.6px 12px;
+    opacity: 0;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    pointer-events: none;
+}
+.season-tick:hover .season-label { opacity: 1; transform: translateX(-50%) translateY(0); }
+.season-zone {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    background: rgba(167,139,202,0.18);
+    transition: opacity 0.25s ease;
+    border-radius: 0 3px 3px 0;
+}
+.season-zone.active { opacity: 1; }
+.season-name { display: none; }
+.month-tick {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    height: 11px;
+    background: rgba(120,120,128,0.35);
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+.month-tick.past    { background: rgba(120,120,128,0.55); }
+.month-tick.current { background: rgba(167,139,202,0.8); height: 13px; }
+.month-name {
+    position: absolute;
+    bottom: 16px;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+    color: rgba(120,120,128,0.5);
+}
+.month-name.past    { color: rgba(120,120,128,0.7); }
+.month-name.current { color: rgba(167,139,202,0.95); font-weight: 700; }
+
 /* Bottom watermark — Alcove-style fading text */
 .bottom-watermark {
-    display: none;
+    display: block;
     position: fixed;
     bottom: -0.12em;
     left: 50%;
@@ -1897,6 +2113,7 @@ body.dev-mode .dev-export-btn { display: block; }
 
 /* ── Time Capsule ── */
 .capsule {
+    display: none !important;
     position: fixed;
     bottom: 16px;
     left: 30px;
@@ -1985,175 +2202,6 @@ body.dev-mode .dev-export-btn { display: block; }
 .capsule-send:hover { opacity: 1; transform: scale(1.02); }
 .capsule-send:active { transform: scale(0.96); }
 
-/* Year progress bar — Clean Data Rail */
-.year-bar-wrapper {
-    position: fixed;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 88%;
-    max-width: 850px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    z-index: 500;
-    pointer-events: none;
-}
-
-.year-bar-year, .year-bar-pct {
-    font-family: 'JetBrains Mono', 'SF Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-color);
-    opacity: 0.5;
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-}
-
-.year-bar {
-    flex: 1;
-    height: 4px;
-    background: rgba(0, 0, 0, 0.08);
-    position: relative;
-    border-radius: 4px;
-}
-
-.year-bar-fill {
-    height: 100%;
-    background: #A78BCA;
-    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-    border-radius: 4px;
-}
-
-/* Month labels — static labels ABOVE the rail */
-.month-name {
-    position: absolute;
-    bottom: 100%;
-    transform: translateX(-50%);
-    font-family: 'Inter', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--text-color);
-    opacity: 0.4;
-    padding-bottom: 10px;
-    white-space: nowrap;
-    transition: opacity 0.3s ease;
-}
-
-.month-name.current {
-    opacity: 0.8;
-    color: #6366F1;
-}
-
-/* Month ticks — stand up from the top of the rail */
-.month-tick {
-    position: absolute;
-    bottom: 100%;
-    width: 1px;
-    height: 10px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
-    transform: translateX(-50%);
-    z-index: 4;
-}
-
-/* Day ticks — tiny vertical markers for each day */
-.day-tick {
-    position: absolute;
-    bottom: 100%;
-    width: 1px;
-    height: 3px;
-    background: rgba(0, 0, 0, 0.05);
-    transform: translateX(-50%);
-    z-index: 3;
-}
-
-/* Holiday pins — tiny elegant markers on top */
-.holiday-pin {
-    display: none;
-    position: absolute;
-    bottom: 100%;
-    width: 1px;
-    height: 8px;
-    background: linear-gradient(to top, rgba(99, 102, 241, 0.4), #6366F1);
-    transform: translateX(-50%);
-    z-index: 6;
-    pointer-events: auto;
-}
-
-.holiday-pin::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 4px;
-    height: 4px;
-    background: #6366F1;
-    border-radius: 50%;
-    box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
-}
-
-.holiday-label {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-8px);
-    font-family: 'Inter', sans-serif;
-    font-size: 7px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #6366F1;
-    background: var(--card-bg);
-    backdrop-filter: blur(10px);
-    padding: 2px 6px;
-    border-radius: 4px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: all 0.2s var(--sf-easing);
-    pointer-events: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.holiday-pin:hover .holiday-label {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-4px);
-}
-
-/* Season names — permanent labels BELOW the rail */
-.season-name {
-    position: absolute;
-    top: 100%;
-    transform: translateX(-50%);
-    font-family: 'Inter', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--text-color);
-    opacity: 0.4;
-    padding-top: 10px;
-    white-space: nowrap;
-    transition: opacity 0.3s ease;
-}
-
-.season-name.current {
-    opacity: 0.8;
-    color: #6366F1;
-}
-
-/* Season ticks — stand down from the bottom of the rail */
-.season-tick {
-    position: absolute;
-    top: 100%;
-    width: 1px;
-    height: 10px;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
-    transform: translateX(-50%);
-    z-index: 5;
-}
 /* Sun arc */
 #sun-arc-bg {
     position: fixed;
@@ -2173,83 +2221,20 @@ body.dev-mode .dev-export-btn { display: block; }
     transition: transform 58s linear, opacity 2.5s ease;
 }
 
-.year-bar-label {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(50px) saturate(210%);
-    -webkit-backdrop-filter: blur(50px) saturate(210%);
-    border: 0.5px solid rgba(255, 255, 255, 0.5);
-    border-radius: 20px;
-    padding: 6px 16px;
-    box-shadow: 
-        0 10px 30px rgba(0,0,0,0.08),
-        inset 0 1px 0 0 rgba(255,255,255,0.4);
-    display: flex;
-    align-items: center;
-    gap: 0;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    cursor: default;
-    pointer-events: auto;
-}
-
-.year-bar-label .full-info {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-color);
-    opacity: 0;
-    max-width: 0;
-    white-space: nowrap;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    display: inline-block;
-}
-
-.year-bar-label:hover .full-info {
-    opacity: 0.5;
-    max-width: 200px;
-    margin-right: 8px;
-}
-
-.year-bar-label .pct-text {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: #7B52B0;
-    letter-spacing: -0.01em;
-}
-
-
-/* Year Progress label under dock */
-.year-progress-label {
-    position: absolute;
-    top: calc(100% + 14px);
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'JetBrains Mono', 'SF Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-color);
-    opacity: 0.4;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-    pointer-events: auto;
-}
 
 
 /* ── Scale down on smaller desktop/laptop screens (< 1260px) ── */
 @media (max-width: 1260px) and (min-width: 431px) {
-    .day-card        { width: 60px; height: 62px; border-radius: 24px; }
+    .day-card        { width: 52px; height: 54px; border-radius: 28px; }
     .day-number      { font-size: 22px; }
     .day-name        { font-size: 9px; }
-    .dock-container  { padding: 7px; gap: 3px; border-radius: 24px; }
+    .dock-container  { padding: 7px; gap: 3px; border-radius: 30px; }
     .dock-wrapper    { gap: 10px; }
     .day-separator   { height: 28px; }
     .weather-icon    { font-size: 12px; }
     .weather-temp    { font-size: 9px; }
     .time-ruler      { height: 35px; margin-bottom: -11px; }
-    .year-progress-label { font-size: 11px; }
+
 }
 
 /* ── 1x (non-retina) screens: thicken hairline borders + scale down fonts ── */
@@ -2349,8 +2334,8 @@ body.dev-mode .dev-export-btn { display: block; }
     .year-progress-label {
         top: auto;
         bottom: calc(100% + 10px);
-        font-size: 11px;
     }
+    .year-progress-label .yp-bar { width: calc(100vw - 48px); }
 
     /* ── Time ruler: collapse, hide all ruler elements ── */
     .time-ruler { display: none; }
@@ -2459,6 +2444,15 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 
+<button class="bg-toggle ruler-toggle" id="ruler-quick-toggle" title="Toggle hour bar">
+    <div class="bg-toggle-icon icon-ruler-on">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+    </div>
+    <div class="bg-toggle-icon icon-ruler-off">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/><line x1="3" y1="3" x2="21" y2="21"/></svg>
+    </div>
+    <div class="bg-toggle-knob"></div>
+</button>
 <button class="bg-toggle" id="bg-toggle" title="Toggle theme">
     <div class="bg-toggle-icon icon-image">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
@@ -2519,6 +2513,13 @@ body.dev-mode .dev-export-btn { display: block; }
             <button class="settings-toggle-btn" data-size="S" style="font-size:9px;">S</button>
             <button class="settings-toggle-btn active" data-size="M" style="font-size:11px;">M</button>
             <button class="settings-toggle-btn" data-size="L" style="font-size:13px;">L</button>
+        </div>
+    </div>
+    <div style="margin-top:4px;">
+        <div class="settings-section-label">Interface</div>
+        <div class="settings-toggle" id="ruler-toggle-picker">
+            <button class="settings-toggle-btn active" data-show="true">Show Hour Bar</button>
+            <button class="settings-toggle-btn" data-show="false">Hide</button>
         </div>
     </div>
     </div>
@@ -2616,34 +2617,25 @@ body.dev-mode .dev-export-btn { display: block; }
     function getMainGreeting(lang, slot, dayName) {
         const map = {
             en: {
-                dawn:      'Good morning.',
-                morning:   `Happy ${dayName}.`,
-                lateAM:    'Good morning.',
-                noon:      'Good afternoon.',
-                afternoon: `Good ${dayName}.`,
-                evening:   'Good evening.',
-                night:     'Good night.',
+                morning:   `Good morning.`,
+                afternoon: `Good afternoon.`,
+                evening:   `Good evening.`,
+                night:     `Good night.`,
             },
             es: {
-                dawn:      'Buenos días.',
-                morning:   `Feliz ${dayName}.`,
-                lateAM:    'Buenos días.',
-                noon:      'Buenas tardes.',
-                afternoon: `Buen ${dayName}.`,
-                evening:   'Buenas noches.',
-                night:     'Buenas noches.',
+                morning:   `Buenos días.`,
+                afternoon: `Buenas tardes.`,
+                evening:   `Buenas noches.`,
+                night:     `Buenas noches.`,
             },
             pt: {
-                dawn:      'Bom dia.',
-                morning:   `Feliz ${dayName}.`,
-                lateAM:    'Bom dia.',
-                noon:      'Boa tarde.',
-                afternoon: `${dayName}.`,
-                evening:   'Boa noite.',
-                night:     'Boa noite.',
+                morning:   `Bom dia.`,
+                afternoon: `Boa tarde.`,
+                evening:   `Boa noite.`,
+                night:     `Boa noite.`,
             },
         };
-        return map[lang][slot];
+        return map[lang][slot] || map[lang].morning;
     }
 
     // Subs stay funny & rotational
@@ -2678,13 +2670,10 @@ body.dev-mode .dev-export-btn { display: block; }
     };
 
     function getTimeSlot(hour) {
-        if (hour >= 0 && hour < 5) return 'dawn';
-        if (hour >= 5 && hour < 9) return 'morning';
-        if (hour >= 9 && hour < 12) return 'lateAM';
-        if (hour >= 12 && hour < 15) return 'noon';
-        if (hour >= 15 && hour < 18) return 'afternoon';
-        if (hour >= 18 && hour < 21) return 'evening';
-        return 'night';
+        if (hour >= 5 && hour < 12)  return 'morning';
+        if (hour >= 12 && hour < 17) return 'afternoon';
+        if (hour >= 17 && hour < 21) return 'evening';
+        return 'night'; // Covers 21:00 - 04:59
     }
 
     // Pick a sub greeting (rotates every 10 minutes)
@@ -2734,6 +2723,27 @@ body.dev-mode .dev-export-btn { display: block; }
     /* ============================================================
        LINKIFY
     ============================================================ */
+    function spotifyEmbed(text) {
+        const t = text.trim();
+        // Extract src URL from any iframe embed containing a Spotify embed URL
+        const match = t.match(/src=["'](https:\/\/open\.spotify\.com\/embed\/[^"'\s]+)["']/i);
+        if (match) return match[1];
+        // Also accept a bare Spotify embed URL
+        if (/^https:\/\/open\.spotify\.com\/embed\//i.test(t)) return t;
+        return null;
+    }
+
+    function renderNoteContent(content, text) {
+        const spotifySrc = spotifyEmbed(text);
+        if (spotifySrc) {
+            content.innerHTML = `<iframe src="${spotifySrc}" width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:10px;display:block;"></iframe>`;
+            content.closest('.note').classList.add('spotify-note');
+        } else {
+            content.innerHTML = linkify(text);
+            content.closest('.note').classList.remove('spotify-note');
+        }
+    }
+
     function linkify(text) {
         const urlRegex = /((https?:\/\/|www\.)[^\s]+|[a-zA-Z0-9-]+\.[a-zA-Z]{2,}[^\s]*)/gi;
         return text.replace(urlRegex, (url) => {
@@ -2759,15 +2769,21 @@ body.dev-mode .dev-export-btn { display: block; }
         const numDays = isMobile ? 5 : 7;
         const weekStart = new Date(now);
         weekStart.setHours(0, 0, 0, 0);
-        weekStart.setDate(now.getDate() + dockOffset);
+        const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon, ...6=Sat
+        const daysToSunday = -dayOfWeek;
+        weekStart.setDate(now.getDate() + daysToSunday + dockOffset);
 
+        const dock = document.getElementById('dock');
         dock.innerHTML = '';
+
         for (let i = 0; i < numDays; i++) {
             const date = new Date(weekStart);
             date.setDate(weekStart.getDate() + i);
             const dateStr = toISO(date);
             const isToday = date.toDateString() === now.toDateString();
             const isPast = date < new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            // 1. Create Day Card
             const card = document.createElement('div');
             const isWeekend = date.getDay() === 0 || date.getDay() === 6;
             card.className = `day-card${isToday ? ' active' : ''}${isPast ? ' past' : ''}${isWeekend ? ' weekend' : ''}`;
@@ -2776,7 +2792,6 @@ body.dev-mode .dev-export-btn { display: block; }
                 <span class="day-name">${(dayNames[lang] || dayNames['en'])[date.getDay()]}</span>
                 <div class="day-main-row">
                     <span class="day-number">${date.getDate()}</span>
-                    <div class="day-weather" id="dw-${dateStr}"></div>
                 </div>
             `;
             if (!isPast) {
@@ -2787,6 +2802,7 @@ body.dev-mode .dev-export-btn { display: block; }
             card.addEventListener('mouseleave', hideDayNotePreview);
             dock.appendChild(card);
 
+            // 2. Separators (dock only)
             if (i < numDays - 1) {
                 const nextDate = new Date(weekStart);
                 nextDate.setDate(weekStart.getDate() + i + 1);
@@ -2800,15 +2816,43 @@ body.dev-mode .dev-export-btn { display: block; }
         }
 
         renderDayNoteDots();
+    }
+
+    function initWeatherRow() {
+        const now = new Date();
+        const isMobile = window.innerWidth <= 430;
+        const numDays = isMobile ? 5 : 7;
+        const weatherRow = document.getElementById('weather');
+        weatherRow.innerHTML = '';
+
+        for (let i = 0; i < numDays; i++) {
+            const date = new Date(now);
+            date.setHours(0, 0, 0, 0);
+            date.setDate(now.getDate() + i);
+            const dateStr = toISO(date);
+
+            const wSlot = document.createElement('div');
+            wSlot.className = 'weather-day' + (i === 0 ? ' today' : '');
+            wSlot.id = `dw-${dateStr}`;
+            wSlot.innerHTML = `<span class="weather-icon" style="opacity:0.2">--</span>`;
+            weatherRow.appendChild(wSlot);
+
+            if (i < numDays - 1) {
+                const wSep = document.createElement('div');
+                wSep.className = 'weather-separator';
+                weatherRow.appendChild(wSep);
+            }
+        }
+
         if (window.populateDockWeather) window.populateDockWeather();
     }
 
     document.getElementById('dock-prev').addEventListener('click', () => {
-        dockOffset -= 7;
+        dockOffset -= 1;
         initDock();
     });
     document.getElementById('dock-next').addEventListener('click', () => {
-        dockOffset += 7;
+        dockOffset += 1;
         initDock();
     });
 
@@ -2988,7 +3032,7 @@ body.dev-mode .dev-export-btn { display: block; }
     }
 
     function updateWatermark() {
-        document.getElementById('bottom-watermark').textContent = 'Year Progress Dashboard';
+        document.getElementById('bottom-watermark').textContent = 'weekdash';
     }
 
     function applyLang(newLang) {
@@ -3075,8 +3119,8 @@ function createNote(data, autoFocus = false) {
         const content = document.createElement('div');
         content.className = 'note-content';
         content.spellcheck = false;
-        content.innerHTML = linkify(data.text || '');
         note.appendChild(content);
+        renderNoteContent(content, data.text || '');
 
 // ---- IMAGE NOTE ----
         if (data.imageData) {
@@ -3113,6 +3157,7 @@ function createNote(data, autoFocus = false) {
             document.body.classList.remove('note-editing-mode');
             activeNoteRef = { note: null, data: null };
             document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
+            document.querySelectorAll('.note-edit-tip').forEach(el => el.remove());
             save();
         });
 
@@ -3385,11 +3430,15 @@ function createNote(data, autoFocus = false) {
                 document.body.classList.remove('note-editing-mode');
                 activeNoteRef = { note: null, data: null };
                 data.text = plainText;
-                content.innerHTML = linkify(plainText);
+                renderNoteContent(content, plainText);
                 document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
                 if (!plainText.trim()) {
                     note.remove();
                     notes = notes.filter(n => n.id !== data.id);
+                    save();
+                    return;
+                }
+                if (note.classList.contains('spotify-note')) {
                     save();
                     return;
                 }
@@ -3496,11 +3545,7 @@ function createNote(data, autoFocus = false) {
                 document.body.classList.remove('screenshot-mode');
             }
         }
-        // Shift+D — screenshot mode
-        if (e.shiftKey && e.key.toLowerCase() === 'd') {
-            e.preventDefault();
-            document.body.classList.toggle('screenshot-mode');
-        }
+
         // Shift+F — dev mode
         if (e.shiftKey && e.key.toLowerCase() === 'f') {
             e.preventDefault();
@@ -3761,6 +3806,7 @@ function createNote(data, autoFocus = false) {
 <script>
 // Init — paint UI immediately, defer network calls
     initDock();
+    initWeatherRow();
     buildTimeRuler();
     updateTimeline();
     updateHeader();
@@ -3789,6 +3835,7 @@ function createNote(data, autoFocus = false) {
                 return;
             }
             initDock();
+            initWeatherRow();
             updateTimeline();
                 scheduleMidnightRefresh();
         }, ms);
@@ -3953,6 +4000,40 @@ function createNote(data, autoFocus = false) {
     bgToggle.addEventListener('click', () => applyBgMode(bgMode === 'white' ? 'dark' : 'white'));
     applyBgMode(bgMode);
 
+    // Ruler Visibility Toggle
+    const rulerQuickToggle = document.getElementById('ruler-quick-toggle');
+    function applyRulerVisibility(show) {
+        const ruler = document.getElementById('time-ruler');
+        if (show === 'true') {
+            document.documentElement.classList.remove('hide-ruler');
+            if (ruler) ruler.style.display = '';
+        } else {
+            document.documentElement.classList.add('hide-ruler');
+            if (ruler) ruler.style.display = 'none';
+        }
+        
+        document.querySelectorAll('#ruler-toggle-picker .settings-toggle-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.show === show);
+        });
+        if (rulerQuickToggle) rulerQuickToggle.classList.toggle('ruler-off', show !== 'true');
+        localStorage.setItem('aura_show_ruler', show);
+    }
+
+    document.getElementById('ruler-toggle-picker').addEventListener('click', (e) => {
+        const btn = e.target.closest('.settings-toggle-btn');
+        if (!btn) return;
+        applyRulerVisibility(btn.dataset.show);
+    });
+
+    if (rulerQuickToggle) {
+        rulerQuickToggle.addEventListener('click', () => {
+            const current = localStorage.getItem('aura_show_ruler') || 'true';
+            applyRulerVisibility(current === 'true' ? 'false' : 'true');
+        });
+    }
+
+    applyRulerVisibility(localStorage.getItem('aura_show_ruler') || 'true');
+
 
     // Restore saved settings
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
@@ -4051,160 +4132,110 @@ function createNote(data, autoFocus = false) {
         if (!e.target.closest('.search-container')) closeSearch();
     });
 
-    // ── Year Progress pinned note ──
+    // ── Year Progress Bar ──
     (function() {
-        const BAR_TYPES = ['year', 'season', 'life'];
-        let barType = localStorage.getItem('aura_bar_type') || 'year';
+        const bar = document.createElement('div');
+        bar.className = 'year-bar';
+        bar.innerHTML = `
+            <div class="year-bar-fill" id="year-bar-fill"></div>
+            <div class="year-bar-marker" id="year-bar-marker">
+                <div class="year-bar-label" id="year-bar-label"></div>
+                <div class="year-bar-tick"></div>
+            </div>`;
+        document.body.appendChild(bar);
 
-        function calcYearPct() {
+        const yr = new Date().getFullYear();
+        const yStart = new Date(yr, 0, 1), yEnd = new Date(yr + 1, 0, 1), ySpan = yEnd - yStart;
+        const now0 = new Date();
+        const springD = new Date(yr, 2, 20), summerD = new Date(yr, 5, 21),
+              fallD   = new Date(yr, 8, 22), winterD  = new Date(yr, 11, 21);
+
+        const fmtDate = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const seasons = [
+            { name: 'winter', s: yStart,  e: springD, tick: null },
+            { name: 'spring', s: springD, e: summerD, tick: `Spring · ${fmtDate(springD)}` },
+            { name: 'summer', s: summerD, e: fallD,   tick: `Summer · ${fmtDate(summerD)}` },
+            { name: 'fall',   s: fallD,   e: winterD, tick: `Fall · ${fmtDate(fallD)}` },
+            { name: 'winter', s: winterD, e: yEnd,    tick: `Winter · ${fmtDate(winterD)}` },
+        ];
+
+        const isCurrent = s => now0 >= s.s && now0 < s.e;
+
+        seasons.forEach(s => {
+            const startPct = (s.s - yStart) / ySpan * 100;
+            const endPct   = (s.e - yStart) / ySpan * 100;
+            const midPct   = (startPct + endPct) / 2;
+
+            const zone = document.createElement('div');
+            zone.className = 'season-zone';
+            zone.style.left  = startPct + '%';
+            zone.style.width = (endPct - startPct) + '%';
+            bar.appendChild(zone);
+
+            if (endPct - startPct > 3) {
+                const lbl = document.createElement('div');
+                lbl.className = 'season-name' + (isCurrent(s) ? ' current' : '');
+                lbl.style.left = midPct + '%';
+                lbl.textContent = s.name;
+                bar.appendChild(lbl);
+            }
+
+            if (s.tick) {
+                const tickPct = (s.s - yStart) / ySpan * 100;
+                const tick = document.createElement('div');
+                tick.className = 'season-tick';
+                tick.style.left = tickPct + '%';
+                tick.innerHTML = `<span class="season-label">${s.tick}</span>`;
+                tick.addEventListener('mouseenter', () => zone.classList.add('active'));
+                tick.addEventListener('mouseleave', () => zone.classList.remove('active'));
+                bar.appendChild(tick);
+            }
+        });
+
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+        // Add month ticks + labels above the bar rail
+        const nowM = new Date(), curMonth = nowM.getMonth();
+        months.forEach((name, i) => {
+            const monthStart = new Date(yr, i, 1);
+            const monthEnd   = new Date(yr, i + 1, 1);
+            const startPct   = (monthStart - yStart) / ySpan * 100;
+            const midPct     = (startPct + (monthEnd - yStart) / ySpan * 100) / 2;
+            const isCur      = i === curMonth, isPast = i < curMonth;
+            const cls        = isCur ? ' current' : isPast ? ' past' : '';
+
+            // tick at month boundary (skip Jan = bar edge)
+            if (i > 0) {
+                const tick = document.createElement('div');
+                tick.className = 'month-tick' + cls;
+                tick.style.left = startPct + '%';
+                bar.appendChild(tick);
+            }
+
+            // label at midpoint
+            const lbl = document.createElement('div');
+            lbl.className = 'month-name' + cls;
+            lbl.style.left = midPct + '%';
+            lbl.textContent = name;
+            bar.appendChild(lbl);
+        });
+
+        function updateYearBar() {
             const now = new Date();
             const start = new Date(now.getFullYear(), 0, 1);
             const end   = new Date(now.getFullYear() + 1, 0, 1);
-            return (now - start) / (end - start);
+            const pct   = (now - start) / (end - start);
+            const pctStr = (pct * 100) + '%';
+            document.getElementById('year-bar-fill').style.width = pctStr;
+            document.getElementById('year-bar-marker').style.left = pctStr;
+            document.getElementById('year-bar-label').textContent =
+                `${months[now.getMonth()]} ${now.getFullYear()}  ·  ${Math.floor(pct * 100)}%`;
         }
 
-        function calcSeasonPct() {
-            const now = new Date(), y = now.getFullYear();
-            const seasons = [
-                { name: 'Spring', start: new Date(y, 2, 20),  end: new Date(y, 5, 21) },
-                { name: 'Summer', start: new Date(y, 5, 21),  end: new Date(y, 8, 23) },
-                { name: 'Autumn', start: new Date(y, 8, 23),  end: new Date(y, 11, 21) },
-                { name: 'Winter', start: new Date(y, 11, 21), end: new Date(y + 1, 2, 20) },
-                { name: 'Winter', start: new Date(y - 1, 11, 21), end: new Date(y, 2, 20) },
-            ];
-            for (const s of seasons) {
-                if (now >= s.start && now < s.end)
-                    return { name: s.name, pct: (now - s.start) / (s.end - s.start) };
-            }
-            return { name: 'Season', pct: 0 };
-        }
-
-        function calcDecadePct() {
-            const now = new Date();
-            const decade = Math.floor(now.getFullYear() / 10) * 10;
-            const start = new Date(decade, 0, 1);
-            const end   = new Date(decade + 10, 0, 1);
-            return { name: decade + 's', pct: (now - start) / (end - start) };
-        }
-
-        function calcCenturyPct() {
-            const now = new Date();
-            const century = Math.floor(now.getFullYear() / 100) * 100;
-            const start = new Date(century, 0, 1);
-            const end   = new Date(century + 100, 0, 1);
-            return { name: century + 's', pct: (now - start) / (end - start) };
-        }
-
-        function calcLifePct() {
-            const birthYear = parseInt(localStorage.getItem('aura_birth_year'));
-            if (!birthYear) return null;
-            const now = new Date();
-            const born = new Date(birthYear, 0, 1);
-            const end  = new Date(birthYear + 80, 0, 1);
-            return Math.max(0, Math.min(1, (now - born) / (end - born)));
-        }
-
-        function makeBar(pct, label) {
-            const pctDisplay = Math.floor(pct * 100);
-            const filled = Math.round(pct * 31);
-            const bar = '▓'.repeat(filled) + '░'.repeat(31 - filled);
-            return label + ': ' + bar + ' ' + pctDisplay + '%';
-        }
-
-        function makeProgressText() {
-            if (barType === 'year') {
-                return makeBar(calcYearPct(), 'Year Progress');
-            } else if (barType === 'season') {
-                const { name, pct } = calcSeasonPct();
-                return makeBar(pct, name + ' Progress');
-            } else if (barType === 'decade') {
-                const { name, pct } = calcDecadePct();
-                return makeBar(pct, name + ' Progress');
-            } else if (barType === 'century') {
-                const { name, pct } = calcCenturyPct();
-                return makeBar(pct, name + ' Progress');
-            } else if (barType === 'life') {
-                const pct = calcLifePct();
-                if (pct === null) return 'Life Progress: tap to set age';
-                return makeBar(pct, 'Life Progress');
-            }
-            return '';
-        }
-
-        function showAgePopup() {
-            const existing = document.getElementById('age-popup');
-            if (existing) { existing.remove(); return; }
-
-            const popup = document.createElement('div');
-            popup.id = 'age-popup';
-            popup.style.cssText = `
-                position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%);
-                background: var(--card-bg); backdrop-filter: blur(60px) saturate(210%);
-                -webkit-backdrop-filter: blur(60px) saturate(210%);
-                border: 0.5px solid rgba(255,255,255,0.25); border-radius: 18px;
-                padding: 16px 20px; z-index: 9999; display: flex; flex-direction: column;
-                gap: 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-                font-family: 'Inter', system-ui, sans-serif;
-            `;
-            popup.innerHTML = `
-                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;opacity:0.4;color:var(--text-color)">What year were you born?</div>
-                <div style="display:flex;gap:8px;align-items:center;">
-                    <input id="age-input" type="number" min="1900" max="2020" placeholder="${new Date().getFullYear() - 25}"
-                        style="font-family:'Inter',system-ui,sans-serif;font-size:22px;font-weight:700;
-                        width:100px;border:none;outline:none;background:transparent;color:var(--text-color);">
-                    <button id="age-save" style="font-family:'Inter',system-ui,sans-serif;font-size:11px;font-weight:700;
-                        text-transform:uppercase;letter-spacing:0.08em;border:none;background:var(--text-color);
-                        color:var(--bg-color);border-radius:10px;padding:7px 14px;cursor:pointer;">Save</button>
-                </div>
-            `;
-            document.body.appendChild(popup);
-            document.getElementById('age-input').focus();
-
-            document.getElementById('age-save').onclick = () => {
-                const val = parseInt(document.getElementById('age-input').value);
-                if (val >= 1900 && val <= new Date().getFullYear()) {
-                    localStorage.setItem('aura_birth_year', val);
-                    popup.remove();
-                    updateYearProgressNote();
-                }
-            };
-            document.getElementById('age-input').onkeydown = (e) => {
-                if (e.key === 'Enter') document.getElementById('age-save').click();
-                if (e.key === 'Escape') popup.remove();
-            };
-            setTimeout(() => {
-                document.addEventListener('mousedown', function dismiss(e) {
-                    if (!popup.contains(e.target) && e.target !== ypLabel) {
-                        popup.remove();
-                        document.removeEventListener('mousedown', dismiss);
-                    }
-                });
-            }, 100);
-        }
-
-        const ypLabel = document.createElement('div');
-        ypLabel.className = 'year-progress-label';
-        ypLabel.id = 'year-progress-text';
-        ypLabel.textContent = makeProgressText();
-        ypLabel.title = 'Click to switch bar';
-        ypLabel.addEventListener('click', () => {
-            const idx = BAR_TYPES.indexOf(barType);
-            barType = BAR_TYPES[(idx + 1) % BAR_TYPES.length];
-            localStorage.setItem('aura_bar_type', barType);
-            updateYearProgressNote();
-            if (barType === 'life' && !localStorage.getItem('aura_birth_year')) {
-                showAgePopup();
-            }
-        });
-        document.querySelector('.dock-wrapper').appendChild(ypLabel);
-
-        function updateYearProgressNote() {
-            const el = document.getElementById('year-progress-text');
-            if (el) el.textContent = makeProgressText();
-        }
-        setInterval(updateYearProgressNote, 60000);
-
-        // stub so applyLang doesn't throw
+        document.getElementById('year-bar-fill').style.width = '0%';
+        document.getElementById('year-bar-marker').style.left = '0%';
+        requestAnimationFrame(() => requestAnimationFrame(updateYearBar));
+        setInterval(updateYearBar, 60000);
         window.updateYearBarLang = function() {};
     })();
 
@@ -4460,7 +4491,7 @@ function createNote(data, autoFocus = false) {
             if (!dock) return;
             const dr = dock.getBoundingClientRect();
 
-            const INSET = 28, LIFT = 14, GAP = 0.028;
+            const INSET = 28, LIFT = 20, GAP = 0.028;
             const effW  = dr.width - INSET * 2;
             let H       = Math.min(effW * 0.38, 160);
 
@@ -4468,7 +4499,7 @@ function createNote(data, autoFocus = false) {
             if (type === 'moon') H *= 0.7;
 
             // Use transform instead of left/top for smoother resizing
-            bgSvg.style.transform = `translate(${dr.left + INSET}px, ${dr.top - H - 2}px)`;
+            bgSvg.style.transform = `translate(${dr.left + INSET}px, ${dr.top - H - 14}px)`;
             bgSvg.setAttribute('width',  effW);
             bgSvg.setAttribute('height', H + 8);
 
@@ -4545,7 +4576,7 @@ function createNote(data, autoFocus = false) {
 
             const x  = dr.left + INSET + t * effW;
             const By = (H - LIFT) * (1 - 2 * t * (1 - t));
-            const y  = (dr.top - H - 2) + By;
+            const y  = (dr.top - H - 14) + By;
 
             skyGlow.style.opacity   = '0';
             horizGlow.style.opacity = '0';
