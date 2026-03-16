@@ -326,6 +326,14 @@ html {
     background-attachment: fixed;
 }
 
+/* Background geometry modes */
+body.bg-geo-dots,
+body.bg-geo-web  { background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px); background-size: 22px 22px; }
+body.bg-geo-off,
+body.bg-geo-stellar,
+body.bg-geo-tribon,
+body.bg-geo-mesh { background-image: none; }
+
 body {
     background: none;
     color: var(--text-color);
@@ -338,6 +346,72 @@ body {
     justify-content: center;
     opacity: 0;
     transition: opacity 0.5s ease;
+}
+
+#dot-connections {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#mesh-iframe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    border: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+body.bg-geo-mesh #mesh-iframe {
+    opacity: 0.54;
+}
+
+/* Background geometry switch */
+.geo-switch {
+    position: fixed;
+    top: 24px;
+    right: 140px;
+    z-index: 10001;
+    display: flex;
+    gap: 2px;
+    background: rgba(120,120,128,0.12);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 10px;
+    padding: 2px;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.3s var(--spring-easing);
+}
+body:hover .geo-switch { opacity: 0.45; }
+.geo-switch:hover { opacity: 1 !important; transform: translateY(-1px); }
+
+.geo-switch-btn {
+    width: 24px;
+    height: 20px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 10px;
+    color: var(--text-color);
+    opacity: 0.5;
+    transition: opacity 0.2s, background 0.2s;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.geo-switch-btn.active {
+    background: #fff;
+    opacity: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 
 body.ready {
@@ -2501,6 +2575,18 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 
+<iframe id="mesh-iframe" scrolling="no"></iframe>
+<canvas id="dot-connections"></canvas>
+
+<div class="geo-switch" id="geo-switch" title="Background pattern">
+    <button class="geo-switch-btn" data-geo="off" title="None">—</button>
+    <button class="geo-switch-btn" data-geo="dots" title="Dots">∷</button>
+    <button class="geo-switch-btn" data-geo="web" title="Web">⊹</button>
+    <button class="geo-switch-btn" data-geo="stellar" title="Stellar">✦</button>
+    <button class="geo-switch-btn" data-geo="tribon" title="Uniform">⁂</button>
+    <button class="geo-switch-btn" data-geo="mesh" title="Mesh">◈</button>
+</div>
+
 <header class="header-container" id="header-area">
     <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
 </header>
@@ -2542,6 +2628,103 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 <script>
+    /* ============================================================
+       BACKGROUND GEOMETRY & MESH
+    ============================================================ */
+    const geoModes = ['off', 'dots', 'web', 'stellar', 'tribon', 'mesh'];
+    let currentGeo = localStorage.getItem('aura_bg_geo') || 'off';
+
+    function initMeshBg() {
+        const W = window.innerWidth, H = window.innerHeight;
+        const PAD = 200;
+        const TW = W + PAD * 2, TH = H + PAD * 2;
+        const balls = [
+            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
+            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
+            { x: W *  0.93 - 250 + PAD, y: H *  0.83 - 250 + PAD, r: 250, color: '#5856D6' },
+        ];
+        const iframe = document.getElementById('mesh-iframe');
+        if (!iframe) return;
+        const circles = balls.map(b =>
+            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
+        ).join('');
+        const srcdoc = `<!DOCTYPE html><html><head><style>
+            *{margin:0;padding:0;box-sizing:border-box;}
+            body{width:${TW}px;height:${TH}px;overflow:hidden;background:transparent;filter:blur(120px);}
+        </style></head><body>${circles}</body></html>`;
+        iframe.srcdoc = srcdoc;
+        iframe.style.top = `-${PAD}px`;
+        iframe.style.left = `-${PAD}px`;
+        iframe.style.width = `${TW}px`;
+        iframe.style.height = `${TH}px`;
+    }
+
+    function drawBgGeo() {
+        const canvas = document.getElementById('dot-connections');
+        if (!canvas) return;
+        const W = window.innerWidth, H = window.innerHeight;
+        canvas.width = W; canvas.height = H;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, W, H);
+
+        if (currentGeo === 'web') {
+            const STEP = 22, OFF = 11;
+            const cols = Math.ceil(W / STEP) + 1, rows = Math.ceil(H / STEP) + 1;
+            ctx.strokeStyle = 'rgba(0,0,0,0.13)';
+            ctx.lineWidth = 1;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const x = c * STEP + OFF, y = r * STEP + OFF;
+                    if (c < cols - 1 && Math.random() < 0.14)
+                        { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + STEP, y); ctx.stroke(); }
+                    if (r < rows - 1 && Math.random() < 0.14)
+                        { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + STEP); ctx.stroke(); }
+                }
+            }
+        } else if (currentGeo === 'stellar') {
+            const N = Math.floor((W * H) / 14000);
+            const pts = Array.from({ length: N }, () => ({ x: Math.random() * W, y: Math.random() * H }));
+            const MAX_DIST = 160;
+            ctx.lineWidth = 0.8;
+            for (let i = 0; i < pts.length; i++) {
+                for (let j = i + 1; j < pts.length; j++) {
+                    const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+                    const d = Math.sqrt(dx*dx + dy*dy);
+                    if (d < MAX_DIST) {
+                        const alpha = (1 - d / MAX_DIST) * 0.22;
+                        ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
+                        ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+                    }
+                }
+            }
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            pts.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 1.3, 0, Math.PI * 2); ctx.fill(); });
+        } else if (currentGeo === 'tribon') {
+            const A1 = 0.5436890126920764, A2 = 0.2956120693571985;
+            const N = Math.floor((W * H) / 6500);
+            ctx.fillStyle = 'rgba(0,0,0,0.38)';
+            for (let i = 0; i < N; i++) {
+                const x = ((0.5 + i * A1) % 1) * W, y = ((0.5 + i * A2) % 1) * H;
+                ctx.beginPath(); ctx.arc(x, y, 1.2, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+    }
+
+    function applyBgGeo(mode, noSave = false) {
+        geoModes.forEach(m => document.body.classList.remove('bg-geo-' + m));
+        document.body.classList.add('bg-geo-' + mode);
+        document.querySelectorAll('.geo-switch-btn').forEach(b => b.classList.toggle('active', b.dataset.geo === mode));
+        currentGeo = mode;
+        if (mode === 'mesh') initMeshBg();
+        drawBgGeo();
+        if (!noSave) localStorage.setItem('aura_bg_geo', mode);
+    }
+
+    window.addEventListener('resize', () => {
+        if (currentGeo === 'mesh') initMeshBg();
+        drawBgGeo();
+    });
+
     /* ============================================================
        LANGUAGE SYSTEM: EN / ES / PT (3-way cycle)
     ============================================================ */
@@ -3972,6 +4155,16 @@ function createNote(data, autoFocus = false) {
     }
 
     applyRulerVisibility(localStorage.getItem('aura_show_ruler') || 'true');
+
+    // Geo switch handler
+    const geoSwitch = document.getElementById('geo-switch');
+    if (geoSwitch) {
+        geoSwitch.addEventListener('click', (e) => {
+            const btn = e.target.closest('.geo-switch-btn');
+            if (btn) applyBgGeo(btn.dataset.geo);
+        });
+    }
+    applyBgGeo(currentGeo, true);
 
 
     // Restore saved settings
