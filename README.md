@@ -2,7 +2,7 @@
 
 A free, minimal weekly planner that runs entirely in your browser. No account, no install, no backend — open the URL and start using it.
 
-**Live app:** [weekdash.com](https://weekdash.com) · [yodatoshii.github.io/7days](https://yodatoshii.github.io/7days/)
+**Live app:** [weekdash.com](https://weekdash.com) · [yodatoshicom.github.io/7days](https://yodatoshicom.github.io/7days/)
 
 ---
 
@@ -47,7 +47,7 @@ A sun/moon arc overlays the sky background showing the current position of the s
 ## Run locally
 
 ```
-git clone https://github.com/yodatoshii/7days.git
+git clone https://github.com/yodatoshicom/7days.git
 open index.html
 ```
 
