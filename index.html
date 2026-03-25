@@ -126,7 +126,7 @@
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@900" rel="stylesheet">
 
 <script>
 // Apply persisted font/size settings before first paint to prevent flash
@@ -135,15 +135,15 @@
     var sizes   = { 'S':'22px', 'M':'28px', 'L':'36px' };
     var sizes1x = { 'S':'16px', 'M':'20px', 'L':'26px' };
     var r = document.documentElement;
-    // Ruler visibility
-    var showRuler = localStorage.getItem('aura_show_ruler') || 'true';
-    if (showRuler === 'false') {
-        r.classList.add('hide-ruler');
-    }
+    // Theme (applied early to avoid flash)
+    var savedTheme = localStorage.getItem('aura_theme') || 'default';
+    if (savedTheme === 'cove') r.classList.add('theme-cove');
+    if (savedTheme === 'valley') r.classList.add('theme-valley');
 
     window.addEventListener('DOMContentLoaded', () => {
-        const rToggle = document.getElementById('ruler-quick-toggle');
-        if (rToggle && showRuler === 'false') rToggle.classList.add('ruler-off');
+        const tToggle = document.getElementById('theme-quick-toggle');
+        if (tToggle && savedTheme === 'cove') tToggle.classList.add('toggle-cove');
+        if (tToggle && savedTheme === 'valley') tToggle.classList.add('toggle-valley');
     });
     
     var f = localStorage.getItem('aura_note_font');
@@ -153,6 +153,7 @@
 })();
 </script>
 <style>
+
 :root {
     --sf-easing: cubic-bezier(0.32, 0.72, 0, 1);
     --spring-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -163,6 +164,269 @@
     --separator-color: rgba(0, 0, 0, 0.06);
     --note-font: 'Caveat', cursive;
     --note-size: 28px;
+}
+
+/* ── Cove theme ── */
+html.theme-cove {
+    background-color: #e2e0de;
+    background-image:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(210, 205, 230, 0.55) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(200, 215, 225, 0.45) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 60% 30%, rgba(230, 220, 210, 0.3) 0%, transparent 60%);
+    background-attachment: fixed;
+}
+html.theme-cove body {
+    background-image: none !important;
+    background-color: transparent;
+}
+html.theme-cove {
+    --bg-color: #e2e0de;
+    --text-color: #292524;
+    --card-bg: rgba(12, 10, 9, 0.04);
+    --separator-color: rgba(12, 10, 9, 0.08);
+}
+html.theme-cove .dock-container {
+    background: #0c0a09;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: 0 8px 32px rgba(12, 10, 9, 0.25);
+}
+html.theme-cove .day-card {
+    color: #fffaf4;
+}
+html.theme-cove .day-card .day-name {
+    color: rgba(255, 240, 223, 0.5);
+}
+html.theme-cove .day-card .day-number {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: #fffaf4;
+    color: #fffaf4;
+    font-weight: 600;
+}
+html.theme-cove .day-card.weekend .day-number {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: rgba(255, 240, 223, 0.55);
+    color: rgba(255, 240, 223, 0.55);
+}
+html.theme-cove .day-card.active {
+    background: #fffaf4;
+    box-shadow: none;
+}
+html.theme-cove .day-card.active .day-name { color: rgba(41, 37, 36, 0.5); opacity: 1; }
+html.theme-cove .day-card.active .day-number {
+    -webkit-text-fill-color: #292524;
+    color: #292524;
+    font-weight: 850;
+}
+html.theme-cove .day-card:hover {
+    background: rgba(255, 250, 244, 0.1);
+}
+html.theme-cove .day-card.active:hover {
+    background: #fffaf4;
+}
+html.theme-cove .day-separator {
+    background: rgba(255, 240, 223, 0.15);
+}
+html.theme-cove .dock-nav {
+    color: #292524;
+    opacity: 0.4;
+}
+html.theme-cove .greeting {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: #292524;
+    color: #292524;
+}
+html.theme-cove .header-time {
+    color: #292524;
+}
+html.theme-cove .bottom-watermark {
+    color: #292524;
+}
+html.theme-cove .year-bar-fill {
+    background: #c580fb;
+}
+html.theme-cove .weather-row {
+    color: #292524;
+}
+html.theme-cove .weather-day {
+    color: #292524;
+}
+html.theme-cove .weather-separator {
+    background: linear-gradient(to bottom, transparent, rgba(41,37,36,0.2) 50%, transparent);
+}
+html.theme-cove .note:not([data-note-color]),
+html.theme-cove .note[data-note-color="default"] {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Valley theme ── */
+html.theme-valley {
+    background-color: #1a1040;
+    background-image: url('wallpaper.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+html.theme-valley body {
+    background-image: none !important;
+    background-color: transparent;
+}
+html.theme-valley {
+    --bg-color: #1a1040;
+    --text-color: #f0eeff;
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --separator-color: rgba(255, 255, 255, 0.1);
+}
+html.theme-valley .dock-container {
+    position: relative;
+    background: rgba(20, 10, 40, 0.55);
+    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    border: none;
+    border-radius: 40px;
+    padding: 8px;
+    gap: 4px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 12px 40px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.12);
+}
+html.theme-valley .day-card { color: rgba(255, 255, 255, 0.75); }
+html.theme-valley .day-card .day-name {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+}
+html.theme-valley .day-card .day-number {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.88);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+}
+html.theme-valley .day-card.weekend .day-number {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: rgba(210, 185, 255, 0.75);
+    color: rgba(210, 185, 255, 0.75);
+}
+html.theme-valley .day-card.active {
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: none;
+}
+html.theme-valley .day-card.active .day-name {
+    color: rgba(255, 255, 255, 0.7);
+    opacity: 1;
+}
+html.theme-valley .day-card.active .day-number {
+    -webkit-text-fill-color: #fff;
+    color: #fff;
+    font-weight: 700;
+}
+html.theme-valley .day-card {
+    width: 66px;
+    height: 80px;
+    border-radius: 18px;
+    clip-path: none;
+    background: transparent;
+    border: none;
+    filter: none;
+    transition: background 0.2s ease, filter 0.2s ease, transform 0.5s var(--sf-easing);
+}
+html.theme-valley .day-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: none;
+}
+html.theme-valley .day-card.active {
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 18px;
+    border: none;
+    height: 74px;
+    filter: drop-shadow(0 4px 16px rgba(180, 140, 255, 0.4));
+    z-index: 2;
+    box-shadow:
+        inset 0 2px 8px rgba(0, 0, 0, 0.22),
+        0 0 0 0.5px rgba(255, 255, 255, 0.04);
+}
+html.theme-valley .day-card:first-child,
+html.theme-valley .day-card:first-child:hover,
+html.theme-valley .day-card.active:first-child { border-radius: 32px 18px 18px 32px; }
+html.theme-valley .day-card:last-child,
+html.theme-valley .day-card:last-child:hover,
+html.theme-valley .day-card.active:last-child  { border-radius: 18px 32px 32px 18px; }
+html.theme-valley .day-card.active:hover { background: rgba(0, 0, 0, 0.45); }
+html.theme-valley .day-separator { display: none; }
+html.theme-valley .dock-wrapper { margin-bottom: 80px; }
+html.theme-valley .dock-nav { color: #f0eeff; opacity: 0.4; }
+html.theme-valley .greeting {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: #f0eeff;
+    color: #f0eeff;
+}
+html.theme-valley .header-time { color: rgba(240, 238, 255, 0.6); }
+html.theme-valley .bottom-watermark { color: #f0eeff; }
+html.theme-valley .year-bar-fill { background: #c580fb; }
+html.theme-valley .weather-row { color: rgba(240, 238, 255, 0.8); }
+html.theme-valley .weather-day { color: rgba(240, 238, 255, 0.8); }
+html.theme-valley .weather-separator {
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15) 50%, transparent);
+}
+html.theme-valley .note {
+    background: transparent;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none;
+    outline: 0.5px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.12);
+    color: #f0eeff;
+}
+html.theme-valley .note textarea { color: inherit; }
+html.theme-valley .note:not([data-note-color]),
+html.theme-valley .note[data-note-color="default"] {
+    background: transparent;
+}
+html.theme-valley .note[data-note-color="yellow"] {
+    background: transparent;
+    outline-color: rgba(251, 191, 36, 0.15);
+    color: #fef3c7;
+}
+html.theme-valley .note[data-note-color="blue"] {
+    background: transparent;
+    outline-color: rgba(147, 197, 253, 0.15);
+    color: #dbeafe;
+}
+html.theme-valley .note[data-note-color="mint"] {
+    background: transparent;
+    outline-color: rgba(52, 211, 153, 0.15);
+    color: #d1fae5;
+}
+html.theme-valley .note[data-note-color="pink"] {
+    background: transparent;
+    outline-color: rgba(244, 114, 182, 0.15);
+    color: #fce7f3;
 }
 
 
@@ -210,24 +474,26 @@
 }
 
 .header-container {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px;
     text-align: center;
-    margin-top: 110px;
-    margin-bottom: 0px;
+    white-space: nowrap;
     z-index: 500;
     user-select: none;
     -webkit-user-select: none;
-    position: relative;
-    top: 25px;
 }
 
-.time-display {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.4;
-    margin-bottom: 8px;
+.header-time {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    opacity: 0.45;
+    margin-bottom: 4px;
     color: var(--text-color);
+    font-variant-numeric: tabular-nums;
 }
 
 .greeting {
@@ -254,30 +520,6 @@
     transform: scale(0.97);
 }
 
-
-/* Greeting sub-line (funny text) — shares position with weather tooltip */
-.greeting-sub {
-    position: fixed;
-    bottom: 72px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Caveat', cursive;
-    font-size: 32px;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    opacity: 0.4;
-    color: var(--text-color);
-    min-height: 20px;
-    z-index: 597;
-    pointer-events: none;
-    text-align: center;
-    white-space: nowrap;
-    transition: opacity 0.2s ease;
-}
-
-.greeting-sub.hidden {
-    opacity: 0;
-}
 
 /* Lang flash animation on greeting */
 @keyframes greetingPulse {
@@ -318,7 +560,7 @@
 /* Background geometry modes */
 
 html {
-    background-color: #fbfbfb;
+    background-color: #e3dde6;
     background-image: url('bg2.png');
     background-size: cover;
     background-position: center;
@@ -335,9 +577,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.35s ease;
 }
 
 body.ready {
@@ -396,12 +638,15 @@ body.ready {
     transform: translateX(-50%) translateY(0);
 }
 
-/* Time ruler — sits above the dock */
+/* Time ruler — absolute, sits on top edge of week bar */
 .time-ruler {
-    position: relative;
-    width: calc((100% - 32px) * 0.756);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc((100% - 90px) * 0.8);
     height: 44px;
-    margin-bottom: -14px;
+    margin-bottom: -3px;
     user-select: none;
     -webkit-user-select: none;
 }
@@ -485,7 +730,7 @@ body.ready {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #A78BCA;
+    background: #c580fb;
     border: 1.5px solid rgba(255,255,255,0.65);
     box-shadow: 0 0 0 3px rgba(167,139,202,0.25), 0 0 14px rgba(167,139,202,0.7);
     animation: yearDotPulse 3s ease-in-out infinite;
@@ -544,7 +789,9 @@ body.ready {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 0;
+    margin-top: auto;
+    margin-bottom: 250px;
 }
 
 .dock-row {
@@ -690,26 +937,28 @@ body.ready {
     color: var(--bg-color);
 }
 
-.day-card.active .day-weather { opacity: 0.75; }
-
-/* WEATHER ROW — below the dock */
-.weather-row {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 0 54px; /* 9px (dock pad) + 40px (nav btn) + 5px (gap) = 54px to align exactly */
-    opacity: 0.7;
-}
-
 /* Inline weather inside day cards */
 .day-main-row {
     display: flex;
     align-items: center;
     gap: 4px;
 }
-.day-weather {
-    /* Hidden inside card now */
-    display: none;
+
+.weather-separator {
+    width: 1px;
+    height: 28px;
+    background: linear-gradient(to bottom, transparent, rgba(120,120,128,0.2) 50%, transparent);
+    flex-shrink: 0;
+}
+
+/* WEATHER ROW — below the dock */
+.weather-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 54px;
+    margin-top: 10px;
+    opacity: 0.7;
 }
 
 .weather-day {
@@ -743,54 +992,9 @@ body.ready {
     filter: drop-shadow(0 0 6px rgba(0, 122, 255, 0.5));
 }
 
-@media (max-width: 430px) {
-    .weather-row {
-        width: 100%;
-        padding: 0 16px; /* Match dock-wrapper padding? No, dock-container has padding 8px 6px */
-        padding: 0 6px; /* Match dock-container mobile padding */
-        gap: 4px;
-    }
-    .weather-day {
-        flex: 1;
-        width: auto;
-    }
-    .weather-separator { display: none; }
-}
-.weather-day:not(:last-child) {
-    border-right: none;
-}
+.weather-icon { font-size: 14px; margin-bottom: 1px; }
+.weather-temp { font-size: 10px; font-weight: 700; }
 
-.weather-icon {
-    font-size: 14px;
-    margin-bottom: 1px;
-    position: relative;
-    z-index: 1;
-}
-
-.weather-temp { 
-    font-size: 10px; 
-    font-weight: 700; 
-}
-
-.weather-day.highlight-light::after {
-    content: ''; 
-    position: absolute; 
-    top: 0%; 
-    left: 50%; 
-    transform: translateX(-50%);
-    width: 40px; 
-    height: 40px; 
-    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
-    opacity: 0.4; 
-    filter: blur(10px); 
-    z-index: 0; 
-    animation: pulseLight 2s infinite ease-in-out;
-}
-
-@keyframes pulseLight { 
-    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; } 
-    50% { transform: translateX(-50%) scale(1.3); opacity: 0.5; } 
-}
 
 .weather-tooltip {
     position: fixed;
@@ -1189,17 +1393,17 @@ html.hide-ruler .time-ruler {
     display: none !important;
 }
 html.hide-ruler .dock-wrapper {
-    margin-top: 30px;
+    margin-top: auto;
 }
 
 
-/* BG TOGGLE — Apple Designer Edition */
+/* BG TOGGLE — 3-way theme switcher */
 .bg-toggle {
     position: fixed;
     top: 24px;
     right: 76px;
     z-index: 10001;
-    width: 52px;
+    width: 78px;
     height: 30px;
     border-radius: 100px;
     border: 0.5px solid rgba(0, 0, 0, 0.08);
@@ -1216,14 +1420,9 @@ html.hide-ruler .dock-wrapper {
     box-shadow: inset 0 0.5px 1px rgba(0,0,0,0.05);
 }
 
-.bg-toggle.ruler-toggle {
-    right: 76px;
-}
-
 body:hover .bg-toggle { opacity: 1; }
 .bg-toggle:hover { background: rgba(120, 120, 128, 0.18); transform: translateY(-1px); }
 .bg-toggle:active { transform: translateY(0) scale(0.96); }
-
 
 .bg-toggle-icon {
     width: 22px;
@@ -1231,13 +1430,16 @@ body:hover .bg-toggle { opacity: 1; }
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.4;
+    opacity: 0.3;
     transition: opacity 0.3s;
     z-index: 1;
+    flex-shrink: 0;
 }
 
-.bg-toggle.ruler-off .icon-ruler-off,
-.bg-toggle:not(.ruler-off) .icon-ruler-on {
+/* Active icon brightens based on theme class */
+.bg-toggle:not(.toggle-cove):not(.toggle-valley) .icon-theme-default,
+.bg-toggle.toggle-cove .icon-theme-cove,
+.bg-toggle.toggle-valley .icon-theme-valley {
     opacity: 0.9;
 }
 
@@ -1254,9 +1456,8 @@ body:hover .bg-toggle { opacity: 1; }
     z-index: 0;
 }
 
-.bg-toggle.ruler-off .bg-toggle-knob {
-    transform: translateX(22px);
-}
+.bg-toggle.toggle-cove .bg-toggle-knob  { transform: translateX(24px); }
+.bg-toggle.toggle-valley .bg-toggle-knob { transform: translateX(48px); }
 
 .bg-toggle-icon svg {
     width: 12px;
@@ -1509,52 +1710,6 @@ body.dev-mode .dev-export-btn { display: block; }
     background: rgba(255,255,255,0.12);
 }
 
-/* DAY NOTE POPUP */
-.day-note-popup {
-    position: fixed;
-    transform: translateX(-50%) scale(0.9);
-    background: var(--card-bg);
-    backdrop-filter: blur(50px) saturate(200%);
-    -webkit-backdrop-filter: blur(50px) saturate(200%);
-    border: 0.5px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    padding: 14px 16px 10px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
-    z-index: 2000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.25s var(--spring-easing);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-width: 200px;
-}
-
-.day-note-popup.show {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) scale(1);
-}
-
-.day-note-popup textarea {
-    font-family: var(--note-font);
-    font-size: 22px;
-    line-height: 1.2;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text-color);
-    resize: none;
-    width: 200px;
-    min-height: 50px;
-}
-
-.day-note-popup textarea::placeholder {
-    color: var(--text-color);
-    opacity: 0.3;
-}
-
-
 /* PAST DAY CARDS */
 .day-card.past {
     cursor: default !important;
@@ -1564,112 +1719,6 @@ body.dev-mode .dev-export-btn { display: block; }
 .day-card.past:hover {
     background: transparent;
     transform: none;
-}
-
-/* DAY NOTE LIST inside popup */
-.day-note-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-.day-note-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 4px 0;
-}
-
-.day-note-item-text {
-    font-family: var(--note-font);
-    font-size: 20px;
-    line-height: 1.2;
-    color: var(--text-color);
-    flex: 1;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.day-note-item-delete {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 59, 48, 0.15);
-    color: #FF3B30;
-    font-size: 10px;
-    line-height: 1;
-    cursor: pointer;
-    flex-shrink: 0;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-}
-
-.day-note-item:hover .day-note-item-delete {
-    opacity: 1;
-}
-
-.day-note-item-delete:hover {
-    background: rgba(255, 59, 48, 0.3);
-}
-
-.day-note-separator {
-    height: 0.5px;
-    background: var(--text-color);
-    opacity: 0.08;
-    margin: 2px 0;
-}
-
-/* DAY NOTE DOT */
-.day-note-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--accent-color);
-    opacity: 0.6;
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-}
-
-.day-card.active .day-note-dot {
-    background: currentColor;
-    opacity: 0.5;
-    bottom: 8px;
-    left: calc(50% + 8px);
-}
-
-/* DAY NOTE HOVER PREVIEW */
-.day-note-preview {
-    position: fixed;
-    font-family: var(--note-font);
-    font-size: 22px;
-    color: var(--text-color);
-    background: var(--card-bg);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 0.5px solid rgba(255, 255, 255, 0.3);
-    border-radius: 14px;
-    padding: 6px 14px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    z-index: 1999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-    white-space: pre-wrap;
-    max-width: 250px;
-}
-
-.day-note-preview.show {
-    opacity: 1;
 }
 
 /* DAY CARD DRAG-OVER HIGHLIGHT */
@@ -1697,19 +1746,10 @@ body.dev-mode .dev-export-btn { display: block; }
 }
 .year-bar-fill {
     height: 100%;
-    background: linear-gradient(to right, rgba(167,139,202,0.25), #A78BCA);
+    background: #c580fb;
     border-radius: 0 4px 4px 0;
     position: relative;
     transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.year-bar-fill::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 50%;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.18), transparent);
-    border-radius: 0 4px 0 0;
-    pointer-events: none;
 }
 .year-bar-marker {
     position: absolute;
@@ -1724,14 +1764,14 @@ body.dev-mode .dev-export-btn { display: block; }
 .year-bar-tick {
     width: 1.5px;
     height: 22px;
-    background: #A78BCA;
+    background: #c580fb;
 }
 .year-bar-label {
     font-family: 'Inter', sans-serif;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.04em;
-    color: #A78BCA;
+    color: #c580fb;
     white-space: nowrap;
     background: rgba(167,139,202,0.1);
     backdrop-filter: blur(12px);
@@ -1746,7 +1786,7 @@ body.dev-mode .dev-export-btn { display: block; }
     bottom: 0;
     width: 1px;
     height: 12px;
-    background: linear-gradient(to top, transparent, rgba(167,139,202,0.55) 45%, #A78BCA);
+    background: linear-gradient(to top, transparent, rgba(167,139,202,0.55) 45%, #c580fb);
     transform: translateX(-50%);
     transform-origin: bottom center;
     pointer-events: auto;
@@ -1766,7 +1806,7 @@ body.dev-mode .dev-export-btn { display: block; }
     transform: translateX(-50%);
     width: 3.6px; height: 3.6px;
     border-radius: 50%;
-    background: #A78BCA;
+    background: #c580fb;
     opacity: 0.65;
     transition: opacity 0.22s ease, transform 0.22s ease;
 }
@@ -1781,7 +1821,7 @@ body.dev-mode .dev-export-btn { display: block; }
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.02em;
-    color: #A78BCA;
+    color: #c580fb;
     white-space: nowrap;
     background: rgba(167,139,202,0.09);
     backdrop-filter: blur(20px);
@@ -1837,21 +1877,22 @@ body.dev-mode .dev-export-btn { display: block; }
 .bottom-watermark {
     display: block;
     position: fixed;
-    bottom: -0.12em;
+    bottom: -0.18em;
     left: 50%;
     transform: translateX(-50%);
-    font-size: clamp(120px, 16vw, 260px);
-    font-weight: 800;
-    letter-spacing: -0.04em;
+    font-size: clamp(100px, 14vw, 220px);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.01em;
     line-height: 0.85;
     color: var(--text-color);
-    opacity: 0.04;
+    opacity: 0.1;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
     z-index: 0;
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 35%, transparent 95%);
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 35%, transparent 95%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.25) 55%, transparent 85%);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.25) 55%, transparent 85%);
     white-space: nowrap;
 }
 
@@ -2110,7 +2151,7 @@ body.dev-mode .dev-export-btn { display: block; }
     background: var(--text-color); opacity: 0.3;
     transition: background 0.3s, opacity 0.3s; flex-shrink: 0;
 }
-.capsule.has-pending .capsule-dot { background: #A78BCA; opacity: 1; }
+.capsule.has-pending .capsule-dot { background: #c580fb; opacity: 1; }
 .capsule-label {
     font-size: 10px; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.15em; opacity: 0.5; color: var(--text-color);
@@ -2193,11 +2234,9 @@ body.dev-mode .dev-export-btn { display: block; }
     .day-number      { font-size: 22px; }
     .day-name        { font-size: 9px; }
     .dock-container  { padding: 7px; gap: 3px; border-radius: 30px; }
-    .dock-wrapper    { gap: 10px; }
+    .dock-wrapper    { gap: 0; }
     .day-separator   { height: 28px; }
-    .weather-icon    { font-size: 12px; }
-    .weather-temp    { font-size: 9px; }
-    .time-ruler      { height: 35px; margin-bottom: -11px; }
+    .time-ruler      { height: 35px; margin-bottom: -10px; }
 
 }
 
@@ -2207,17 +2246,15 @@ body.dev-mode .dev-export-btn { display: block; }
     .note,
     .settings-panel,
     .note-arrow-bar,
-    .day-note-popup,
     .time-ruler-now-label,
     .sun-tooltip-bubble {
         border-width: 1px;
     }
     body            { justify-content: flex-end; }
-    .dock-wrapper   { padding-bottom: 32px; }
+    .dock-wrapper   { padding-bottom: 32px; margin-top: 0; margin-bottom: 0; }
     :root           { --note-size: 20px; }
     .day-number     { font-size: 18px; }
     .day-name       { font-size: 8px; }
-    .weather-icon   { font-size: 11px; }
     .weather-tooltip { font-size: 24px; }
     .sun-label      { font-size: 7px; }
     .sun-tooltip-bubble { font-size: 9px; }
@@ -2235,7 +2272,7 @@ body.dev-mode .dev-export-btn { display: block; }
 /* ── Dock to bottom + fluid width at ≤ 750px ── */
 @media (max-width: 750px) and (min-width: 431px) {
     body           { justify-content: flex-end; }
-    .dock-wrapper  { width: calc(100% - 32px); padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+    .dock-wrapper  { width: calc(100% - 32px); padding-bottom: max(20px, env(safe-area-inset-bottom)); margin-top: 0; margin-bottom: 0; }
     .dock-row      { width: 100%; }
     .dock-container{ flex: 1; }
     .day-card      { flex: 1; width: auto; min-width: 0; }
@@ -2257,6 +2294,8 @@ body.dev-mode .dev-export-btn { display: block; }
         width: calc(100% - 24px);
         gap: 10px;
         padding-bottom: max(20px, env(safe-area-inset-bottom));
+        margin-top: 0;
+        margin-bottom: 0;
     }
     .dock-row { width: 100%; }
     .dock-container {
@@ -2283,11 +2322,6 @@ body.dev-mode .dev-export-btn { display: block; }
     .day-number { font-size: 24px; }
     .day-separator { display: none; }
     .day-main-row  { gap: 3px; }
-
-    /* ── Weather inside card ── */
-    .day-weather  { opacity: 0.65; }
-    .weather-icon { font-size: 13px; }
-    .weather-temp { font-size: 10px; }
 
     /* ── Hide desktop-only chrome ── */
     .bottom-controls { display: none; }
@@ -2352,6 +2386,13 @@ body.dev-mode .dev-export-btn { display: block; }
 </style>
 </head>
 <body id="surface">
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <clipPath id="squircle" clipPathUnits="objectBoundingBox">
+      <path d="M 0.5,0 C 0.65,0 0.88,0 0.94,0.06 C 1,0.12 1,0.35 1,0.5 C 1,0.65 1,0.88 0.94,0.94 C 0.88,1 0.65,1 0.5,1 C 0.35,1 0.12,1 0.06,0.94 C 0,0.88 0,0.65 0,0.5 C 0,0.35 0,0.12 0.06,0.06 C 0.12,0 0.35,0 0.5,0 Z"/>
+    </clipPath>
+  </defs>
+</svg>
 <noscript>
   <div style="font-family:sans-serif;max-width:600px;margin:40px auto;padding:0 20px;color:#333">
     <h1>Year Progress Dashboard</h1>
@@ -2408,12 +2449,15 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 
-<button class="bg-toggle ruler-toggle" id="ruler-quick-toggle" title="Toggle hour bar">
-    <div class="bg-toggle-icon icon-ruler-on">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+<button class="bg-toggle" id="theme-quick-toggle" title="Cycle theme: Default → Cove → Valley">
+    <div class="bg-toggle-icon icon-theme-default">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
     </div>
-    <div class="bg-toggle-icon icon-ruler-off">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/><line x1="3" y1="3" x2="21" y2="21"/></svg>
+    <div class="bg-toggle-icon icon-theme-cove">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M8 12h8M12 8v8"/></svg>
+    </div>
+    <div class="bg-toggle-icon icon-theme-valley">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </div>
     <div class="bg-toggle-knob"></div>
 </button>
@@ -2471,10 +2515,11 @@ body.dev-mode .dev-export-btn { display: block; }
         </div>
     </div>
     <div style="margin-top:4px;">
-        <div class="settings-section-label">Interface</div>
+        <div class="settings-section-label">Theme</div>
         <div class="settings-toggle" id="ruler-toggle-picker">
-            <button class="settings-toggle-btn active" data-show="true">Show Hour Bar</button>
-            <button class="settings-toggle-btn" data-show="false">Hide</button>
+            <button class="settings-toggle-btn active" data-theme="default">Default</button>
+            <button class="settings-toggle-btn" data-theme="cove">Cove</button>
+            <button class="settings-toggle-btn" data-theme="valley">Valley</button>
         </div>
     </div>
     </div>
@@ -2501,34 +2546,18 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 
-<header class="header-container" id="header-area">
-    <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
-</header>
-
 <div class="dock-wrapper">
-<div class="time-ruler" id="time-ruler">
-        <div class="time-ruler-track">
-            <div class="time-ruler-past" id="time-ruler-past"></div>
-        </div>
-        <div class="time-ruler-now" id="time-ruler-now">
-            <div class="time-ruler-now-label" id="time-ruler-now-label"></div>
-            <div class="time-ruler-now-line"></div>
-            <div class="time-ruler-now-dot"></div>
-        </div>
-        <div class="time-ruler-hover-label" id="time-ruler-hover-label"></div>
-    </div>
     <div id="mobile-time"></div>
     <div class="dock-row">
+        <header class="header-container" id="header-area">
+            <div class="header-time" id="header-time"></div>
+            <h1 class="greeting" id="greeting">Good morning.</h1>
+        </header>
         <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="dock-container" id="dock"></div>
         <button class="dock-nav" id="dock-next"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M6 3L10.5 8L6 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
     <div class="weather-row" id="weather"></div>
-    <div class="day-note-popup" id="day-note-popup">
-        <div class="day-note-list" id="day-note-list"></div>
-        <textarea id="day-note-input" placeholder="add a note..." rows="1"></textarea>
-    </div>
-    <div class="day-note-preview" id="day-note-preview"></div>
 </div>
 
 <div class="bottom-controls">
@@ -2537,7 +2566,6 @@ body.dev-mode .dev-export-btn { display: block; }
 
 <div class="city-tooltip" id="city-display">Detecting...</div>
 
-<div class="greeting-sub" id="greeting-sub"></div>
 <div class="weather-tooltip" id="weather-tooltip"></div>
 
 
@@ -2646,16 +2674,8 @@ body.dev-mode .dev-export-btn { display: block; }
         const slot = getTimeSlot(hour);
         const dayName = now.toLocaleDateString(locale, { weekday: 'long' });
         const greetEl = document.getElementById('greeting');
-        const subEl = document.getElementById('greeting-sub');
-
-        if (!greetEl || !subEl) return;
-
-        // main greeting — simple, natural, with day name where it fits
-        const mainText = getMainGreeting(lang, slot, dayName);
-        greetEl.textContent = mainText;
-
-        // sub greeting — the funny line
-        subEl.textContent = getSubGreeting(slot);
+        if (!greetEl) return;
+        greetEl.textContent = getMainGreeting(lang, slot, dayName);
     }
 
     function cycleLang() {
@@ -2749,12 +2769,6 @@ body.dev-mode .dev-export-btn { display: block; }
                     <span class="day-number">${date.getDate()}</span>
                 </div>
             `;
-            if (!isPast) {
-                card.addEventListener('click', () => openDayNotePopup(card, dateStr));
-                card.style.cursor = 'pointer';
-            }
-            card.addEventListener('mouseenter', () => showDayNotePreview(card, dateStr));
-            card.addEventListener('mouseleave', hideDayNotePreview);
             dock.appendChild(card);
 
             // 2. Separators (dock only)
@@ -2769,38 +2783,31 @@ body.dev-mode .dev-export-btn { display: block; }
                 }
             }
         }
-
-        renderDayNoteDots();
     }
 
     function initWeatherRow() {
-        const now = new Date();
-        const isMobile = window.innerWidth <= 430;
-        const numDays = isMobile ? 5 : 7;
         const weatherRow = document.getElementById('weather');
         weatherRow.innerHTML = '';
-
-        for (let i = 0; i < numDays; i++) {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        for (let i = 0; i < 7; i++) {
             const date = new Date(now);
-            date.setHours(0, 0, 0, 0);
             date.setDate(now.getDate() + i);
             const dateStr = toISO(date);
-
             const wSlot = document.createElement('div');
             wSlot.className = 'weather-day' + (i === 0 ? ' today' : '');
-            wSlot.id = `dw-${dateStr}`;
+            wSlot.id = 'dw-' + dateStr;
             wSlot.innerHTML = `<span class="weather-icon" style="opacity:0.2">--</span>`;
             weatherRow.appendChild(wSlot);
-
-            if (i < numDays - 1) {
+            if (i < 6) {
                 const wSep = document.createElement('div');
                 wSep.className = 'weather-separator';
                 weatherRow.appendChild(wSep);
             }
         }
-
         if (window.populateDockWeather) window.populateDockWeather();
     }
+
 
     document.getElementById('dock-prev').addEventListener('click', () => {
         dockOffset -= 1;
@@ -2891,7 +2898,7 @@ body.dev-mode .dev-export-btn { display: block; }
             const tick = document.createElement('div');
             tick.className = 'time-ruler-tick hour';
             tick.style.left = pct + '%';
-            tick.style.background = isPastH ? '#A78BCA' : 'var(--text-color)';
+            tick.style.background = isPastH ? '#c580fb' : 'var(--text-color)';
             tick.style.opacity = isPastH ? '0.55' : '0.25';
             ruler.appendChild(tick);
 
@@ -2902,7 +2909,7 @@ body.dev-mode .dev-export-btn { display: block; }
                 const half = document.createElement('div');
                 half.className = 'time-ruler-tick half';
                 half.style.left = halfPct + '%';
-                half.style.background = isPastHalf ? '#A78BCA' : 'var(--text-color)';
+                half.style.background = isPastHalf ? '#c580fb' : 'var(--text-color)';
                 half.style.opacity = isPastHalf ? '0.35' : '0.15';
                 ruler.appendChild(half);
 
@@ -2913,7 +2920,7 @@ body.dev-mode .dev-export-btn { display: block; }
                     const qt = document.createElement('div');
                     qt.className = 'time-ruler-tick quarter';
                     qt.style.left = qPct + '%';
-                    qt.style.background = isPastQ ? '#A78BCA' : 'var(--text-color)';
+                    qt.style.background = isPastQ ? '#c580fb' : 'var(--text-color)';
                     qt.style.opacity = isPastQ ? '0.2' : '0.08';
                     ruler.appendChild(qt);
                 });
@@ -2933,57 +2940,14 @@ body.dev-mode .dev-export-btn { display: block; }
         return h.toString().padStart(2, '0') + ':' + mm;
     }
 
-    (function() {
-        const ruler = document.getElementById('time-ruler');
-        const hoverLabel = document.getElementById('time-ruler-hover-label');
-        ruler.addEventListener('mousemove', (e) => {
-            const rr = ruler.getBoundingClientRect();
-            const frac = Math.max(0, Math.min(1, (e.clientX - rr.left) / rr.width));
-            const totalH = RULER_START + frac * RULER_SPAN;
-            const h = Math.floor(totalH);
-            const m = Math.round((totalH - h) * 60);
-            hoverLabel.textContent = formatTime(h === 24 ? 0 : h, m === 60 ? 0 : m);
-            hoverLabel.style.left = (frac * 100) + '%';
-            hoverLabel.classList.add('visible');
-        });
-        ruler.addEventListener('mouseleave', () => {
-            hoverLabel.classList.remove('visible');
-        });
-    })();
-
-    document.getElementById('time-ruler-now-label').addEventListener('click', () => {
-        timeFormatIdx = (timeFormatIdx + 1) % 2;
-        localStorage.setItem('aura_time_format', timeFormatIdx);
-        const now = new Date();
-        document.getElementById('time-ruler-now-label').textContent =
-            formatTime(now.getHours(), now.getMinutes());
-    });
 
     function updateTimeline() {
         const now = new Date();
-        const hours = now.getHours() + now.getMinutes() / 60;
-        const nowEl = document.getElementById('time-ruler-now');
-        const labelEl = document.getElementById('time-ruler-now-label');
-        const pastEl = document.getElementById('time-ruler-past');
-
         const timeStr = formatTime(now.getHours(), now.getMinutes());
-        labelEl.textContent = timeStr;
+        const headerTime = document.getElementById('header-time');
+        if (headerTime) headerTime.textContent = timeStr;
         const mobileTime = document.getElementById('mobile-time');
         if (mobileTime) mobileTime.textContent = timeStr;
-
-        nowEl.style.display = 'flex';
-        if (hours < RULER_START || hours > RULER_END) {
-            document.querySelector('.time-ruler-now-line').style.display = 'none';
-            document.querySelector('.time-ruler-now-dot').style.display = 'none';
-            nowEl.style.left = hours < RULER_START ? '0%' : '100%';
-            pastEl.style.width = hours < RULER_START ? '0%' : '100%';
-            return;
-        }
-        document.querySelector('.time-ruler-now-line').style.display = '';
-        document.querySelector('.time-ruler-now-dot').style.display = '';
-        const pct = (hours - RULER_START) / RULER_SPAN * 100;
-        nowEl.style.left = pct + '%';
-        pastEl.style.width = pct + '%';
     }
 
     function updateWatermark() {
@@ -3164,25 +3128,8 @@ function createNote(data, autoFocus = false) {
                 note.classList.remove('dragging', 'near-dock');
                 note.style.transform = '';
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
-                const hit = getDayCardAtPoint(cx, cy);
-                if (hit && !hit.card.classList.contains('past') && data.text && data.text.trim()) {
-                    note.style.transition = 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease';
-                    note.style.transform = 'scale(0.2)';
-                    note.style.opacity = '0';
-                    setTimeout(() => {
-                        const dateStr = hit.dateStr;
-                        if (!dayNotes[dateStr]) dayNotes[dateStr] = [];
-                        dayNotes[dateStr].push(data.text.trim());
-                        saveDayNotes();
-                        note.remove();
-                        notes = notes.filter(n => n.id !== data.id);
-                        save();
-                        renderDayNoteDots();
-                    }, 150);
-                } else {
-                    note.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease';
-                    save();
-                }
+                note.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease';
+                save();
             };
             return { move, stop };
         };
@@ -3459,9 +3406,21 @@ function createNote(data, autoFocus = false) {
 
     function spawnNote(x, y, target) {
         if (
-            (target.id === 'surface' || target.id === 'mesh') &&
+            !target.closest('.note') &&
             !target.closest('.dock-wrapper') &&
-            !target.closest('.note')
+            !target.closest('.settings-panel') &&
+            !target.closest('.settings-btn') &&
+            !target.closest('.bg-toggle') &&
+            !target.closest('.city-tooltip') &&
+            !target.closest('.weather-tooltip') &&
+            !target.closest('.note-arrow-bar') &&
+            !target.closest('.search-overlay') &&
+            !target.closest('.dev-modal') &&
+            !target.closest('.capsule') &&
+            !target.closest('.year-bar') &&
+            target.tagName !== 'BUTTON' &&
+            target.tagName !== 'INPUT' &&
+            target.tagName !== 'A'
         ) {
             const n = {
                 id: 'n' + Date.now(),
@@ -3475,7 +3434,7 @@ function createNote(data, autoFocus = false) {
         }
     }
 
-    window.ondblclick = (e) => spawnNote(e.clientX, e.clientY, e.target);
+    window.addEventListener('dblclick', (e) => spawnNote(e.clientX, e.clientY, e.target));
 
     // Double-tap to create note on touch devices
     let lastTap = 0, lastTapTarget = null;
@@ -3609,152 +3568,12 @@ function createNote(data, autoFocus = false) {
         toggleSettings(true);
     });
 
-    /* ============================================================
-       DAY NOTES — per-day notes on dock cards
-    ============================================================ */
-    let dayNotes = JSON.parse(localStorage.getItem('aura_day_notes')) || {};
-
-    // Migrate old string format → array format
-    Object.keys(dayNotes).forEach(k => {
-        if (typeof dayNotes[k] === 'string') {
-            dayNotes[k] = [dayNotes[k]];
-        }
-    });
-
-    function saveDayNotes() {
-        localStorage.setItem('aura_day_notes', JSON.stringify(dayNotes));
-    }
-
-    let dayNotePopupDate = null;
-    let dayNotePopupCard = null;
-    const dayNotePopup = document.getElementById('day-note-popup');
-    const dayNoteInput = document.getElementById('day-note-input');
-    const dayNoteList = document.getElementById('day-note-list');
-    const dayNotePreview = document.getElementById('day-note-preview');
-
     function toISO(date) {
         return date.getFullYear() + '-' +
             String(date.getMonth() + 1).padStart(2, '0') + '-' +
             String(date.getDate()).padStart(2, '0');
     }
 
-    function renderDayNoteList() {
-        dayNoteList.innerHTML = '';
-        const entries = dayNotes[dayNotePopupDate] || [];
-        entries.forEach((text, i) => {
-            if (i > 0) {
-                const sep = document.createElement('div');
-                sep.className = 'day-note-separator';
-                dayNoteList.appendChild(sep);
-            }
-            const item = document.createElement('div');
-            item.className = 'day-note-item';
-
-            const span = document.createElement('span');
-            span.className = 'day-note-item-text';
-            span.textContent = text;
-            item.appendChild(span);
-
-            const del = document.createElement('button');
-            del.className = 'day-note-item-delete';
-            del.textContent = '×';
-            del.addEventListener('click', () => {
-                dayNotes[dayNotePopupDate].splice(i, 1);
-                if (dayNotes[dayNotePopupDate].length === 0) delete dayNotes[dayNotePopupDate];
-                saveDayNotes();
-                renderDayNoteList();
-                renderDayNoteDots();
-            });
-            item.appendChild(del);
-
-            dayNoteList.appendChild(item);
-        });
-    }
-
-    function openDayNotePopup(card, dateStr) {
-        dayNotePopupDate = dateStr;
-        dayNotePopupCard = card;
-        dayNoteInput.value = '';
-
-        renderDayNoteList();
-
-        // Position popup directly above the card using fixed coords
-        const rect = card.getBoundingClientRect();
-        dayNotePopup.style.left = (rect.left + rect.width / 2) + 'px';
-        dayNotePopup.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
-        dayNotePopup.style.top = 'auto';
-
-        dayNotePopup.classList.add('show');
-        setTimeout(() => dayNoteInput.focus(), 50);
-    }
-
-    function closeDayNotePopup() {
-        dayNotePopup.classList.remove('show');
-        dayNotePopupDate = null;
-        dayNotePopupCard = null;
-    }
-
-    function addDayNote() {
-        if (!dayNotePopupDate) return;
-        const text = dayNoteInput.value.trim();
-        if (!text) return;
-        if (!dayNotes[dayNotePopupDate]) dayNotes[dayNotePopupDate] = [];
-        dayNotes[dayNotePopupDate].push(text);
-        saveDayNotes();
-        dayNoteInput.value = '';
-        renderDayNoteList();
-        renderDayNoteDots();
-    }
-
-    dayNoteInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            addDayNote();
-        }
-        if (e.key === 'Escape') {
-            closeDayNotePopup();
-        }
-    });
-
-    // Click outside to close
-    document.addEventListener('mousedown', (e) => {
-        if (dayNotePopup.classList.contains('show') && !dayNotePopup.contains(e.target) && !e.target.closest('.day-card')) {
-            closeDayNotePopup();
-        }
-    });
-
-    function renderDayNoteDots() {
-        document.querySelectorAll('[data-date]').forEach(card => {
-            const dateStr = card.dataset.date;
-            let dot = card.querySelector('.day-note-dot');
-            const hasNotes = dayNotes[dateStr] && dayNotes[dateStr].length > 0;
-            if (hasNotes) {
-                if (!dot) {
-                    dot = document.createElement('div');
-                    dot.className = 'day-note-dot';
-                    card.appendChild(dot);
-                }
-            } else {
-                if (dot) dot.remove();
-            }
-        });
-    }
-
-    function showDayNotePreview(card, dateStr) {
-        const entries = dayNotes[dateStr];
-        if (!entries || entries.length === 0) return;
-        if (dayNotePopup.classList.contains('show')) return;
-        const rect = card.getBoundingClientRect();
-        dayNotePreview.textContent = entries.join('\n');
-        dayNotePreview.style.left = (rect.left + rect.width / 2) + 'px';
-        dayNotePreview.style.top = (rect.top - 10) + 'px';
-        dayNotePreview.style.transform = 'translate(-50%, -100%)';
-        dayNotePreview.classList.add('show');
-    }
-
-    function hideDayNotePreview() {
-        dayNotePreview.classList.remove('show');
-    }
 
 </script>
 <script src="js/weather.js"></script>
@@ -3762,7 +3581,7 @@ function createNote(data, autoFocus = false) {
 // Init — paint UI immediately, defer network calls
     initDock();
     initWeatherRow();
-    buildTimeRuler();
+
     updateTimeline();
     updateHeader();
     updateWatermark();
@@ -3776,26 +3595,6 @@ function createNote(data, autoFocus = false) {
         updateHeader();
     }, 10000);
 
-    // Auto-advance dock at midnight
-    function scheduleMidnightRefresh() {
-        const now = new Date();
-        const midnight = new Date(now);
-        midnight.setHours(24, 0, 1, 0); // 1 second past midnight
-        const ms = midnight - now;
-        setTimeout(() => {
-            // Don't interrupt if user is typing a day note
-            if (dayNotePopup.classList.contains('show')) {
-                // Retry in 30s
-                setTimeout(() => scheduleMidnightRefresh(), 0);
-                return;
-            }
-            initDock();
-            initWeatherRow();
-            updateTimeline();
-                scheduleMidnightRefresh();
-        }, ms);
-    }
-    scheduleMidnightRefresh();
 
     // Kick off location + weather after first frame so UI is visible first
     requestAnimationFrame(() => {
@@ -3939,39 +3738,39 @@ function createNote(data, autoFocus = false) {
         applyNoteSize(btn.dataset.size);
     });
 
-    // Ruler Visibility Toggle
-    const rulerQuickToggle = document.getElementById('ruler-quick-toggle');
-    function applyRulerVisibility(show) {
-        const ruler = document.getElementById('time-ruler');
-        if (show === 'true') {
-            document.documentElement.classList.remove('hide-ruler');
-            if (ruler) ruler.style.display = '';
-        } else {
-            document.documentElement.classList.add('hide-ruler');
-            if (ruler) ruler.style.display = 'none';
-        }
-        
+    // Theme Toggle (default / cove / valley)
+    const themeQuickToggle = document.getElementById('theme-quick-toggle');
+    const THEMES = ['default', 'cove', 'valley'];
+    function applyTheme(theme) {
+        document.documentElement.classList.remove('theme-cove', 'theme-valley');
+        if (theme === 'cove') document.documentElement.classList.add('theme-cove');
+        if (theme === 'valley') document.documentElement.classList.add('theme-valley');
         document.querySelectorAll('#ruler-toggle-picker .settings-toggle-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.show === show);
+            b.classList.toggle('active', b.dataset.theme === theme);
         });
-        if (rulerQuickToggle) rulerQuickToggle.classList.toggle('ruler-off', show !== 'true');
-        localStorage.setItem('aura_show_ruler', show);
+        if (themeQuickToggle) {
+            themeQuickToggle.classList.remove('toggle-cove', 'toggle-valley');
+            if (theme === 'cove') themeQuickToggle.classList.add('toggle-cove');
+            if (theme === 'valley') themeQuickToggle.classList.add('toggle-valley');
+        }
+        localStorage.setItem('aura_theme', theme);
     }
 
     document.getElementById('ruler-toggle-picker').addEventListener('click', (e) => {
         const btn = e.target.closest('.settings-toggle-btn');
-        if (!btn) return;
-        applyRulerVisibility(btn.dataset.show);
+        if (!btn || !btn.dataset.theme) return;
+        applyTheme(btn.dataset.theme);
     });
 
-    if (rulerQuickToggle) {
-        rulerQuickToggle.addEventListener('click', () => {
-            const current = localStorage.getItem('aura_show_ruler') || 'true';
-            applyRulerVisibility(current === 'true' ? 'false' : 'true');
+    if (themeQuickToggle) {
+        themeQuickToggle.addEventListener('click', () => {
+            const current = localStorage.getItem('aura_theme') || 'default';
+            const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
+            applyTheme(next);
         });
     }
 
-    applyRulerVisibility(localStorage.getItem('aura_show_ruler') || 'true');
+    applyTheme(localStorage.getItem('aura_theme') || 'default');
 
 
     // Restore saved settings
@@ -3979,9 +3778,15 @@ function createNote(data, autoFocus = false) {
     applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
     applyTempUnit(tempUnit, false);
 
-    // Reveal UI after all settings applied — no flash
-    requestAnimationFrame(() => document.body.classList.add('ready'));
-    setTimeout(() => document.body.classList.add('ready'), 300);
+    // Reveal once background image is loaded — prevents backdrop-filter flash
+    (function revealWhenReady() {
+        const show = () => document.body.classList.add('ready');
+        const bg = new Image();
+        bg.onload = () => requestAnimationFrame(show);
+        bg.onerror = show;
+        bg.src = 'bg2.png';
+        setTimeout(show, 600); // fallback
+    })();
 
     // Snap note widths once fonts are loaded so they're stable across refreshes
     document.fonts.ready.then(() => snapNoteWidths());
@@ -4058,9 +3863,6 @@ function createNote(data, autoFocus = false) {
         const tag = document.activeElement.tagName;
         const editable = document.activeElement.contentEditable === 'true';
         if (tag === 'INPUT' || tag === 'TEXTAREA' || editable) return;
-
-        // Check if day note popup is open
-        if (document.querySelector('.day-note-popup.show')) return;
 
         e.preventDefault();
         openSearch();
@@ -4151,12 +3953,14 @@ function createNote(data, autoFocus = false) {
                 bar.appendChild(tick);
             }
 
-            // label at midpoint
-            const lbl = document.createElement('div');
-            lbl.className = 'month-name' + cls;
-            lbl.style.left = midPct + '%';
-            lbl.textContent = name;
-            bar.appendChild(lbl);
+            // label at midpoint — skip current month (shown in marker tooltip)
+            if (!isCur) {
+                const lbl = document.createElement('div');
+                lbl.className = 'month-name' + cls;
+                lbl.style.left = midPct + '%';
+                lbl.textContent = name;
+                bar.appendChild(lbl);
+            }
         });
 
         function updateYearBar() {
