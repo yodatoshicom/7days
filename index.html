@@ -4315,24 +4315,46 @@ function createNote(data, autoFocus = false) {
             });
         }
 
-        // Initial State & Animation — start digits 5 ahead for visible roll-down effect
+        // Initial animation — rAF counter from 0 → actual value (slot-machine spin then decelerate)
         const actualVal = Math.max(0, Math.min(100, ((Date.now() - start) / span) * 100));
-        const actualN = Math.floor(actualVal);
-        const startT = (Math.floor((actualN % 100) / 10) + 5) % 10;
-        const startO = (actualN % 10 + 5) % 10;
+        const fillEl = document.getElementById('year-bar-fill');
+        const markerEl = document.getElementById('year-bar-marker');
         const hEl = document.getElementById('digit-hundreds');
         const tEl = document.getElementById('digit-tens');
         const oEl = document.getElementById('digit-ones');
-        // Set initial positions without transition
+
+        // Disable CSS transitions — JS owns the animation
         [hEl, tEl, oEl].forEach(el => el && (el.style.transition = 'none'));
-        if (hEl) { hEl.style.width = '0'; hEl.style.opacity = '0'; hEl.style.transform = 'translateY(0)'; }
-        if (tEl) { tEl.style.width = '9px'; tEl.style.opacity = '1'; tEl.style.transform = `translateY(-${startT * 22}px)`; }
-        if (oEl) { oEl.style.transform = `translateY(-${startO * 22}px)`; }
-        void (oEl && oEl.offsetWidth); // force reflow
-        [hEl, tEl, oEl].forEach(el => el && (el.style.transition = ''));
-        document.getElementById('year-bar-fill').style.width = '0%';
-        document.getElementById('year-bar-marker').style.left = '0%';
-        setTimeout(() => update(true), 600);
+        fillEl.style.transition = 'none';
+        markerEl.style.transition = 'none';
+        setRollingNumber(0);
+        fillEl.style.width = '0%';
+        markerEl.style.left = '0%';
+        void (oEl && oEl.offsetWidth); // force reflow before starting
+
+        setTimeout(() => {
+            const dur = 1600;
+            const t0 = performance.now();
+            const easeOut = t => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
+            (function frame(now) {
+                const p = Math.min(1, (now - t0) / dur);
+                const val = easeOut(p) * actualVal;
+                fillEl.style.width = val.toFixed(2) + '%';
+                markerEl.style.left = val.toFixed(2) + '%';
+                setRollingNumber(val);
+                if (p < 1) {
+                    requestAnimationFrame(frame);
+                } else {
+                    // Snap to exact final value and re-enable transitions for minute updates
+                    setRollingNumber(actualVal);
+                    fillEl.style.width = actualVal.toFixed(2) + '%';
+                    markerEl.style.left = actualVal.toFixed(2) + '%';
+                    [hEl, tEl, oEl].forEach(el => el && (el.style.transition = ''));
+                    fillEl.style.transition = '';
+                    markerEl.style.transition = '';
+                }
+            })(performance.now());
+        }, 500);
         setInterval(update, 60000);
         window.updateYearBarLang = function() {};
     })();
