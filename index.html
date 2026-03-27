@@ -129,8 +129,8 @@
 // Apply persisted font/size settings before first paint to prevent flash
 (function() {
     var fonts = { 'caveat':"'Caveat', cursive", 'sf-mono':"'SF Mono', 'SFMono-Regular', ui-monospace, monospace", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace", 'instrument-serif':"'Instrument Serif', serif" };
-    var sizes   = { 'S':'18px', 'M':'22px', 'L':'28px' };
-    var sizes1x = { 'S':'13px', 'M':'16px', 'L':'20px' };
+    var sizes   = { 'S':'21px', 'M':'22px', 'L':'28px' };
+    var sizes1x = { 'S':'15px', 'M':'16px', 'L':'20px' };
     var r = document.documentElement;
     // Theme (applied early to avoid flash)
     var savedTheme = localStorage.getItem('aura_theme') || 'valley';
@@ -4082,8 +4082,8 @@ function createNote(data, autoFocus = false) {
     });
 
     // Text size
-    const noteSizes   = { 'S': '18px', 'M': '22px', 'L': '28px' };
-    const noteSizes1x = { 'S': '13px', 'M': '16px', 'L': '20px' };
+    const noteSizes   = { 'S': '21px', 'M': '22px', 'L': '28px' };
+    const noteSizes1x = { 'S': '15px', 'M': '16px', 'L': '20px' };
 
     function applyNoteSize(size, noReflow = false) {
         const sizes = window.devicePixelRatio > 1 ? noteSizes : noteSizes1x;
