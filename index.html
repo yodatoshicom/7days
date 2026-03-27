@@ -2918,11 +2918,10 @@ body.dev-mode .dev-only { display: block; }
     // First time — seed hint notes
     if (notes.length === 0) {
         notes = [
-            { id: 'n_s2', x: Math.min(40,  window.innerWidth * 0.04), y: 38,  w: Math.min(260, window.innerWidth * 0.45), text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8', color: 'mint',  zIndex: 100 },
-            ...(window.innerWidth > 600 ? [
-            { id: 'n_s4', x: Math.min(175, window.innerWidth * 0.30), y: 38,  w: Math.min(223, window.innerWidth * 0.40), text: 'book flights\n↗ tokyo, april\nbefore prices jump',                 color: 'pink',  zIndex: 101 },
-            { id: 'n_s5', x: Math.min(712, window.innerWidth * 0.55), y: 38,  w: Math.min(224, window.innerWidth * 0.38), text: 'ship it. don\'t wait.',                                            color: 'blue',  zIndex: 102 },
-            ] : []),
+            { id: 'n_s2',          x: 40,  y: 38,  w: 260, text: 'saturday\n→ farmers market\n→ fix the bike\n→ dinner with J at 8', color: 'mint',  zIndex: 100 },
+            { id: 'n_s4',          x: 391, y: 50,  w: 223, text: 'book flights\n↗ tokyo, april\nbefore prices jump',                 color: 'pink',  zIndex: 101 },
+            { id: 'n_s5',          x: 231, y: 218, w: 185, text: 'ship it. don\'t wait.',                                            color: 'blue',  zIndex: 102 },
+            { id: 'n1774638266876', x: 504, y: 201, w: 157, text: 'double click to create a note',                                                   zIndex: 103 },
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
