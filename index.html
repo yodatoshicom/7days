@@ -136,14 +136,16 @@
     var sizes1x = { 'S':'16px', 'M':'20px', 'L':'26px' };
     var r = document.documentElement;
     // Theme (applied early to avoid flash)
-    var savedTheme = localStorage.getItem('aura_theme') || 'default';
+    var savedTheme = localStorage.getItem('aura_theme') || 'valley';
     if (savedTheme === 'cove') r.classList.add('theme-cove');
     if (savedTheme === 'valley') r.classList.add('theme-valley');
+    if (savedTheme === 'tahoe') r.classList.add('theme-tahoe');
 
     window.addEventListener('DOMContentLoaded', () => {
         const tToggle = document.getElementById('theme-quick-toggle');
         if (tToggle && savedTheme === 'cove') tToggle.classList.add('toggle-cove');
         if (tToggle && savedTheme === 'valley') tToggle.classList.add('toggle-valley');
+        if (tToggle && savedTheme === 'tahoe') tToggle.classList.add('toggle-tahoe');
     });
     
     var f = localStorage.getItem('aura_note_font');
@@ -249,9 +251,6 @@ html.theme-cove .header-time {
 html.theme-cove .bottom-watermark {
     color: #292524;
 }
-html.theme-cove .year-bar-fill {
-    background: #c580fb;
-}
 html.theme-cove .weather-row {
     color: #292524;
 }
@@ -269,6 +268,127 @@ html.theme-cove .note[data-note-color="default"] {
     border-color: rgba(255, 255, 255, 0.6);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
+
+/* ── Tahoe theme ── */
+html.theme-tahoe {
+    background-color: #d0e8f5;
+    background-image: url('soft-macos-default-stock-style-simple-minimalist-best-wallpapers-for-macos-26-tahoe-m3-m4-m5-macbook-air-and-macbook-pro-10-09-2025-1757534945-hd-wallpaper.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    --bg-color: #d0e8f5;
+    --text-color: #1a2a3a;
+    --card-bg: rgba(255, 255, 255, 0.5);
+    --separator-color: rgba(0, 0, 0, 0.08);
+}
+html.theme-tahoe body {
+    background-image: none !important;
+    background-color: transparent;
+}
+html.theme-tahoe .dock-container {
+    position: relative;
+    background: rgba(20, 10, 40, 0.55);
+    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    border: none;
+    border-radius: 40px;
+    padding: 8px;
+    gap: 4px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 12px 40px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.12);
+}
+html.theme-tahoe .day-card { color: rgba(255, 255, 255, 0.75); }
+html.theme-tahoe .day-card .day-name {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+}
+html.theme-tahoe .day-card .day-number {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.88);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+}
+html.theme-tahoe .day-card.weekend .day-number {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: rgba(180, 220, 255, 0.75);
+    color: rgba(180, 220, 255, 0.75);
+}
+html.theme-tahoe .day-card {
+    width: 66px;
+    height: 80px;
+    border-radius: 18px;
+    clip-path: none;
+    background: transparent;
+    border: none;
+    filter: none;
+    transition: background 0.2s ease, filter 0.2s ease, transform 0.5s var(--sf-easing);
+}
+html.theme-tahoe .day-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: none;
+}
+html.theme-tahoe .day-card.active {
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 24px;
+    border: none;
+    height: 74px;
+    filter: drop-shadow(0 4px 16px rgba(100, 180, 255, 0.4));
+    z-index: 2;
+    box-shadow:
+        inset 0 2px 8px rgba(0, 0, 0, 0.22),
+        0 0 0 0.5px rgba(255, 255, 255, 0.04);
+}
+html.theme-tahoe .day-card.active .day-name { color: rgba(255, 255, 255, 0.7); opacity: 1; }
+html.theme-tahoe .day-card.active .day-number { -webkit-text-fill-color: #fff; color: #fff; font-weight: 700; }
+html.theme-tahoe .day-card:first-child,
+html.theme-tahoe .day-card:first-child:hover { border-radius: 32px 18px 18px 32px; }
+html.theme-tahoe .day-card:last-child,
+html.theme-tahoe .day-card:last-child:hover  { border-radius: 18px 32px 32px 18px; }
+html.theme-tahoe .day-card.active:first-child { border-radius: 32px 24px 24px 32px; }
+html.theme-tahoe .day-card.active:last-child  { border-radius: 24px 32px 32px 24px; }
+html.theme-tahoe .day-card.active:hover { background: rgba(0, 0, 0, 0.45); }
+html.theme-tahoe .day-separator { display: none; }
+html.theme-tahoe .dock-nav { color: #e8f4ff; opacity: 0.4; }
+html.theme-tahoe .greeting { color: #e8f4ff; background: none; -webkit-background-clip: unset; background-clip: unset; -webkit-text-fill-color: #e8f4ff; }
+html.theme-tahoe .header-time { color: rgba(232, 244, 255, 0.6); }
+html.theme-tahoe .dock-wrapper { margin-bottom: 80px; }
+html.theme-tahoe .bottom-watermark { color: #e8f4ff; }
+html.theme-tahoe .note {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: none;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.12);
+    color: #e8f4ff;
+    white-space: normal;
+}
+html.theme-tahoe .note .note-content {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+html.theme-tahoe .note textarea { color: inherit; }
+html.theme-tahoe .note[data-note-color="yellow"] { outline-color: rgba(251, 191, 36, 0.2); color: #fef3c7; }
+html.theme-tahoe .note[data-note-color="blue"]   { outline-color: rgba(147, 197, 253, 0.2); color: #dbeafe; }
+html.theme-tahoe .note[data-note-color="mint"]   { outline-color: rgba(52, 211, 153, 0.2);  color: #d1fae5; }
+html.theme-tahoe .note[data-note-color="pink"]   { outline-color: rgba(244, 114, 182, 0.2); color: #fce7f3; }
 
 /* ── Valley theme ── */
 html.theme-valley {
@@ -357,7 +477,7 @@ html.theme-valley .day-card:hover {
 }
 html.theme-valley .day-card.active {
     background: rgba(0, 0, 0, 0.35);
-    border-radius: 18px;
+    border-radius: 24px;
     border: none;
     height: 74px;
     filter: drop-shadow(0 4px 16px rgba(180, 140, 255, 0.4));
@@ -367,11 +487,11 @@ html.theme-valley .day-card.active {
         0 0 0 0.5px rgba(255, 255, 255, 0.04);
 }
 html.theme-valley .day-card:first-child,
-html.theme-valley .day-card:first-child:hover,
-html.theme-valley .day-card.active:first-child { border-radius: 32px 18px 18px 32px; }
+html.theme-valley .day-card:first-child:hover { border-radius: 32px 18px 18px 32px; }
 html.theme-valley .day-card:last-child,
-html.theme-valley .day-card:last-child:hover,
-html.theme-valley .day-card.active:last-child  { border-radius: 18px 32px 32px 18px; }
+html.theme-valley .day-card:last-child:hover  { border-radius: 18px 32px 32px 18px; }        
+html.theme-valley .day-card.active:first-child { border-radius: 32px 24px 24px 32px; }     
+html.theme-valley .day-card.active:last-child  { border-radius: 24px 32px 32px 24px; }
 html.theme-valley .day-card.active:hover { background: rgba(0, 0, 0, 0.45); }
 html.theme-valley .day-separator { display: none; }
 html.theme-valley .dock-wrapper { margin-bottom: 80px; }
@@ -385,47 +505,90 @@ html.theme-valley .greeting {
 }
 html.theme-valley .header-time { color: rgba(240, 238, 255, 0.6); }
 html.theme-valley .bottom-watermark { color: #f0eeff; }
-html.theme-valley .year-bar-fill { background: #c580fb; }
+html.theme-valley .year-bar-fill {
+    background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
+}
+html.theme-valley #year-bar-marker {
+    bottom: 2px;
+}
+html.theme-valley .year-bar-label {
+    color: rgba(220, 180, 255, 0.9);
+    background: rgba(20, 10, 40, 0.55);
+    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    border: none;
+    outline: 0.5px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.3);
+}
+html.theme-valley .season-bracket {
+    border-color: rgba(200, 150, 255, 0.3);
+}
+html.theme-valley .season-label {
+    color: rgba(200, 150, 255, 0.6);
+}
 html.theme-valley .weather-row { color: rgba(240, 238, 255, 0.8); }
 html.theme-valley .weather-day { color: rgba(240, 238, 255, 0.8); }
 html.theme-valley .weather-separator {
     background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15) 50%, transparent);
 }
+/* ---- hide sun/moon arc ---- */
+html.theme-valley #sun-arc,
+html.theme-valley #sun-arc-bg { display: none; }
+/* ---- active day backlight (behind glass pill) ---- */
+#active-day-light {
+    display: none;
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+}
+html.theme-valley #active-day-light {
+    display: block;
+    background: radial-gradient(circle, rgba(190, 140, 255, 0.2) 0%, rgba(140, 80, 255, 0.08) 50%, transparent 75%);
+}
+/* ---- day card name/number swap ---- */
+html.day-swap .day-card { flex-direction: column-reverse; }
 html.theme-valley .note {
-    background: transparent;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: none;
-    outline: 0.5px solid rgba(255, 255, 255, 0.1);
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.08),
         inset 0 -1px 0 rgba(0, 0, 0, 0.08),
         0 4px 16px rgba(0, 0, 0, 0.12);
     color: #f0eeff;
+    white-space: normal;
+}
+html.theme-valley .note .note-content {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 html.theme-valley .note textarea { color: inherit; }
-html.theme-valley .note:not([data-note-color]),
-html.theme-valley .note[data-note-color="default"] {
-    background: transparent;
-}
 html.theme-valley .note[data-note-color="yellow"] {
-    background: transparent;
-    outline-color: rgba(251, 191, 36, 0.15);
+    outline-color: rgba(251, 191, 36, 0.2);
     color: #fef3c7;
 }
 html.theme-valley .note[data-note-color="blue"] {
-    background: transparent;
-    outline-color: rgba(147, 197, 253, 0.15);
+    outline-color: rgba(147, 197, 253, 0.2);
     color: #dbeafe;
 }
 html.theme-valley .note[data-note-color="mint"] {
-    background: transparent;
-    outline-color: rgba(52, 211, 153, 0.15);
+    outline-color: rgba(52, 211, 153, 0.2);
     color: #d1fae5;
 }
 html.theme-valley .note[data-note-color="pink"] {
-    background: transparent;
-    outline-color: rgba(244, 114, 182, 0.15);
+    outline-color: rgba(244, 114, 182, 0.2);
     color: #fce7f3;
 }
 
@@ -566,6 +729,8 @@ html {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    overflow: hidden;
+    height: 100%;
 }
 
 body {
@@ -573,7 +738,10 @@ body {
     color: var(--text-color);
     height: 100vh;
     height: 100dvh;
+    max-height: 100dvh;
     overflow: hidden;
+    position: fixed;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1282,6 +1450,7 @@ body.note-font-sf-mono .note-edit-ta {
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
+    -webkit-user-drag: none;
 }
 
 
@@ -1381,9 +1550,18 @@ body.note-editing-mode .note-arrow-bar {
     z-index: 10;
     opacity: 0;
     transition: opacity 0.3s var(--sf-easing);
+    pointer-events: none;
+}
+.note-resize-handle svg {
+    pointer-events: none;
+}
+.note-resize-handle .rh-fill {
+    pointer-events: stroke;
+    cursor: nwse-resize;
 }
 
-.note:hover .note-resize-handle { opacity: 1; }
+.note:hover .note-resize-handle { opacity: 1; pointer-events: none; }
+.note:hover .note-resize-handle .rh-fill { pointer-events: stroke; }
 
 .note-resize-handle .rh-fill { }
 
@@ -1403,7 +1581,7 @@ html.hide-ruler .dock-wrapper {
     top: 24px;
     right: 76px;
     z-index: 10001;
-    width: 78px;
+    width: 102px;
     height: 30px;
     border-radius: 100px;
     border: 0.5px solid rgba(0, 0, 0, 0.08);
@@ -1420,7 +1598,7 @@ html.hide-ruler .dock-wrapper {
     box-shadow: inset 0 0.5px 1px rgba(0,0,0,0.05);
 }
 
-body:hover .bg-toggle { opacity: 1; }
+body.dev-mode:hover .bg-toggle { opacity: 1; }
 .bg-toggle:hover { background: rgba(120, 120, 128, 0.18); transform: translateY(-1px); }
 .bg-toggle:active { transform: translateY(0) scale(0.96); }
 
@@ -1437,9 +1615,10 @@ body:hover .bg-toggle { opacity: 1; }
 }
 
 /* Active icon brightens based on theme class */
-.bg-toggle:not(.toggle-cove):not(.toggle-valley) .icon-theme-default,
+.bg-toggle:not(.toggle-cove):not(.toggle-valley):not(.toggle-tahoe) .icon-theme-default,
 .bg-toggle.toggle-cove .icon-theme-cove,
-.bg-toggle.toggle-valley .icon-theme-valley {
+.bg-toggle.toggle-valley .icon-theme-valley,
+.bg-toggle.toggle-tahoe .icon-theme-tahoe {
     opacity: 0.9;
 }
 
@@ -1456,8 +1635,9 @@ body:hover .bg-toggle { opacity: 1; }
     z-index: 0;
 }
 
-.bg-toggle.toggle-cove .bg-toggle-knob  { transform: translateX(24px); }
+.bg-toggle.toggle-cove .bg-toggle-knob   { transform: translateX(24px); }
 .bg-toggle.toggle-valley .bg-toggle-knob { transform: translateX(48px); }
+.bg-toggle.toggle-tahoe .bg-toggle-knob  { transform: translateX(72px); }
 
 .bg-toggle-icon svg {
     width: 12px;
@@ -1516,6 +1696,8 @@ body:hover .bg-toggle { opacity: 1; }
 }
 .dev-export-btn:hover { opacity: 1; }
 body.dev-mode .dev-export-btn { display: block; }
+.dev-only { display: none; }
+body.dev-mode .dev-only { display: block; }
 .dev-modal {
     display: none;
     position: fixed;
@@ -1732,15 +1914,15 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 /* Year progress bar — full width bottom */
+/* Year progress bar — full width bottom */
 .year-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 7px;
+    height: 12px;
     z-index: 500;
-    background: rgba(0,0,0,0.07);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+    background: transparent;
     pointer-events: none;
     overflow: visible;
 }
@@ -1751,127 +1933,109 @@ body.dev-mode .dev-export-btn { display: block; }
     position: relative;
     transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.year-bar-marker {
+
+.season-bracket {
     position: absolute;
-    bottom: 0;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
+    bottom: 12px;
+    height: 8px;
     pointer-events: none;
 }
-.year-bar-tick {
-    width: 1.5px;
-    height: 22px;
-    background: #c580fb;
-}
-.year-bar-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: #c580fb;
-    white-space: nowrap;
-    background: rgba(167,139,202,0.1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 0.5px solid rgba(167,139,202,0.3);
-    border-radius: 20px;
-    padding: 2.5px 10px;
-    margin-bottom: 0;
-}
+
 .season-tick {
     position: absolute;
+    left: 0;
     bottom: 0;
     width: 1px;
-    height: 12px;
-    background: linear-gradient(to top, transparent, rgba(167,139,202,0.55) 45%, #c580fb);
-    transform: translateX(-50%);
-    transform-origin: bottom center;
-    pointer-events: auto;
-    cursor: default;
-    transition: height 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.22s ease;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.4);
+    opacity: 0;
+    transition: opacity 0.4s ease;
 }
-.season-tick::before {
-    content: '';
-    position: absolute;
-    left: -14px; right: -14px;
-    top: -28px; bottom: -6px;
+
+.season-bracket.past .season-tick {
+    opacity: 1;
 }
-.season-tick::after {
-    content: '';
-    position: absolute;
-    top: -3.6px; left: 50%;
-    transform: translateX(-50%);
-    width: 3.6px; height: 3.6px;
-    border-radius: 50%;
-    background: #c580fb;
-    opacity: 0.65;
-    transition: opacity 0.22s ease, transform 0.22s ease;
-}
-.season-tick:hover { height: 24px; filter: drop-shadow(0 0 4px rgba(167,139,202,0.5)); }
-.season-tick:hover::after { opacity: 1; transform: translateX(-50%) scale(1.4); }
+
 .season-label {
     position: absolute;
-    bottom: calc(100% + 8px);
+    top: -9px;
     left: 50%;
-    transform: translateX(-50%) translateY(6px);
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.year-bar-marker {
+    position: absolute;
+    bottom: 14px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 501;
+    transition: left 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.year-bar-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: 'Inter', sans-serif;
     font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-weight: 900;
     color: #c580fb;
     white-space: nowrap;
-    background: rgba(167,139,202,0.09);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 0.5px solid rgba(167,139,202,0.2);
+    background: #fff;
+    padding: 0 10px;
     border-radius: 20px;
-    padding: 3.6px 12px;
-    opacity: 0;
-    transition: opacity 0.22s ease, transform 0.22s ease;
-    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    height: 22px;
+    overflow: hidden;
+    line-height: 22px;
+    font-variant-numeric: tabular-nums;
+    border: 0.5px solid rgba(197, 128, 251, 0.25);
 }
-.season-tick:hover .season-label { opacity: 1; transform: translateX(-50%) translateY(0); }
-.season-zone {
-    position: absolute;
-    bottom: 0;
-    height: 100%;
-    pointer-events: none;
-    opacity: 0;
-    background: rgba(167,139,202,0.18);
-    transition: opacity 0.25s ease;
-    border-radius: 0 3px 3px 0;
+.digit-scroll {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s ease, opacity 0.4s ease;
 }
-.season-zone.active { opacity: 1; }
-.season-name { display: none; }
-.month-tick {
-    position: absolute;
-    bottom: 0;
-    width: 1px;
-    height: 11px;
-    background: rgba(120,120,128,0.35);
-    transform: translateX(-50%);
-    pointer-events: none;
+.digit-scroll span {
+    height: 22px;
+    width: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
-.month-tick.past    { background: rgba(120,120,128,0.55); }
-.month-tick.current { background: rgba(167,139,202,0.8); height: 13px; }
+.pct-sign {
+    margin-left: 1px;
+    font-weight: 700;
+    font-size: 10px;
+    opacity: 0.8;
+}
+
 .month-name {
     position: absolute;
-    bottom: 16px;
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translate(-50%, -50%);
     font-family: 'Inter', sans-serif;
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     white-space: nowrap;
     pointer-events: none;
-    color: rgba(120,120,128,0.5);
+    color: rgba(0, 0, 0, 0.4);
 }
-.month-name.past    { color: rgba(120,120,128,0.7); }
-.month-name.current { color: rgba(167,139,202,0.95); font-weight: 700; }
+.month-name.current { 
+    opacity: 1;
+    color: #1d1d1f;
+}
 
 /* Bottom watermark — Alcove-style fading text */
 .bottom-watermark {
@@ -2449,7 +2613,7 @@ body.dev-mode .dev-export-btn { display: block; }
 
 
 
-<button class="bg-toggle" id="theme-quick-toggle" title="Cycle theme: Default → Cove → Valley">
+<button class="bg-toggle" id="theme-quick-toggle" title="Cycle theme: Default → Cove → Valley → Tahoe">
     <div class="bg-toggle-icon icon-theme-default">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
     </div>
@@ -2458,6 +2622,9 @@ body.dev-mode .dev-export-btn { display: block; }
     </div>
     <div class="bg-toggle-icon icon-theme-valley">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </div>
+    <div class="bg-toggle-icon icon-theme-tahoe">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7"/></svg>
     </div>
     <div class="bg-toggle-knob"></div>
 </button>
@@ -2514,12 +2681,19 @@ body.dev-mode .dev-export-btn { display: block; }
             <button class="settings-toggle-btn" data-size="L" style="font-size:13px;">L</button>
         </div>
     </div>
-    <div style="margin-top:4px;">
+    <div style="margin-top:4px;" id="theme-settings-section" class="dev-only">
         <div class="settings-section-label">Theme</div>
         <div class="settings-toggle" id="ruler-toggle-picker">
             <button class="settings-toggle-btn active" data-theme="default">Default</button>
             <button class="settings-toggle-btn" data-theme="cove">Cove</button>
             <button class="settings-toggle-btn" data-theme="valley">Valley</button>
+        </div>
+    </div>
+    <div style="margin-top:4px;">
+        <div class="settings-section-label">Day cards</div>
+        <div class="settings-toggle" id="day-display-toggle">
+            <button class="settings-toggle-btn active" data-display="name-top">Name · №</button>
+            <button class="settings-toggle-btn" data-display="number-top">№ · Name</button>
         </div>
     </div>
     </div>
@@ -2554,6 +2728,7 @@ body.dev-mode .dev-export-btn { display: block; }
             <h1 class="greeting" id="greeting">Good morning.</h1>
         </header>
         <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div id="active-day-light"></div>
         <div class="dock-container" id="dock"></div>
         <button class="dock-nav" id="dock-next"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M6 3L10.5 8L6 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
@@ -2745,8 +2920,8 @@ body.dev-mode .dev-export-btn { display: block; }
         const weekStart = new Date(now);
         weekStart.setHours(0, 0, 0, 0);
         const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon, ...6=Sat
-        const daysToSunday = -dayOfWeek;
-        weekStart.setDate(now.getDate() + daysToSunday + dockOffset);
+        const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        weekStart.setDate(now.getDate() + daysToMonday + dockOffset);
 
         const dock = document.getElementById('dock');
         dock.innerHTML = '';
@@ -2770,6 +2945,15 @@ body.dev-mode .dev-export-btn { display: block; }
                 </div>
             `;
             dock.appendChild(card);
+            if (isToday) {
+                requestAnimationFrame(() => {
+                    const light = document.getElementById('active-day-light');
+                    if (!light) return;
+                    const cr = card.getBoundingClientRect();
+                    light.style.left = (cr.left + cr.width / 2) + 'px';
+                    light.style.top  = (cr.top  + cr.height / 2) + 'px';
+                });
+            }
 
             // 2. Separators (dock only)
             if (i < numDays - 1) {
@@ -3047,6 +3231,8 @@ function createNote(data, autoFocus = false) {
             const img = document.createElement('img');
             img.className = 'note-image';
             img.src = data.imageData;
+            img.draggable = false;
+            img.ondragstart = () => false;
             note.insertBefore(img, content);
         }
 
@@ -3057,7 +3243,8 @@ function createNote(data, autoFocus = false) {
         // SVG arc — quarter circle matching note's 30px border-radius, convex toward corner
         // Arc: center at (4,4), radius 30, from (34,4) to (4,34), sweep clockwise
         resizeHandle.innerHTML = `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path class="rh-fill" d="M 33.0,11.8 A 30,30 0 0,1 11.8,33.0" stroke="rgba(255,255,255,0.92)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M 33.0,11.8 A 30,30 0 0,1 11.8,33.0" stroke="transparent" stroke-width="20" stroke-linecap="round" style="pointer-events:stroke;cursor:nwse-resize"/>
+          <path class="rh-fill" d="M 33.0,11.8 A 30,30 0 0,1 11.8,33.0" stroke="rgba(255,255,255,0.92)" stroke-width="7" stroke-linecap="round" style="pointer-events:none"/>
         </svg>`;
         note.appendChild(resizeHandle);
 
@@ -3129,20 +3316,27 @@ function createNote(data, autoFocus = false) {
                 note.style.transform = '';
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
                 note.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease';
+                setTimeout(() => { note.style.transition = ''; }, 500);
+                const clamped = clampNote(parseFloat(note.style.left), parseFloat(note.style.top));
+                note.style.left = clamped.x + 'px';
+                note.style.top  = clamped.y + 'px';
                 save();
             };
             return { move, stop };
         };
 
         note.onmousedown = (e) => {
+            if (e.button !== 0) return;
             if (e.target.closest('.note-resize-handle')) return;
             if (e.target.closest('.note-close')) return;
             if (note.querySelector('.note-edit-ta')) return;
             if (e.target.tagName === 'A') return;
+            if (window._lastFileDrop && Date.now() - window._lastFileDrop < 400) return;
             e.preventDefault();
             const { move, stop } = startDrag(e.clientX, e.clientY);
-            const onMove = (me) => { me.preventDefault(); move(me.clientX, me.clientY); };
-            const onUp   = (me) => { stop(me.clientX, me.clientY); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+            const cleanup = (cx, cy) => { stop(cx, cy); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+            const onMove  = (me) => { if (me.buttons === 0) { cleanup(me.clientX, me.clientY); return; } me.preventDefault(); move(me.clientX, me.clientY); };
+            const onUp    = (me) => cleanup(me.clientX, me.clientY);
             window.addEventListener('mousemove', onMove);
             window.addEventListener('mouseup', onUp);
         };
@@ -3152,12 +3346,15 @@ function createNote(data, autoFocus = false) {
             if (e.target.closest('.note-close')) return;
             if (note.querySelector('.note-edit-ta')) return;
             if (e.target.tagName === 'A') return;
+            if (window._lastFileDrop && Date.now() - window._lastFileDrop < 400) return;
             const t = e.touches[0];
             const { move, stop } = startDrag(t.clientX, t.clientY);
-            const onMove = (te) => { te.preventDefault(); const t = te.touches[0]; move(t.clientX, t.clientY); };
-            const onEnd  = (te) => { const t = te.changedTouches[0]; stop(t.clientX, t.clientY); window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd); };
+            const onMove   = (te) => { te.preventDefault(); const t = te.touches[0]; move(t.clientX, t.clientY); };
+            const cleanup  = () => { window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd); window.removeEventListener('touchcancel', onEnd); };
+            const onEnd    = (te) => { const t = te.changedTouches[0]; stop(t.clientX, t.clientY); cleanup(); };
             window.addEventListener('touchmove', onMove, { passive: false });
             window.addEventListener('touchend', onEnd);
+            window.addEventListener('touchcancel', onEnd);
         }, { passive: true });
 
         // ---- RESIZE (mousedown + touchstart on handle) ----
@@ -3170,9 +3367,10 @@ function createNote(data, autoFocus = false) {
 
             note.style.height = startH + 'px';
 
-            const minW = Math.min(startW, 80);
-            const minH = Math.min(startH, 40);
+            const minW = 80;
+            const minH = 40;
             const onMove = (me) => {
+                if (me.buttons === 0) { onUp(); return; }
                 const newW = Math.max(minW, startW + (me.clientX - startX));
                 const newH = Math.max(minH, startH + (me.clientY - startY));
                 note.style.width = newW + 'px';
@@ -3196,20 +3394,23 @@ function createNote(data, autoFocus = false) {
                 window.removeEventListener('mouseup', onUp);
                 window.removeEventListener('touchmove', onTouchMove);
                 window.removeEventListener('touchend', onUp);
+                window.removeEventListener('touchcancel', onUp);
             };
             window.addEventListener('mousemove', onMove);
             window.addEventListener('mouseup', onUp);
             window.addEventListener('touchmove', onTouchMove, { passive: false });
             window.addEventListener('touchend', onUp);
+            window.addEventListener('touchcancel', onUp);
         }
 
-        resizeHandle.addEventListener('mousedown', (e) => {
+        const rhPath = resizeHandle.querySelector('path');
+        rhPath.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             e.preventDefault();
             startResize(e.clientX, e.clientY);
         });
 
-        resizeHandle.addEventListener('touchstart', (e) => {
+        rhPath.addEventListener('touchstart', (e) => {
             e.stopPropagation();
             e.preventDefault();
             const t = e.touches[0];
@@ -3220,7 +3421,8 @@ function createNote(data, autoFocus = false) {
         note.ondblclick = (e) => {
             if (e.target.closest('.note-resize-handle')) return;
             if (e.target.closest('.note-delete')) return;
-            if (data.imageData) return;
+            if (data.imageData) { e.stopPropagation(); return; }
+            if (note.classList.contains('editing')) return;
             e.stopPropagation();
             note.classList.add('editing');
             document.body.classList.add('note-editing-mode');
@@ -3266,7 +3468,8 @@ function createNote(data, autoFocus = false) {
                     const longestLine = (ta.value || ' ').split('\n').reduce((a, b) => a.length > b.length ? a : b, '');
                     mirror.textContent = longestLine || ' ';
                     const naturalW = mirror.getBoundingClientRect().width;
-                    note.style.width = Math.max(Math.min(Math.ceil(naturalW) + NOTE_PAD, NOTE_MAX + NOTE_PAD), NOTE_MIN) + 'px';
+                    const edgeMax = Math.max(NOTE_MIN, window.innerWidth - data.x - 16);
+                    note.style.width = Math.max(Math.min(Math.ceil(naturalW) + NOTE_PAD, NOTE_MAX + NOTE_PAD, edgeMax), NOTE_MIN) + 'px';
                 }
                 ta.style.height = 'auto';
                 ta.style.height = ta.scrollHeight + 'px';
@@ -3325,7 +3528,7 @@ function createNote(data, autoFocus = false) {
                     document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
                     return;
                 }
-                const plainText = ta.value;
+                const plainText = ta.value.trimEnd();
                 ta.remove();
                 content.style.display = '';
                 note.classList.remove('editing');
@@ -3372,7 +3575,7 @@ function createNote(data, autoFocus = false) {
     });
 
     window.addEventListener('drop', (e) => {
-        if (e.target.closest('.note') || e.target.closest('.dock-wrapper')) return;
+        if (e.target.closest('.dock-wrapper')) return;
         const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
         if (!file) return;
         e.preventDefault();
@@ -3396,6 +3599,7 @@ function createNote(data, autoFocus = false) {
                     zIndex: ++topZ
                 };
                 notes.push(data);
+                window._lastFileDrop = Date.now();
                 createNote(data);
                 save();
             };
@@ -3460,8 +3664,8 @@ function createNote(data, autoFocus = false) {
             }
         }
 
-        // Shift+F — dev mode
-        if (e.shiftKey && e.key.toLowerCase() === 'f') {
+        // Option+D — dev mode
+        if (e.altKey && (e.key.toLowerCase() === 'd' || e.key === '∂')) {
             e.preventDefault();
             document.body.classList.toggle('dev-mode');
         }
@@ -3740,18 +3944,20 @@ function createNote(data, autoFocus = false) {
 
     // Theme Toggle (default / cove / valley)
     const themeQuickToggle = document.getElementById('theme-quick-toggle');
-    const THEMES = ['default', 'cove', 'valley'];
+    const THEMES = ['default', 'cove', 'valley', 'tahoe'];
     function applyTheme(theme) {
-        document.documentElement.classList.remove('theme-cove', 'theme-valley');
+        document.documentElement.classList.remove('theme-cove', 'theme-valley', 'theme-tahoe');
         if (theme === 'cove') document.documentElement.classList.add('theme-cove');
         if (theme === 'valley') document.documentElement.classList.add('theme-valley');
+        if (theme === 'tahoe') document.documentElement.classList.add('theme-tahoe');
         document.querySelectorAll('#ruler-toggle-picker .settings-toggle-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.theme === theme);
         });
         if (themeQuickToggle) {
-            themeQuickToggle.classList.remove('toggle-cove', 'toggle-valley');
+            themeQuickToggle.classList.remove('toggle-cove', 'toggle-valley', 'toggle-tahoe');
             if (theme === 'cove') themeQuickToggle.classList.add('toggle-cove');
             if (theme === 'valley') themeQuickToggle.classList.add('toggle-valley');
+            if (theme === 'tahoe') themeQuickToggle.classList.add('toggle-tahoe');
         }
         localStorage.setItem('aura_theme', theme);
     }
@@ -3762,6 +3968,22 @@ function createNote(data, autoFocus = false) {
         applyTheme(btn.dataset.theme);
     });
 
+    // Day display toggle (name-top / number-top)
+    function applyDayDisplay(mode) {
+        document.documentElement.classList.toggle('day-swap', mode === 'number-top');
+        document.querySelectorAll('#day-display-toggle .settings-toggle-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.display === mode);
+        });
+        localStorage.setItem('aura_day_display', mode);
+    }
+    document.getElementById('day-display-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.settings-toggle-btn');
+        if (!btn) return;
+        applyDayDisplay(btn.dataset.display);
+    });
+    applyDayDisplay(localStorage.getItem('aura_day_display') || 'name-top');
+
+
     if (themeQuickToggle) {
         themeQuickToggle.addEventListener('click', () => {
             const current = localStorage.getItem('aura_theme') || 'default';
@@ -3770,7 +3992,7 @@ function createNote(data, autoFocus = false) {
         });
     }
 
-    applyTheme(localStorage.getItem('aura_theme') || 'default');
+    applyTheme(localStorage.getItem('aura_theme') || 'valley');
 
 
     // Restore saved settings
@@ -3873,112 +4095,79 @@ function createNote(data, autoFocus = false) {
         if (!e.target.closest('.search-container')) closeSearch();
     });
 
-    // ── Year Progress Bar ──
     (function() {
         const bar = document.createElement('div');
         bar.className = 'year-bar';
         bar.innerHTML = `
             <div class="year-bar-fill" id="year-bar-fill"></div>
             <div class="year-bar-marker" id="year-bar-marker">
-                <div class="year-bar-label" id="year-bar-label"></div>
-                <div class="year-bar-tick"></div>
+                <div class="year-bar-label" id="year-bar-label">
+                    <div class="digit-scroll" id="digit-hundreds"><span>0</span><span>1</span></div>
+                    <div class="digit-scroll" id="digit-tens"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+                    <div class="digit-scroll" id="digit-ones"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+                    <span class="pct-sign">%</span>
+                </div>
             </div>`;
         document.body.appendChild(bar);
 
+        const setRollingNumber = (val) => {
+            const n = Math.floor(val);
+            const h = Math.floor(n / 100);
+            const t = Math.floor((n % 100) / 10);
+            const o = n % 10;
+            const hEl = document.getElementById('digit-hundreds'), tEl = document.getElementById('digit-tens'), oEl = document.getElementById('digit-ones');
+            if (hEl) { hEl.style.width = h > 0 ? '9px' : '0'; hEl.style.opacity = h > 0 ? '1' : '0'; hEl.style.transform = `translateY(-${h * 22}px)`; }
+            if (tEl) { const showT = (h > 0 || t > 0); tEl.style.width = showT ? '9px' : '0'; tEl.style.opacity = showT ? '1' : '0'; tEl.style.transform = `translateY(-${t * 22}px)`; }
+            if (oEl) { oEl.style.transform = `translateY(-${o * 22}px)`; }
+        };
+
         const yr = new Date().getFullYear();
-        const yStart = new Date(yr, 0, 1), yEnd = new Date(yr + 1, 0, 1), ySpan = yEnd - yStart;
-        const now0 = new Date();
-        const springD = new Date(yr, 2, 20), summerD = new Date(yr, 5, 21),
-              fallD   = new Date(yr, 8, 22), winterD  = new Date(yr, 11, 21);
+        const start = new Date(yr, 0, 1).getTime(), end = new Date(yr + 1, 0, 1).getTime(), span = end - start;
 
-        const fmtDate = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        // Render seasons
+        const sD = [new Date(yr, 2, 20).getTime(), new Date(yr, 5, 21).getTime(), new Date(yr, 8, 22).getTime(), new Date(yr, 11, 21).getTime()];
         const seasons = [
-            { name: 'winter', s: yStart,  e: springD, tick: null },
-            { name: 'spring', s: springD, e: summerD, tick: `Spring · ${fmtDate(springD)}` },
-            { name: 'summer', s: summerD, e: fallD,   tick: `Summer · ${fmtDate(summerD)}` },
-            { name: 'fall',   s: fallD,   e: winterD, tick: `Fall · ${fmtDate(fallD)}` },
-            { name: 'winter', s: winterD, e: yEnd,    tick: `Winter · ${fmtDate(winterD)}` },
+            { name: 'Winter', s: start, e: sD[0] }, { name: 'Spring', s: sD[0], e: sD[1] }, { name: 'Summer', s: sD[1], e: sD[2] }, { name: 'Fall', s: sD[2], e: sD[3] }, { name: 'Winter', s: sD[3], e: end }
         ];
-
-        const isCurrent = s => now0 >= s.s && now0 < s.e;
-
         seasons.forEach(s => {
-            const startPct = (s.s - yStart) / ySpan * 100;
-            const endPct   = (s.e - yStart) / ySpan * 100;
-            const midPct   = (startPct + endPct) / 2;
-
-            const zone = document.createElement('div');
-            zone.className = 'season-zone';
-            zone.style.left  = startPct + '%';
-            zone.style.width = (endPct - startPct) + '%';
-            bar.appendChild(zone);
-
-            if (endPct - startPct > 3) {
-                const lbl = document.createElement('div');
-                lbl.className = 'season-name' + (isCurrent(s) ? ' current' : '');
-                lbl.style.left = midPct + '%';
-                lbl.textContent = s.name;
-                bar.appendChild(lbl);
-            }
-
-            if (s.tick) {
-                const tickPct = (s.s - yStart) / ySpan * 100;
-                const tick = document.createElement('div');
-                tick.className = 'season-tick';
-                tick.style.left = tickPct + '%';
-                tick.innerHTML = `<span class="season-label">${s.tick}</span>`;
-                tick.addEventListener('mouseenter', () => zone.classList.add('active'));
-                tick.addEventListener('mouseleave', () => zone.classList.remove('active'));
-                bar.appendChild(tick);
-            }
+            const sP = (s.s - start) / span * 100, eP = (s.e - start) / span * 100;
+            const bracket = document.createElement('div');
+            bracket.className = 'season-bracket';
+            bracket.style.left = sP + '%'; bracket.style.width = (eP - sP) + '%';
+            bracket.dataset.startPct = sP;
+            bracket.innerHTML = `<div class="season-tick"></div><span class="season-label">${s.name}</span>`;
+            bar.appendChild(bracket);
         });
 
+        // Render months
         const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-        // Add month ticks + labels above the bar rail
-        const nowM = new Date(), curMonth = nowM.getMonth();
+        const curM = new Date().getMonth();
         months.forEach((name, i) => {
-            const monthStart = new Date(yr, i, 1);
-            const monthEnd   = new Date(yr, i + 1, 1);
-            const startPct   = (monthStart - yStart) / ySpan * 100;
-            const midPct     = (startPct + (monthEnd - yStart) / ySpan * 100) / 2;
-            const isCur      = i === curMonth, isPast = i < curMonth;
-            const cls        = isCur ? ' current' : isPast ? ' past' : '';
-
-            // tick at month boundary (skip Jan = bar edge)
-            if (i > 0) {
-                const tick = document.createElement('div');
-                tick.className = 'month-tick' + cls;
-                tick.style.left = startPct + '%';
-                bar.appendChild(tick);
-            }
-
-            // label at midpoint — skip current month (shown in marker tooltip)
-            if (!isCur) {
-                const lbl = document.createElement('div');
-                lbl.className = 'month-name' + cls;
-                lbl.style.left = midPct + '%';
-                lbl.textContent = name;
-                bar.appendChild(lbl);
-            }
+            const mS = new Date(yr, i, 1).getTime(), mE = new Date(yr, i + 1, 1).getTime();
+            const mMid = ((mS - start) + (mE - start)) / 2 / span * 100;
+            const lbl = document.createElement('div');
+            lbl.className = 'month-name' + (i === curM ? ' current' : (i < curM ? ' past' : ''));
+            lbl.style.left = mMid + '%'; lbl.textContent = name;
+            bar.appendChild(lbl);
         });
 
-        function updateYearBar() {
-            const now = new Date();
-            const start = new Date(now.getFullYear(), 0, 1);
-            const end   = new Date(now.getFullYear() + 1, 0, 1);
-            const pct   = (now - start) / (end - start);
-            const pctStr = (pct * 100) + '%';
-            document.getElementById('year-bar-fill').style.width = pctStr;
-            document.getElementById('year-bar-marker').style.left = pctStr;
-            document.getElementById('year-bar-label').textContent =
-                `${months[now.getMonth()]} ${now.getFullYear()}  ·  ${Math.floor(pct * 100)}%`;
+        function update(forceRolling = false) {
+            const val = Math.max(0, Math.min(100, ((Date.now() - start) / span) * 100));
+            document.getElementById('year-bar-fill').style.width = val.toFixed(2) + '%';
+            document.getElementById('year-bar-marker').style.left = val.toFixed(2) + '%';
+            setRollingNumber(val);
+            document.querySelectorAll('.season-bracket').forEach(el => {
+                if (parseFloat(el.dataset.startPct) <= val) el.classList.add('past');
+                else el.classList.remove('past');
+            });
         }
 
+        // Initial State & Animation
+        setRollingNumber(0);
         document.getElementById('year-bar-fill').style.width = '0%';
         document.getElementById('year-bar-marker').style.left = '0%';
-        requestAnimationFrame(() => requestAnimationFrame(updateYearBar));
-        setInterval(updateYearBar, 60000);
+        setTimeout(() => update(true), 300);
+        setInterval(update, 60000);
         window.updateYearBarLang = function() {};
     })();
 
