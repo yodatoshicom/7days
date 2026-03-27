@@ -4156,14 +4156,11 @@ function createNote(data, autoFocus = false) {
     applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
     applyTempUnit(tempUnit, false);
 
-    // Reveal once background image is loaded — prevents backdrop-filter flash
+    // Reveal body — wait for fonts then show immediately
     (function revealWhenReady() {
         const show = () => document.body.classList.add('ready');
-        const bg = new Image();
-        bg.onload = () => requestAnimationFrame(show);
-        bg.onerror = show;
-        bg.src = 'bg2.png';
-        setTimeout(show, 600); // fallback
+        document.fonts.ready.then(() => requestAnimationFrame(show));
+        setTimeout(show, 300); // fallback
     })();
 
     // Snap note widths once fonts are loaded so they're stable across refreshes
@@ -4318,11 +4315,24 @@ function createNote(data, autoFocus = false) {
             });
         }
 
-        // Initial State & Animation
-        setRollingNumber(0);
+        // Initial State & Animation — start digits 5 ahead for visible roll-down effect
+        const actualVal = Math.max(0, Math.min(100, ((Date.now() - start) / span) * 100));
+        const actualN = Math.floor(actualVal);
+        const startT = (Math.floor((actualN % 100) / 10) + 5) % 10;
+        const startO = (actualN % 10 + 5) % 10;
+        const hEl = document.getElementById('digit-hundreds');
+        const tEl = document.getElementById('digit-tens');
+        const oEl = document.getElementById('digit-ones');
+        // Set initial positions without transition
+        [hEl, tEl, oEl].forEach(el => el && (el.style.transition = 'none'));
+        if (hEl) { hEl.style.width = '0'; hEl.style.opacity = '0'; hEl.style.transform = 'translateY(0)'; }
+        if (tEl) { tEl.style.width = '9px'; tEl.style.opacity = '1'; tEl.style.transform = `translateY(-${startT * 22}px)`; }
+        if (oEl) { oEl.style.transform = `translateY(-${startO * 22}px)`; }
+        void (oEl && oEl.offsetWidth); // force reflow
+        [hEl, tEl, oEl].forEach(el => el && (el.style.transition = ''));
         document.getElementById('year-bar-fill').style.width = '0%';
         document.getElementById('year-bar-marker').style.left = '0%';
-        setTimeout(() => update(true), 300);
+        setTimeout(() => update(true), 600);
         setInterval(update, 60000);
         window.updateYearBarLang = function() {};
     })();
