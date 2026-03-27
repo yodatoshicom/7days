@@ -4128,20 +4128,6 @@ function createNote(data, autoFocus = false) {
         applyTheme(btn.dataset.theme);
     });
 
-    // Day display toggle (name-top / number-top)
-    function applyDayDisplay(mode) {
-        document.documentElement.classList.toggle('day-swap', mode === 'number-top');
-        document.querySelectorAll('#day-display-toggle .settings-toggle-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.display === mode);
-        });
-        localStorage.setItem('aura_day_display', mode);
-    }
-    document.getElementById('day-display-toggle').addEventListener('click', (e) => {
-        const btn = e.target.closest('.settings-toggle-btn');
-        if (!btn) return;
-        applyDayDisplay(btn.dataset.display);
-    });
-    applyDayDisplay(localStorage.getItem('aura_day_display') || 'name-top');
 
 
     if (themeQuickToggle) {
