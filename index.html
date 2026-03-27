@@ -129,8 +129,8 @@
 // Apply persisted font/size settings before first paint to prevent flash
 (function() {
     var fonts = { 'caveat':"'Caveat', cursive", 'sf-mono':"'SF Mono', 'SFMono-Regular', ui-monospace, monospace", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace" };
-    var sizes   = { 'S':'22px', 'M':'28px', 'L':'36px' };
-    var sizes1x = { 'S':'16px', 'M':'20px', 'L':'26px' };
+    var sizes   = { 'S':'18px', 'M':'22px', 'L':'28px' };
+    var sizes1x = { 'S':'13px', 'M':'16px', 'L':'20px' };
     var r = document.documentElement;
     // Theme (applied early to avoid flash)
     var savedTheme = localStorage.getItem('aura_theme') || 'valley';
@@ -2747,9 +2747,9 @@ body.dev-mode .dev-only { display: block; }
     <div>
         <div class="settings-section-label">Text Size</div>
         <div class="settings-toggle" id="text-size-toggle">
-            <button class="settings-toggle-btn" data-size="S" style="font-size:9px;">S</button>
-            <button class="settings-toggle-btn active" data-size="M" style="font-size:11px;">M</button>
-            <button class="settings-toggle-btn" data-size="L" style="font-size:13px;">L</button>
+            <button class="settings-toggle-btn" data-size="S" style="font-size:8px;">S</button>
+            <button class="settings-toggle-btn active" data-size="M" style="font-size:10px;">M</button>
+            <button class="settings-toggle-btn" data-size="L" style="font-size:12px;">L</button>
         </div>
     </div>
     <div style="margin-top:4px;" id="theme-settings-section" class="dev-only">
@@ -4081,8 +4081,8 @@ function createNote(data, autoFocus = false) {
     });
 
     // Text size
-    const noteSizes   = { 'S': '25px', 'M': '28px', 'L': '36px' };
-    const noteSizes1x = { 'S': '16px', 'M': '20px', 'L': '26px' };
+    const noteSizes   = { 'S': '18px', 'M': '22px', 'L': '28px' };
+    const noteSizes1x = { 'S': '13px', 'M': '16px', 'L': '20px' };
 
     function applyNoteSize(size, noReflow = false) {
         const sizes = window.devicePixelRatio > 1 ? noteSizes : noteSizes1x;
