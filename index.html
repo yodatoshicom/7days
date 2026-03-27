@@ -4333,9 +4333,9 @@ function createNote(data, autoFocus = false) {
         void (oEl && oEl.offsetWidth); // force reflow
 
         // Apply swift transition then scroll to actual value
-        [hEl, tEl, oEl].forEach(el => el && (el.style.transition = 'transform 1.1s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease, opacity 0.3s ease'));
-        fillEl.style.transition = 'width 1.1s cubic-bezier(0.4, 0, 0.2, 1)';
-        markerEl.style.transition = 'left 1.1s cubic-bezier(0.4, 0, 0.2, 1)';
+        [hEl, tEl, oEl].forEach(el => el && (el.style.transition = 'transform 2.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease, opacity 0.3s ease'));
+        fillEl.style.transition = 'width 2.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        markerEl.style.transition = 'left 2.4s cubic-bezier(0.4, 0, 0.2, 1)';
 
         setTimeout(() => {
             setRollingNumber(actualVal);
