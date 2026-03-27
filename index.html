@@ -123,12 +123,12 @@
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@900&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300" rel="stylesheet">
 
 <script>
 // Apply persisted font/size settings before first paint to prevent flash
 (function() {
-    var fonts = { 'caveat':"'Caveat', cursive", 'sf-mono':"'SF Mono', 'SFMono-Regular', ui-monospace, monospace", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace", 'cormorant':"'Cormorant Garamond', serif" };
+    var fonts = { 'caveat':"'Caveat', cursive", 'sf-mono':"'SF Mono', 'SFMono-Regular', ui-monospace, monospace", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace", 'fraunces':"'Fraunces', serif" };
     var sizes   = { 'S':'21px', 'M':'22px', 'L':'28px' };
     var sizes1x = { 'S':'15px', 'M':'16px', 'L':'20px' };
     var r = document.documentElement;
@@ -2742,7 +2742,7 @@ body.dev-mode .dev-only { display: block; }
         <div class="settings-row" id="font-picker">
             <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
             <div class="font-pick" data-font="sf-mono" style="font-family:'SF Mono','SFMono-Regular',ui-monospace,monospace;">Aa</div>
-            <div class="font-pick" data-font="cormorant" style="font-family:'Cormorant Garamond',serif;">Aa</div>
+            <div class="font-pick" data-font="fraunces" style="font-family:'Fraunces',serif;">Aa</div>
         </div>
     </div>
     <div>
@@ -4035,7 +4035,7 @@ function createNote(data, autoFocus = false) {
         'lora':     "'Lora', serif",
         'dm-mono':  "'DM Mono', monospace",
         'jetbrains-mono': "'JetBrains Mono', monospace",
-        'cormorant': "'Cormorant Garamond', serif",
+        'fraunces': "'Fraunces', serif",
     };
 
     function reflowNotes() {
