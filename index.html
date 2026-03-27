@@ -4154,6 +4154,11 @@ function createNote(data, autoFocus = false) {
 
 
     // Restore saved settings
+    if (!localStorage.getItem('aura_font_reset_v1')) {
+        localStorage.setItem('aura_note_font', 'caveat');
+        localStorage.setItem('aura_note_size', 'M');
+        localStorage.setItem('aura_font_reset_v1', '1');
+    }
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
     applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
     applyTempUnit(tempUnit, false);
