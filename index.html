@@ -123,7 +123,8 @@
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=Lora:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@300;400;500&family=Caveat:wght@400;700&family=Lora:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300" rel="stylesheet">
 
 <script>
 // Apply persisted font/size settings before first paint to prevent flash
@@ -197,22 +198,22 @@ html.theme-valley .dock-container {
         0 12px 40px rgba(0, 0, 0, 0.25),
         0 2px 8px rgba(0, 0, 0, 0.12);
 }
-html.theme-valley .day-card { color: rgba(255, 255, 255, 0.75); }
+html.theme-valley .day-card { color: rgba(255, 255, 255, 0.6); }
 html.theme-valley .day-card .day-name {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    margin-bottom: 4px;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 7px;
+    letter-spacing: 0.06em;
+    margin-bottom: 1px;
 }
 html.theme-valley .day-card .day-number {
     background: none;
     -webkit-background-clip: unset;
     background-clip: unset;
-    -webkit-text-fill-color: rgba(255, 255, 255, 0.88);
-    color: rgba(255, 255, 255, 0.88);
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.04em;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
 }
 html.theme-valley .day-card.weekend .day-number {
     background: none;
@@ -234,50 +235,107 @@ html.theme-valley .day-card.active .day-number {
     color: #fff;
     font-weight: 700;
 }
-html.theme-valley .day-card {
-    width: 66px;
-    height: 80px;
-    border-radius: 18px;
-    clip-path: none;
-    background: transparent;
-    border: none;
-    filter: none;
-    transition: background 0.2s ease, filter 0.2s ease, transform 0.5s var(--sf-easing);
-}
 html.theme-valley .day-card:hover {
     background: rgba(255, 255, 255, 0.05);
     transform: none;
 }
 html.theme-valley .day-card.active {
-    background: rgba(0, 0, 0, 0.35);
-    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.06);
     border: none;
-    height: 74px;
-    filter: drop-shadow(0 4px 16px rgba(180, 140, 255, 0.4));
+    filter: none;
     z-index: 2;
-    box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.22),
-        0 0 0 0.5px rgba(255, 255, 255, 0.04);
+    box-shadow: none;
+}
+html.theme-valley .day-card.active .day-name { color: rgba(220, 180, 255, 0.7); }
+html.theme-valley .day-card.active .day-number { -webkit-text-fill-color: #fff; color: #fff; font-weight: 700; }
+html.theme-valley .day-card.active:hover { background: rgba(255, 255, 255, 0.08); }
+html.theme-valley .day-separator { display: none; }
+html.theme-valley .dock-wrapper {
+    margin-top: 0;
+    margin-bottom: auto;
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+}
+html.theme-valley .dock-nav { display: none; }
+html.theme-valley .day-card {
+    width: 32px;
+    height: 38px;
+    border-radius: 10px;
+}
+html.theme-valley .day-card.active {
+    border-radius: 10px;
+    height: 38px;
 }
 html.theme-valley .day-card:first-child,
-html.theme-valley .day-card:first-child:hover { border-radius: 32px 18px 18px 32px; }
+html.theme-valley .day-card:first-child:hover { border-radius: 14px 10px 10px 14px; }
 html.theme-valley .day-card:last-child,
-html.theme-valley .day-card:last-child:hover  { border-radius: 18px 32px 32px 18px; }        
-html.theme-valley .day-card.active:first-child { border-radius: 32px 24px 24px 32px; }     
-html.theme-valley .day-card.active:last-child  { border-radius: 24px 32px 32px 24px; }
-html.theme-valley .day-card.active:hover { background: rgba(0, 0, 0, 0.45); }
-html.theme-valley .day-separator { display: none; }
-html.theme-valley .dock-wrapper { margin-bottom: 80px; }
-html.theme-valley .dock-nav { color: #f0eeff; opacity: 0.4; }
-html.theme-valley .greeting {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: #f0eeff;
-    color: #f0eeff;
+html.theme-valley .day-card:last-child:hover  { border-radius: 10px 14px 14px 10px; }
+html.theme-valley .day-card.active:first-child { border-radius: 14px 10px 10px 14px; }
+html.theme-valley .day-card.active:last-child  { border-radius: 10px 14px 14px 10px; }
+html.theme-valley .weather-row { display: none; }
+
+/* Hide entire dock by default in valley; show-old-dock brings back the big legacy dock */
+html.theme-valley .dock-wrapper { display: none; }
+html.theme-valley.show-old-dock .dock-wrapper {
+    display: flex;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin-top: auto;
+    margin-bottom: 60px;
 }
-html.theme-valley .header-time { color: rgba(240, 238, 255, 0.6); }
-html.theme-valley .bottom-watermark { color: #f0eeff; }
+html.theme-valley.show-old-dock .day-card,
+html.theme-valley.show-old-dock .day-card:first-child,
+html.theme-valley.show-old-dock .day-card:last-child,
+html.theme-valley.show-old-dock .day-card:first-child:hover,
+html.theme-valley.show-old-dock .day-card:last-child:hover,
+html.theme-valley.show-old-dock .day-card.active,
+html.theme-valley.show-old-dock .day-card.active:first-child,
+html.theme-valley.show-old-dock .day-card.active:last-child {
+    width: 64px;
+    height: 76px;
+    border-radius: 30px;
+}
+html.theme-valley.show-old-dock .day-card .day-name { font-size: 10px; margin-bottom: 2px; }
+html.theme-valley.show-old-dock .day-card .day-number { font-size: 28px; font-weight: 700; }
+html.theme-valley.show-old-dock .dock-nav { display: flex; }
+html.theme-valley.show-old-dock .weather-row { display: flex; }
+html.theme-valley.show-old-dock .header-container {
+    display: block;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px;
+}
+html.theme-valley .day-card .day-weather-hover {
+    display: none;
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 10, 40, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 10px;
+    padding: 3px 6px;
+    white-space: nowrap;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.85);
+    pointer-events: none;
+    z-index: 1001;
+}
+html.theme-valley .day-card:hover .day-weather-hover {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+html.theme-valley .header-container { display: none; }
+html.theme-valley .bottom-watermark { display: none; }
 html.theme-valley .year-bar-fill {
     background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
     border-radius: 0 3px 3px 0;
@@ -305,9 +363,6 @@ html.theme-valley .weather-day { color: rgba(240, 238, 255, 0.8); }
 html.theme-valley .weather-separator {
     background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15) 50%, transparent);
 }
-/* ---- hide sun/moon arc ---- */
-html.theme-valley #sun-arc,
-html.theme-valley #sun-arc-bg { display: none; }
 /* ---- active day backlight (behind glass pill) ---- */
 #active-day-light {
     display: none;
@@ -338,6 +393,10 @@ html.theme-valley .note {
         0 4px 16px rgba(0, 0, 0, 0.12);
     color: #f0eeff;
     white-space: normal;
+}
+html.theme-valley .note.selected {
+    outline: 2px solid rgba(197, 128, 251, 0.7);
+    outline-offset: 0px;
 }
 html.theme-valley .note .note-content {
     white-space: pre-wrap;
@@ -453,6 +512,19 @@ html.theme-valley .note[data-note-color="pink"] {
     transform: scale(0.97);
 }
 
+
+.greeting-sub {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    opacity: 0.5;
+    color: var(--text-color);
+    margin-top: 4px;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+}
 
 /* Lang flash animation on greeting */
 @keyframes greetingPulse {
@@ -1188,6 +1260,7 @@ body.ready {
 
 .note-content {
     font-family: var(--note-font);
+    font-weight: var(--note-weight, 400);
     font-size: var(--note-size);
     line-height: 1.1;
     outline: none;
@@ -1216,11 +1289,8 @@ body.ready {
 
 /* Selected note state */
 .note.selected {
-    outline: 2px solid #007AFF;
-    outline-offset: 4px;
-    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.3), 0 12px 40px rgba(0, 0, 0, 0.2);
-    z-index: 1099 !important;
-    transition: outline-offset 0.2s var(--spring-easing), transform 0.2s var(--spring-easing);
+    outline: 2px solid rgba(197, 128, 251, 0.7);
+    outline-offset: 0px;
 }
 
 /* Selection rectangle overlay */
@@ -1239,13 +1309,12 @@ body.ready {
 body.is-selecting {
     user-select: none;
     -webkit-user-select: none;
-    cursor: crosshair;
 }
 
 /* Highlight notes that would be selected during rectangle draw */
 .note.potential-select {
-    outline: 2px solid rgba(0, 122, 255, 0.3);
-    outline-offset: 4px;
+    outline: 2px solid rgba(197, 128, 251, 0.5);
+    outline-offset: 0px;
 }
 
 body.note-editing-mode .note.editing {
@@ -1276,6 +1345,7 @@ body.note-font-sf-mono .note-content {
     outline: none;
     resize: none;
     font-family: var(--note-font);
+    font-weight: var(--note-weight, 400);
     font-size: var(--note-size);
     line-height: 1.1;
     color: inherit;
@@ -1397,7 +1467,6 @@ body.screenshot-mode .dock-wrapper {
 }
 body.note-editing-mode .note-edit-overlay { display: none; }
 body.note-editing-mode .note.editing { z-index: 2000 !important; }
-body.note-editing-mode .note:not(.editing) { z-index: 50 !important; }
 
 .note-context-menu {
     position: fixed;
@@ -1661,6 +1730,222 @@ html.theme-minimal .note[data-note-color="pink"] {
 .week-label { display: none; white-space: nowrap; }
 
 /* SETTINGS — top right */
+.season-flip-btn {
+    position: fixed;
+    top: 24px;
+    right: 180px;
+    z-index: 10001;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    padding: 0;
+}
+.season-flip-btn:hover { opacity: 0.8; }
+.season-flip-btn:active { transform: scale(0.9); }
+
+/* Seasons below bar */
+.seasons-below .season-bracket {
+    bottom: auto;
+    top: 100%;
+}
+.seasons-below .season-tick {
+    bottom: auto;
+    top: 0;
+}
+.seasons-below .season-label {
+    top: auto;
+    bottom: -6px;
+}
+html.theme-minimal.seasons-below .season-bracket {
+    top: 28px;
+    bottom: auto;
+    transform: none;
+}
+html.theme-minimal.seasons-below .season-tick {
+    top: 0;
+    bottom: auto;
+}
+html.theme-minimal.seasons-below .season-label {
+    top: auto;
+    bottom: -12px;
+}
+
+.old-dock-toggle-btn {
+    position: fixed;
+    top: 24px;
+    right: 140px;
+    z-index: 10001;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    padding: 0;
+}
+.old-dock-toggle-btn:hover { opacity: 0.8; }
+.old-dock-toggle-btn:active { transform: scale(0.9); }
+.old-dock-toggle-btn.active { opacity: 0.9; }
+
+
+.app-logo {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10001;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    opacity: 0.9;
+    cursor: pointer;
+    user-select: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    transition: transform 0.3s var(--spring-easing), opacity 0.2s ease;
+}
+.app-logo:hover { opacity: 1; transform: translateX(-50%) scale(1.08); }
+.app-logo:active { transform: translateX(-50%) scale(0.94); }
+.app-logo svg { width: 28px; height: 28px; }
+
+.app-logo-popup {
+    position: fixed;
+    top: 20px;
+    left: calc(50% + 40px);
+    z-index: 10001;
+    padding: 12px 18px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: none;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.12),
+        0 12px 36px rgba(0, 0, 0, 0.25);
+    color: #f0eeff;
+    font-family: -apple-system, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-6px) scale(0.92);
+    transform-origin: left bottom;
+    transition: opacity 0.25s ease, transform 0.35s var(--spring-easing);
+    text-align: left;
+    pointer-events: none;
+    line-height: 1.35;
+}
+.app-logo-popup::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    border: 8px solid transparent;
+    border-right-color: rgba(255, 255, 255, 0.08);
+    border-left: 0;
+}
+.app-logo-popup.show {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    pointer-events: auto;
+}
+.app-logo-popup .logo-popup-title { font-weight: 600; letter-spacing: -0.01em; margin-bottom: 1px; }
+.app-logo-popup .logo-popup-sub { opacity: 0.65; font-size: 11px; font-weight: 400; }
+.app-logo-popup .logo-popup-sub a {
+    color: #b49bff;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(180, 155, 255, 0.3);
+}
+.app-logo-popup .logo-popup-sub a:hover { border-bottom-color: #b49bff; }
+
+.font-test-switch {
+    position: fixed;
+    top: 24px;
+    right: 200px;
+    margin-right: 20px;
+    z-index: 10001;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 4px 6px;
+    border-radius: 16px;
+    background: rgba(20, 10, 40, 0.35);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+.font-test-switch .ft-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(255, 255, 255, 0.12);
+    background: transparent;
+    color: #f0eeff;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    padding: 0;
+}
+.font-test-switch .ft-btn:hover { opacity: 1; transform: scale(1.08); }
+.font-test-switch .ft-btn.active {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+.font-test-switch .ft-popup {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(20, 10, 40, 0.85);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    color: #f0eeff;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s var(--spring-easing);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+.font-test-switch .ft-popup.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 .settings-btn {
     position: fixed;
     top: 20px;
@@ -1819,6 +2104,28 @@ body.dev-mode .dev-only { display: block; }
     color: rgba(255,255,255,0.9);
     margin-bottom: 6px;
 }
+
+.settings-divider {
+    height: 0.5px;
+    background: rgba(255, 255, 255, 0.12);
+    margin: 10px -2px;
+}
+
+.settings-discord-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0;
+    color: #b8c0ff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    opacity: 0.85;
+}
+.settings-discord-link:hover { opacity: 1; text-decoration: none; }
+.settings-discord-link svg { flex-shrink: 0; }
 
 .settings-row {
     display: flex;
@@ -1988,7 +2295,9 @@ body.dev-mode .dev-only { display: block; }
 }
 
 /* Valley Year Bar Overrides */
-html.theme-valley .year-bar { left: 0; width: 100%; }
+html.theme-valley .year-bar { left: 0; width: 100%; height: 8px; }
+html.theme-valley .season-bracket { height: 7px; }
+html.theme-valley .season-tick { width: 2px; }
 html.theme-valley .year-bar-ghost {
     background: rgba(0, 0, 0, 0.3);
     mix-blend-mode: multiply;
@@ -1998,7 +2307,31 @@ html.theme-valley .year-bar-fill {
     border-radius: 0 3px 3px 0;
     box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
 }
-html.theme-valley .year-bar-marker { bottom: 2px; }
+html.theme-valley .year-bar-marker { bottom: 2px; pointer-events: auto; }
+.year-bar-date-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 4px 10px;
+    border-radius: 12px;
+    pointer-events: none;
+    text-transform: lowercase;
+}
+html.theme-valley .year-bar-marker:hover .year-bar-date-tooltip {
+    display: block;
+    color: rgba(220, 180, 255, 0.9);
+    background: rgba(20, 10, 40, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+}
 html.theme-valley .year-bar-label {
     color: rgba(220, 180, 255, 0.9);
     background: rgba(20, 10, 40, 0.55);
@@ -2025,41 +2358,44 @@ html.theme-minimal .year-bar-fill {
     box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
 }
 html.theme-minimal .year-bar-marker { top: 24px; bottom: auto; transform: translateX(-50%); }
+html.theme-minimal .digit-scroll-container { display: none !important; }
+html.theme-minimal .pct-sign { display: none !important; }
+
 html.theme-minimal .year-bar-label {
+    background: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+}
+html.theme-minimal .minimal-week-pill {
+    display: flex;
+    align-items: center;
     position: absolute;
-    bottom: 12px !important; 
-    top: auto !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    color: #fff;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 501;
     background: rgba(255, 255, 255, 0.015);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: none;
-    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+    border-top: 0.5px solid rgba(255, 255, 255, 0.1);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.12);
-    border-radius: 16px;
-    padding: 6px 14px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    height: auto;
-    width: max-content;
-    min-width: unset;
-    line-height: 1;
-    overflow: visible;
+    border-radius: 12px;
+    padding: 5px 12px;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
 }
-html.theme-minimal .digit-scroll-container { 
-    display: flex; 
-    margin-top: 0;
-    opacity: 0.9;
-    height: 16px;
+html.theme-minimal .minimal-week-pill .mini-day.current {
+    color: #c580fb;
+    font-weight: 800;
 }
-html.theme-minimal .digit-scroll span { height: 16px; color: #c580fb; font-weight: 800; font-size: 11px; }
-
-html.theme-minimal .week-label { display: flex; flex-direction: column; align-items: center; }
-html.theme-minimal .week-info-top { display: none; } /* Remove text */
+html.theme-minimal .week-info-top { display: none; }
 html.theme-minimal .week-days-row { gap: 10px; white-space: nowrap; font-size: 13px; font-weight: 700; }
 /* month-name styles for minimal are set above */
 html.theme-minimal .season-bracket {
@@ -2072,7 +2408,7 @@ html.theme-minimal .season-tick {
     height: 100%;
     top: 0;
     width: 2px;
-    background: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(to top, #c580fb var(--tick-fill), rgba(255, 255, 255, 0.15) var(--tick-fill));
     opacity: 1;
 }
 html.theme-minimal .season-bracket.past .season-tick {
@@ -2126,17 +2462,17 @@ html.theme-minimal .season-bracket.past .season-label { opacity: 1; }
     bottom: 0;
     width: 3px;
     height: 100%;
-    background: rgba(0, 0, 0, 0.2);
+    --tick-fill: 0%;
+    background: linear-gradient(to top, #c580fb var(--tick-fill), rgba(0, 0, 0, 0.2) var(--tick-fill));
     opacity: 1;
-    transition: all 0.4s ease;
     z-index: 1;
 }
-.season-bracket.past .season-tick { 
+.season-bracket.past .season-tick {
     background: #c580fb;
     opacity: 0.8;
 }
 html.theme-valley .season-tick {
-    background: rgba(0, 0, 0, 0.3);
+    background: linear-gradient(to top, #c580fb var(--tick-fill), rgba(0, 0, 0, 0.3) var(--tick-fill));
     box-shadow: none;
 }
 html.theme-valley .season-bracket.past .season-tick {
@@ -2496,24 +2832,7 @@ html.theme-valley .season-bracket.past .season-tick {
 .capsule-send:hover { opacity: 1; transform: scale(1.02); }
 .capsule-send:active { transform: scale(0.96); }
 
-/* Sun arc */
-#sun-arc-bg {
-    position: fixed;
-    pointer-events: none;
-    z-index: 598;
-    overflow: visible;
-    transition: opacity 2s ease;
-}
 #mobile-time { display: none; }
-
-#sun-arc {
-    position: fixed;
-    left: 0; top: 0;
-    pointer-events: none;
-    z-index: 600;
-    will-change: transform;
-    transition: transform 58s linear, opacity 2.5s ease;
-}
 
 
 
@@ -2739,6 +3058,13 @@ html.theme-valley .season-bracket.past .season-tick {
 
 
 
+<button class="app-logo" id="app-logo" title="weekDash" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7"/></svg>
+</button>
+<div class="app-logo-popup" id="app-logo-popup">
+    <div class="logo-popup-title">psst — we have a Discord!</div>
+    <div class="logo-popup-sub">come hang out → <a href="#" target="_blank" rel="noopener">join the server</a></div>
+</div>
 <button class="bg-toggle" id="theme-quick-toggle" title="Cycle theme: Valley → Minimal">
     <div class="bg-toggle-icon icon-theme-valley">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7"/></svg>
@@ -2747,6 +3073,22 @@ html.theme-valley .season-bracket.past .season-tick {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
     </div>
     <div class="bg-toggle-knob"></div>
+</button>
+<button class="season-flip-btn" id="season-flip-btn" title="Flip seasons above/below">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="7 3 12 8 17 3"/><polyline points="7 21 12 16 17 21"/>
+    </svg>
+</button>
+<div class="font-test-switch" id="font-test-switch">
+    <button class="ft-btn" data-font-family="'Caveat', cursive" data-font-weight="400" title="Caveat (current)" style="font-family:'Caveat',cursive;font-weight:400;">Aa</button>
+    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="400" title="Lexend" style="font-family:'Lexend',sans-serif;font-weight:400;font-size:10px;">Aa</button>
+    <button class="ft-btn" data-font-family="'Google Sans', sans-serif" data-font-weight="400" title="Google Sans" style="font-family:'Google Sans',sans-serif;font-weight:400;font-size:10px;">Aa</button>
+    <div class="ft-popup" id="ft-popup"></div>
+</div>
+<button class="old-dock-toggle-btn" id="old-dock-toggle-btn" title="Show old dock (greeting + weather)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 17h16M6 13l2-6h8l2 6M8 17v2M16 17v2"/>
+    </svg>
 </button>
 <button class="settings-btn" id="settings-btn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -2797,6 +3139,7 @@ html.theme-valley .season-bracket.past .season-tick {
     <div>
         <div class="settings-section-label">Text Size</div>
         <div class="settings-toggle" id="text-size-toggle">
+            <button class="settings-toggle-btn" data-size="XS" style="font-size:7px;">XS</button>
             <button class="settings-toggle-btn" data-size="S" style="font-size:8px;">S</button>
             <button class="settings-toggle-btn active" data-size="M" style="font-size:10px;">M</button>
             <button class="settings-toggle-btn" data-size="L" style="font-size:12px;">L</button>
@@ -2808,6 +3151,14 @@ html.theme-valley .season-bracket.past .season-tick {
             <button class="settings-toggle-btn active" data-theme="valley">Valley</button>
             <button class="settings-toggle-btn" data-theme="minimal">Minimal</button>
         </div>
+    </div>
+    <div class="settings-divider"></div>
+    <div>
+        <div class="settings-section-label">Community</div>
+        <a class="settings-discord-link" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+            <span>Join our Discord</span>
+        </a>
     </div>
 </div>
 
@@ -2837,7 +3188,8 @@ html.theme-valley .season-bracket.past .season-tick {
     <div class="dock-row">
         <header class="header-container" id="header-area">
             <div class="header-time" id="header-time"></div>
-            <h1 class="greeting" id="greeting">Good morning.</h1>
+            <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
+            <div class="greeting-sub" id="greeting-sub"></div>
         </header>
         <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div id="active-day-light"></div>
@@ -2977,7 +3329,7 @@ html.theme-valley .season-bracket.past .season-tick {
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
-    let topZ = 1100;
+    let topZ = Math.max(1100, ...notes.map(n => n.zIndex || 0));
 
     // Track mouse for paste-to-note
     let mousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -3198,9 +3550,8 @@ html.theme-valley .season-bracket.past .season-tick {
 
     function getTimeSlot(hour) {
         if (hour >= 5 && hour < 12)  return 'morning';
-        if (hour >= 12 && hour < 17) return 'afternoon';
-        if (hour >= 17 && hour < 21) return 'evening';
-        return 'night'; // Covers 21:00 - 04:59
+        if (hour >= 12 && hour < 20) return 'afternoon';
+        return 'night'; // Covers 20:00 - 04:59
     }
 
     // Pick a sub greeting (rotates every 10 minutes)
@@ -3220,6 +3571,8 @@ html.theme-valley .season-bracket.past .season-tick {
         const greetEl = document.getElementById('greeting');
         if (!greetEl) return;
         greetEl.textContent = getMainGreeting(lang, slot, dayName);
+        const subEl = document.getElementById('greeting-sub');
+        if (subEl) subEl.textContent = getSubGreeting(slot);
     }
 
     function cycleLang() {
@@ -3312,6 +3665,7 @@ html.theme-valley .season-bracket.past .season-tick {
                 <div class="day-main-row">
                     <span class="day-number">${date.getDate()}</span>
                 </div>
+                <div class="day-weather-hover" data-weather-date="${dateStr}"></div>
             `;
             dock.appendChild(card);
             if (isToday) {
@@ -3379,7 +3733,7 @@ html.theme-valley .season-bracket.past .season-tick {
     const RULER_SPAN  = RULER_END - RULER_START;
 
     window.drawSunriseSunset = function() {
-        return; // Hiding for now
+        return; // Sun/moon arc removed
         const ruler = document.getElementById('time-ruler');
         ruler.querySelectorAll('.sun-label').forEach(el => el.remove());
         const sun = window.todaySunTimes;
@@ -4272,6 +4626,95 @@ function createNote(data, autoFocus = false) {
 /* ============================================================
        SETTINGS PANEL
     ============================================================ */
+    // Season flip toggle
+    (function() {
+        const btn = document.getElementById('season-flip-btn');
+        const key = 'aura_seasons_below';
+        let below = localStorage.getItem(key) === 'true';
+        function apply() {
+            document.documentElement.classList.toggle('seasons-below', below);
+        }
+        apply();
+        btn.addEventListener('click', () => {
+            below = !below;
+            localStorage.setItem(key, below);
+            apply();
+        });
+    })();
+
+    // App logo → click to show info popup
+    (function() {
+        const logo = document.getElementById('app-logo');
+        const popup = document.getElementById('app-logo-popup');
+        if (!logo || !popup) return;
+        let timer;
+        logo.addEventListener('click', () => {
+            popup.classList.add('show');
+            clearTimeout(timer);
+            timer = setTimeout(() => popup.classList.remove('show'), 5000);
+        });
+    })();
+
+    // Font test switch (top-right quick-picker for testing note fonts)
+    (function() {
+        const wrap = document.getElementById('font-test-switch');
+        if (!wrap) return;
+        const key = 'aura_font_test';
+        function apply(family, weight, btn, reflow = true) {
+            document.documentElement.style.setProperty('--note-font', family);
+            document.documentElement.style.setProperty('--note-weight', weight);
+            wrap.querySelectorAll('.ft-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            localStorage.setItem(key, JSON.stringify({ family, weight }));
+            if (reflow && typeof reflowNotes === 'function') {
+                document.fonts.ready.then(() => reflowNotes());
+            }
+        }
+        const popup = document.getElementById('ft-popup');
+        let popupTimer;
+        function showPopup(text) {
+            if (!popup) return;
+            popup.textContent = text;
+            popup.classList.add('show');
+            clearTimeout(popupTimer);
+            popupTimer = setTimeout(() => popup.classList.remove('show'), 1400);
+        }
+        wrap.addEventListener('click', (e) => {
+            const btn = e.target.closest('.ft-btn');
+            if (!btn) return;
+            apply(btn.dataset.fontFamily, btn.dataset.fontWeight, btn);
+            showPopup(btn.getAttribute('title') || '');
+        });
+        const saved = localStorage.getItem(key);
+        if (saved) {
+            try {
+                const { family, weight } = JSON.parse(saved);
+                const btn = Array.from(wrap.querySelectorAll('.ft-btn')).find(b => b.dataset.fontFamily === family && b.dataset.fontWeight === weight);
+                apply(family, weight, btn, false);
+            } catch {}
+        }
+    })();
+
+    // Old dock toggle (shows greeting + weather row from legacy dock)
+    (function() {
+        const btn = document.getElementById('old-dock-toggle-btn');
+        const key = 'aura_show_old_dock';
+        let on = localStorage.getItem(key) === 'true';
+        function apply() {
+            document.documentElement.classList.toggle('show-old-dock', on);
+            btn.classList.toggle('active', on);
+        }
+        apply();
+        btn.addEventListener('click', () => {
+            on = !on;
+            localStorage.setItem(key, on);
+            apply();
+        });
+    })();
+
+    // Clear legacy week-hidden state that could leave dock hidden
+    localStorage.removeItem('aura_week_visible');
+
     const settingsBtn = document.getElementById('settings-btn');
     const settingsPanel = document.getElementById('settings-panel');
     const settingsLocation = document.getElementById('settings-location');
@@ -4386,8 +4829,8 @@ function createNote(data, autoFocus = false) {
     });
 
     // Text size
-    const noteSizes   = { 'S': '21px', 'M': '25px', 'L': '28px' };
-    const noteSizes1x = { 'S': '15px', 'M': '16px', 'L': '20px' };
+    const noteSizes   = { 'XS': '18px', 'S': '21px', 'M': '25px', 'L': '28px' };
+    const noteSizes1x = { 'XS': '13px', 'S': '15px', 'M': '16px', 'L': '20px' };
 
     function applyNoteSize(size, noReflow = false) {
         const sizes = window.devicePixelRatio > 1 ? noteSizes : noteSizes1x;
@@ -4464,6 +4907,16 @@ function createNote(data, autoFocus = false) {
     }
     applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
     applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
+    // Font-test switch wins over the main font picker if set
+    (function reapplyFontTest() {
+        const saved = localStorage.getItem('aura_font_test');
+        if (!saved) return;
+        try {
+            const { family, weight } = JSON.parse(saved);
+            document.documentElement.style.setProperty('--note-font', family);
+            document.documentElement.style.setProperty('--note-weight', weight);
+        } catch {}
+    })();
     applyTempUnit(tempUnit, false);
 
     // Reveal body — wait for fonts then show immediately
@@ -4575,8 +5028,20 @@ function createNote(data, autoFocus = false) {
                     <div class="week-label" id="week-label"></div>
                 </div>
                 <div class="year-pct-minimal" id="year-pct-minimal"></div>
+                <div class="year-bar-date-tooltip" id="year-bar-date-tooltip"></div>
             </div>`;
         document.body.appendChild(bar);
+
+        // Populate date tooltip for year bar hover
+        (function updateDateTooltip() {
+            const tip = document.getElementById('year-bar-date-tooltip');
+            if (tip) {
+                const locale = (typeof lang !== 'undefined' && lang === 'es') ? 'es-ES' : (typeof lang !== 'undefined' && lang === 'pt') ? 'pt-BR' : 'en-US';
+                const now = new Date();
+                tip.textContent = now.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            setTimeout(updateDateTooltip, 60000);
+        })();
 
         const setRollingNumber = (val) => {
             const n = Math.floor(val);
@@ -4669,12 +5134,15 @@ function createNote(data, autoFocus = false) {
                 const currentDayIdx = (new Date().getDay() + 6) % 7; // 0=Mon, 6=Sun
                 const daysHtml = ptDays.map((d, i) => `<span class="mini-day ${i === currentDayIdx ? 'current' : ''}">${d}</span>`).join('');
 
-                const weekEl = document.getElementById('week-label');
-                if (weekEl) {
-                    weekEl.innerHTML = `
-                        <div class="week-days-row">${daysHtml}</div>
-                    `;
+                // Populate minimal week pill inside year bar
+                let minPill = document.getElementById('minimal-week-pill');
+                if (!minPill) {
+                    minPill = document.createElement('div');
+                    minPill.id = 'minimal-week-pill';
+                    minPill.className = 'minimal-week-pill';
+                    document.getElementById('year-bar-label').appendChild(minPill);
                 }
+                minPill.innerHTML = daysHtml;
                 const pctEl = document.getElementById('year-pct-minimal');
                 if (pctEl) pctEl.textContent = Math.floor(val) + '%';
                 setRollingNumber(val);
@@ -4683,8 +5151,20 @@ function createNote(data, autoFocus = false) {
             }
 
             document.querySelectorAll('.season-bracket').forEach(el => {
-                if (parseFloat(el.dataset.startPct) <= val) el.classList.add('past');
-                else el.classList.remove('past');
+                const sp = parseFloat(el.dataset.startPct);
+                const tick = el.querySelector('.season-tick');
+                if (sp <= val) {
+                    el.classList.add('past');
+                    if (tick) tick.style.setProperty('--tick-fill', '100%');
+                } else {
+                    el.classList.remove('past');
+                    // Fill approaching tick gradually (within 0.3% range before it)
+                    if (tick) {
+                        const dist = sp - val;
+                        const fillPct = dist < 0.3 ? Math.max(0, ((0.3 - dist) / 0.3) * 100) : 0;
+                        tick.style.setProperty('--tick-fill', fillPct + '%');
+                    }
+                }
             });
         }
 
@@ -4724,8 +5204,9 @@ function createNote(data, autoFocus = false) {
         window.updateYearBarLang = function() {};
     })();
 
-    // ── Sun Arc ──
-    (function() {
+    // ── Sun Arc — REMOVED ──
+    /* Sun/moon arc code has been removed */
+    if (false) { (function() {
         const NS = 'http://www.w3.org/2000/svg';
         const f  = n => n.toFixed(2);
 
@@ -5110,7 +5591,7 @@ function createNote(data, autoFocus = false) {
             setTimeout(() => updateAstroArc(false), 50);
             setTimeout(() => updateAstroArc(true),  150);
         };
-    })();
+    })(); }
 
     // ── Time Capsule ──
     (function() {
