@@ -134,15 +134,13 @@
     var r = document.documentElement;
     // Theme (applied early to avoid flash)
     var savedTheme = localStorage.getItem('aura_theme') || 'valley';
-    if (savedTheme === 'cove') r.classList.add('theme-cove');
-    if (savedTheme === 'valley') r.classList.add('theme-valley');
-    if (savedTheme === 'tahoe') r.classList.add('theme-tahoe');
+    if (savedTheme === 'minimal') r.classList.add('theme-minimal');
+    else r.classList.add('theme-valley');
 
     window.addEventListener('DOMContentLoaded', () => {
         const tToggle = document.getElementById('theme-quick-toggle');
-        if (tToggle && savedTheme === 'cove') tToggle.classList.add('toggle-cove');
-        if (tToggle && savedTheme === 'valley') tToggle.classList.add('toggle-valley');
-        if (tToggle && savedTheme === 'tahoe') tToggle.classList.add('toggle-tahoe');
+        if (tToggle && savedTheme === 'minimal') tToggle.classList.add('toggle-minimal');
+        else if (tToggle) tToggle.classList.add('toggle-valley');
     });
     
     var f = localStorage.getItem('aura_note_font');
@@ -156,236 +154,14 @@
 :root {
     --sf-easing: cubic-bezier(0.32, 0.72, 0, 1);
     --spring-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --bg-color: #e3dde6;
-    --text-color: #1d1d1f;
+    --bg-color: #1a1040;
+    --text-color: #f0eeff;
     --accent-color: #007AFF;
-    --card-bg: rgba(255, 255, 255, 0.3);
-    --separator-color: rgba(0, 0, 0, 0.06);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --separator-color: rgba(255, 255, 255, 0.1);
     --note-font: 'Caveat', cursive;
     --note-size: 28px;
 }
-
-/* ── Cove theme ── */
-html.theme-cove {
-    background-color: #e2e0de;
-    background-image:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(210, 205, 230, 0.55) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(200, 215, 225, 0.45) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 40% at 60% 30%, rgba(230, 220, 210, 0.3) 0%, transparent 60%);
-    background-attachment: fixed;
-}
-html.theme-cove body {
-    background-image: none !important;
-    background-color: transparent;
-}
-html.theme-cove {
-    --bg-color: #e2e0de;
-    --text-color: #292524;
-    --card-bg: rgba(12, 10, 9, 0.04);
-    --separator-color: rgba(12, 10, 9, 0.08);
-}
-html.theme-cove .dock-container {
-    background: #0c0a09;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: none;
-    box-shadow: 0 8px 32px rgba(12, 10, 9, 0.25);
-}
-html.theme-cove .day-card {
-    color: #fffaf4;
-}
-html.theme-cove .day-card .day-name {
-    color: rgba(255, 240, 223, 0.5);
-}
-html.theme-cove .day-card .day-number {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: #fffaf4;
-    color: #fffaf4;
-    font-weight: 600;
-}
-html.theme-cove .day-card.weekend .day-number {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: rgba(255, 240, 223, 0.55);
-    color: rgba(255, 240, 223, 0.55);
-}
-html.theme-cove .day-card.active {
-    background: #fffaf4;
-    box-shadow: none;
-}
-html.theme-cove .day-card.active .day-name { color: rgba(41, 37, 36, 0.5); opacity: 1; }
-html.theme-cove .day-card.active .day-number {
-    -webkit-text-fill-color: #292524;
-    color: #292524;
-    font-weight: 850;
-}
-html.theme-cove .day-card:hover {
-    background: rgba(255, 250, 244, 0.1);
-}
-html.theme-cove .day-card.active:hover {
-    background: #fffaf4;
-}
-html.theme-cove .day-separator {
-    background: rgba(255, 240, 223, 0.15);
-}
-html.theme-cove .dock-nav {
-    color: #292524;
-    opacity: 0.4;
-}
-html.theme-cove .greeting {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: #292524;
-    color: #292524;
-}
-html.theme-cove .header-time {
-    color: #292524;
-}
-html.theme-cove .bottom-watermark {
-    color: #292524;
-}
-html.theme-cove .weather-row {
-    color: #292524;
-}
-html.theme-cove .weather-day {
-    color: #292524;
-}
-html.theme-cove .weather-separator {
-    background: linear-gradient(to bottom, transparent, rgba(41,37,36,0.2) 50%, transparent);
-}
-html.theme-cove .note:not([data-note-color]),
-html.theme-cove .note[data-note-color="default"] {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-}
-
-/* ── Tahoe theme ── */
-html.theme-tahoe {
-    background-color: #d0e8f5;
-    background-image: url('soft-macos-default-stock-style-simple-minimalist-best-wallpapers-for-macos-26-tahoe-m3-m4-m5-macbook-air-and-macbook-pro-10-09-2025-1757534945-hd-wallpaper.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    --bg-color: #d0e8f5;
-    --text-color: #1a2a3a;
-    --card-bg: rgba(255, 255, 255, 0.5);
-    --separator-color: rgba(0, 0, 0, 0.08);
-}
-html.theme-tahoe body {
-    background-image: none !important;
-    background-color: transparent;
-}
-html.theme-tahoe .dock-container {
-    position: relative;
-    background: rgba(20, 10, 40, 0.55);
-    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
-    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
-    border: none;
-    border-radius: 40px;
-    padding: 8px;
-    gap: 4px;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-        0 12px 40px rgba(0, 0, 0, 0.25),
-        0 2px 8px rgba(0, 0, 0, 0.12);
-}
-html.theme-tahoe .day-card { color: rgba(255, 255, 255, 0.75); }
-html.theme-tahoe .day-card .day-name {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    margin-bottom: 4px;
-}
-html.theme-tahoe .day-card .day-number {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: rgba(255, 255, 255, 0.88);
-    color: rgba(255, 255, 255, 0.88);
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.04em;
-}
-html.theme-tahoe .day-card.weekend .day-number {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: rgba(180, 220, 255, 0.75);
-    color: rgba(180, 220, 255, 0.75);
-}
-html.theme-tahoe .day-card {
-    width: 66px;
-    height: 80px;
-    border-radius: 18px;
-    clip-path: none;
-    background: transparent;
-    border: none;
-    filter: none;
-    transition: background 0.2s ease, filter 0.2s ease, transform 0.5s var(--sf-easing);
-}
-html.theme-tahoe .day-card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: none;
-}
-html.theme-tahoe .day-card.active {
-    background: rgba(0, 0, 0, 0.35);
-    border-radius: 24px;
-    border: none;
-    height: 74px;
-    filter: drop-shadow(0 4px 16px rgba(100, 180, 255, 0.4));
-    z-index: 2;
-    box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.22),
-        0 0 0 0.5px rgba(255, 255, 255, 0.04);
-}
-html.theme-tahoe .day-card.active .day-name { color: rgba(255, 255, 255, 0.7); opacity: 1; }
-html.theme-tahoe .day-card.active .day-number { -webkit-text-fill-color: #fff; color: #fff; font-weight: 700; }
-html.theme-tahoe .day-card:first-child,
-html.theme-tahoe .day-card:first-child:hover { border-radius: 32px 18px 18px 32px; }
-html.theme-tahoe .day-card:last-child,
-html.theme-tahoe .day-card:last-child:hover  { border-radius: 18px 32px 32px 18px; }
-html.theme-tahoe .day-card.active:first-child { border-radius: 32px 24px 24px 32px; }
-html.theme-tahoe .day-card.active:last-child  { border-radius: 24px 32px 32px 24px; }
-html.theme-tahoe .day-card.active:hover { background: rgba(0, 0, 0, 0.45); }
-html.theme-tahoe .day-separator { display: none; }
-html.theme-tahoe .dock-nav { color: #e8f4ff; opacity: 0.4; }
-html.theme-tahoe .greeting { color: #e8f4ff; background: none; -webkit-background-clip: unset; background-clip: unset; -webkit-text-fill-color: #e8f4ff; }
-html.theme-tahoe .header-time { color: rgba(232, 244, 255, 0.6); }
-html.theme-tahoe .dock-wrapper { margin-bottom: 80px; }
-html.theme-tahoe .bottom-watermark { color: #e8f4ff; }
-html.theme-tahoe .note {
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: none;
-    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-        0 4px 16px rgba(0, 0, 0, 0.12);
-    color: #e8f4ff;
-    white-space: normal;
-}
-html.theme-tahoe .note .note-content {
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-html.theme-tahoe .note textarea { color: inherit; }
-html.theme-tahoe .note[data-note-color="yellow"] { outline-color: rgba(251, 191, 36, 0.2); color: #fef3c7; }
-html.theme-tahoe .note[data-note-color="blue"]   { outline-color: rgba(147, 197, 253, 0.2); color: #dbeafe; }
-html.theme-tahoe .note[data-note-color="mint"]   { outline-color: rgba(52, 211, 153, 0.2);  color: #d1fae5; }
-html.theme-tahoe .note[data-note-color="pink"]   { outline-color: rgba(244, 114, 182, 0.2); color: #fce7f3; }
 
 /* ── Valley theme ── */
 html.theme-valley {
@@ -520,9 +296,6 @@ html.theme-valley .year-bar-label {
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.08),
         0 4px 16px rgba(0, 0, 0, 0.3);
-}
-html.theme-valley .season-bracket {
-    border-color: rgba(200, 150, 255, 0.3);
 }
 html.theme-valley .season-label {
     color: rgba(200, 150, 255, 0.6);
@@ -1323,6 +1096,8 @@ body.ready {
     transition: transform 0.4s var(--spring-easing), box-shadow 0.3s var(--sf-easing), opacity 0.3s ease;
     overflow: visible;
     resize: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .note:active:not(:has(.note-resize-handle:active)) {
@@ -1419,7 +1194,71 @@ body.ready {
     white-space: pre-wrap;
     overflow-wrap: break-word;
     word-break: normal;
+    user-select: none;
+    -webkit-user-select: none;
 }
+
+/* Blurred note content state */
+.note.blurred .note-content,
+.note.blurred .note-image {
+    filter: blur(4px);
+    opacity: 0.6;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+    user-select: none;
+    pointer-events: none;
+}
+
+.note.blurred:hover .note-content,
+.note.blurred:hover .note-image {
+    filter: blur(1.5px);
+    opacity: 0.8;
+}
+
+/* Selected note state */
+.note.selected {
+    outline: 2px solid #007AFF;
+    outline-offset: 4px;
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.3), 0 12px 40px rgba(0, 0, 0, 0.2);
+    z-index: 1099 !important;
+    transition: outline-offset 0.2s var(--spring-easing), transform 0.2s var(--spring-easing);
+}
+
+/* Selection rectangle overlay */
+.selection-rect {
+    position: fixed;
+    border: 1px solid rgba(0, 122, 255, 0.5);
+    background: rgba(0, 122, 255, 0.05);
+    pointer-events: none;
+    z-index: 999;
+    border-radius: 4px;
+    transition: none;
+    display: none;
+}
+
+/* Disable text selection during multi-select mode */
+body.is-selecting {
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: crosshair;
+}
+
+/* Highlight notes that would be selected during rectangle draw */
+.note.potential-select {
+    outline: 2px solid rgba(0, 122, 255, 0.3);
+    outline-offset: 4px;
+}
+
+body.note-editing-mode .note.editing {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+body.note-editing-mode .note.editing .note-content,
+body.note-editing-mode .note.editing textarea {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
 body.note-font-sf-mono .note-content {
     font-size: calc(var(--note-size) * 0.72);
     outline: none;
@@ -1477,7 +1316,7 @@ body.note-font-sf-mono .note-edit-ta {
 
 /* Image notes */
 .note.image-note {
-    padding: 0;
+    padding: 6px !important;
     overflow: visible;
     background: #000;
     border: 1px solid rgba(0,0,0,0.12);
@@ -1543,7 +1382,7 @@ body.screenshot-mode .capsule,
 body.screenshot-mode .bottom-watermark,
 body.screenshot-mode .dev-export-btn,
 body.screenshot-mode .note-edit-overlay,
-body.screenshot-mode .note-arrow-bar {
+body.screenshot-mode .note-context-menu {
     opacity: 0 !important;
     pointer-events: none !important;
     transition: opacity 0.3s ease !important;
@@ -1552,7 +1391,7 @@ body.screenshot-mode .dock-wrapper {
     z-index: 1200;
 }
 
-/* ── Note editing mode — page blur + arrow bar ── */
+/* ── Note editing mode — page blur ── */
 .note-edit-overlay {
     display: none;
 }
@@ -1560,55 +1399,77 @@ body.note-editing-mode .note-edit-overlay { display: none; }
 body.note-editing-mode .note.editing { z-index: 2000 !important; }
 body.note-editing-mode .note:not(.editing) { z-index: 50 !important; }
 
-.note-arrow-bar {
+.note-context-menu {
     position: fixed;
-    bottom: max(28px, calc(28px + env(safe-area-inset-bottom)));
-    left: 50%;
-    transform: translateX(-50%) translateY(12px);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    background: var(--card-bg);
+    z-index: 10000;
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(40px) saturate(200%);
     -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border: 0.5px solid rgba(255,255,255,0.35);
+    border: 0.5px solid rgba(255, 255, 255, 0.35);
     border-radius: 18px;
-    padding: 6px 10px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5);
+    padding: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 140px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.25s var(--spring-easing);
+    transform: scale(0.92);
+    transform-origin: top left;
+    transition: opacity 0.15s ease, transform 0.25s var(--spring-easing);
 }
-body.note-editing-mode .note-arrow-bar {
+.note-context-menu.show {
     opacity: 1;
     pointer-events: auto;
-    transform: translateX(-50%) translateY(0px);
+    transform: scale(1);
 }
-.note-arrow-btn {
-    width: 34px;
-    height: 34px;
+.ncm-section {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+}
+.ncm-section.colors {
+    justify-content: space-between;
+    padding: 4px 8px;
+}
+.ncm-sep {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 2px 4px;
+}
+.ncm-btn {
+    flex: 1;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     color: var(--text-color);
-    opacity: 0.7;
-    transition: background 0.15s, opacity 0.15s;
+    font-size: 14px;
+    transition: background 0.1s;
     user-select: none;
-    font-family: 'Inter', sans-serif;
 }
-.note-arrow-btn:hover { background: rgba(128,128,128,0.12); opacity: 1; }
-.note-arrow-btn:active { transform: scale(0.88); }
-.note-arrow-sep {
-    width: 1px;
-    height: 18px;
-    background: rgba(128,128,128,0.18);
-    margin: 0 4px;
-    flex-shrink: 0;
+.ncm-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.ncm-btn:active { transform: scale(0.95); }
+
+.ncm-color-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.15s var(--spring-easing);
 }
+.ncm-color-dot:hover { transform: scale(1.2); }
+.ncm-color-dot.active { border-color: #fff; }
+.ncm-color-dot[data-color="default"] { background: rgba(128,128,128,0.4); }
+.ncm-color-dot[data-color="yellow"] { background: #fbbf24; }
+.ncm-color-dot[data-color="blue"] { background: #60a5fa; }
+.ncm-color-dot[data-color="mint"] { background: #34d399; }
+.ncm-color-dot[data-color="pink"] { background: #f472b6; }
 
 /* SVG arc resize handle */
 .note-resize-handle {
@@ -1646,13 +1507,13 @@ html.hide-ruler .dock-wrapper {
 }
 
 
-/* BG TOGGLE — 3-way theme switcher */
+/* BG TOGGLE — 2-way theme switcher */
 .bg-toggle {
     position: fixed;
     top: 24px;
     right: 76px;
     z-index: 10001;
-    width: 102px;
+    width: 56px; /* 2 themes */
     height: 30px;
     border-radius: 100px;
     border: 0.5px solid rgba(0, 0, 0, 0.08);
@@ -1660,7 +1521,7 @@ html.hide-ruler .dock-wrapper {
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     cursor: pointer;
-    opacity: 0;
+    opacity: 1; /* Always visible */
     transition: opacity 0.4s ease, transform 0.3s var(--spring-easing), background 0.3s;
     padding: 2px;
     display: flex;
@@ -1669,7 +1530,6 @@ html.hide-ruler .dock-wrapper {
     box-shadow: inset 0 0.5px 1px rgba(0,0,0,0.05);
 }
 
-body.dev-mode:hover .bg-toggle { opacity: 1; }
 .bg-toggle:hover { background: rgba(120, 120, 128, 0.18); transform: translateY(-1px); }
 .bg-toggle:active { transform: translateY(0) scale(0.96); }
 
@@ -1686,10 +1546,8 @@ body.dev-mode:hover .bg-toggle { opacity: 1; }
 }
 
 /* Active icon brightens based on theme class */
-.bg-toggle:not(.toggle-cove):not(.toggle-valley):not(.toggle-tahoe) .icon-theme-default,
-.bg-toggle.toggle-cove .icon-theme-cove,
 .bg-toggle.toggle-valley .icon-theme-valley,
-.bg-toggle.toggle-tahoe .icon-theme-tahoe {
+.bg-toggle.toggle-minimal .icon-theme-minimal {
     opacity: 0.9;
 }
 
@@ -1706,15 +1564,101 @@ body.dev-mode:hover .bg-toggle { opacity: 1; }
     z-index: 0;
 }
 
-.bg-toggle.toggle-cove .bg-toggle-knob   { transform: translateX(24px); }
-.bg-toggle.toggle-valley .bg-toggle-knob { transform: translateX(48px); }
-.bg-toggle.toggle-tahoe .bg-toggle-knob  { transform: translateX(72px); }
+.bg-toggle.toggle-valley  .bg-toggle-knob { transform: translateX(0); }
+.bg-toggle.toggle-minimal .bg-toggle-knob { transform: translateX(26px); }
 
 .bg-toggle-icon svg {
     width: 12px;
     height: 12px;
     stroke: var(--text-color);
 }
+
+/* ── Minimal theme (Valley-based) ── */
+html.theme-minimal {
+    background-color: #1a1040;
+    background-image: url('wallpaper.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    --bg-color: #1a1040;
+    --text-color: #f0eeff;
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --separator-color: rgba(255, 255, 255, 0.1);
+}
+html.theme-minimal body {
+    background-image: none !important;
+    background-color: transparent;
+}
+html.theme-minimal .dock-wrapper { display: none; }
+html.theme-minimal .week-info-top {
+    opacity: 0.8;
+    font-size: 9px;
+    white-space: nowrap;
+}
+html.theme-minimal .week-days-row {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+}
+html.theme-minimal .mini-day.current {
+    color: #c580fb; /* Purple highlight */
+    font-weight: 800;
+    opacity: 1;
+}
+html.theme-minimal .month-name { display: none !important; }
+html.theme-minimal .month-divider { display: none !important; }
+html.theme-minimal .bottom-watermark { display: none; }
+
+/* Valley-style Notes for Minimal Theme */
+html.theme-minimal .note {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: none;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.12);
+    color: #f0eeff;
+    white-space: normal;
+    /* No border-radius override to match valley (global 30px) */
+}
+html.theme-minimal .note .note-content {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+html.theme-minimal .note textarea { color: inherit; }
+html.theme-minimal .note[data-note-color="yellow"] {
+    outline-color: rgba(251, 191, 36, 0.2);
+    color: #fef3c7;
+}
+html.theme-minimal .note[data-note-color="blue"] {
+    outline-color: rgba(147, 197, 253, 0.2);
+    color: #dbeafe;
+}
+html.theme-minimal .note[data-note-color="mint"] {
+    outline-color: rgba(52, 211, 153, 0.2);
+    color: #d1fae5;
+}
+html.theme-minimal .note[data-note-color="pink"] {
+    outline-color: rgba(244, 114, 182, 0.2);
+    color: #fce7f3;
+}
+
+.digit-scroll-container { 
+    display: flex; 
+    align-items: center; 
+    overflow: hidden;
+    height: 22px;
+    position: relative;
+}
+.week-label { display: none; white-space: nowrap; }
 
 /* SETTINGS — top right */
 .settings-btn {
@@ -1984,64 +1928,37 @@ body.dev-mode .dev-only { display: block; }
 
 
 
-/* Year progress bar — full width bottom */
-/* Year progress bar — full width bottom */
+/* ── Year Progress Bar — Optimized & Fixed ── */
 .year-bar {
     position: fixed;
     bottom: 0;
-    left: 0;
-    width: 100%;
+    left: 2%;
+    width: 96%;
     height: 12px;
     z-index: 500;
     background: transparent;
     pointer-events: none;
     overflow: visible;
 }
+.year-bar-ghost {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    mix-blend-mode: multiply;
+}
 .year-bar-fill {
     height: 100%;
     background: #c580fb;
     border-radius: 0 4px 4px 0;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.season-bracket {
-    position: absolute;
-    bottom: 12px;
-    height: 8px;
-    pointer-events: none;
-}
-
-.season-tick {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 1px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.4);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.season-bracket.past .season-tick {
-    opacity: 1;
-}
-
-.season-label {
-    position: absolute;
-    top: -9px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Inter', sans-serif;
-    font-size: 8px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: rgba(255, 255, 255, 0.85);
-    white-space: nowrap;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
-}
-
 .year-bar-marker {
     position: absolute;
     bottom: 14px;
@@ -2069,11 +1986,111 @@ body.dev-mode .dev-only { display: block; }
     font-variant-numeric: tabular-nums;
     border: 0.5px solid rgba(197, 128, 251, 0.25);
 }
+
+/* Valley Year Bar Overrides */
+html.theme-valley .year-bar { left: 0; width: 100%; }
+html.theme-valley .year-bar-ghost {
+    background: rgba(0, 0, 0, 0.3);
+    mix-blend-mode: multiply;
+}
+html.theme-valley .year-bar-fill {
+    background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
+}
+html.theme-valley .year-bar-marker { bottom: 2px; }
+html.theme-valley .year-bar-label {
+    color: rgba(220, 180, 255, 0.9);
+    background: rgba(20, 10, 40, 0.55);
+    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    border: none;
+    outline: 0.5px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+/* Minimal Year Bar Overrides */
+html.theme-minimal .year-bar { height: 48px; left: 2%; width: 96%; right: auto; }
+html.theme-minimal .year-bar-ghost { 
+    height: 4px; 
+    top: 24px; 
+    background: rgba(0, 0, 0, 0.2); 
+    border-radius: 2px; 
+    mix-blend-mode: multiply;
+}
+html.theme-minimal .year-bar-fill { 
+    height: 4px; 
+    top: 24px; 
+    background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
+    border-radius: 2px;
+    box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
+}
+html.theme-minimal .year-bar-marker { top: 24px; bottom: auto; transform: translateX(-50%); }
+html.theme-minimal .year-bar-label {
+    position: absolute;
+    bottom: 12px !important; 
+    top: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: none;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
+    padding: 6px 14px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    height: auto;
+    width: max-content;
+    min-width: unset;
+    line-height: 1;
+    overflow: visible;
+}
+html.theme-minimal .digit-scroll-container { 
+    display: flex; 
+    margin-top: 0;
+    opacity: 0.9;
+    height: 16px;
+}
+html.theme-minimal .digit-scroll span { height: 16px; color: #c580fb; font-weight: 800; font-size: 11px; }
+
+html.theme-minimal .week-label { display: flex; flex-direction: column; align-items: center; }
+html.theme-minimal .week-info-top { display: none; } /* Remove text */
+html.theme-minimal .week-days-row { gap: 10px; white-space: nowrap; font-size: 13px; font-weight: 700; }
+/* month-name styles for minimal are set above */
+html.theme-minimal .season-bracket {
+    height: 6px;
+    top: 24px;
+    bottom: auto;
+    transform: translateY(-100%);
+}
+html.theme-minimal .season-tick {
+    height: 100%;
+    top: 0;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    opacity: 1;
+}
+html.theme-minimal .season-bracket.past .season-tick {
+    background: #c580fb;
+    opacity: 0.8;
+}
+html.theme-minimal .season-label { font-size: 8px; top: -10px; color: #c580fb; opacity: 0.6; font-weight: 700; }
+html.theme-minimal .season-bracket.past .season-label { opacity: 1; }
+
+.year-pct-minimal { display: none !important; }
+
 .digit-scroll {
     display: flex;
     flex-direction: column;
     align-self: flex-start;
     transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s ease, opacity 0.4s ease;
+    overflow: hidden;
+    position: relative;
 }
 .digit-scroll span {
     height: 22px;
@@ -2091,21 +2108,58 @@ body.dev-mode .dev-only { display: block; }
 }
 
 .month-name {
+    display: none !important;
+}
+.month-divider {
+    display: none !important;
+}
+
+.season-bracket {
     position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    bottom: 100%;
+    height: 10px;
+    pointer-events: none;
+}
+.season-tick {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 3px;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transition: all 0.4s ease;
+    z-index: 1;
+}
+.season-bracket.past .season-tick { 
+    background: #c580fb;
+    opacity: 0.8;
+}
+html.theme-valley .season-tick {
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: none;
+}
+html.theme-valley .season-bracket.past .season-tick {
+    background: #c580fb;
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(197, 128, 251, 0.6);
+}.season-label {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
     font-family: 'Inter', sans-serif;
     font-size: 8px;
     font-weight: 800;
-    letter-spacing: 0.08em;
     text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #c580fb;
+    opacity: 0.6;
     white-space: nowrap;
-    pointer-events: none;
-    color: rgba(0, 0, 0, 0.4);
+    transition: opacity 0.4s ease;
 }
-.month-name.current { 
+.season-bracket.past .season-label {
     opacity: 1;
-    color: #1d1d1f;
 }
 
 /* Bottom watermark — Alcove-style fading text */
@@ -2651,23 +2705,24 @@ body.dev-mode .dev-only { display: block; }
 <div id="desktop-only" style="display:none">Desktop only</div>
 <div class="screenshot-overlay" id="screenshot-overlay"></div>
 <div class="note-edit-overlay" id="note-edit-overlay"></div>
-<div class="note-arrow-bar" id="note-arrow-bar">
-    <div class="note-arrow-btn" data-insert="→">→</div>
-    <div class="note-arrow-btn" data-insert="↗">↗</div>
-    <div class="note-arrow-btn" data-insert="↑">↑</div>
-    <div class="note-arrow-btn" data-insert="↓">↓</div>
-    <div class="note-arrow-sep"></div>
-    <div class="note-arrow-btn" data-insert="—">—</div>
-    <div class="note-arrow-btn" data-insert="·">·</div>
-    <div class="note-arrow-btn" data-insert="×">×</div>
-    <div class="note-arrow-sep"></div>
-    <div class="bar-color-dot" data-color="default"></div>
-    <div class="bar-color-dot" data-color="yellow"></div>
-    <div class="bar-color-dot" data-color="blue"></div>
-    <div class="bar-color-dot" data-color="mint"></div>
-    <div class="bar-color-dot" data-color="pink"></div>
+<div class="selection-rect" id="selection-rect"></div>
+<div class="note-context-menu" id="note-context-menu">
+    <div class="ncm-section colors">
+        <div class="ncm-color-dot" data-color="default"></div>
+        <div class="ncm-color-dot" data-color="yellow"></div>
+        <div class="ncm-color-dot" data-color="blue"></div>
+        <div class="ncm-color-dot" data-color="mint"></div>
+        <div class="ncm-color-dot" data-color="pink"></div>
+    </div>
+    <div class="ncm-sep"></div>
+    <div class="ncm-section">
+        <div class="ncm-btn" data-action="blur">Blur</div>
+        <div class="ncm-btn" data-insert="→">→</div>
+        <div class="ncm-btn" data-insert="↗">↗</div>
+        <div class="ncm-btn" data-insert="—">—</div>
+        <div class="ncm-btn" data-insert="·">·</div>
+    </div>
 </div>
-
 <div class="search-overlay" id="search-overlay">
     <div class="search-container">
         <div class="engine-switch" id="engine-switch">
@@ -2684,18 +2739,12 @@ body.dev-mode .dev-only { display: block; }
 
 
 
-<button class="bg-toggle" id="theme-quick-toggle" title="Cycle theme: Default → Cove → Valley → Tahoe">
-    <div class="bg-toggle-icon icon-theme-default">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-    </div>
-    <div class="bg-toggle-icon icon-theme-cove">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><path d="M8 12h8M12 8v8"/></svg>
-    </div>
+<button class="bg-toggle" id="theme-quick-toggle" title="Cycle theme: Valley → Minimal">
     <div class="bg-toggle-icon icon-theme-valley">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </div>
-    <div class="bg-toggle-icon icon-theme-tahoe">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7"/></svg>
+    </div>
+    <div class="bg-toggle-icon icon-theme-minimal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
     </div>
     <div class="bg-toggle-knob"></div>
 </button>
@@ -2756,9 +2805,8 @@ body.dev-mode .dev-only { display: block; }
     <div style="margin-top:4px;" id="theme-settings-section" class="dev-only">
         <div class="settings-section-label">Theme</div>
         <div class="settings-toggle" id="ruler-toggle-picker">
-            <button class="settings-toggle-btn active" data-theme="default">Default</button>
-            <button class="settings-toggle-btn" data-theme="cove">Cove</button>
-            <button class="settings-toggle-btn" data-theme="valley">Valley</button>
+            <button class="settings-toggle-btn active" data-theme="valley">Valley</button>
+            <button class="settings-toggle-btn" data-theme="minimal">Minimal</button>
         </div>
     </div>
 </div>
@@ -2914,6 +2962,10 @@ body.dev-mode .dev-only { display: block; }
     let lang = LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en';
     const dock = document.getElementById('dock');
     let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
+    let selectedNoteIds = new Set();
+    const selRect = document.getElementById('selection-rect');
+    let isSelecting = false;
+    let selStart = { x: 0, y: 0 };
 
     // First time — seed hint notes
     if (notes.length === 0) {
@@ -2926,6 +2978,163 @@ body.dev-mode .dev-only { display: block; }
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
     let topZ = 1100;
+
+    // Track mouse for paste-to-note
+    let mousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    document.addEventListener('mousemove', (e) => {
+        mousePos.x = e.clientX;
+        mousePos.y = e.clientY;
+    });
+
+    document.addEventListener('paste', (e) => {
+        // Skip if typing in an input/textarea
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.contentEditable === 'true') return;
+
+        const text = (e.clipboardData || window.clipboardData).getData('text').trim();
+        if (!text) return;
+
+        // Simple URL check
+        const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/i;
+        if (urlRegex.test(text)) {
+            e.preventDefault();
+            // Extract domain.tld
+            let domain = text.replace(/^(https?:\/\/)?(www\.)?/i, '').split('/')[0];
+            
+            const newNote = {
+                id: 'n' + Date.now(),
+                x: mousePos.x - 100,
+                y: mousePos.y - 20,
+                text: text, // Keep full text for linkify
+                displayTitle: domain, // We'll use this if we wanted a shorter title, but let's just use linkify
+                zIndex: ++topZ
+            };
+            // Actually, user wants trimmed text in the note.
+            newNote.text = domain; 
+
+            notes.push(newNote);
+            createNote(newNote, true);
+            save();
+        }
+    });
+
+    // ---- MULTI-SELECTION HELPERS ----
+    function clearSelection() {
+        selectedNoteIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('selected');
+        });
+        selectedNoteIds.clear();
+    }
+
+    function toggleNoteSelection(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (selectedNoteIds.has(id)) {
+            selectedNoteIds.delete(id);
+            el.classList.remove('selected');
+        } else {
+            selectedNoteIds.add(id);
+            el.classList.add('selected');
+        }
+    }
+
+    function selectNotesInRect(x1, y1, x2, y2) {
+        const left = Math.min(x1, x2);
+        const top = Math.min(y1, y2);
+        const right = Math.max(x1, x2);
+        const bottom = Math.max(y1, y2);
+
+        clearSelection();
+
+        document.querySelectorAll('.note').forEach(el => {
+            const rect = el.getBoundingClientRect();
+            // Collision: rectangle intersection
+            if (rect.left < right && rect.right > left && rect.top < bottom && rect.bottom > top) {
+                selectedNoteIds.add(el.id);
+                el.classList.add('selected');
+            }
+        });
+    }
+
+    // ---- SELECTION RECTANGLE ON WINDOW CLICK ----
+    window.addEventListener('mousedown', (e) => {
+        // Only start selection if clicking on empty space (not on a note, not on UI elements)
+        if (
+            e.button !== 0 ||
+            e.target.closest('.note') ||
+            e.target.closest('.dock-wrapper') ||
+            e.target.closest('.settings-btn') ||
+            e.target.closest('.search-overlay') ||
+            e.target.closest('.note-context-menu') ||
+            e.target.closest('.dev-modal') ||
+            ['INPUT', 'TEXTAREA', 'BUTTON', 'A'].includes(e.target.tagName)
+        ) return;
+
+        isSelecting = true;
+        selStart.x = e.clientX;
+        selStart.y = e.clientY;
+        
+        document.body.classList.add('is-selecting');
+        selRect.style.display = 'block';
+        selRect.style.left = e.clientX + 'px';
+        selRect.style.top = e.clientY + 'px';
+        selRect.style.width = '0px';
+        selRect.style.height = '0px';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isSelecting) return;
+        
+        const x = e.clientX;
+        const y = e.clientY;
+        const left = Math.min(selStart.x, x);
+        const top = Math.min(selStart.y, y);
+        const width = Math.abs(x - selStart.x);
+        const height = Math.abs(y - selStart.y);
+        
+        selRect.style.left = left + 'px';
+        selRect.style.top = top + 'px';
+        selRect.style.width = width + 'px';
+        selRect.style.height = height + 'px';
+        
+        // Live preview: highlight notes that would be selected
+        const right = Math.max(selStart.x, x);
+        const bottom = Math.max(selStart.y, y);
+        
+        document.querySelectorAll('.note').forEach(el => {
+            const rect = el.getBoundingClientRect();
+            // Collision: rectangle intersection
+            if (rect.left < right && rect.right > left && rect.top < bottom && rect.bottom > top) {
+                el.classList.add('potential-select');
+            } else {
+                el.classList.remove('potential-select');
+            }
+        });
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        if (!isSelecting) return;
+        isSelecting = false;
+        document.body.classList.remove('is-selecting');
+        
+        const x = e.clientX;
+        const y = e.clientY;
+        const width = Math.abs(x - selStart.x);
+        const height = Math.abs(y - selStart.y);
+        
+        // Remove potential-select from all notes
+        document.querySelectorAll('.note.potential-select').forEach(el => el.classList.remove('potential-select'));
+        
+        // Only select if rectangle is large enough (avoid accidental clicks)
+        if (width > 10 && height > 10) {
+            selectNotesInRect(selStart.x, selStart.y, x, y);
+        } else {
+            // Small click - clear selection
+            clearSelection();
+        }
+        
+        selRect.style.display = 'none';
+    });
 
     /* ============================================================
        GREETINGS — simple main, funny subs
@@ -3339,27 +3548,71 @@ body.dev-mode .dev-only { display: block; }
         return null;
     }
 
-    function positionArrowBar(noteEl) {
-        const bar = document.getElementById('note-arrow-bar');
-        const noteRect = noteEl.getBoundingClientRect();
-        const barW = bar.offsetWidth || 300;
-        const barH = bar.offsetHeight || 50;
-        const gap = 10;
-        const vp = { w: window.innerWidth, h: window.innerHeight };
-
-        // Horizontal: center on note, clamped to viewport
-        let left = noteRect.left + noteRect.width / 2 - barW / 2;
-        left = Math.max(8, Math.min(left, vp.w - barW - 8));
-
-        // Vertical: below if space, else above
-        const spaceBelow = vp.h - noteRect.bottom - gap;
-        const top = spaceBelow >= barH
-            ? noteRect.bottom + gap
-            : noteRect.top - gap - barH;
-
-        bar.style.left = left + 'px';
-        bar.style.top  = Math.max(8, top) + 'px';
+    const contextMenu = document.getElementById('note-context-menu');
+    function openContextMenu(x, y, noteEl, data) {
+        activeNoteRef = { note: noteEl, data };
+        contextMenu.classList.add('show');
+        const menuW = contextMenu.offsetWidth;
+        const menuH = contextMenu.offsetHeight;
+        let left = x, top = y;
+        if (left + menuW > window.innerWidth - 10) left = window.innerWidth - menuW - 10;
+        if (top + menuH > window.innerHeight - 10) top = window.innerHeight - menuH - 10;
+        contextMenu.style.left = left + 'px';
+        contextMenu.style.top = top + 'px';
+        
+        const activeColor = data.color || 'default';
+        contextMenu.querySelectorAll('.ncm-color-dot').forEach(d =>
+            d.classList.toggle('active', d.dataset.color === activeColor)
+        );
     }
+    function closeContextMenu() {
+        contextMenu.classList.remove('show');
+    }
+    contextMenu.addEventListener('mousedown', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const dot = e.target.closest('.ncm-color-dot');
+        const btn = e.target.closest('.ncm-btn');
+        if (dot && activeNoteRef.note) {
+            const c = dot.dataset.color;
+            const { note, data } = activeNoteRef;
+            data.color = c;
+            if (c && c !== 'default') note.setAttribute('data-note-color', c);
+            else note.removeAttribute('data-note-color');
+            contextMenu.querySelectorAll('.ncm-color-dot').forEach(d =>
+                d.classList.toggle('active', d.dataset.color === c)
+            );
+            save();
+        } else if (btn) {
+            // Handle blur action
+            if (btn.dataset.action === 'blur' && activeNoteRef.note) {
+                const { note, data } = activeNoteRef;
+                data.blurred = !data.blurred;
+                note.classList.toggle('blurred', data.blurred);
+                save();
+                closeContextMenu();
+                return;
+            }
+            
+            const ta = document.querySelector('.note-edit-ta');
+            const char = btn.dataset.insert;
+            if (ta) {
+                const pos = ta.selectionStart;
+                ta.value = ta.value.slice(0, pos) + char + ta.value.slice(ta.selectionEnd);
+                ta.selectionStart = ta.selectionEnd = pos + char.length;
+                ta.focus();
+                ta.dispatchEvent(new Event('input'));
+            } else if (activeNoteRef.data) {
+                activeNoteRef.data.text = (activeNoteRef.data.text || '') + char;
+                const content = activeNoteRef.note.querySelector('.note-content');
+                renderNoteContent(content, activeNoteRef.data.text);
+                save();
+            }
+            closeContextMenu();
+        }
+    });
+    window.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('#note-context-menu')) closeContextMenu();
+    });
 
 function createNote(data, autoFocus = false) {
         const note = document.createElement('div');
@@ -3450,6 +3703,22 @@ function createNote(data, autoFocus = false) {
             const dockEl = document.getElementById('dock');
             const SCALE_MINI = 0.65;
 
+            // Track offsets for all selected notes
+            const selectedOffsets = [];
+            if (selectedNoteIds.size > 1) {
+                selectedNoteIds.forEach(id => {
+                    if (id === data.id) return;
+                    const el = document.getElementById(id);
+                    if (el) {
+                        selectedOffsets.push({
+                            el,
+                            ox: clientX - el.offsetLeft,
+                            oy: clientY - el.offsetTop
+                        });
+                    }
+                });
+            }
+
             const move = (cx, cy) => {
                 const dockRect = dockEl.getBoundingClientRect();
                 const pad = 40;
@@ -3465,6 +3734,12 @@ function createNote(data, autoFocus = false) {
                     note.style.left = (cx - origOx) + 'px';
                     note.style.top  = (cy - origOy) + 'px';
                     note.style.transform = `scale(1.02)`;
+                    
+                    // Move all other selected notes together
+                    selectedOffsets.forEach(({ el, ox, oy }) => {
+                        el.style.left = (cx - ox) + 'px';
+                        el.style.top = (cy - oy) + 'px';
+                    });
                 }
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
                 const hit = getDayCardAtPoint(cx, cy);
@@ -3477,9 +3752,16 @@ function createNote(data, autoFocus = false) {
                 document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
                 note.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease';
                 setTimeout(() => { note.style.transition = ''; }, 500);
-                const clamped = clampNote(parseFloat(note.style.left), parseFloat(note.style.top));
-                note.style.left = clamped.x + 'px';
-                note.style.top  = clamped.y + 'px';
+                
+                // Clamp all selected notes
+                selectedNoteIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const clamped = clampNote(parseFloat(el.style.left), parseFloat(el.style.top));
+                        el.style.left = clamped.x + 'px';
+                        el.style.top = clamped.y + 'px';
+                    }
+                });
                 save();
             };
             return { move, stop };
@@ -3493,6 +3775,17 @@ function createNote(data, autoFocus = false) {
             if (e.target.tagName === 'A') return;
             if (window._lastFileDrop && Date.now() - window._lastFileDrop < 400) return;
             e.preventDefault();
+            
+            // Shift+click to toggle selection
+            if (e.shiftKey) {
+                toggleNoteSelection(data.id);
+            } else if (!selectedNoteIds.has(data.id)) {
+                // Click on unselected note - clear others and select this one
+                clearSelection();
+                selectedNoteIds.add(data.id);
+                note.classList.add('selected');
+            }
+            
             const { move, stop } = startDrag(e.clientX, e.clientY);
             const cleanup = (cx, cy) => { stop(cx, cy); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
             const onMove  = (me) => { if (me.buttons === 0) { cleanup(me.clientX, me.clientY); return; } me.preventDefault(); move(me.clientX, me.clientY); };
@@ -3516,6 +3809,12 @@ function createNote(data, autoFocus = false) {
             window.addEventListener('touchend', onEnd);
             window.addEventListener('touchcancel', onEnd);
         }, { passive: true });
+
+        note.oncontextmenu = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openContextMenu(e.clientX, e.clientY, note, data);
+        };
 
         // ---- RESIZE (mousedown + touchstart on handle) ----
         function startResize(clientX, clientY) {
@@ -3587,10 +3886,6 @@ function createNote(data, autoFocus = false) {
             note.classList.add('editing');
             document.body.classList.add('note-editing-mode');
             activeNoteRef = { note, data };
-            const activeColor = data.color || 'default';
-            document.querySelectorAll('#note-arrow-bar .bar-color-dot').forEach(d =>
-                d.classList.toggle('active', d.dataset.color === activeColor)
-            );
 
             const ta = document.createElement('textarea');
             ta.className = 'note-edit-ta';
@@ -3619,8 +3914,8 @@ function createNote(data, autoFocus = false) {
             mirror.style.lineHeight = taCs.lineHeight;
             document.body.appendChild(mirror);
 
-            const NOTE_PAD = 52; // 26px padding each side
-            const NOTE_MAX = 574; // max-width 600 - padding
+            const NOTE_PAD = 32; // 16px padding each side
+            const NOTE_MAX = 568; // max-width 600 - padding
             const NOTE_MIN = 80;
 
             const taResize = () => {
@@ -3727,6 +4022,8 @@ function createNote(data, autoFocus = false) {
             // Append to DOM first so getBoundingClientRect works, then open editor
             requestAnimationFrame(() => note.ondblclick({ target: note, stopPropagation: () => {}, closest: () => null }));
         }
+        
+        return note;
     }
 
     // ---- IMAGE DROP FROM FILE SYSTEM ----
@@ -3822,12 +4119,50 @@ function createNote(data, autoFocus = false) {
             if (document.body.classList.contains('screenshot-mode')) {
                 document.body.classList.remove('screenshot-mode');
             }
+            return;
         }
 
         // Option+D — dev mode
         if (e.altKey && (e.key.toLowerCase() === 'd' || e.key === '∂')) {
             e.preventDefault();
             document.body.classList.toggle('dev-mode');
+            return;
+        }
+
+        // Direct typing — create note and start typing
+        if (
+            e.key.length === 1 &&
+            !e.ctrlKey &&
+            !e.metaKey &&
+            !e.altKey &&
+            !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) &&
+            document.activeElement.contentEditable !== 'true' &&
+            !document.body.classList.contains('screenshot-mode') &&
+            !document.getElementById('search-overlay').classList.contains('show')
+        ) {
+            e.preventDefault();
+            const cx = mousePos.x || window.innerWidth / 2;
+            const cy = mousePos.y || window.innerHeight / 2;
+            const n = {
+                id: 'n' + Date.now(),
+                x: cx - 60,
+                y: cy - 30,
+                text: '',
+                zIndex: ++topZ
+            };
+            notes.push(n);
+            const noteEl = createNote(n, true);
+            
+            // Insert the typed character after edit mode opens
+            requestAnimationFrame(() => {
+                const ta = noteEl.querySelector('.note-edit-ta');
+                if (ta) {
+                    ta.value = e.key;
+                    ta.dispatchEvent(new Event('input'));
+                    ta.selectionStart = ta.selectionEnd = ta.value.length;
+                    ta.focus();
+                }
+            });
         }
     });
 
@@ -3860,37 +4195,6 @@ function createNote(data, autoFocus = false) {
 
     // Track which note is being edited for the color bar
     let activeNoteRef = { note: null, data: null };
-
-    // Arrow bar — insert characters or change color
-    document.getElementById('note-arrow-bar').addEventListener('mousedown', (e) => {
-        e.preventDefault(); // don't blur the textarea
-        const btn = e.target.closest('.note-arrow-btn');
-        const dot = e.target.closest('.bar-color-dot');
-        if (btn) {
-            const ta = document.querySelector('.note-edit-ta');
-            if (!ta) return;
-            const pos = ta.selectionStart;
-            const char = btn.dataset.insert;
-            ta.value = ta.value.slice(0, pos) + char + ta.value.slice(ta.selectionEnd);
-            ta.selectionStart = ta.selectionEnd = pos + char.length;
-            ta.focus();
-            ta.dispatchEvent(new Event('input'));
-        } else if (dot && activeNoteRef.note) {
-            const c = dot.dataset.color;
-            const { note, data } = activeNoteRef;
-            data.color = c;
-            if (c && c !== 'default') {
-                note.setAttribute('data-note-color', c);
-            } else {
-                note.removeAttribute('data-note-color');
-                delete data.color;
-            }
-            document.querySelectorAll('#note-arrow-bar .bar-color-dot').forEach(d =>
-                d.classList.toggle('active', d.dataset.color === (c || 'default'))
-            );
-            save();
-        }
-    });
 
     // Dev mode — activate with ?dev in URL or Shift+F
     if (location.search.includes('dev')) {
@@ -4103,22 +4407,20 @@ function createNote(data, autoFocus = false) {
         applyNoteSize(btn.dataset.size);
     });
 
-    // Theme Toggle (default / cove / valley)
+    // Theme Toggle (valley / minimal)
     const themeQuickToggle = document.getElementById('theme-quick-toggle');
-    const THEMES = ['default', 'cove', 'valley', 'tahoe'];
+    const THEMES = ['valley', 'minimal'];
     function applyTheme(theme) {
-        document.documentElement.classList.remove('theme-cove', 'theme-valley', 'theme-tahoe');
-        if (theme === 'cove') document.documentElement.classList.add('theme-cove');
+        document.documentElement.classList.remove('theme-valley', 'theme-minimal');
         if (theme === 'valley') document.documentElement.classList.add('theme-valley');
-        if (theme === 'tahoe') document.documentElement.classList.add('theme-tahoe');
+        if (theme === 'minimal') document.documentElement.classList.add('theme-minimal');
         document.querySelectorAll('#ruler-toggle-picker .settings-toggle-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.theme === theme);
         });
         if (themeQuickToggle) {
-            themeQuickToggle.classList.remove('toggle-cove', 'toggle-valley', 'toggle-tahoe');
-            if (theme === 'cove') themeQuickToggle.classList.add('toggle-cove');
+            themeQuickToggle.classList.remove('toggle-valley', 'toggle-minimal');
             if (theme === 'valley') themeQuickToggle.classList.add('toggle-valley');
-            if (theme === 'tahoe') themeQuickToggle.classList.add('toggle-tahoe');
+            if (theme === 'minimal') themeQuickToggle.classList.add('toggle-minimal');
         }
         localStorage.setItem('aura_theme', theme);
     }
@@ -4133,13 +4435,15 @@ function createNote(data, autoFocus = false) {
 
     if (themeQuickToggle) {
         themeQuickToggle.addEventListener('click', () => {
-            const current = localStorage.getItem('aura_theme') || 'default';
+            const current = localStorage.getItem('aura_theme') || 'valley';
             const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
             applyTheme(next);
         });
     }
 
-    applyTheme(localStorage.getItem('aura_theme') || 'valley');
+    let savedTheme = localStorage.getItem('aura_theme') || 'valley';
+    if (!THEMES.includes(savedTheme)) savedTheme = 'valley';
+    applyTheme(savedTheme);
 
     // Geo switch handler
     const geoSwitch = document.getElementById('geo-switch');
@@ -4258,14 +4562,19 @@ function createNote(data, autoFocus = false) {
         const bar = document.createElement('div');
         bar.className = 'year-bar';
         bar.innerHTML = `
+            <div class="year-bar-ghost"></div>
             <div class="year-bar-fill" id="year-bar-fill"></div>
             <div class="year-bar-marker" id="year-bar-marker">
                 <div class="year-bar-label" id="year-bar-label">
-                    <div class="digit-scroll" id="digit-hundreds"><span>0</span><span>1</span></div>
-                    <div class="digit-scroll" id="digit-tens"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
-                    <div class="digit-scroll" id="digit-ones"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
-                    <span class="pct-sign">%</span>
+                    <div class="digit-scroll-container" id="digit-scroll-container">
+                        <div class="digit-scroll" id="digit-hundreds"><span>0</span><span>1</span></div>
+                        <div class="digit-scroll" id="digit-tens"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+                        <div class="digit-scroll" id="digit-ones"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+                        <span class="pct-sign">%</span>
+                    </div>
+                    <div class="week-label" id="week-label"></div>
                 </div>
+                <div class="year-pct-minimal" id="year-pct-minimal"></div>
             </div>`;
         document.body.appendChild(bar);
 
@@ -4275,9 +4584,22 @@ function createNote(data, autoFocus = false) {
             const t = Math.floor((n % 100) / 10);
             const o = n % 10;
             const hEl = document.getElementById('digit-hundreds'), tEl = document.getElementById('digit-tens'), oEl = document.getElementById('digit-ones');
-            if (hEl) { hEl.style.width = h > 0 ? '9px' : '0'; hEl.style.opacity = h > 0 ? '1' : '0'; hEl.style.transform = `translateY(-${h * 22}px)`; }
-            if (tEl) { const showT = (h > 0 || t > 0); tEl.style.width = showT ? '9px' : '0'; tEl.style.opacity = showT ? '1' : '0'; tEl.style.transform = `translateY(-${t * 22}px)`; }
-            if (oEl) { oEl.style.transform = `translateY(-${o * 22}px)`; }
+            const rowH = document.documentElement.classList.contains('theme-minimal') ? 16 : 22;
+            if (hEl) { hEl.style.width = h > 0 ? '9px' : '0'; hEl.style.opacity = h > 0 ? '1' : '0'; hEl.style.transform = `translateY(-${h * rowH}px)`; }
+            if (tEl) { const showT = (h > 0 || t > 0); tEl.style.width = showT ? '9px' : '0'; tEl.style.opacity = showT ? '1' : '0'; tEl.style.transform = `translateY(-${t * rowH}px)`; }
+            if (oEl) { oEl.style.transform = `translateY(-${o * rowH}px)`; }
+        };
+
+        const getWeekNumber = (d) => {
+            const target = new Date(d.valueOf());
+            const dayNr = (d.getDay() + 6) % 7;
+            target.setDate(target.getDate() - dayNr + 3);
+            const firstThursday = target.valueOf();
+            target.setMonth(0, 1);
+            if (target.getDay() !== 4) {
+                target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+            }
+            return 1 + Math.ceil((firstThursday - target) / 604800000);
         };
 
         const yr = new Date().getFullYear();
@@ -4288,13 +4610,18 @@ function createNote(data, autoFocus = false) {
         const seasons = [
             { name: 'Winter', s: start, e: sD[0] }, { name: 'Spring', s: sD[0], e: sD[1] }, { name: 'Summer', s: sD[1], e: sD[2] }, { name: 'Fall', s: sD[2], e: sD[3] }, { name: 'Winter', s: sD[3], e: end }
         ];
-        seasons.forEach(s => {
+        seasons.forEach((s, idx) => {
             const sP = (s.s - start) / span * 100, eP = (s.e - start) / span * 100;
             const bracket = document.createElement('div');
-            bracket.className = 'season-bracket';
+            bracket.className = 'season-bracket' + (idx === 0 ? ' first-season' : '');
             bracket.style.left = sP + '%'; bracket.style.width = (eP - sP) + '%';
             bracket.dataset.startPct = sP;
-            bracket.innerHTML = `<div class="season-tick"></div><span class="season-label">${s.name}</span>`;
+            
+            // Skip label for the last 'Winter' segment to avoid repetition at the end of the bar
+            const labelHtml = (idx === seasons.length - 1) ? '' : `<span class="season-label">${s.name}</span>`;
+            // Skip first divider (idx 0)
+            const tickHtml = (idx === 0) ? '' : `<div class="season-tick"></div>`;
+            bracket.innerHTML = `${tickHtml}${labelHtml}`;
             bar.appendChild(bracket);
         });
 
@@ -4308,13 +4635,53 @@ function createNote(data, autoFocus = false) {
             lbl.className = 'month-name' + (i === curM ? ' current' : (i < curM ? ' past' : ''));
             lbl.style.left = mMid + '%'; lbl.textContent = name;
             bar.appendChild(lbl);
+            // Add month divider (skip first month)
+            if (i > 0) {
+                const mStart = (mS - start) / span * 100;
+                const div = document.createElement('div');
+                div.className = 'month-divider' + (i <= curM ? ' past' : '');
+                div.style.left = mStart + '%';
+                bar.appendChild(div);
+            }
         });
 
         function update(forceRolling = false) {
             const val = Math.max(0, Math.min(100, ((Date.now() - start) / span) * 100));
-            document.getElementById('year-bar-fill').style.width = val.toFixed(2) + '%';
-            document.getElementById('year-bar-marker').style.left = val.toFixed(2) + '%';
-            setRollingNumber(val);
+            const fillEl = document.getElementById('year-bar-fill');
+            const markerEl = document.getElementById('year-bar-marker');
+            if (fillEl) fillEl.style.width = val.toFixed(2) + '%';
+            if (markerEl) markerEl.style.left = val.toFixed(2) + '%';
+
+            if (document.documentElement.classList.contains('theme-minimal')) {
+                const now = new Date();
+                const weekNum = getWeekNumber(now);
+                
+                // Get Monday and Sunday of current week without mutating 'now'
+                const day = now.getDay();
+                const diffToMon = (day === 0 ? -6 : 1) - day;
+                const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMon);
+                const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
+                
+                const fmt = (d) => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                
+                // PT initials: S T Q Q S S D (Seg, Ter, Qua, Qui, Sex, Sáb, Dom)
+                const ptDays = ['S','T','Q','Q','S','S','D'];
+                const currentDayIdx = (new Date().getDay() + 6) % 7; // 0=Mon, 6=Sun
+                const daysHtml = ptDays.map((d, i) => `<span class="mini-day ${i === currentDayIdx ? 'current' : ''}">${d}</span>`).join('');
+
+                const weekEl = document.getElementById('week-label');
+                if (weekEl) {
+                    weekEl.innerHTML = `
+                        <div class="week-days-row">${daysHtml}</div>
+                    `;
+                }
+                const pctEl = document.getElementById('year-pct-minimal');
+                if (pctEl) pctEl.textContent = Math.floor(val) + '%';
+                setRollingNumber(val);
+            } else {
+                setRollingNumber(val);
+            }
+
             document.querySelectorAll('.season-bracket').forEach(el => {
                 if (parseFloat(el.dataset.startPct) <= val) el.classList.add('past');
                 else el.classList.remove('past');
@@ -4344,7 +4711,11 @@ function createNote(data, autoFocus = false) {
         markerEl.style.transition = 'left 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
 
         setTimeout(() => {
-            setRollingNumber(actualVal);
+            if (document.documentElement.classList.contains('theme-minimal')) {
+                update();
+            } else {
+                setRollingNumber(actualVal);
+            }
             fillEl.style.width = actualVal.toFixed(2) + '%';
             markerEl.style.left = actualVal.toFixed(2) + '%';
             update(); // also mark past seasons
