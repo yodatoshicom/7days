@@ -3001,7 +3001,13 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
         // Hide/show notes based on page
         document.querySelectorAll('.note').forEach(el => {
             const d = notes.find(n => n.id === el.id);
-            el.style.display = (d && d.page === currentPage) ? '' : 'none';
+            const show = (d && d.page === currentPage);
+            const wasHidden = el.style.display === 'none';
+            el.style.display = show ? '' : 'none';
+            if (show && wasHidden) {
+                const vid = el.querySelector('video');
+                if (vid && vid.src) vid.load();
+            }
         });
         renderPageDots();
     }
