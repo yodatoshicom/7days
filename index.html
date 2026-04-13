@@ -1568,35 +1568,32 @@ html.year-bar-hidden .year-bar {
 
 
 .font-test-switch {
-    position: fixed;
-    top: 24px;
-    right: 140px;
-    margin-right: 0;
-    z-index: 10001;
+    position: relative;
+    top: auto;
+    right: auto;
     display: flex;
-    gap: 4px;
+    gap: 8px;
     align-items: center;
-    padding: 4px 6px;
-    border-radius: 16px;
-    background: rgba(20, 10, 40, 0.35);
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
-    border: 0.5px solid rgba(255, 255, 255, 0.1);
+    padding: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
 }
 .font-test-switch .ft-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 0.5px solid rgba(255, 255, 255, 0.12);
-    background: transparent;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
     color: #f0eeff;
-    font-size: 12px;
+    font-size: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    opacity: 0.45;
-    transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    opacity: 0.6;
+    transition: all 0.2s ease;
     padding: 0;
 }
 .font-test-switch .ft-btn:hover { opacity: 1; transform: scale(1.08); }
@@ -2715,14 +2712,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
         <polyline points="7 3 12 8 17 3"/><polyline points="7 21 12 16 17 21"/>
     </svg>
 </button>
-<div class="font-test-switch" id="font-test-switch">
-    <button class="ft-btn" data-font-family="'Caveat', cursive" data-font-weight="400" data-font-size="28px" title="Caveat (current)" style="font-family:'Caveat',cursive;font-weight:400;">Aa</button>
-    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="300" data-font-size="21px" title="Lexend Light" style="font-family:'Lexend',sans-serif;font-weight:300;font-size:10px;">Aa</button>
-    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="200" data-font-size="21px" title="Lexend Extra Light" style="font-family:'Lexend',sans-serif;font-weight:200;font-size:10px;">Aa</button>
-    <button class="ft-btn" data-font-family="-apple-system, 'SF Pro', 'SF Pro Text', system-ui, sans-serif" data-font-weight="400" data-font-size="19px" title="SF Pro" style="font-family:-apple-system,'SF Pro','SF Pro Text',system-ui,sans-serif;font-weight:400;font-size:10px;">Aa</button>
-    <button class="ft-btn" data-font-family="'Google Sans', sans-serif" data-font-weight="400" data-font-size="19px" title="Google Sans" style="font-family:'Google Sans',sans-serif;font-weight:400;font-size:10px;">Aa</button>
-    <div class="ft-popup" id="ft-popup"></div>
-</div>
+
 <button class="old-dock-toggle-btn" id="old-dock-toggle-btn" title="Show old dock (greeting + weather)">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 17h16M6 13l2-6h8l2 6M8 17v2M16 17v2"/>
@@ -2773,6 +2763,17 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
             <button class="settings-toggle-btn" data-size="S" style="font-size:8px;">S</button>
             <button class="settings-toggle-btn active" data-size="M" style="font-size:10px;">M</button>
             <button class="settings-toggle-btn" data-size="L" style="font-size:12px;">L</button>
+        </div>
+    </div>
+    <div>
+        <div class="settings-section-label">Font</div>
+        <div class="font-test-switch" id="font-test-switch">
+            <button class="ft-btn" data-font-family="'Caveat', cursive" data-font-weight="400" data-font-size="28px" title="Caveat (current)" style="font-family:'Caveat',cursive;font-weight:400;">Aa</button>
+            <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="300" data-font-size="21px" title="Lexend Light" style="font-family:'Lexend',sans-serif;font-weight:300;font-size:10px;">Aa</button>
+            <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="200" data-font-size="21px" title="Lexend Extra Light" style="font-family:'Lexend',sans-serif;font-weight:200;font-size:10px;">Aa</button>
+            <button class="ft-btn" data-font-family="-apple-system, 'SF Pro', 'SF Pro Text', system-ui, sans-serif" data-font-weight="400" data-font-size="19px" title="SF Pro" style="font-family:-apple-system,'SF Pro','SF Pro Text',system-ui,sans-serif;font-weight:400;font-size:10px;">Aa</button>
+            <button class="ft-btn" data-font-family="'Google Sans', sans-serif" data-font-weight="400" data-font-size="19px" title="Google Sans" style="font-family:'Google Sans',sans-serif;font-weight:400;font-size:10px;">Aa</button>
+            <div class="ft-popup" id="ft-popup"></div>
         </div>
     </div>
     <div class="settings-divider"></div>
@@ -3012,8 +3013,6 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
         renderPageDots();
     }
 
-    let pageDotShape = localStorage.getItem('aura_page_dot_shape') || 'rect';
-
     function renderPageDots() {
         let container = document.getElementById('page-dots');
         if (!container) {
@@ -3022,7 +3021,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
             container.id = 'page-dots';
             document.body.appendChild(container);
         }
-        container.className = 'page-dots' + (pageDotShape === 'circle' ? ' circles' : '');
+        container.className = 'page-dots';
         container.innerHTML = '';
         for (let i = 0; i < PAGE_COUNT; i++) {
             const dot = document.createElement('div');
@@ -3036,28 +3035,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     }
     renderPageDots();
 
-    // Shape toggle button
-    (function() {
-        const btn = document.createElement('button');
-        btn.className = 'page-shape-toggle';
-        btn.title = 'Toggle dot shape';
-        function updateIcon() {
-            if (pageDotShape === 'circle') {
-                btn.innerHTML = '<svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5"/></svg>';
-            } else {
-                btn.innerHTML = '<svg viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" rx="3"/></svg>';
-            }
-        }
-        updateIcon();
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            pageDotShape = pageDotShape === 'rect' ? 'circle' : 'rect';
-            localStorage.setItem('aura_page_dot_shape', pageDotShape);
-            renderPageDots();
-            updateIcon();
-        });
-        document.body.appendChild(btn);
-    })();
+    // Shape toggle button removed
 
     let selectedNoteIds = new Set();
     const selRect = document.getElementById('selection-rect');
@@ -4245,7 +4223,6 @@ function createNote(data, autoFocus = false) {
             !target.closest('.capsule') &&
             !target.closest('.year-bar') &&
             !target.closest('.page-dots') &&
-            !target.closest('.page-shape-toggle') &&
             target.tagName !== 'BUTTON' &&
             target.tagName !== 'INPUT' &&
             target.tagName !== 'A'
@@ -4472,6 +4449,8 @@ function createNote(data, autoFocus = false) {
         const btn = document.getElementById('season-flip-btn');
         const key = 'aura_year_bar_hidden';
         let hidden = localStorage.getItem(key) === 'true';
+        // If never set, default to shown (false)
+        if (localStorage.getItem(key) === null) hidden = false;
         function apply() {
             document.documentElement.classList.toggle('year-bar-hidden', hidden);
         }
@@ -4483,38 +4462,12 @@ function createNote(data, autoFocus = false) {
         });
     })();
 
-    // App logo → create week note
+    // App logo click (disabled)
     (function() {
         const logo = document.getElementById('app-logo');
         if (!logo) return;
         logo.addEventListener('click', () => {
-            const now = new Date();
-            const dayNames = { en: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], es: ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'], pt: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'] };
-            const names = dayNames[lang] || dayNames.en;
-            const todayIdx = (now.getDay() + 6) % 7; // 0=Mon
-            const monday = new Date(now);
-            monday.setDate(now.getDate() - todayIdx);
-            const lines = names.map((name, i) => {
-                const d = new Date(monday);
-                d.setDate(monday.getDate() + i);
-                const num = d.getDate();
-                const marker = i === todayIdx ? ' ●' : '';
-                return `${name} ${num}${marker}`;
-            });
-            const text = lines.join('\n');
-            const cx = window.innerWidth / 2;
-            const cy = window.innerHeight / 2;
-            const n = {
-                id: 'n' + Date.now(),
-                x: cx - 60,
-                y: cy - 80,
-                text,
-                w: 120,
-                zIndex: ++topZ
-            };
-            notes.push(n);
-            createNote(n);
-            save();
+            // week note disabled
         });
     })();
 
@@ -4563,10 +4516,10 @@ function createNote(data, autoFocus = false) {
     (function() {
         const btn = document.getElementById('old-dock-toggle-btn');
         const key = 'aura_show_old_dock';
-        let on = localStorage.getItem(key) === 'true';
+        let on = localStorage.getItem(key) !== 'false'; // Default to true if not explicitly disabled
         function apply() {
             document.documentElement.classList.toggle('show-old-dock', on);
-            btn.classList.toggle('active', on);
+            if (btn) btn.classList.toggle('active', on);
         }
         apply();
         btn.addEventListener('click', () => {
