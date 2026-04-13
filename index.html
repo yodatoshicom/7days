@@ -124,7 +124,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@300;400;500&family=Caveat:wght@400;700&family=Lora:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@200;300;400;500&family=Caveat:wght@400;700&family=Lora:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300" rel="stylesheet">
 
 <script>
 // Apply persisted font/size settings before first paint to prevent flash
@@ -133,16 +133,7 @@
     var sizes   = { 'S':'21px', 'M':'22px', 'L':'28px' };
     var sizes1x = { 'S':'15px', 'M':'16px', 'L':'20px' };
     var r = document.documentElement;
-    // Theme (applied early to avoid flash)
-    var savedTheme = localStorage.getItem('aura_theme') || 'valley';
-    if (savedTheme === 'minimal') r.classList.add('theme-minimal');
-    else r.classList.add('theme-valley');
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const tToggle = document.getElementById('theme-quick-toggle');
-        if (tToggle && savedTheme === 'minimal') tToggle.classList.add('toggle-minimal');
-        else if (tToggle) tToggle.classList.add('toggle-valley');
-    });
+    r.classList.add('theme-valley');
     
     var f = localStorage.getItem('aura_note_font');
     if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
@@ -159,7 +150,7 @@
     --text-color: #f0eeff;
     --accent-color: #007AFF;
     --card-bg: rgba(255, 255, 255, 0.08);
-    --separator-color: rgba(255, 255, 255, 0.1);
+
     --note-font: 'Caveat', cursive;
     --note-size: 28px;
 }
@@ -181,7 +172,7 @@ html.theme-valley {
     --bg-color: #1a1040;
     --text-color: #f0eeff;
     --card-bg: rgba(255, 255, 255, 0.08);
-    --separator-color: rgba(255, 255, 255, 0.1);
+
 }
 html.theme-valley .dock-container {
     position: relative;
@@ -221,19 +212,6 @@ html.theme-valley .day-card.weekend .day-number {
     background-clip: unset;
     -webkit-text-fill-color: rgba(210, 185, 255, 0.75);
     color: rgba(210, 185, 255, 0.75);
-}
-html.theme-valley .day-card.active {
-    background: rgba(0, 0, 0, 0.35);
-    box-shadow: none;
-}
-html.theme-valley .day-card.active .day-name {
-    color: rgba(255, 255, 255, 0.7);
-    opacity: 1;
-}
-html.theme-valley .day-card.active .day-number {
-    -webkit-text-fill-color: #fff;
-    color: #fff;
-    font-weight: 700;
 }
 html.theme-valley .day-card:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -312,33 +290,11 @@ html.theme-valley.show-old-dock .header-container {
     transform: translateX(-50%);
     margin-bottom: 10px;
 }
-html.theme-valley .day-card .day-weather-hover {
-    display: none;
-    position: absolute;
-    bottom: -28px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(20, 10, 40, 0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 10px;
-    padding: 3px 6px;
-    white-space: nowrap;
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.85);
-    pointer-events: none;
-    z-index: 1001;
-}
-html.theme-valley .day-card:hover .day-weather-hover {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-}
 html.theme-valley .header-container { display: none; }
 html.theme-valley .bottom-watermark { display: none; }
 html.theme-valley .year-bar-fill {
     background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
-    border-radius: 0 3px 3px 0;
+    border-radius: 0;
     box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
 }
 html.theme-valley #year-bar-marker {
@@ -378,48 +334,6 @@ html.theme-valley #active-day-light {
     display: block;
     background: radial-gradient(circle, rgba(190, 140, 255, 0.2) 0%, rgba(140, 80, 255, 0.08) 50%, transparent 75%);
 }
-/* ---- day card name/number swap ---- */
-html.day-swap .day-card { flex-direction: column-reverse; }
-html.theme-valley .note {
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: none;
-    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-        0 4px 16px rgba(0, 0, 0, 0.12);
-    color: #f0eeff;
-    white-space: normal;
-}
-html.theme-valley .note.selected {
-    outline: 2px solid rgba(197, 128, 251, 0.7);
-    outline-offset: 0px;
-}
-html.theme-valley .note .note-content {
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-html.theme-valley .note textarea { color: inherit; }
-html.theme-valley .note[data-note-color="yellow"] {
-    outline-color: rgba(251, 191, 36, 0.2);
-    color: #fef3c7;
-}
-html.theme-valley .note[data-note-color="blue"] {
-    outline-color: rgba(147, 197, 253, 0.2);
-    color: #dbeafe;
-}
-html.theme-valley .note[data-note-color="mint"] {
-    outline-color: rgba(52, 211, 153, 0.2);
-    color: #d1fae5;
-}
-html.theme-valley .note[data-note-color="pink"] {
-    outline-color: rgba(244, 114, 182, 0.2);
-    color: #fce7f3;
-}
 
 
 /* Note color bar — shown below note in editing mode */
@@ -447,46 +361,6 @@ html.theme-valley .note[data-note-color="pink"] {
 .bar-color-dot[data-color="pink"] { background: #f472b6; }
 
 
-/* Note color tints */
-.note[data-note-color="yellow"] {
-    background: rgba(251, 191, 36, 0.18);
-    border-color: rgba(251, 191, 36, 0.3);
-}
-.note[data-note-color="blue"] {
-    background: rgba(96, 165, 250, 0.18);
-    border-color: rgba(96, 165, 250, 0.3);
-}
-.note[data-note-color="mint"] {
-    background: rgba(52, 211, 153, 0.18);
-    border-color: rgba(52, 211, 153, 0.3);
-}
-.note[data-note-color="pink"] {
-    background: rgba(244, 114, 182, 0.18);
-    border-color: rgba(244, 114, 182, 0.3);
-}
-
-.header-container {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 10px;
-    text-align: center;
-    white-space: nowrap;
-    z-index: 500;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-.header-time {
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    opacity: 0.45;
-    margin-bottom: 4px;
-    color: var(--text-color);
-    font-variant-numeric: tabular-nums;
-}
 
 .greeting {
     font-size: 68px;
@@ -512,20 +386,6 @@ html.theme-valley .note[data-note-color="pink"] {
     transform: scale(0.97);
 }
 
-
-.greeting-sub {
-    font-family: 'Caveat', cursive;
-    font-size: 24px;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    opacity: 0.5;
-    color: var(--text-color);
-    margin-top: 4px;
-    text-align: center;
-    white-space: nowrap;
-    pointer-events: none;
-}
-
 /* Lang flash animation on greeting */
 @keyframes greetingPulse {
     0% { transform: scale(1); }
@@ -537,21 +397,17 @@ html.theme-valley .note[data-note-color="pink"] {
     animation: greetingPulse 0.4s var(--spring-easing);
 }
 
-.lang-btn {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    opacity: 0.3;
-    cursor: pointer;
-    transition: opacity 0.3s;
-}
-
-.lang-btn:hover {
-    opacity: 1;
+.header-container {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px;
+    text-align: center;
+    white-space: nowrap;
+    z-index: 500;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 * {
@@ -625,46 +481,6 @@ body.bg-geo-mesh #mesh-iframe {
     opacity: 0.54;
 }
 
-/* Background geometry switch */
-.geo-switch {
-    position: fixed;
-    top: 24px;
-    right: 140px;
-    z-index: 10001;
-    display: flex;
-    gap: 2px;
-    background: rgba(120,120,128,0.12);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 10px;
-    padding: 2px;
-    opacity: 0;
-    transition: opacity 0.4s ease, transform 0.3s var(--spring-easing);
-}
-body:hover .geo-switch { opacity: 0.45; }
-.geo-switch:hover { opacity: 1 !important; transform: translateY(-1px); }
-
-.geo-switch-btn {
-    width: 24px;
-    height: 20px;
-    border: none;
-    border-radius: 7px;
-    background: transparent;
-    cursor: pointer;
-    font-size: 10px;
-    color: var(--text-color);
-    opacity: 0.5;
-    transition: opacity 0.2s, background 0.2s;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.geo-switch-btn.active {
-    background: #fff;
-    opacity: 1;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-}
 
 body.ready {
     opacity: 1;
@@ -1101,31 +917,6 @@ body.ready {
     opacity: 0.4;
 }
 
-.bottom-controls {
-    display: none;
-    position: fixed;
-    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-}
-
-.lang-btn {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    opacity: 0.3;
-    cursor: pointer;
-    transition: opacity 0.3s;
-}
-
-.lang-btn:hover {
-    opacity: 1;
-}
 
 .city-tooltip {
     display: none;
@@ -1153,16 +944,22 @@ body.ready {
 .note {
     position: absolute;
     width: fit-content;
-    min-width: 80px;
+    min-width: 0;
     max-width: 600px;
     min-height: 40px;
-    background: var(--card-bg);
-    backdrop-filter: blur(50px) saturate(180%);
-    -webkit-backdrop-filter: blur(50px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: none;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
     border-radius: 30px;
-    padding: 18px 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.12);
+    color: #f0eeff;
+    white-space: normal;
     z-index: 1100;
     cursor: grab;
     transition: transform 0.4s var(--spring-easing), box-shadow 0.3s var(--sf-easing), opacity 0.3s ease;
@@ -1171,6 +968,22 @@ body.ready {
     user-select: none;
     -webkit-user-select: none;
 }
+.note.selected {
+    outline: 2px solid rgba(197, 128, 251, 0.7);
+    outline-offset: 0px;
+}
+.note .note-content {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+.note textarea { color: inherit; }
+
+.note[data-note-color="yellow"] { color: #fef3c7; }
+.note[data-note-color="blue"] { color: #dbeafe; }
+.note[data-note-color="mint"] { color: #d1fae5; }
+.note[data-note-color="pink"] { color: #fce7f3; }
+
 
 .note:active:not(:has(.note-resize-handle:active)) {
     transform: none;
@@ -1287,12 +1100,6 @@ body.ready {
     opacity: 0.8;
 }
 
-/* Selected note state */
-.note.selected {
-    outline: 2px solid rgba(197, 128, 251, 0.7);
-    outline-offset: 0px;
-}
-
 /* Selection rectangle overlay */
 .selection-rect {
     position: fixed;
@@ -1303,6 +1110,84 @@ body.ready {
     border-radius: 4px;
     transition: none;
     display: none;
+}
+
+/* ── Page Navigation Dots ── */
+.page-dots {
+    position: fixed;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 1200;
+    padding: 6px 3px;
+}
+.page-dot {
+    width: 6px;
+    height: 14px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+.page-dot:hover {
+    background: rgba(255, 255, 255, 0.45);
+    transform: scale(1.1);
+}
+.page-dot.active {
+    width: 8px;
+    height: 20px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+    border: 0.5px solid rgba(255, 255, 255, 0.25);
+}
+/* Circle variant */
+.page-dots.circles .page-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.page-dots.circles .page-dot.active {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+/* Shape toggle button */
+.page-shape-toggle {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    width: 22px;
+    height: 22px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.25s ease, opacity 0.25s ease;
+    opacity: 0.4;
+}
+.page-shape-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+    opacity: 0.7;
+}
+.page-shape-toggle svg {
+    width: 12px;
+    height: 12px;
+    fill: rgba(255, 255, 255, 0.8);
 }
 
 /* Disable text selection during multi-select mode */
@@ -1359,23 +1244,6 @@ body.note-font-sf-mono .note-edit-ta {
     font-size: calc(var(--note-size) * 0.72);
 }
 
-.note-edit-tip {
-    position: fixed;
-    bottom: max(86px, calc(86px + env(safe-area-inset-bottom)));
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-color);
-    opacity: 0.3;
-    pointer-events: none;
-    user-select: none;
-    z-index: 3000;
-    white-space: nowrap;
-}
 
 .note-content a {
     color: var(--accent-color);
@@ -1388,11 +1256,6 @@ body.note-font-sf-mono .note-edit-ta {
 .note.image-note {
     padding: 6px !important;
     overflow: visible;
-    background: #000;
-    border: 1px solid rgba(0,0,0,0.12);
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
 }
 
 .note.image-note .note-content,
@@ -1431,6 +1294,46 @@ body.note-font-sf-mono .note-edit-ta {
     user-select: none;
     -webkit-user-select: none;
     -webkit-user-drag: none;
+}
+
+video.note-image {
+    pointer-events: none;
+}
+
+.video-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+.note.image-note:hover .video-play-btn {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.video-play-btn:hover {
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.video-play-btn:active {
+    transform: translate(-50%, -50%) scale(0.9);
 }
 
 
@@ -1576,149 +1479,7 @@ html.hide-ruler .dock-wrapper {
 }
 
 
-/* BG TOGGLE — 2-way theme switcher */
-.bg-toggle {
-    position: fixed;
-    top: 24px;
-    right: 76px;
-    z-index: 10001;
-    width: 56px; /* 2 themes */
-    height: 30px;
-    border-radius: 100px;
-    border: 0.5px solid rgba(0, 0, 0, 0.08);
-    background: rgba(120, 120, 128, 0.12);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    cursor: pointer;
-    opacity: 1; /* Always visible */
-    transition: opacity 0.4s ease, transform 0.3s var(--spring-easing), background 0.3s;
-    padding: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: inset 0 0.5px 1px rgba(0,0,0,0.05);
-}
 
-.bg-toggle:hover { background: rgba(120, 120, 128, 0.18); transform: translateY(-1px); }
-.bg-toggle:active { transform: translateY(0) scale(0.96); }
-
-.bg-toggle-icon {
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.3;
-    transition: opacity 0.3s;
-    z-index: 1;
-    flex-shrink: 0;
-}
-
-/* Active icon brightens based on theme class */
-.bg-toggle.toggle-valley .icon-theme-valley,
-.bg-toggle.toggle-minimal .icon-theme-minimal {
-    opacity: 0.9;
-}
-
-.bg-toggle-knob {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04), 0 0 0 0.5px rgba(0,0,0,0.04);
-    transition: transform 0.4s var(--spring-easing);
-    z-index: 0;
-}
-
-.bg-toggle.toggle-valley  .bg-toggle-knob { transform: translateX(0); }
-.bg-toggle.toggle-minimal .bg-toggle-knob { transform: translateX(26px); }
-
-.bg-toggle-icon svg {
-    width: 12px;
-    height: 12px;
-    stroke: var(--text-color);
-}
-
-/* ── Minimal theme (Valley-based) ── */
-html.theme-minimal {
-    background-color: #1a1040;
-    background-image: url('wallpaper.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    --bg-color: #1a1040;
-    --text-color: #f0eeff;
-    --card-bg: rgba(255, 255, 255, 0.08);
-    --separator-color: rgba(255, 255, 255, 0.1);
-}
-html.theme-minimal body {
-    background-image: none !important;
-    background-color: transparent;
-}
-html.theme-minimal .dock-wrapper { display: none; }
-html.theme-minimal .week-info-top {
-    opacity: 0.8;
-    font-size: 9px;
-    white-space: nowrap;
-}
-html.theme-minimal .week-days-row {
-    display: flex;
-    gap: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.4);
-}
-html.theme-minimal .mini-day.current {
-    color: #c580fb; /* Purple highlight */
-    font-weight: 800;
-    opacity: 1;
-}
-html.theme-minimal .month-name { display: none !important; }
-html.theme-minimal .month-divider { display: none !important; }
-html.theme-minimal .bottom-watermark { display: none; }
-
-/* Valley-style Notes for Minimal Theme */
-html.theme-minimal .note {
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: none;
-    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-        0 4px 16px rgba(0, 0, 0, 0.12);
-    color: #f0eeff;
-    white-space: normal;
-    /* No border-radius override to match valley (global 30px) */
-}
-html.theme-minimal .note .note-content {
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    word-break: break-word;
-}
-html.theme-minimal .note textarea { color: inherit; }
-html.theme-minimal .note[data-note-color="yellow"] {
-    outline-color: rgba(251, 191, 36, 0.2);
-    color: #fef3c7;
-}
-html.theme-minimal .note[data-note-color="blue"] {
-    outline-color: rgba(147, 197, 253, 0.2);
-    color: #dbeafe;
-}
-html.theme-minimal .note[data-note-color="mint"] {
-    outline-color: rgba(52, 211, 153, 0.2);
-    color: #d1fae5;
-}
-html.theme-minimal .note[data-note-color="pink"] {
-    outline-color: rgba(244, 114, 182, 0.2);
-    color: #fce7f3;
-}
 
 .digit-scroll-container { 
     display: flex; 
@@ -1733,7 +1494,7 @@ html.theme-minimal .note[data-note-color="pink"] {
 .season-flip-btn {
     position: fixed;
     top: 24px;
-    right: 180px;
+    right: 100px;
     z-index: 10001;
     width: 32px;
     height: 32px;
@@ -1752,37 +1513,15 @@ html.theme-minimal .note[data-note-color="pink"] {
 .season-flip-btn:hover { opacity: 0.8; }
 .season-flip-btn:active { transform: scale(0.9); }
 
-/* Seasons below bar */
-.seasons-below .season-bracket {
-    bottom: auto;
-    top: 100%;
-}
-.seasons-below .season-tick {
-    bottom: auto;
-    top: 0;
-}
-.seasons-below .season-label {
-    top: auto;
-    bottom: -6px;
-}
-html.theme-minimal.seasons-below .season-bracket {
-    top: 28px;
-    bottom: auto;
-    transform: none;
-}
-html.theme-minimal.seasons-below .season-tick {
-    top: 0;
-    bottom: auto;
-}
-html.theme-minimal.seasons-below .season-label {
-    top: auto;
-    bottom: -12px;
+/* Hide bottom bar */
+html.year-bar-hidden .year-bar {
+    display: none;
 }
 
 .old-dock-toggle-btn {
     position: fixed;
     top: 24px;
-    right: 140px;
+    right: 60px;
     z-index: 10001;
     width: 32px;
     height: 32px;
@@ -1827,66 +1566,12 @@ html.theme-minimal.seasons-below .season-label {
 .app-logo:active { transform: translateX(-50%) scale(0.94); }
 .app-logo svg { width: 28px; height: 28px; }
 
-.app-logo-popup {
-    position: fixed;
-    top: 20px;
-    left: calc(50% + 40px);
-    z-index: 10001;
-    padding: 12px 18px;
-    border-radius: 22px;
-    background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: none;
-    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-        0 4px 16px rgba(0, 0, 0, 0.12),
-        0 12px 36px rgba(0, 0, 0, 0.25);
-    color: #f0eeff;
-    font-family: -apple-system, 'SF Pro Text', 'Inter', system-ui, sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    white-space: nowrap;
-    opacity: 0;
-    transform: translateX(-6px) scale(0.92);
-    transform-origin: left bottom;
-    transition: opacity 0.25s ease, transform 0.35s var(--spring-easing);
-    text-align: left;
-    pointer-events: none;
-    line-height: 1.35;
-}
-.app-logo-popup::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    transform: translateY(-50%);
-    border: 8px solid transparent;
-    border-right-color: rgba(255, 255, 255, 0.08);
-    border-left: 0;
-}
-.app-logo-popup.show {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-    pointer-events: auto;
-}
-.app-logo-popup .logo-popup-title { font-weight: 600; letter-spacing: -0.01em; margin-bottom: 1px; }
-.app-logo-popup .logo-popup-sub { opacity: 0.65; font-size: 11px; font-weight: 400; }
-.app-logo-popup .logo-popup-sub a {
-    color: #b49bff;
-    font-weight: 500;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(180, 155, 255, 0.3);
-}
-.app-logo-popup .logo-popup-sub a:hover { border-bottom-color: #b49bff; }
 
 .font-test-switch {
     position: fixed;
     top: 24px;
-    right: 200px;
-    margin-right: 20px;
+    right: 140px;
+    margin-right: 0;
     z-index: 10001;
     display: flex;
     gap: 4px;
@@ -2127,12 +1812,6 @@ body.dev-mode .dev-only { display: block; }
 .settings-discord-link:hover { opacity: 1; text-decoration: none; }
 .settings-discord-link svg { flex-shrink: 0; }
 
-.settings-row {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
 .settings-location-input {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     font-size: 11px;
@@ -2185,34 +1864,6 @@ body.dev-mode .dev-only { display: block; }
 }
 
 
-.font-pick {
-    width: 34px;
-    height: 30px;
-    border-radius: 8px;
-    border: 1.5px solid transparent;
-    background: rgba(255,255,255,0.06);
-    cursor: pointer;
-    opacity: 0.4;
-    transition: opacity 0.2s, transform 0.2s var(--spring-easing), border-color 0.2s, background 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.9);
-    line-height: 1;
-}
-
-.font-pick:hover {
-    opacity: 0.8;
-    transform: scale(1.06);
-}
-
-.font-pick.active {
-    opacity: 1;
-    border-color: rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.12);
-}
 
 /* PAST DAY CARDS */
 .day-card.past {
@@ -2241,7 +1892,7 @@ body.dev-mode .dev-only { display: block; }
     bottom: 0;
     left: 2%;
     width: 96%;
-    height: 12px;
+    height: 6px;
     z-index: 500;
     background: transparent;
     pointer-events: none;
@@ -2249,18 +1900,50 @@ body.dev-mode .dev-only { display: block; }
 }
 .year-bar-ghost {
     position: absolute;
-    top: 0;
+    top: -12px;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% + 16px);
+    background: transparent;
+    pointer-events: auto;
+    cursor: pointer;
+}
+.year-bar-ghost::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    width: 100%;
+    height: 6px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     mix-blend-mode: multiply;
 }
+.year-bar-pct-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: #c580fb;
+    white-space: nowrap;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    pointer-events: none;
+    z-index: 502;
+}
+.year-bar-ghost:hover ~ .year-bar-pct-tooltip {
+    display: block;
+}
 .year-bar-fill {
     height: 100%;
     background: #c580fb;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0;
     position: absolute;
     top: 0;
     left: 0;
@@ -2268,14 +1951,14 @@ body.dev-mode .dev-only { display: block; }
 }
 .year-bar-marker {
     position: absolute;
-    bottom: 14px;
+    bottom: 8px;
     transform: translateX(-50%);
     pointer-events: none;
     z-index: 501;
     transition: left 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .year-bar-label {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     font-family: 'Inter', sans-serif;
@@ -2295,16 +1978,24 @@ body.dev-mode .dev-only { display: block; }
 }
 
 /* Valley Year Bar Overrides */
-html.theme-valley .year-bar { left: 0; width: 100%; height: 8px; }
+html.theme-valley .year-bar { left: 0; width: 100%; height: 4px; }
 html.theme-valley .season-bracket { height: 7px; }
 html.theme-valley .season-tick { width: 2px; }
-html.theme-valley .year-bar-ghost {
+html.theme-valley .year-bar-ghost::after {
     background: rgba(0, 0, 0, 0.3);
     mix-blend-mode: multiply;
 }
+html.theme-valley .year-bar-pct-tooltip {
+    color: rgba(220, 180, 255, 0.9);
+    background: rgba(20, 10, 40, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+}
 html.theme-valley .year-bar-fill {
     background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
-    border-radius: 0 3px 3px 0;
+    border-radius: 0;
     box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
 }
 html.theme-valley .year-bar-marker { bottom: 2px; pointer-events: auto; }
@@ -2341,84 +2032,7 @@ html.theme-valley .year-bar-label {
     outline: 0.5px solid rgba(255, 255, 255, 0.1);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.3);
 }
-/* Minimal Year Bar Overrides */
-html.theme-minimal .year-bar { height: 48px; left: 2%; width: 96%; right: auto; }
-html.theme-minimal .year-bar-ghost { 
-    height: 4px; 
-    top: 24px; 
-    background: rgba(0, 0, 0, 0.2); 
-    border-radius: 2px; 
-    mix-blend-mode: multiply;
-}
-html.theme-minimal .year-bar-fill { 
-    height: 4px; 
-    top: 24px; 
-    background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
-    border-radius: 2px;
-    box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
-}
-html.theme-minimal .year-bar-marker { top: 24px; bottom: auto; transform: translateX(-50%); }
-html.theme-minimal .digit-scroll-container { display: none !important; }
-html.theme-minimal .pct-sign { display: none !important; }
 
-html.theme-minimal .year-bar-label {
-    background: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    overflow: visible !important;
-    height: auto !important;
-}
-html.theme-minimal .minimal-week-pill {
-    display: flex;
-    align-items: center;
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 501;
-    background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: 0.5px solid rgba(255, 255, 255, 0.1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.12);
-    border-radius: 12px;
-    padding: 5px 12px;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.4);
-}
-html.theme-minimal .minimal-week-pill .mini-day.current {
-    color: #c580fb;
-    font-weight: 800;
-}
-html.theme-minimal .week-info-top { display: none; }
-html.theme-minimal .week-days-row { gap: 10px; white-space: nowrap; font-size: 13px; font-weight: 700; }
-/* month-name styles for minimal are set above */
-html.theme-minimal .season-bracket {
-    height: 6px;
-    top: 24px;
-    bottom: auto;
-    transform: translateY(-100%);
-}
-html.theme-minimal .season-tick {
-    height: 100%;
-    top: 0;
-    width: 2px;
-    background: linear-gradient(to top, #c580fb var(--tick-fill), rgba(255, 255, 255, 0.15) var(--tick-fill));
-    opacity: 1;
-}
-html.theme-minimal .season-bracket.past .season-tick {
-    background: #c580fb;
-    opacity: 0.8;
-}
-html.theme-minimal .season-label { font-size: 8px; top: -10px; color: #c580fb; opacity: 0.6; font-weight: 700; }
-html.theme-minimal .season-bracket.past .season-label { opacity: 1; }
-
-.year-pct-minimal { display: none !important; }
 
 .digit-scroll {
     display: flex;
@@ -2454,7 +2068,8 @@ html.theme-minimal .season-bracket.past .season-label { opacity: 1; }
     position: absolute;
     bottom: 100%;
     height: 10px;
-    pointer-events: none;
+    pointer-events: auto;
+    cursor: pointer;
 }
 .season-tick {
     position: absolute;
@@ -2497,6 +2112,64 @@ html.theme-valley .season-bracket.past .season-tick {
 .season-bracket.past .season-label {
     opacity: 1;
 }
+
+/* Bar mode labels & dividers — shared across all modes */
+.bar-mode-label {
+    position: absolute;
+    bottom: 100%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(197, 128, 251, 0.3);
+    white-space: nowrap;
+    pointer-events: auto;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: opacity 0.4s ease;
+}
+.bar-mode-label.past { color: rgba(197, 128, 251, 0.6); }
+.bar-mode-label.current { color: rgba(197, 128, 251, 0.85); }
+
+.bar-mode-divider {
+    position: absolute;
+    bottom: 100%;
+    width: 2px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    z-index: 1;
+}
+.bar-mode-divider.past {
+    background: #c580fb;
+    opacity: 0.8;
+}
+
+html.theme-valley .bar-mode-divider {
+    background: rgba(0, 0, 0, 0.3);
+}
+html.theme-valley .bar-mode-divider.past {
+    background: #c580fb;
+    opacity: 0.8;
+}
+html.theme-valley .bar-mode-label {
+    color: rgba(255, 255, 255, 0.3);
+}
+html.theme-valley .bar-mode-label.past { color: rgba(255, 255, 255, 0.5); }
+html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
+
+
+.bar-sun-marker {
+    color: #f5a623 !important;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0;
+    margin-bottom: 16px;
+    opacity: 0.8;
+}
+
 
 /* Bottom watermark — Alcove-style fading text */
 .bottom-watermark {
@@ -2832,7 +2505,6 @@ html.theme-valley .season-bracket.past .season-tick {
 .capsule-send:hover { opacity: 1; transform: scale(1.02); }
 .capsule-send:active { transform: scale(0.96); }
 
-#mobile-time { display: none; }
 
 
 
@@ -2932,7 +2604,6 @@ html.theme-valley .season-bracket.past .season-tick {
     .day-main-row  { gap: 3px; }
 
     /* ── Hide desktop-only chrome ── */
-    .bottom-controls { display: none; }
     .city-tooltip    { display: none; }
     .capsule         { display: none; }
 
@@ -2946,28 +2617,6 @@ html.theme-valley .season-bracket.past .season-tick {
     /* ── Time ruler: collapse, hide all ruler elements ── */
     .time-ruler { display: none; }
 
-    /* ── Mobile clock pill: safe-area aware top ── */
-    #mobile-time {
-        display: block;
-        position: fixed;
-        top: max(16px, env(safe-area-inset-top, 16px));
-        left: 50%;
-        transform: translateX(-50%);
-        font-family: 'Inter', sans-serif;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        color: #7B52B0;
-        background: rgba(167,139,202,0.12);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 0.5px solid rgba(167,139,202,0.3);
-        border-radius: 20px;
-        padding: 4px 12px;
-        z-index: 9999;
-        pointer-events: none;
-        white-space: nowrap;
-    }
 
     /* ── Settings button: respect Dynamic Island / notch ── */
     .settings-btn {
@@ -3061,27 +2710,16 @@ html.theme-valley .season-bracket.past .season-tick {
 <button class="app-logo" id="app-logo" title="weekDash" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7"/></svg>
 </button>
-<div class="app-logo-popup" id="app-logo-popup">
-    <div class="logo-popup-title">psst — we have a Discord!</div>
-    <div class="logo-popup-sub">come hang out → <a href="#" target="_blank" rel="noopener">join the server</a></div>
-</div>
-<button class="bg-toggle" id="theme-quick-toggle" title="Cycle theme: Valley → Minimal">
-    <div class="bg-toggle-icon icon-theme-valley">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7"/></svg>
-    </div>
-    <div class="bg-toggle-icon icon-theme-minimal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-    </div>
-    <div class="bg-toggle-knob"></div>
-</button>
-<button class="season-flip-btn" id="season-flip-btn" title="Flip seasons above/below">
+<button class="season-flip-btn" id="season-flip-btn" title="Toggle bottom bar">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="7 3 12 8 17 3"/><polyline points="7 21 12 16 17 21"/>
     </svg>
 </button>
 <div class="font-test-switch" id="font-test-switch">
     <button class="ft-btn" data-font-family="'Caveat', cursive" data-font-weight="400" title="Caveat (current)" style="font-family:'Caveat',cursive;font-weight:400;">Aa</button>
-    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="400" title="Lexend" style="font-family:'Lexend',sans-serif;font-weight:400;font-size:10px;">Aa</button>
+    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="300" title="Lexend Light" style="font-family:'Lexend',sans-serif;font-weight:300;font-size:10px;">Aa</button>
+    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="200" title="Lexend Extra Light" style="font-family:'Lexend',sans-serif;font-weight:200;font-size:10px;">Aa</button>
+    <button class="ft-btn" data-font-family="-apple-system, 'SF Pro', 'SF Pro Text', system-ui, sans-serif" data-font-weight="400" title="SF Pro" style="font-family:-apple-system,'SF Pro','SF Pro Text',system-ui,sans-serif;font-weight:400;font-size:10px;">Aa</button>
     <button class="ft-btn" data-font-family="'Google Sans', sans-serif" data-font-weight="400" title="Google Sans" style="font-family:'Google Sans',sans-serif;font-weight:400;font-size:10px;">Aa</button>
     <div class="ft-popup" id="ft-popup"></div>
 </div>
@@ -3129,27 +2767,12 @@ html.theme-valley .season-bracket.past .season-tick {
         </div>
     </div>
     <div>
-        <div class="settings-section-label">Note Font</div>
-        <div class="settings-row" id="font-picker">
-            <div class="font-pick active" data-font="caveat" style="font-family:'Caveat',cursive;">Aa</div>
-            <div class="font-pick" data-font="sf-mono" style="font-family:'SF Mono','SFMono-Regular',ui-monospace,monospace;">Aa</div>
-            <div class="font-pick" data-font="fraunces" style="font-family:'Fraunces',serif;">Aa</div>
-        </div>
-    </div>
-    <div>
         <div class="settings-section-label">Text Size</div>
         <div class="settings-toggle" id="text-size-toggle">
             <button class="settings-toggle-btn" data-size="XS" style="font-size:7px;">XS</button>
             <button class="settings-toggle-btn" data-size="S" style="font-size:8px;">S</button>
             <button class="settings-toggle-btn active" data-size="M" style="font-size:10px;">M</button>
             <button class="settings-toggle-btn" data-size="L" style="font-size:12px;">L</button>
-        </div>
-    </div>
-    <div style="margin-top:4px;" id="theme-settings-section" class="dev-only">
-        <div class="settings-section-label">Theme</div>
-        <div class="settings-toggle" id="ruler-toggle-picker">
-            <button class="settings-toggle-btn active" data-theme="valley">Valley</button>
-            <button class="settings-toggle-btn" data-theme="minimal">Minimal</button>
         </div>
     </div>
     <div class="settings-divider"></div>
@@ -3184,12 +2807,9 @@ html.theme-valley .season-bracket.past .season-tick {
 
 
 <div class="dock-wrapper">
-    <div id="mobile-time"></div>
     <div class="dock-row">
         <header class="header-container" id="header-area">
-            <div class="header-time" id="header-time"></div>
             <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
-            <div class="greeting-sub" id="greeting-sub"></div>
         </header>
         <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div id="active-day-light"></div>
@@ -3199,9 +2819,6 @@ html.theme-valley .season-bracket.past .season-tick {
     <div class="weather-row" id="weather"></div>
 </div>
 
-<div class="bottom-controls">
-    <button class="lang-btn" id="lang-toggle" onclick="cycleLang()">Language: EN</button>
-</div>
 
 <div class="city-tooltip" id="city-display">Detecting...</div>
 
@@ -3294,7 +2911,6 @@ html.theme-valley .season-bracket.past .season-tick {
     function applyBgGeo(mode, noSave = false) {
         geoModes.forEach(m => document.body.classList.remove('bg-geo-' + m));
         document.body.classList.add('bg-geo-' + mode);
-        document.querySelectorAll('.geo-switch-btn').forEach(b => b.classList.toggle('active', b.dataset.geo === mode));
         currentGeo = mode;
         if (mode === 'mesh') initMeshBg();
         drawBgGeo();
@@ -3309,11 +2925,134 @@ html.theme-valley .season-bracket.past .season-tick {
     /* ============================================================
        LANGUAGE SYSTEM: EN / ES / PT (3-way cycle)
     ============================================================ */
+    // ---- IndexedDB for media blobs ----
+    const mediaDB = (function() {
+        const DB_NAME = 'aura_media';
+        const STORE = 'blobs';
+        let dbPromise;
+        function open() {
+            if (!dbPromise) {
+                dbPromise = new Promise((resolve, reject) => {
+                    const req = indexedDB.open(DB_NAME, 1);
+                    req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            }
+            return dbPromise;
+        }
+        return {
+            async put(key, data) {
+                const db = await open();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE, 'readwrite');
+                    tx.objectStore(STORE).put(data, key);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            },
+            async get(key) {
+                const db = await open();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE, 'readonly');
+                    const req = tx.objectStore(STORE).get(key);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            },
+            async del(key) {
+                const db = await open();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE, 'readwrite');
+                    tx.objectStore(STORE).delete(key);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            },
+            async keys() {
+                const db = await open();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE, 'readonly');
+                    const req = tx.objectStore(STORE).getAllKeys();
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                });
+            }
+        };
+    })();
+
     const LANGS = ['en', 'es', 'pt'];
     const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
     let lang = LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en';
     const dock = document.getElementById('dock');
     let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
+    const PAGE_COUNT = 4;
+    let currentPage = parseInt(localStorage.getItem('aura_current_page') || '0', 10);
+    if (isNaN(currentPage) || currentPage < 0 || currentPage >= PAGE_COUNT) currentPage = 0;
+
+    // Ensure all notes have a page property
+    notes.forEach(n => { if (n.page == null) n.page = 0; });
+
+    function switchPage(page) {
+        if (page === currentPage) return;
+        clearSelection();
+        currentPage = page;
+        localStorage.setItem('aura_current_page', String(page));
+        // Hide/show notes based on page
+        document.querySelectorAll('.note').forEach(el => {
+            const d = notes.find(n => n.id === el.id);
+            el.style.display = (d && d.page === currentPage) ? '' : 'none';
+        });
+        renderPageDots();
+    }
+
+    let pageDotShape = localStorage.getItem('aura_page_dot_shape') || 'rect';
+
+    function renderPageDots() {
+        let container = document.getElementById('page-dots');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'page-dots';
+            container.id = 'page-dots';
+            document.body.appendChild(container);
+        }
+        container.className = 'page-dots' + (pageDotShape === 'circle' ? ' circles' : '');
+        container.innerHTML = '';
+        for (let i = 0; i < PAGE_COUNT; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'page-dot' + (i === currentPage ? ' active' : '');
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                switchPage(i);
+            });
+            container.appendChild(dot);
+        }
+    }
+    renderPageDots();
+
+    // Shape toggle button
+    (function() {
+        const btn = document.createElement('button');
+        btn.className = 'page-shape-toggle';
+        btn.title = 'Toggle dot shape';
+        function updateIcon() {
+            if (pageDotShape === 'circle') {
+                btn.innerHTML = '<svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="5"/></svg>';
+            } else {
+                btn.innerHTML = '<svg viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" rx="3"/></svg>';
+            }
+        }
+        updateIcon();
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pageDotShape = pageDotShape === 'rect' ? 'circle' : 'rect';
+            localStorage.setItem('aura_page_dot_shape', pageDotShape);
+            renderPageDots();
+            updateIcon();
+        });
+        document.body.appendChild(btn);
+    })();
+
     let selectedNoteIds = new Set();
     const selRect = document.getElementById('selection-rect');
     let isSelecting = false;
@@ -3356,9 +3095,10 @@ html.theme-valley .season-bracket.past .season-tick {
                 id: 'n' + Date.now(),
                 x: mousePos.x - 100,
                 y: mousePos.y - 20,
-                text: text, // Keep full text for linkify
-                displayTitle: domain, // We'll use this if we wanted a shorter title, but let's just use linkify
-                zIndex: ++topZ
+                text: text,
+                displayTitle: domain,
+                zIndex: ++topZ,
+                page: currentPage
             };
             // Actually, user wants trimmed text in the note.
             newNote.text = domain; 
@@ -3407,6 +3147,64 @@ html.theme-valley .season-bracket.past .season-tick {
             }
         });
     }
+
+    // ---- COPY / PASTE SELECTED NOTES ----
+    let copiedNotes = null;
+
+    window.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.contentEditable === 'true') return;
+
+        // Cmd/Ctrl+C — copy selected notes
+        if ((e.metaKey || e.ctrlKey) && e.key === 'c' && selectedNoteIds.size > 0) {
+            e.preventDefault();
+            const selectedData = notes.filter(n => selectedNoteIds.has(n.id));
+            if (!selectedData.length) return;
+            // Store copies with relative positions (offset from the group's top-left)
+            const minX = Math.min(...selectedData.map(n => n.x));
+            const minY = Math.min(...selectedData.map(n => n.y));
+            copiedNotes = selectedData.map(n => ({
+                text: n.text,
+                color: n.color,
+                imageData: n.imageData,
+                w: n.w,
+                h: n.h,
+                manualResize: n.manualResize,
+                ox: n.x - minX,
+                oy: n.y - minY,
+            }));
+            return;
+        }
+
+        // Cmd/Ctrl+V — paste copied notes at mouse position
+        if ((e.metaKey || e.ctrlKey) && e.key === 'v' && copiedNotes) {
+            e.preventDefault();
+            clearSelection();
+            const baseX = mousePos.x - 20;
+            const baseY = mousePos.y - 20;
+            copiedNotes.forEach(src => {
+                const n = {
+                    id: 'n' + Date.now() + Math.random().toString(36).slice(2, 6),
+                    x: baseX + src.ox,
+                    y: baseY + src.oy,
+                    text: src.text,
+                    color: src.color,
+                    w: src.w,
+                    h: src.h,
+                    manualResize: src.manualResize,
+                    imageData: src.imageData,
+                    zIndex: ++topZ,
+                    page: currentPage,
+                };
+                notes.push(n);
+                createNote(n);
+                selectedNoteIds.add(n.id);
+                const el = document.getElementById(n.id);
+                if (el) el.classList.add('selected');
+            });
+            save();
+            return;
+        }
+    });
 
     // ---- SELECTION RECTANGLE ON WINDOW CLICK ----
     window.addEventListener('mousedown', (e) => {
@@ -3488,91 +3286,27 @@ html.theme-valley .season-bracket.past .season-tick {
         selRect.style.display = 'none';
     });
 
-    /* ============================================================
-       GREETINGS — simple main, funny subs
-    ============================================================ */
-
-    // Main greeting: simple, warm, uses day name where it feels right
-    function getMainGreeting(lang, slot, dayName) {
+    function getMainGreeting(lang, slot) {
         const map = {
-            en: {
-                morning:   `Good morning.`,
-                afternoon: `Good afternoon.`,
-                evening:   `Good evening.`,
-                night:     `Good night.`,
-            },
-            es: {
-                morning:   `Buenos días.`,
-                afternoon: `Buenas tardes.`,
-                evening:   `Buenas noches.`,
-                night:     `Buenas noches.`,
-            },
-            pt: {
-                morning:   `Bom dia.`,
-                afternoon: `Boa tarde.`,
-                evening:   `Boa noite.`,
-                night:     `Boa noite.`,
-            },
+            en: { morning: 'Good morning.', afternoon: 'Good afternoon.', evening: 'Good evening.', night: 'Good night.' },
+            es: { morning: 'Buenos días.', afternoon: 'Buenas tardes.', evening: 'Buenas noches.', night: 'Buenas noches.' },
+            pt: { morning: 'Bom dia.', afternoon: 'Boa tarde.', evening: 'Boa noite.', night: 'Boa noite.' },
         };
         return map[lang][slot] || map[lang].morning;
     }
 
-    // Subs stay funny & rotational
-    const greetingSubs = {
-        en: {
-            dawn:      ["Can't sleep? Neither can your inbox.", "The birds aren't even awake yet. You good?", "Early bird gets the coffee. Go."],
-            morning:   ["Fully charged. Let's pretend.", "Coffee first. Ambitions second.", "Today's forecast: unclear, like your plans.", "Still half asleep? Same energy here."],
-            lateAM:    ["Lunch o'clock is approaching. Stay strong.", "The morning's not over. Technically.", "Still morning. Barely."],
-            noon:      ["Midday. Peak confusion hours.", "It's noon somewhere. Actually it's here.", "Halfway through. You can do this. Probably."],
-            afternoon: ["4pm slump incoming. You've been warned.", "Time is flying. Unlike your productivity.", "Still got it. Maybe."],
-            evening:   ["Golden hour. Your ideas are finally good.", "Almost done. With the day, at least.", "Dinner soon? Your stomach says yes."],
-            night:     ["Should you be asleep? Asking for science.", "Late-night ideas hit different. Unfortunately.", "This is fine. Everything is fine."],
-        },
-        es: {
-            dawn:      ["¿No puedes dormir? Tu bandeja tampoco.", "Ni los pájaros están despiertos. ¿Todo bien?", "El que madruga, toma el café primero."],
-            morning:   ["El café antes que las ambiciones.", "Hoy: confusión moderada y posibles logros.", "Cargado al 40%. Suficiente por agora.", "Buenos días. Relativo."],
-            lateAM:    ["El almuerzo se acerca. Aguanta.", "Técnicamente todavía es mañana.", "La mañana no se ha rendido. Tú tampoco."],
-            noon:      ["Mediodía. Hora pico del caos.", "Aquí es donde el café ya no ayuda.", "Mitad del día. Mitad de las excusas."],
-            afternoon: ["El bajón de las 4pm viene en camino.", "El tiempo vuela. Tu lista de pendientes no.", "¿Productivo? Eso está por verse."],
-            evening:   ["Hora dorada. Ideas finalmente decentes.", "La cena no se va a hacer sola.", "Casi terminas. El día, al menos."],
-            night:     ["¿No deberías estar durmiendo? La ciencia pregunta.", "Ideas de madrugada: arriesgadas. Inevitables.", "Todo está bien. Completamente bien."],
-        },
-        pt: {
-            dawn:      ["Não consegue dormir? Sua caixa de entrada também não.", "Nem os pássaros acordaram ainda. Tá bem?", "Quem madruga toma café primeiro."],
-            morning:   ["Café antes das ambições. Sempre.", "Previsão de hoje: confusão com chance de produtividade.", "Carregando... 40%. Por enquanto basta.", "Bom dia. Relativamente falando."],
-            lateAM:    ["O almoço está chegando. Segura.", "Tecnicamente ainda é manhã.", "A manhã ainda não desistiu. Você também não."],
-            noon:      ["Meio-dia. Horário de pico do caos.", "É aqui que o café já não funciona mais.", "Metade do dia. Metade das desculpas."],
-            afternoon: ["A queda das 16h vem aí. Avisado.", "O tempo voa. Sua lista de tarefas não.", "Produtivo? A ver."],
-            evening:   ["Hora dourada. Suas ideias finalmente prestam.", "O jantar não vai se fazer sozinho.", "Quase terminou. O dia, pelo menos."],
-            night:     ["Não deveria estar dormindo? Pergunta a ciência.", "Ideias de madrugada: arriscadas. Inevitáveis.", "Tá tudo bem. Completamente bem."],
-        }
-    };
-
     function getTimeSlot(hour) {
         if (hour >= 5 && hour < 12)  return 'morning';
         if (hour >= 12 && hour < 20) return 'afternoon';
-        return 'night'; // Covers 20:00 - 04:59
-    }
-
-    // Pick a sub greeting (rotates every 10 minutes)
-    function getSubGreeting(slot) {
-        const subs = greetingSubs[lang][slot];
-        const minuteBucket = Math.floor(Date.now() / (10 * 60 * 1000));
-        return subs[minuteBucket % subs.length];
+        return 'night';
     }
 
     function updateHeader() {
         const now = new Date();
-        const hour = now.getHours();
-        const locale = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'pt-BR';
-
-        const slot = getTimeSlot(hour);
-        const dayName = now.toLocaleDateString(locale, { weekday: 'long' });
+        const slot = getTimeSlot(now.getHours());
         const greetEl = document.getElementById('greeting');
         if (!greetEl) return;
-        greetEl.textContent = getMainGreeting(lang, slot, dayName);
-        const subEl = document.getElementById('greeting-sub');
-        if (subEl) subEl.textContent = getSubGreeting(slot);
+        greetEl.textContent = getMainGreeting(lang, slot);
     }
 
     function cycleLang() {
@@ -3580,16 +3314,14 @@ html.theme-valley .season-bracket.past .season-tick {
         const nextLang = LANGS[(idx + 1) % LANGS.length];
         applyLang(nextLang);
 
-        // Animate greeting
         const greetEl = document.getElementById('greeting');
         if (greetEl) {
             greetEl.classList.remove('lang-switch');
-            void greetEl.offsetWidth; // reflow
+            void greetEl.offsetWidth;
             greetEl.classList.add('lang-switch');
         }
     }
 
-    // Clicking the greeting cycles language
     document.getElementById('greeting').addEventListener('click', () => cycleLang());
 
     /* ============================================================
@@ -3614,6 +3346,57 @@ html.theme-valley .season-bracket.past .season-tick {
             content.innerHTML = linkify(text);
             content.closest('.note').classList.remove('spotify-note');
         }
+    }
+
+    function wrapNote(note, data) {
+        if (data.imageData) return;
+        if (note.classList.contains('spotify-note')) return;
+        const content = note.querySelector('.note-content');
+        if (!content) return;
+        const text = data.text || '';
+        if (!text.trim()) return;
+
+        // Always clear fixed height so it auto-sizes to content
+        note.style.height = '';
+        delete data.h;
+
+        if (data.manualResize) return;
+
+        const lines = text.split('\n');
+
+        // Single line (no explicit newlines) — let CSS fit-content + max-width handle it
+        if (lines.length <= 1) {
+            note.style.width = '';
+            delete data.w;
+            return;
+        }
+
+        // Multi-line: measure the longest line and size to fit
+        const cs = getComputedStyle(content);
+        const mirror = document.createElement('div');
+        mirror.style.cssText = 'position:fixed;top:-9999px;left:-9999px;white-space:pre;visibility:hidden;pointer-events:none;';
+        mirror.style.fontFamily = cs.fontFamily;
+        mirror.style.fontSize = cs.fontSize;
+        mirror.style.fontWeight = cs.fontWeight;
+        mirror.style.lineHeight = cs.lineHeight;
+        mirror.style.letterSpacing = cs.letterSpacing;
+        document.body.appendChild(mirror);
+
+        const NOTE_PAD = 32;
+        const NOTE_MAX = 568;
+        const NOTE_MIN = 80;
+
+        let maxW = 0;
+        lines.forEach(line => {
+            mirror.textContent = line || ' ';
+            maxW = Math.max(maxW, mirror.getBoundingClientRect().width);
+        });
+        mirror.remove();
+
+        const edgeMax = Math.max(NOTE_MIN, window.innerWidth - data.x - 16);
+        const w = Math.max(Math.min(Math.ceil(maxW) + NOTE_PAD, NOTE_MAX + NOTE_PAD, edgeMax), NOTE_MIN);
+        note.style.width = w + 'px';
+        data.w = w;
     }
 
     function linkify(text) {
@@ -3641,9 +3424,7 @@ html.theme-valley .season-bracket.past .season-tick {
         const numDays = isMobile ? 5 : 7;
         const weekStart = new Date(now);
         weekStart.setHours(0, 0, 0, 0);
-        const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon, ...6=Sat
-        const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-        weekStart.setDate(now.getDate() + daysToMonday + dockOffset);
+        weekStart.setDate(now.getDate() + dockOffset);
 
         const dock = document.getElementById('dock');
         dock.innerHTML = '';
@@ -3665,7 +3446,6 @@ html.theme-valley .season-bracket.past .season-tick {
                 <div class="day-main-row">
                     <span class="day-number">${date.getDate()}</span>
                 </div>
-                <div class="day-weather-hover" data-weather-date="${dateStr}"></div>
             `;
             dock.appendChild(card);
             if (isToday) {
@@ -3848,15 +3628,6 @@ html.theme-valley .season-bracket.past .season-tick {
     }
 
 
-    function updateTimeline() {
-        const now = new Date();
-        const timeStr = formatTime(now.getHours(), now.getMinutes());
-        const headerTime = document.getElementById('header-time');
-        if (headerTime) headerTime.textContent = timeStr;
-        const mobileTime = document.getElementById('mobile-time');
-        if (mobileTime) mobileTime.textContent = timeStr;
-    }
-
     function updateWatermark() {
         document.getElementById('bottom-watermark').textContent = 'weekdash';
     }
@@ -3871,12 +3642,7 @@ html.theme-valley .season-bracket.past .season-tick {
             b.classList.toggle('active', b.dataset.lang === lang);
         });
 
-        // Update bottom button
-        const langToggle = document.getElementById('lang-toggle');
-        if (langToggle) langToggle.textContent = `Language: ${LANG_LABELS[lang]}`;
-
         updateHeader();
-        updateTimeline();
         initDock();
         updateWatermark();
         if (window.updateYearBarLang) window.updateYearBarLang();
@@ -3995,12 +3761,42 @@ function createNote(data, autoFocus = false) {
 // ---- IMAGE NOTE ----
         if (data.imageData) {
             note.classList.add('image-note');
-            const img = document.createElement('img');
-            img.className = 'note-image';
-            img.src = data.imageData;
-            img.draggable = false;
-            img.ondragstart = () => false;
-            note.insertBefore(img, content);
+            if (data.imageData.startsWith('data:video/')) {
+                const vid = document.createElement('video');
+                vid.className = 'note-image';
+                vid.src = data.imageData;
+                vid.loop = true;
+                vid.muted = true;
+                vid.playsInline = true;
+                vid.autoplay = false;
+                vid.draggable = false;
+                vid.ondragstart = () => false;
+                note.insertBefore(vid, content);
+
+                const playBtn = document.createElement('button');
+                playBtn.className = 'video-play-btn';
+                const pauseIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`;
+                const playIcon = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+                playBtn.innerHTML = playIcon;
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (vid.paused) {
+                        vid.play();
+                        playBtn.innerHTML = pauseIcon;
+                    } else {
+                        vid.pause();
+                        playBtn.innerHTML = playIcon;
+                    }
+                });
+                note.insertBefore(playBtn, content);
+            } else {
+                const img = document.createElement('img');
+                img.className = 'note-image';
+                img.src = data.imageData;
+                img.draggable = false;
+                img.ondragstart = () => false;
+                note.insertBefore(img, content);
+            }
         }
 
 
@@ -4024,13 +3820,13 @@ function createNote(data, autoFocus = false) {
         closeBtn.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             e.preventDefault();
+            if (data.imageData) mediaDB.del('media_' + data.id);
             data._deleted = true;
             note.remove();
             notes = notes.filter(n => n.id !== data.id);
             document.body.classList.remove('note-editing-mode');
             activeNoteRef = { note: null, data: null };
             document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
-            document.querySelectorAll('.note-edit-tip').forEach(el => el.remove());
             save();
         });
 
@@ -4125,6 +3921,7 @@ function createNote(data, autoFocus = false) {
             if (e.button !== 0) return;
             if (e.target.closest('.note-resize-handle')) return;
             if (e.target.closest('.note-close')) return;
+            if (e.target.closest('.video-play-btn')) return;
             if (note.querySelector('.note-edit-ta')) return;
             if (e.target.tagName === 'A') return;
             if (window._lastFileDrop && Date.now() - window._lastFileDrop < 400) return;
@@ -4151,6 +3948,7 @@ function createNote(data, autoFocus = false) {
         note.addEventListener('touchstart', (e) => {
             if (e.target.closest('.note-resize-handle')) return;
             if (e.target.closest('.note-close')) return;
+            if (e.target.closest('.video-play-btn')) return;
             if (note.querySelector('.note-edit-ta')) return;
             if (e.target.tagName === 'A') return;
             if (window._lastFileDrop && Date.now() - window._lastFileDrop < 400) return;
@@ -4180,8 +3978,8 @@ function createNote(data, autoFocus = false) {
 
             note.style.height = startH + 'px';
 
-            const minW = 80;
-            const minH = 40;
+            const minW = 20;
+            const minH = 20;
             const onMove = (me) => {
                 if (me.buttons === 0) { onUp(); return; }
                 const newW = Math.max(minW, startW + (me.clientX - startX));
@@ -4249,16 +4047,6 @@ function createNote(data, autoFocus = false) {
             content.style.display = 'none';
             note.insertBefore(ta, content);
 
-            // Tip shown only on new (empty) notes
-            let tipEl = null;
-            if (!data.text) {
-                tipEl = document.createElement('div');
-                tipEl.className = 'note-edit-tip';
-                tipEl.textContent = 'shift + enter for new line';
-                document.body.appendChild(tipEl);
-                ta.addEventListener('input', () => { if (tipEl) { tipEl.remove(); tipEl = null; } }, { once: true });
-            }
-
             // Mirror div to measure natural text width (longest line)
             const mirror = document.createElement('div');
             mirror.style.cssText = 'position:fixed;top:-9999px;left:-9999px;white-space:pre;visibility:hidden;pointer-events:none;';
@@ -4274,11 +4062,14 @@ function createNote(data, autoFocus = false) {
 
             const taResize = () => {
                 if (!data.manualResize) {
-                    const longestLine = (ta.value || ' ').split('\n').reduce((a, b) => a.length > b.length ? a : b, '');
-                    mirror.textContent = longestLine || ' ';
-                    const naturalW = mirror.getBoundingClientRect().width;
+                    const lines = (ta.value || ' ').split('\n');
+                    let maxW = 0;
+                    lines.forEach(line => {
+                        mirror.textContent = line || ' ';
+                        maxW = Math.max(maxW, mirror.getBoundingClientRect().width);
+                    });
                     const edgeMax = Math.max(NOTE_MIN, window.innerWidth - data.x - 16);
-                    note.style.width = Math.max(Math.min(Math.ceil(naturalW) + NOTE_PAD, NOTE_MAX + NOTE_PAD, edgeMax), NOTE_MIN) + 'px';
+                    note.style.width = Math.max(Math.min(Math.ceil(maxW) + NOTE_PAD, NOTE_MAX + NOTE_PAD, edgeMax), NOTE_MIN) + 'px';
                 }
                 ta.style.height = 'auto';
                 ta.style.height = ta.scrollHeight + 'px';
@@ -4330,7 +4121,6 @@ function createNote(data, autoFocus = false) {
 
             ta.onblur = () => {
                 mirror.remove();
-                if (tipEl) { tipEl.remove(); tipEl = null; }
                 if (data._deleted) {
                     document.body.classList.remove('note-editing-mode');
                     activeNoteRef = { note: null, data: null };
@@ -4356,19 +4146,8 @@ function createNote(data, autoFocus = false) {
                     save();
                     return;
                 }
-                if (!data.manualResize) {
-                    note.style.width = '';
-                    delete data.w;
-                    requestAnimationFrame(() => {
-                        if (document.getElementById(data.id)) {
-                            data.w = Math.ceil(note.getBoundingClientRect().width);
-                            note.style.width = data.w + 'px';
-                            save();
-                        }
-                    });
-                } else {
-                    save();
-                }
+                wrapNote(note, data);
+                save();
             };
         };
 
@@ -4387,34 +4166,61 @@ function createNote(data, autoFocus = false) {
 
     window.addEventListener('drop', (e) => {
         if (e.target.closest('.dock-wrapper')) return;
-        const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
+        const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/') || f.type.startsWith('video/'));
         if (!file) return;
         e.preventDefault();
 
         const reader = new FileReader();
         reader.onload = (ev) => {
-            const tempImg = new Image();
-            tempImg.onload = () => {
-                const maxW = 320, maxH = 320;
-                let w = tempImg.naturalWidth, h = tempImg.naturalHeight;
-                if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
-                if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
-                const data = {
-                    id: 'n' + Date.now(),
-                    x: Math.round(e.clientX - w / 2),
-                    y: Math.round(e.clientY - h / 2),
-                    text: '',
-                    imageData: ev.target.result,
-                    w, h,
-                    manualResize: true,
-                    zIndex: ++topZ
+            if (file.type.startsWith('video/')) {
+                const vid = document.createElement('video');
+                vid.onloadedmetadata = () => {
+                    const maxW = 320, maxH = 320;
+                    let w = vid.videoWidth, h = vid.videoHeight;
+                    if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+                    if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+                    const data = {
+                        id: 'n' + Date.now(),
+                        x: Math.round(e.clientX - w / 2),
+                        y: Math.round(e.clientY - h / 2),
+                        text: '',
+                        imageData: ev.target.result,
+                        w, h,
+                        manualResize: true,
+                        zIndex: ++topZ,
+                        page: currentPage
+                    };
+                    notes.push(data);
+                    window._lastFileDrop = Date.now();
+                    createNote(data);
+                    save();
                 };
-                notes.push(data);
-                window._lastFileDrop = Date.now();
-                createNote(data);
-                save();
-            };
-            tempImg.src = ev.target.result;
+                vid.src = ev.target.result;
+            } else {
+                const tempImg = new Image();
+                tempImg.onload = () => {
+                    const maxW = 320, maxH = 320;
+                    let w = tempImg.naturalWidth, h = tempImg.naturalHeight;
+                    if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+                    if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+                    const data = {
+                        id: 'n' + Date.now(),
+                        x: Math.round(e.clientX - w / 2),
+                        y: Math.round(e.clientY - h / 2),
+                        text: '',
+                        imageData: ev.target.result,
+                        w, h,
+                        manualResize: true,
+                        zIndex: ++topZ,
+                        page: currentPage
+                    };
+                    notes.push(data);
+                    window._lastFileDrop = Date.now();
+                    createNote(data);
+                    save();
+                };
+                tempImg.src = ev.target.result;
+            }
         };
         reader.readAsDataURL(file);
     });
@@ -4425,7 +4231,6 @@ function createNote(data, autoFocus = false) {
             !target.closest('.dock-wrapper') &&
             !target.closest('.settings-panel') &&
             !target.closest('.settings-btn') &&
-            !target.closest('.bg-toggle') &&
             !target.closest('.city-tooltip') &&
             !target.closest('.weather-tooltip') &&
             !target.closest('.note-arrow-bar') &&
@@ -4433,6 +4238,8 @@ function createNote(data, autoFocus = false) {
             !target.closest('.dev-modal') &&
             !target.closest('.capsule') &&
             !target.closest('.year-bar') &&
+            !target.closest('.page-dots') &&
+            !target.closest('.page-shape-toggle') &&
             target.tagName !== 'BUTTON' &&
             target.tagName !== 'INPUT' &&
             target.tagName !== 'A'
@@ -4442,7 +4249,8 @@ function createNote(data, autoFocus = false) {
                 x: x - 40,
                 y: y - 30,
                 text: '',
-                zIndex: ++topZ
+                zIndex: ++topZ,
+                page: currentPage
             };
             notes.push(n);
             createNote(n, true);
@@ -4502,7 +4310,8 @@ function createNote(data, autoFocus = false) {
                 x: cx - 60,
                 y: cy - 30,
                 text: '',
-                zIndex: ++topZ
+                zIndex: ++topZ,
+                page: currentPage
             };
             notes.push(n);
             const noteEl = createNote(n, true);
@@ -4525,6 +4334,8 @@ function createNote(data, autoFocus = false) {
         document.querySelectorAll('.note').forEach(el => {
             const d = notes.find(x => x.id === el.id);
             if (d) {
+                // Skip hidden notes (other pages) — their rect is 0
+                if (el.style.display === 'none') return;
                 d.x = parseInt(el.style.left);
                 d.y = parseInt(el.style.top);
                 if (d.manualResize) {
@@ -4535,13 +4346,23 @@ function createNote(data, autoFocus = false) {
                 d.zIndex = el.style.zIndex;
             }
         });
-        localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
+        // Store media blobs in IndexedDB, keep only ref key in localStorage
+        const toSave = notes.map(n => {
+            if (n.imageData && n.imageData.startsWith('data:')) {
+                const key = 'media_' + n.id;
+                mediaDB.put(key, n.imageData);
+                return { ...n, imageData: key };
+            }
+            return n;
+        });
+        localStorage.setItem('aura_notes_v3', JSON.stringify(toSave));
     }
 
     /* ============================================================
        MISC
     ============================================================ */
     function clearNotes() {
+        notes.forEach(n => { if (n.imageData) mediaDB.del('media_' + n.id); });
         document.querySelectorAll('.note').forEach(n => n.remove());
         notes = [];
         localStorage.removeItem('aura_notes_v3');
@@ -4561,7 +4382,7 @@ function createNote(data, autoFocus = false) {
     const devClose  = document.getElementById('dev-modal-close');
 
     devBtn.addEventListener('click', () => {
-        const snapshot = notes.map(d => {
+        const snapshot = notes.filter(d => (d.page || 0) === currentPage).map(d => {
             const el = document.getElementById(d.id);
             const rect = el ? el.getBoundingClientRect() : null;
             return {
@@ -4569,8 +4390,11 @@ function createNote(data, autoFocus = false) {
                 x: Math.round(d.x),
                 y: Math.round(d.y),
                 w: rect ? Math.round(rect.width) : d.w,
+                ...(d.h ? { h: d.h } : {}),
+                ...(d.manualResize ? { manualResize: true } : {}),
                 text: d.text,
                 ...(d.color && d.color !== 'default' ? { color: d.color } : {}),
+                ...(d.imageData ? { hasImage: true } : {}),
             };
         });
         devOutput.value = JSON.stringify(snapshot, null, 4);
@@ -4604,18 +4428,29 @@ function createNote(data, autoFocus = false) {
     initDock();
     initWeatherRow();
 
-    updateTimeline();
     updateHeader();
     updateWatermark();
     applyLang(lang);
     initWeatherPlaceholder();
-    notes.filter(n => !n.archived).forEach(n => {
-        createNote(n);
-    });
+    // Hydrate media from IndexedDB, then create notes
+    (async function() {
+        for (const n of notes.filter(n => !n.archived)) {
+            if (n.imageData && !n.imageData.startsWith('data:')) {
+                const blob = await mediaDB.get(n.imageData);
+                if (blob) n.imageData = blob;
+                else n.imageData = null; // media lost
+            }
+            createNote(n);
+            // Hide notes not on current page
+            if (n.page !== currentPage) {
+                const el = document.getElementById(n.id);
+                if (el) el.style.display = 'none';
+            }
+        }
+    })();
     setInterval(() => {
-        updateTimeline();
         updateHeader();
-    }, 10000);
+    }, 60000);
 
 
     // Kick off location + weather after first frame so UI is visible first
@@ -4626,32 +4461,54 @@ function createNote(data, autoFocus = false) {
 /* ============================================================
        SETTINGS PANEL
     ============================================================ */
-    // Season flip toggle
+    // Year bar hide toggle
     (function() {
         const btn = document.getElementById('season-flip-btn');
-        const key = 'aura_seasons_below';
-        let below = localStorage.getItem(key) === 'true';
+        const key = 'aura_year_bar_hidden';
+        let hidden = localStorage.getItem(key) === 'true';
         function apply() {
-            document.documentElement.classList.toggle('seasons-below', below);
+            document.documentElement.classList.toggle('year-bar-hidden', hidden);
         }
         apply();
         btn.addEventListener('click', () => {
-            below = !below;
-            localStorage.setItem(key, below);
+            hidden = !hidden;
+            localStorage.setItem(key, hidden);
             apply();
         });
     })();
 
-    // App logo → click to show info popup
+    // App logo → create week note
     (function() {
         const logo = document.getElementById('app-logo');
-        const popup = document.getElementById('app-logo-popup');
-        if (!logo || !popup) return;
-        let timer;
+        if (!logo) return;
         logo.addEventListener('click', () => {
-            popup.classList.add('show');
-            clearTimeout(timer);
-            timer = setTimeout(() => popup.classList.remove('show'), 5000);
+            const now = new Date();
+            const dayNames = { en: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], es: ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'], pt: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'] };
+            const names = dayNames[lang] || dayNames.en;
+            const todayIdx = (now.getDay() + 6) % 7; // 0=Mon
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - todayIdx);
+            const lines = names.map((name, i) => {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                const num = d.getDate();
+                const marker = i === todayIdx ? ' ●' : '';
+                return `${name} ${num}${marker}`;
+            });
+            const text = lines.join('\n');
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+            const n = {
+                id: 'n' + Date.now(),
+                x: cx - 60,
+                y: cy - 80,
+                text,
+                w: 120,
+                zIndex: ++topZ
+            };
+            notes.push(n);
+            createNote(n);
+            save();
         });
     })();
 
@@ -4787,28 +4644,16 @@ function createNote(data, autoFocus = false) {
     function reflowNotes() {
         document.querySelectorAll('.note').forEach(el => {
             const data = notes.find(n => n.id === el.id);
-            if (data && data.imageData) return; // skip image notes
-            el.style.width = '';
+            if (!data || data.imageData) return;
+            // Always clear fixed height so text doesn't overflow
             el.style.height = '';
-            if (data) { data.manualResize = false; delete data.w; delete data.h; }
+            delete data.h;
+            if (data.manualResize) return; // preserve user-chosen width
+            delete data.w;
+            el.style.width = '';
+            wrapNote(el, data);
         });
         save();
-        // Re-snap widths after layout settles with new font/size
-        requestAnimationFrame(() => snapNoteWidths());
-    }
-
-    function snapNoteWidths() {
-        let dirty = false;
-        document.querySelectorAll('.note').forEach(el => {
-            const data = notes.find(n => n.id === el.id);
-            if (data && data.imageData) return; // skip image notes
-            if (data && !data.w) {
-                data.w = Math.ceil(el.getBoundingClientRect().width);
-                el.style.width = data.w + 'px';
-                dirty = true;
-            }
-        });
-        if (dirty) save();
     }
 
     function applyNoteFont(key, noReflow = false) {
@@ -4816,17 +4661,10 @@ function createNote(data, autoFocus = false) {
         if (!font) return;
         document.documentElement.style.setProperty('--note-font', font);
         document.body.classList.toggle('note-font-sf-mono', key === 'sf-mono');
-        document.querySelectorAll('.font-pick').forEach(p => p.classList.remove('active'));
-        document.querySelector(`.font-pick[data-font="${key}"]`)?.classList.add('active');
         localStorage.setItem('aura_note_font', key);
         if (!noReflow) reflowNotes();
     }
 
-    document.getElementById('font-picker').addEventListener('click', (e) => {
-        const pick = e.target.closest('.font-pick');
-        if (!pick) return;
-        applyNoteFont(pick.dataset.font);
-    });
 
     // Text size
     const noteSizes   = { 'XS': '18px', 'S': '21px', 'M': '25px', 'L': '28px' };
@@ -4850,52 +4688,9 @@ function createNote(data, autoFocus = false) {
         applyNoteSize(btn.dataset.size);
     });
 
-    // Theme Toggle (valley / minimal)
-    const themeQuickToggle = document.getElementById('theme-quick-toggle');
-    const THEMES = ['valley', 'minimal'];
-    function applyTheme(theme) {
-        document.documentElement.classList.remove('theme-valley', 'theme-minimal');
-        if (theme === 'valley') document.documentElement.classList.add('theme-valley');
-        if (theme === 'minimal') document.documentElement.classList.add('theme-minimal');
-        document.querySelectorAll('#ruler-toggle-picker .settings-toggle-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.theme === theme);
-        });
-        if (themeQuickToggle) {
-            themeQuickToggle.classList.remove('toggle-valley', 'toggle-minimal');
-            if (theme === 'valley') themeQuickToggle.classList.add('toggle-valley');
-            if (theme === 'minimal') themeQuickToggle.classList.add('toggle-minimal');
-        }
-        localStorage.setItem('aura_theme', theme);
-    }
+    // Always apply valley theme
+    document.documentElement.classList.add('theme-valley');
 
-    document.getElementById('ruler-toggle-picker').addEventListener('click', (e) => {
-        const btn = e.target.closest('.settings-toggle-btn');
-        if (!btn || !btn.dataset.theme) return;
-        applyTheme(btn.dataset.theme);
-    });
-
-
-
-    if (themeQuickToggle) {
-        themeQuickToggle.addEventListener('click', () => {
-            const current = localStorage.getItem('aura_theme') || 'valley';
-            const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
-            applyTheme(next);
-        });
-    }
-
-    let savedTheme = localStorage.getItem('aura_theme') || 'valley';
-    if (!THEMES.includes(savedTheme)) savedTheme = 'valley';
-    applyTheme(savedTheme);
-
-    // Geo switch handler
-    const geoSwitch = document.getElementById('geo-switch');
-    if (geoSwitch) {
-        geoSwitch.addEventListener('click', (e) => {
-            const btn = e.target.closest('.geo-switch-btn');
-            if (btn) applyBgGeo(btn.dataset.geo);
-        });
-    }
     applyBgGeo(currentGeo, true);
 
 
@@ -4927,7 +4722,14 @@ function createNote(data, autoFocus = false) {
     })();
 
     // Snap note widths once fonts are loaded so they're stable across refreshes
-    document.fonts.ready.then(() => snapNoteWidths());
+    document.fonts.ready.then(() => {
+        document.querySelectorAll('.note').forEach(el => {
+            const data = notes.find(n => n.id === el.id);
+            if (!data || data.imageData || data.manualResize) return;
+            wrapNote(el, data);
+        });
+        save();
+    });
 
     /* ============================================================
        SEARCH OVERLAY — Google, ChatGPT, Claude
@@ -5017,6 +4819,7 @@ function createNote(data, autoFocus = false) {
         bar.innerHTML = `
             <div class="year-bar-ghost"></div>
             <div class="year-bar-fill" id="year-bar-fill"></div>
+            <div class="year-bar-pct-tooltip" id="year-bar-pct-tooltip"></div>
             <div class="year-bar-marker" id="year-bar-marker">
                 <div class="year-bar-label" id="year-bar-label">
                     <div class="digit-scroll-container" id="digit-scroll-container">
@@ -5027,7 +4830,6 @@ function createNote(data, autoFocus = false) {
                     </div>
                     <div class="week-label" id="week-label"></div>
                 </div>
-                <div class="year-pct-minimal" id="year-pct-minimal"></div>
                 <div class="year-bar-date-tooltip" id="year-bar-date-tooltip"></div>
             </div>`;
         document.body.appendChild(bar);
@@ -5049,7 +4851,7 @@ function createNote(data, autoFocus = false) {
             const t = Math.floor((n % 100) / 10);
             const o = n % 10;
             const hEl = document.getElementById('digit-hundreds'), tEl = document.getElementById('digit-tens'), oEl = document.getElementById('digit-ones');
-            const rowH = document.documentElement.classList.contains('theme-minimal') ? 16 : 22;
+            const rowH = 22;
             if (hEl) { hEl.style.width = h > 0 ? '9px' : '0'; hEl.style.opacity = h > 0 ? '1' : '0'; hEl.style.transform = `translateY(-${h * rowH}px)`; }
             if (tEl) { const showT = (h > 0 || t > 0); tEl.style.width = showT ? '9px' : '0'; tEl.style.opacity = showT ? '1' : '0'; tEl.style.transform = `translateY(-${t * rowH}px)`; }
             if (oEl) { oEl.style.transform = `translateY(-${o * rowH}px)`; }
@@ -5070,100 +4872,213 @@ function createNote(data, autoFocus = false) {
         const yr = new Date().getFullYear();
         const start = new Date(yr, 0, 1).getTime(), end = new Date(yr + 1, 0, 1).getTime(), span = end - start;
 
+        // Bar mode cycling: year → month → season → day
+        const MODES = ['year', 'season', 'quarter'];
+        let modeIdx = parseInt(localStorage.getItem('aura_year_bar_mode_idx') || '0', 10);
+        if (isNaN(modeIdx) || modeIdx < 0 || modeIdx >= MODES.length) modeIdx = 0;
+        function getModeRange() {
+            const now = new Date();
+            const mode = MODES[modeIdx];
+            if (mode === 'month') {
+                return {
+                    s: new Date(now.getFullYear(), now.getMonth(), 1).getTime(),
+                    e: new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime(),
+                };
+            }
+            if (mode === 'season') {
+                // Full year range — fill represents year progress, labels show season boundaries
+                return { s: start, e: end };
+            }
+            if (mode === 'quarter') {
+                const q = Math.floor(now.getMonth() / 3);
+                return {
+                    s: new Date(now.getFullYear(), q * 3, 1).getTime(),
+                    e: new Date(now.getFullYear(), q * 3 + 3, 1).getTime(),
+                };
+            }
+            if (mode === 'day') {
+                const sod = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                return { s: sod, e: sod + 86400000 };
+            }
+            return { s: start, e: end };
+        }
+
         // Render seasons
         const sD = [new Date(yr, 2, 20).getTime(), new Date(yr, 5, 21).getTime(), new Date(yr, 8, 22).getTime(), new Date(yr, 11, 21).getTime()];
         const seasons = [
             { name: 'Winter', s: start, e: sD[0] }, { name: 'Spring', s: sD[0], e: sD[1] }, { name: 'Summer', s: sD[1], e: sD[2] }, { name: 'Fall', s: sD[2], e: sD[3] }, { name: 'Winter', s: sD[3], e: end }
         ];
-        seasons.forEach((s, idx) => {
-            const sP = (s.s - start) / span * 100, eP = (s.e - start) / span * 100;
-            const bracket = document.createElement('div');
-            bracket.className = 'season-bracket' + (idx === 0 ? ' first-season' : '');
-            bracket.style.left = sP + '%'; bracket.style.width = (eP - sP) + '%';
-            bracket.dataset.startPct = sP;
-            
-            // Skip label for the last 'Winter' segment to avoid repetition at the end of the bar
-            const labelHtml = (idx === seasons.length - 1) ? '' : `<span class="season-label">${s.name}</span>`;
-            // Skip first divider (idx 0)
-            const tickHtml = (idx === 0) ? '' : `<div class="season-tick"></div>`;
-            bracket.innerHTML = `${tickHtml}${labelHtml}`;
-            bar.appendChild(bracket);
-        });
-
-        // Render months
         const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const curM = new Date().getMonth();
-        months.forEach((name, i) => {
-            const mS = new Date(yr, i, 1).getTime(), mE = new Date(yr, i + 1, 1).getTime();
-            const mMid = ((mS - start) + (mE - start)) / 2 / span * 100;
-            const lbl = document.createElement('div');
-            lbl.className = 'month-name' + (i === curM ? ' current' : (i < curM ? ' past' : ''));
-            lbl.style.left = mMid + '%'; lbl.textContent = name;
-            bar.appendChild(lbl);
-            // Add month divider (skip first month)
-            if (i > 0) {
-                const mStart = (mS - start) / span * 100;
-                const div = document.createElement('div');
-                div.className = 'month-divider' + (i <= curM ? ' past' : '');
-                div.style.left = mStart + '%';
-                bar.appendChild(div);
+
+        function clearBarLabels() {
+            bar.querySelectorAll('.season-bracket, .month-name, .month-divider, .bar-mode-label, .bar-mode-divider').forEach(el => el.remove());
+        }
+
+        function renderBarLabels() {
+            clearBarLabels();
+            const mode = MODES[modeIdx];
+            const now = new Date();
+
+            if (mode === 'year') {
+                // 12 month labels + dividers
+                const curM = now.getMonth();
+                months.forEach((name, i) => {
+                    const mS = new Date(yr, i, 1).getTime(), mE = new Date(yr, i + 1, 1).getTime();
+                    const midPct = ((mS - start) + (mE - start)) / 2 / span * 100;
+                    const lbl = document.createElement('div');
+                    lbl.className = 'bar-mode-label' + (i === curM ? ' current' : (i < curM ? ' past' : ''));
+                    lbl.style.left = midPct + '%';
+                    lbl.textContent = name;
+                    bar.appendChild(lbl);
+                    if (i > 0) {
+                        const mStart = (mS - start) / span * 100;
+                        const div = document.createElement('div');
+                        div.className = 'bar-mode-divider' + (i <= curM ? ' past' : '');
+                        div.style.left = mStart + '%';
+                        bar.appendChild(div);
+                    }
+                });
+            } else if (mode === 'month') {
+                // All days in current month
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                const curDay = now.getDate();
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const pct = (d - 1) / daysInMonth * 100;
+                    const midPct = (d - 0.5) / daysInMonth * 100;
+                    if (d > 1) {
+                        const div = document.createElement('div');
+                        div.className = 'bar-mode-divider' + (d <= curDay ? ' past' : '');
+                        div.style.left = pct + '%';
+                        bar.appendChild(div);
+                    }
+                    const lbl = document.createElement('div');
+                    lbl.className = 'bar-mode-label' + (d < curDay ? ' past' : '') + (d === curDay ? ' current' : '');
+                    lbl.style.left = midPct + '%';
+                    lbl.textContent = d;
+                    bar.appendChild(lbl);
+                }
+            } else if (mode === 'season') {
+                // Season labels + dividers using shared bar-mode elements
+                const nowT = now.getTime();
+                const curSi = nowT < sD[0] ? 0 : nowT < sD[1] ? 1 : nowT < sD[2] ? 2 : nowT < sD[3] ? 3 : 4;
+                seasons.forEach((s, idx) => {
+                    const sP = (s.s - start) / span * 100, eP = (s.e - start) / span * 100;
+                    const midPct = (sP + eP) / 2;
+                    // Divider at season boundary (skip first)
+                    if (idx > 0) {
+                        const div = document.createElement('div');
+                        div.className = 'bar-mode-divider' + (idx <= curSi ? ' past' : '');
+                        div.style.left = sP + '%';
+                        bar.appendChild(div);
+                    }
+                    // Label (skip last Winter duplicate)
+                    if (idx < seasons.length - 1) {
+                        const lbl = document.createElement('div');
+                        lbl.className = 'bar-mode-label' + (idx === curSi ? ' current' : (idx < curSi ? ' past' : ''));
+                        lbl.style.left = midPct + '%';
+                        lbl.textContent = s.name;
+                        bar.appendChild(lbl);
+                    }
+                });
+            } else if (mode === 'quarter') {
+                // Q1–Q4 labels + dividers
+                const curQ = Math.floor(now.getMonth() / 3);
+                for (let q = 0; q < 4; q++) {
+                    const qS = new Date(yr, q * 3, 1).getTime();
+                    const qE = new Date(yr, q * 3 + 3, 1).getTime();
+                    const sPct = (qS - start) / span * 100;
+                    const ePct = (qE - start) / span * 100;
+                    const midPct = (sPct + ePct) / 2;
+                    if (q > 0) {
+                        const div = document.createElement('div');
+                        div.className = 'bar-mode-divider' + (q <= curQ ? ' past' : '');
+                        div.style.left = sPct + '%';
+                        bar.appendChild(div);
+                    }
+                    const lbl = document.createElement('div');
+                    lbl.className = 'bar-mode-label' + (q === curQ ? ' current' : (q < curQ ? ' past' : ''));
+                    lbl.style.left = midPct + '%';
+                    lbl.textContent = 'Q' + (q + 1);
+                    bar.appendChild(lbl);
+                }
+            } else if (mode === 'day') {
+                // All 24 hour labels + dividers
+                const curHour = now.getHours();
+                for (let h = 0; h < 24; h++) {
+                    const pct = h / 24 * 100;
+                    const midPct = (h + 0.5) / 24 * 100;
+                    // Divider at each hour (skip 0)
+                    if (h > 0) {
+                        const div = document.createElement('div');
+                        div.className = 'bar-mode-divider' + (h <= curHour ? ' past' : '');
+                        div.style.left = pct + '%';
+                        bar.appendChild(div);
+                    }
+                        const lbl = document.createElement('div');
+                    lbl.className = 'bar-mode-label' + (h < curHour ? ' past' : '') + (h === curHour ? ' current' : '');
+                    lbl.style.left = midPct + '%';
+                    lbl.textContent = h;
+                    bar.appendChild(lbl);
+                }
+                // Sunrise & sunset markers
+                if (window.allSunTimes) {
+                    const rise = new Date(window.allSunTimes.sunrise[0]);
+                    const set = new Date(window.allSunTimes.sunset[0]);
+                    const risePct = (rise.getHours() + rise.getMinutes() / 60) / 24 * 100;
+                    const setPct = (set.getHours() + set.getMinutes() / 60) / 24 * 100;
+                    [{ pct: risePct, label: '☀↑' }, { pct: setPct, label: '☀↓' }].forEach(m => {
+                        const marker = document.createElement('div');
+                        marker.className = 'bar-mode-label bar-sun-marker';
+                        marker.style.left = m.pct + '%';
+                        marker.textContent = m.label;
+                        bar.appendChild(marker);
+                    });
+                }
             }
-        });
+        }
+
+        renderBarLabels();
 
         function update(forceRolling = false) {
-            const val = Math.max(0, Math.min(100, ((Date.now() - start) / span) * 100));
+            const now = Date.now();
+            const yearVal = Math.max(0, Math.min(100, ((now - start) / span) * 100));
+            const range = getModeRange();
+            const val = Math.max(0, Math.min(100, ((now - range.s) / (range.e - range.s)) * 100));
             const fillEl = document.getElementById('year-bar-fill');
             const markerEl = document.getElementById('year-bar-marker');
+            const isYear = MODES[modeIdx] === 'year';
             if (fillEl) fillEl.style.width = val.toFixed(2) + '%';
-            if (markerEl) markerEl.style.left = val.toFixed(2) + '%';
-
-            if (document.documentElement.classList.contains('theme-minimal')) {
-                const now = new Date();
-                const weekNum = getWeekNumber(now);
-                
-                // Get Monday and Sunday of current week without mutating 'now'
-                const day = now.getDay();
-                const diffToMon = (day === 0 ? -6 : 1) - day;
-                const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMon);
-                const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
-                
-                const fmt = (d) => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-                
-                // PT initials: S T Q Q S S D (Seg, Ter, Qua, Qui, Sex, Sáb, Dom)
-                const ptDays = ['S','T','Q','Q','S','S','D'];
-                const currentDayIdx = (new Date().getDay() + 6) % 7; // 0=Mon, 6=Sun
-                const daysHtml = ptDays.map((d, i) => `<span class="mini-day ${i === currentDayIdx ? 'current' : ''}">${d}</span>`).join('');
-
-                // Populate minimal week pill inside year bar
-                let minPill = document.getElementById('minimal-week-pill');
-                if (!minPill) {
-                    minPill = document.createElement('div');
-                    minPill.id = 'minimal-week-pill';
-                    minPill.className = 'minimal-week-pill';
-                    document.getElementById('year-bar-label').appendChild(minPill);
-                }
-                minPill.innerHTML = daysHtml;
-                const pctEl = document.getElementById('year-pct-minimal');
-                if (pctEl) pctEl.textContent = Math.floor(val) + '%';
-                setRollingNumber(val);
-            } else {
-                setRollingNumber(val);
+            if (markerEl) {
+                markerEl.style.left = val.toFixed(2) + '%';
+                markerEl.style.opacity = isYear ? '0' : '1';
             }
 
-            document.querySelectorAll('.season-bracket').forEach(el => {
-                const sp = parseFloat(el.dataset.startPct);
-                const tick = el.querySelector('.season-tick');
-                if (sp <= val) {
-                    el.classList.add('past');
-                    if (tick) tick.style.setProperty('--tick-fill', '100%');
-                } else {
-                    el.classList.remove('past');
-                    // Fill approaching tick gradually (within 0.3% range before it)
-                    if (tick) {
-                        const dist = sp - val;
-                        const fillPct = dist < 0.3 ? Math.max(0, ((0.3 - dist) / 0.3) * 100) : 0;
-                        tick.style.setProperty('--tick-fill', fillPct + '%');
-                    }
+            setRollingNumber(val);
+
+            const pctTip = document.getElementById('year-bar-pct-tooltip');
+            if (pctTip) {
+                pctTip.textContent = val.toFixed(1) + '%';
+                pctTip.style.left = val.toFixed(2) + '%';
+            }
+        }
+
+        // Click to cycle mode: year → month → season → day → year
+        const ghostEl = bar.querySelector('.year-bar-ghost');
+        if (ghostEl) {
+            function cycleMode(e) {
+                e.stopPropagation();
+                modeIdx = (modeIdx + 1) % MODES.length;
+                localStorage.setItem('aura_year_bar_mode_idx', String(modeIdx));
+                renderBarLabels();
+                update();
+            }
+            ghostEl.addEventListener('click', cycleMode);
+            ghostEl.title = 'Click to cycle: year → month → season → day';
+
+            // Also allow clicking season labels / brackets to cycle
+            bar.addEventListener('click', (e) => {
+                if (e.target.closest('.season-bracket') || e.target.closest('.season-label') || e.target.closest('.bar-mode-label')) {
+                    cycleMode(e);
                 }
             });
         }
@@ -5191,11 +5106,7 @@ function createNote(data, autoFocus = false) {
         markerEl.style.transition = 'left 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
 
         setTimeout(() => {
-            if (document.documentElement.classList.contains('theme-minimal')) {
-                update();
-            } else {
-                setRollingNumber(actualVal);
-            }
+            setRollingNumber(actualVal);
             fillEl.style.width = actualVal.toFixed(2) + '%';
             markerEl.style.left = actualVal.toFixed(2) + '%';
             update(); // also mark past seasons
@@ -5619,7 +5530,8 @@ function createNote(data, autoFocus = false) {
                     id, archived: false, color: null,
                     x: Math.round(window.innerWidth  * 0.3 + Math.random() * window.innerWidth  * 0.3),
                     y: Math.round(window.innerHeight * 0.2 + Math.random() * window.innerHeight * 0.35),
-                    text: `from ${sent}:\n\n${c.text}`
+                    text: `from ${sent}:\n\n${c.text}`,
+                    page: currentPage
                 };
                 notes.push(note);
                 createNote(note);

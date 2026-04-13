@@ -256,13 +256,12 @@ window.populateDockWeather = function() {
     if (!weatherData.length) return;
     weatherData.forEach((item, i) => {
         const slot = document.getElementById('dw-' + item.dateStr);
-        if (!slot) return;
-        const icon = mapWmoToEmoji(item.code);
-        slot.innerHTML = `<span class="weather-icon">${icon}</span><span class="weather-temp">${item.temp}°</span>`;
-        
-        // Attach tooltip to the weather slot itself
-        slot.onmouseenter = () => showWeatherTooltip(i);
-        slot.onmouseleave = hideWeatherTooltip;
+        if (slot) {
+            const icon = mapWmoToEmoji(item.code);
+            slot.innerHTML = `<span class="weather-icon">${icon}</span><span class="weather-temp">${item.temp}°</span>`;
+            slot.onmouseenter = () => showWeatherTooltip(i);
+            slot.onmouseleave = hideWeatherTooltip;
+        }
     });
 };
 
