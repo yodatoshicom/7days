@@ -640,17 +640,19 @@ body.ready {
 
 .dock-container {
     position: relative;
-    padding: 9px;
-    background: var(--card-bg);
-    backdrop-filter: blur(60px) saturate(210%);
-    -webkit-backdrop-filter: blur(60px) saturate(210%);
-    border-radius: 36px;
-    border: 0.5px solid rgba(255, 255, 255, 0.15);
-    
-    box-shadow: 
-        inset 0 2px 0 0 rgba(255, 255, 255, 0.4),
-        0 30px 60px rgba(0,0,0,0.12);
-        
+    padding: 8px;
+    background: rgba(20, 10, 40, 0.55);
+    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
+    border-radius: 40px;
+    border: none;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 12px 40px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.12);
+
     display: flex;
     gap: 4px;
     align-items: center;
@@ -660,11 +662,7 @@ body.ready {
 
 
 .day-separator {
-    width: 1px;
-    height: 34px;
-    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.15) 80%, transparent);
-    flex-shrink: 0;
-    transition: opacity 0.4s var(--sf-easing);
+    display: none;
 }
 
 .day-card {
@@ -676,9 +674,10 @@ body.ready {
     justify-content: center;
     background: transparent;
     border-radius: 30px;
-    transition: 
-        transform 0.5s var(--sf-easing), 
-        background 0.3s var(--sf-easing), 
+    color: rgba(255, 255, 255, 0.6);
+    transition:
+        transform 0.5s var(--sf-easing),
+        background 0.3s var(--sf-easing),
         box-shadow 0.3s var(--sf-easing);
     cursor: default;
     position: relative;
@@ -686,8 +685,8 @@ body.ready {
 
 
 .day-card:hover {
-    background: rgba(0, 0, 0, 0.03);
-    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.05);
+    transform: none;
 }
 
 .day-card:active {
@@ -696,11 +695,11 @@ body.ready {
 }
 
 .day-card.active {
-    background: var(--text-color);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    color: var(--bg-color);
-    transform: none;
-    z-index: 10;
+    background: rgba(255, 255, 255, 0.06);
+    border: none;
+    filter: none;
+    z-index: 2;
+    box-shadow: none;
 }
 
 .day-card.active::after {
@@ -708,21 +707,22 @@ body.ready {
 }
 
 .day-name {
-    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 7px;
     font-weight: 700;
     text-transform: uppercase;
-    opacity: 0.45;
-    margin-bottom: 2px;
-    letter-spacing: 0.04em;
+    margin-bottom: 1px;
+    letter-spacing: 0.06em;
 }
 
-.day-card.active .day-name { opacity: 0.6; }
+.day-card.active .day-name { color: rgba(220, 180, 255, 0.7); }
 
 .day-card.weekend .day-number {
-    background: linear-gradient(to bottom, var(--text-color) 20%, #A0A0A8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: rgba(210, 185, 255, 0.75);
+    color: rgba(210, 185, 255, 0.75);
 }
 
 .day-card.weekend.active .day-number {
@@ -733,21 +733,28 @@ body.ready {
 }
 
 .day-number {
-    font-size: 28px; 
-    font-weight: 700;
-    letter-spacing: -0.06em;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
     transition: font-weight 0.4s var(--sf-easing);
 }
 
 .day-card.active .day-number {
-    font-weight: 850;
+    font-weight: 700;
     background: none;
     -webkit-background-clip: unset;
     background-clip: unset;
-    -webkit-text-fill-color: var(--bg-color);
-    color: var(--bg-color);
+    -webkit-text-fill-color: #fff;
+    color: #fff;
 }
+
+.day-card.active:hover { background: rgba(255, 255, 255, 0.08); }
 
 /* Inline weather inside day cards */
 .day-main-row {
@@ -1175,26 +1182,7 @@ body.note-font-sf-mono .note-edit-ta {
     display: none;
 }
 
-.note.spotify-note {
-    width: 300px !important;
-    padding: 6px;
-    border-radius: 16px;
-}
-.note.spotify-note .note-content {
-    padding: 0;
-    overflow: hidden;
-    border-radius: 10px;
-    height: 152px;
-    line-height: 0;
-}
-.note.spotify-note .note-content iframe {
-    display: block;
-    width: 100%;
-    height: 152px;
-    border: none;
-    border-radius: 10px;
-}
-.note.spotify-note .note-color-bar { display: none; }
+
 
 .note-image {
     width: 100%;
@@ -1249,32 +1237,7 @@ video.note-image {
 }
 
 
-/* ── Screenshot mode (Option+D) ── */
-.screenshot-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1098;
-    backdrop-filter: blur(28px) saturate(120%) brightness(0.88);
-    -webkit-backdrop-filter: blur(28px) saturate(120%) brightness(0.88);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-}
-body.screenshot-mode .screenshot-overlay { opacity: 1; }
-body.screenshot-mode .note,
-body.screenshot-mode .settings-btn,
-body.screenshot-mode .capsule,
-body.screenshot-mode .bottom-watermark,
-body.screenshot-mode .dev-export-btn,
-body.screenshot-mode .note-edit-overlay,
-body.screenshot-mode .note-context-menu {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transition: opacity 0.3s ease !important;
-}
-body.screenshot-mode .dock-wrapper {
-    z-index: 1200;
-}
+
 
 /* ── Note editing mode — page blur ── */
 .note-edit-overlay {
@@ -1592,6 +1555,78 @@ html.year-bar-hidden .year-bar {
 body.dev-mode .dev-export-btn { display: block; }
 .dev-only { display: none; }
 body.dev-mode .dev-only { display: block; }
+.delete-confirm-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+}
+.delete-confirm-modal.open { display: flex; }
+.delete-confirm-box {
+    background: rgba(28, 28, 30, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px 24px 20px;
+    width: 300px;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    animation: delete-confirm-in 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes delete-confirm-in {
+    from { opacity: 0; transform: scale(0.88); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.delete-confirm-msg {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.88);
+    line-height: 1.4;
+}
+.delete-confirm-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+}
+.delete-confirm-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+.delete-confirm-cancel {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.delete-confirm-cancel:hover { background: rgba(255,255,255,0.16); }
+.delete-confirm-delete {
+    background: #ff3b30;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.delete-confirm-delete:hover { background: #ff1f12; }
+
 .dev-modal {
     display: none;
     position: fixed;
@@ -2323,96 +2358,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     color: var(--text-color);
 }
 
-/* ── Time Capsule ── */
-.capsule {
-    display: none !important;
-    position: fixed;
-    bottom: 16px;
-    left: 30px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-}
-.capsule-pill {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 14px;
-    background: var(--card-bg);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border-radius: 20px;
-    border: 0.5px solid rgba(255,255,255,0.3);
-    box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4), 0 8px 24px rgba(0,0,0,0.08);
-    cursor: pointer;
-    opacity: 0.4;
-    transition: opacity 0.3s, border-radius 0.4s var(--sf-easing);
-    user-select: none;
-}
-.capsule-pill:hover { opacity: 1; }
-.capsule.open .capsule-pill { opacity: 1; border-radius: 0 0 20px 20px; }
-.capsule-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--text-color); opacity: 0.3;
-    transition: background 0.3s, opacity 0.3s; flex-shrink: 0;
-}
-.capsule.has-pending .capsule-dot { background: #c580fb; opacity: 1; }
-.capsule-label {
-    font-size: 10px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.15em; opacity: 0.5; color: var(--text-color);
-}
-.capsule-panel {
-    width: 240px;
-    background: var(--card-bg);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border-radius: 20px 20px 20px 0;
-    border: 0.5px solid rgba(255,255,255,0.3);
-    border-bottom: none;
-    box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4), 0 12px 32px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    pointer-events: none;
-    padding: 0 20px;
-    transition: max-height 0.4s var(--sf-easing), opacity 0.3s ease, padding 0.4s var(--sf-easing);
-}
-.capsule.open .capsule-panel { max-height: 320px; opacity: 1; pointer-events: auto; padding: 20px; }
-.capsule-title {
-    font-size: 9px; font-weight: 800; text-transform: uppercase;
-    letter-spacing: 0.2em; opacity: 0.35; color: var(--text-color);
-}
-.capsule-textarea {
-    width: 100%; min-height: 80px; resize: none; border: none;
-    background: rgba(0,0,0,0.04); border-radius: 12px;
-    padding: 10px 12px; font-family: 'Inter', sans-serif; font-size: 13px;
-    color: var(--text-color); outline: none; line-height: 1.5;
-}
-.capsule-textarea::placeholder { opacity: 0.3; }
-.capsule-days { display: flex; gap: 6px; }
-.capsule-day-btn {
-    flex: 1; height: 26px; border-radius: 13px;
-    border: 0.5px solid rgba(0,0,0,0.15); background: transparent;
-    color: var(--text-color); font-size: 10px; font-weight: 700;
-    letter-spacing: 0.06em; cursor: pointer; opacity: 0.35;
-    transition: opacity 0.2s, background 0.2s, color 0.2s;
-}
-.capsule-day-btn.active { background: var(--text-color); color: var(--bg-color); opacity: 1; }
-.capsule-day-btn:hover { opacity: 0.7; }
-.capsule-send {
-    height: 30px; border-radius: 15px; border: none;
-    background: var(--text-color); color: var(--bg-color);
-    font-size: 10px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.1em; cursor: pointer; opacity: 0.85;
-    transition: opacity 0.2s, transform 0.2s var(--spring-easing);
-}
-.capsule-send:hover { opacity: 1; transform: scale(1.02); }
-.capsule-send:active { transform: scale(0.96); }
+
 
 
 
@@ -2514,7 +2460,6 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
 
     /* ── Hide desktop-only chrome ── */
     .city-tooltip    { display: none; }
-    .capsule         { display: none; }
 
     /* ── Year progress: above dock ── */
     .year-progress-label {
@@ -2580,7 +2525,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
 </noscript>
 
 <div id="desktop-only" style="display:none">Desktop only</div>
-<div class="screenshot-overlay" id="screenshot-overlay"></div>
+
 <div class="note-edit-overlay" id="note-edit-overlay"></div>
 <div class="selection-rect" id="selection-rect"></div>
 <div class="note-context-menu" id="note-context-menu">
@@ -2600,19 +2545,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
         <div class="ncm-btn" data-insert="·">·</div>
     </div>
 </div>
-<div class="search-overlay" id="search-overlay">
-    <div class="search-container">
-        <div class="engine-switch" id="engine-switch">
-            <button class="engine-btn" data-engine="google">Google</button>
-            <button class="engine-btn" data-engine="chatgpt">ChatGPT</button>
-            <button class="engine-btn" data-engine="claude">Claude</button>
-        </div>
-        <div class="search-input-wrap">
-            <input class="search-input" id="search-input" type="text" placeholder="Ask anything..." autocomplete="off">
-            <div class="search-hint">esc to close · enter to search</div>
-        </div>
-    </div>
-</div>
+
 
 
 
@@ -2637,6 +2570,18 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     </svg>
 </button>
 <button class="dev-export-btn" id="dev-export-btn">export notes</button>
+<div class="delete-confirm-modal" id="delete-confirm-modal">
+    <div class="delete-confirm-box">
+        <div>
+            <div class="delete-confirm-msg" id="delete-confirm-msg">Delete 2 notes?</div>
+            <div class="delete-confirm-sub">This cannot be undone.</div>
+        </div>
+        <div class="delete-confirm-actions">
+            <button class="delete-confirm-cancel" id="delete-confirm-cancel">Cancel</button>
+            <button class="delete-confirm-delete" id="delete-confirm-delete">Delete</button>
+        </div>
+    </div>
+</div>
 <div class="dev-modal" id="dev-modal">
     <div class="dev-modal-box">
         <div class="dev-modal-label">NOTES STATE — paste this to Claude</div>
@@ -2700,22 +2645,6 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
 
 <div class="bottom-watermark" id="bottom-watermark"></div>
 
-<div class="capsule" id="capsule">
-    <div class="capsule-panel" id="capsule-panel">
-        <div class="capsule-title">letter to future self</div>
-        <textarea class="capsule-textarea" id="capsule-textarea" placeholder="write something..."></textarea>
-        <div class="capsule-days">
-            <button class="capsule-day-btn active" data-days="30">30 days</button>
-            <button class="capsule-day-btn" data-days="90">90 days</button>
-            <button class="capsule-day-btn" data-days="365">1 year</button>
-        </div>
-        <button class="capsule-send" id="capsule-send">seal & send</button>
-    </div>
-    <div class="capsule-pill" id="capsule-pill">
-        <div class="capsule-dot"></div>
-        <span class="capsule-label">capsule</span>
-    </div>
-</div>
 
 
 
@@ -3100,6 +3029,57 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
             save();
             return;
         }
+
+        // Delete / Backspace — delete selected notes (with confirm popup)
+        if ((e.key === 'Delete' || e.key === 'Backspace') && selectedNoteIds.size > 0) {
+            e.preventDefault();
+            showDeleteConfirm();
+            return;
+        }
+    });
+
+    // ---- DELETE CONFIRM MODAL ----
+    const deleteConfirmModal  = document.getElementById('delete-confirm-modal');
+    const deleteConfirmMsg    = document.getElementById('delete-confirm-msg');
+    const deleteConfirmCancel = document.getElementById('delete-confirm-cancel');
+    const deleteConfirmBtn    = document.getElementById('delete-confirm-delete');
+
+    function showDeleteConfirm() {
+        const count = selectedNoteIds.size;
+        deleteConfirmMsg.textContent = `Delete ${count} ${count === 1 ? 'note' : 'notes'}?`;
+        deleteConfirmModal.classList.add('open');
+        deleteConfirmBtn.focus();
+    }
+
+    function hideDeleteConfirm() {
+        deleteConfirmModal.classList.remove('open');
+    }
+
+    function commitDeleteSelected() {
+        selectedNoteIds.forEach(id => {
+            const data = notes.find(n => n.id === id);
+            if (data && data.imageData) mediaDB.del('media_' + id);
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        });
+        notes = notes.filter(n => !selectedNoteIds.has(n.id));
+        selectedNoteIds.clear();
+        save();
+        hideDeleteConfirm();
+    }
+
+    deleteConfirmCancel.addEventListener('click', hideDeleteConfirm);
+    deleteConfirmBtn.addEventListener('click', commitDeleteSelected);
+
+    deleteConfirmModal.addEventListener('mousedown', (e) => {
+        if (e.target === deleteConfirmModal) hideDeleteConfirm();
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (deleteConfirmModal.classList.contains('open')) {
+            if (e.key === 'Escape') { e.preventDefault(); hideDeleteConfirm(); }
+            if (e.key === 'Enter')  { e.preventDefault(); commitDeleteSelected(); }
+        }
     });
 
     // ---- SELECTION RECTANGLE ON WINDOW CLICK ----
@@ -3113,6 +3093,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
             e.target.closest('.search-overlay') ||
             e.target.closest('.note-context-menu') ||
             e.target.closest('.dev-modal') ||
+            e.target.closest('.delete-confirm-modal') ||
             ['INPUT', 'TEXTAREA', 'BUTTON', 'A'].includes(e.target.tagName)
         ) return;
 
@@ -3223,30 +3204,12 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     /* ============================================================
        LINKIFY
     ============================================================ */
-    function spotifyEmbed(text) {
-        const t = text.trim();
-        // Extract src URL from any iframe embed containing a Spotify embed URL
-        const match = t.match(/src=["'](https:\/\/open\.spotify\.com\/embed\/[^"'\s]+)["']/i);
-        if (match) return match[1];
-        // Also accept a bare Spotify embed URL
-        if (/^https:\/\/open\.spotify\.com\/embed\//i.test(t)) return t;
-        return null;
-    }
-
     function renderNoteContent(content, text) {
-        const spotifySrc = spotifyEmbed(text);
-        if (spotifySrc) {
-            content.innerHTML = `<iframe src="${spotifySrc}" width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border-radius:10px;display:block;"></iframe>`;
-            content.closest('.note').classList.add('spotify-note');
-        } else {
-            content.innerHTML = linkify(text);
-            content.closest('.note').classList.remove('spotify-note');
-        }
+        content.innerHTML = linkify(text);
     }
 
     function wrapNote(note, data) {
         if (data.imageData) return;
-        if (note.classList.contains('spotify-note')) return;
         const content = note.querySelector('.note-content');
         if (!content) return;
         const text = data.text || '';
@@ -4132,7 +4095,6 @@ function createNote(data, autoFocus = false) {
             !target.closest('.note-arrow-bar') &&
             !target.closest('.search-overlay') &&
             !target.closest('.dev-modal') &&
-            !target.closest('.capsule') &&
             !target.closest('.year-bar') &&
             !target.closest('.page-dots') &&
             target.tagName !== 'BUTTON' &&
@@ -4603,88 +4565,6 @@ function createNote(data, autoFocus = false) {
         save();
     });
 
-    /* ============================================================
-       SEARCH OVERLAY — Google, ChatGPT, Claude
-    ============================================================ */
-    const searchOverlay = document.getElementById('search-overlay');
-    const searchInput = document.getElementById('search-input');
-    const engineBtns = document.querySelectorAll('.engine-btn');
-    
-    let currentEngine = localStorage.getItem('aura_search_engine') || 'google';
-
-    function applyEngine(engine) {
-        currentEngine = engine;
-        localStorage.setItem('aura_search_engine', engine);
-        engineBtns.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.engine === engine);
-        });
-        searchInput.placeholder = `Search with ${engine.charAt(0).toUpperCase() + engine.slice(1)}...`;
-    }
-
-    engineBtns.forEach(btn => {
-        btn.addEventListener('click', () => applyEngine(btn.dataset.engine));
-    });
-
-    applyEngine(currentEngine);
-
-    function openSearch() {
-        searchOverlay.classList.add('show');
-        searchInput.value = '';
-        setTimeout(() => searchInput.focus(), 50);
-    }
-
-    function closeSearch() {
-        searchOverlay.classList.remove('show');
-    }
-
-    function performSearch() {
-        const text = searchInput.value.trim();
-        if (!text) return;
-
-        let url = '';
-        const q = encodeURIComponent(text);
-        if (currentEngine === 'google') {
-            url = `https://www.google.com/search?q=${q}`;
-        } else if (currentEngine === 'chatgpt') {
-            url = `https://chatgpt.com/?q=${q}`;
-        } else if (currentEngine === 'claude') {
-            url = `https://claude.ai/new?q=${q}`;
-        }
-
-        if (url) {
-            window.open(url, '_blank');
-            closeSearch();
-        }
-    }
-
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            performSearch();
-        }
-        if (e.key === 'Escape') {
-            closeSearch();
-        }
-    });
-
-    // Spacebar opens search — only when nothing is focused/editable
-    window.addEventListener('keydown', (e) => {
-        if (e.code !== 'Space') return;
-        if (searchOverlay.classList.contains('show')) return;
-
-        const tag = document.activeElement.tagName;
-        const editable = document.activeElement.contentEditable === 'true';
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || editable) return;
-
-        e.preventDefault();
-        openSearch();
-    });
-
-    // Click outside input area closes
-    searchOverlay.addEventListener('mousedown', (e) => {
-        if (!e.target.closest('.search-container')) closeSearch();
-    });
-
     (function() {
         const bar = document.createElement('div');
         bar.className = 'year-bar';
@@ -4987,468 +4867,6 @@ function createNote(data, autoFocus = false) {
         window.updateYearBarLang = function() {};
     })();
 
-    // ── Sun Arc — REMOVED ──
-    /* Sun/moon arc code has been removed */
-    if (false) { (function() {
-        const NS = 'http://www.w3.org/2000/svg';
-        const f  = n => n.toFixed(2);
-
-        // ── Color helpers ──
-        function lerpColor(a, b, v) {
-            return [0,1,2].map(i => Math.round(a[i] + (b[i] - a[i]) * v));
-        }
-        const DAWN_COLOR   = [255,  88, 28];   // deep amber at horizon
-        const GOLDEN_COLOR = [255, 150, 40];   // golden hour
-        const PEAK_COLOR   = [255, 215, 65];   // bright yellow at noon
-
-        function sunColor(arc) {
-            // Two-stop: horizon→golden (0–0.3), golden→peak (0.3–1)
-            if (arc < 0.3) return lerpColor(DAWN_COLOR,   GOLDEN_COLOR, arc / 0.3);
-            return             lerpColor(GOLDEN_COLOR, PEAK_COLOR,   (arc - 0.3) / 0.7);
-        }
-
-        // ── Split quadratic bezier at t (de Casteljau) ──
-        function splitQ(P0, P1, P2, t) {
-            const Q0 = { x: P0.x + t*(P1.x-P0.x), y: P0.y + t*(P1.y-P0.y) };
-            const Q1 = { x: P1.x + t*(P2.x-P1.x), y: P1.y + t*(P2.y-P1.y) };
-            const M  = { x: Q0.x + t*(Q1.x-Q0.x), y: Q0.y + t*(Q1.y-Q0.y) };
-            return { head: [P0, Q0, M], tail: [M, Q1, P2] };
-        }
-
-        // ── Extract sub-segment [ta..tb] of a quadratic bezier ──
-        function bezierSeg(P0, P1, P2, ta, tb) {
-            if (ta <= 0 && tb >= 1) return [P0, P1, P2];
-            if (ta <= 0) return splitQ(P0, P1, P2, tb).head;
-            if (tb >= 1) return splitQ(P0, P1, P2, ta).tail;
-            const tail = splitQ(P0, P1, P2, ta).tail;
-            return splitQ(tail[0], tail[1], tail[2], (tb - ta) / (1 - ta)).head;
-        }
-
-        // ── Arc guide SVG ──
-        const bgSvg = document.createElementNS(NS, 'svg');
-        bgSvg.id    = 'sun-arc-bg';
-        bgSvg.setAttribute('fill', 'none');
-        bgSvg.style.left = '0';
-        bgSvg.style.top  = '0';
-
-        // SVG defs — gradients for arc fade
-        const defs = document.createElementNS(NS, 'defs');
-        bgSvg.appendChild(defs);
-
-        function makeGrad(id, x1pct, x2pct) {
-            const g = document.createElementNS(NS, 'linearGradient');
-            g.id = id;
-            g.setAttribute('gradientUnits', 'userSpaceOnUse');
-            g.setAttribute('x1', x1pct); g.setAttribute('y1', '0');
-            g.setAttribute('x2', x2pct); g.setAttribute('y2', '0');
-            const s0 = document.createElementNS(NS, 'stop');
-            s0.setAttribute('offset', '0');
-            const s1 = document.createElementNS(NS, 'stop');
-            s1.setAttribute('offset', '1');
-            g.appendChild(s0); g.appendChild(s1);
-            defs.appendChild(g);
-            return { grad: g, s0, s1 };
-        }
-
-        const pastGrad   = makeGrad('sa-past',   '0', '100%');
-        const futureGrad = makeGrad('sa-future', '0', '100%');
-
-        // Sky dome gradient (vertical — peak color fading down to transparent)
-        const domeGrad = document.createElementNS(NS, 'linearGradient');
-        domeGrad.id = 'sa-dome';
-        domeGrad.setAttribute('gradientUnits', 'userSpaceOnUse');
-        domeGrad.setAttribute('x1', '0'); domeGrad.setAttribute('x2', '0');
-        const domeS0 = document.createElementNS(NS, 'stop');
-        domeS0.setAttribute('offset', '0');
-        const domeS1 = document.createElementNS(NS, 'stop');
-        domeS1.setAttribute('offset', '1'); domeS1.setAttribute('stop-opacity', '0');
-        domeGrad.appendChild(domeS0); domeGrad.appendChild(domeS1);
-        defs.appendChild(domeGrad);
-
-        // Clip-path for stars
-        const starClip = document.createElementNS(NS, 'clipPath');
-        starClip.id = 'star-clip';
-        const clipPath = document.createElementNS(NS, 'path');
-        starClip.appendChild(clipPath);
-        defs.appendChild(starClip);
-
-        // Sky dome fill — sits behind everything
-        const domePath = document.createElementNS(NS, 'path');
-        domePath.setAttribute('stroke', 'none');
-        domePath.setAttribute('fill', 'url(#sa-dome)');
-        bgSvg.appendChild(domePath);
-
-        // Star group for night sky
-        const starGroup = document.createElementNS(NS, 'g');
-        starGroup.id = 'sky-stars';
-        starGroup.style.pointerEvents = 'none';
-        starGroup.setAttribute('clip-path', 'url(#star-clip)');
-        bgSvg.appendChild(starGroup);
-
-        function createStars(width, height) {
-            starGroup.innerHTML = '';
-            return; // No stars
-            const count = 130;
-            for (let i = 0; i < count; i++) {
-                const star = document.createElementNS(NS, 'circle');
-                const x = Math.random() * width;
-                const y = Math.random() * height;
-                star.setAttribute('cx', x.toFixed(1));
-                star.setAttribute('cy', y.toFixed(1));
-                // Mix of faint background stars and a few prominent bright ones
-                const isBright = i < 8;
-                star.setAttribute('r', isBright ? (Math.random() * 0.8 + 1.2).toFixed(1) : (Math.random() * 0.8 + 0.4).toFixed(1));
-                star.setAttribute('fill', '#fff');
-                const op = isBright ? (Math.random() * 0.35 + 0.6).toFixed(2) : (Math.random() * 0.5 + 0.15).toFixed(2);
-                star.setAttribute('opacity', op);
-                starGroup.appendChild(star);
-            }
-        }
-
-        // Endpoint anchor dots
-        const endDot0 = document.createElementNS(NS, 'circle');
-        endDot0.setAttribute('r', '2'); endDot0.setAttribute('fill-opacity', '0');
-        bgSvg.appendChild(endDot0);
-        const endDot1 = document.createElementNS(NS, 'circle');
-        endDot1.setAttribute('r', '2'); endDot1.setAttribute('fill-opacity', '0');
-        bgSvg.appendChild(endDot1);
-
-        // Hour tick group
-        const tickGroup = document.createElementNS(NS, 'g');
-        bgSvg.appendChild(tickGroup);
-
-        // Glow layer (wide soft) + crisp layer for past and future wing arcs
-        function makeArcPath(stroke, strokeWidth, linecap) {
-            const p = document.createElementNS(NS, 'path');
-            p.setAttribute('fill', 'none');
-            p.setAttribute('stroke', stroke);
-            p.setAttribute('stroke-width', strokeWidth);
-            p.setAttribute('stroke-linecap', linecap || 'round');
-            return p;
-        }
-        const pastPath   = makeArcPath('url(#sa-past)',   '1.6', 'round');
-        const futurePath = makeArcPath('url(#sa-future)', '1.6', 'round');
-        bgSvg.appendChild(pastPath);
-        bgSvg.appendChild(futurePath);
-
-        document.documentElement.appendChild(bgSvg);
-
-        // ── Sun & Moon icon ──
-        const SIZE = 28, C = SIZE / 2;
-        const astroSvg = document.createElementNS(NS, 'svg');
-        astroSvg.setAttribute('width', SIZE); astroSvg.setAttribute('height', SIZE);
-        astroSvg.setAttribute('viewBox', `0 0 ${SIZE} ${SIZE}`);
-        astroSvg.setAttribute('fill', 'none');
-        astroSvg.style.display = 'block';
-
-        // Mask for crescent moon
-        const astroDefs = document.createElementNS(NS, 'defs');
-        astroDefs.innerHTML = `
-            <mask id="moon-mask">
-                <circle cx="${C}" cy="${C}" r="${C * 0.42}" fill="white" />
-                <circle cx="${(C + C * 0.38).toFixed(1)}" cy="${(C - C * 0.28).toFixed(1)}" r="${C * 0.42}" fill="black" />
-            </mask>
-        `;
-        astroSvg.appendChild(astroDefs);
-
-        const halo = document.createElementNS(NS, 'circle');
-        halo.setAttribute('cx', C); halo.setAttribute('cy', C);
-        halo.setAttribute('r', C * 0.65);
-        halo.setAttribute('opacity', '0.12');
-        astroSvg.appendChild(halo);
-
-        const core = document.createElementNS(NS, 'circle');
-        core.setAttribute('cx', C); core.setAttribute('cy', C);
-        core.setAttribute('r', C * 0.42);
-        astroSvg.appendChild(core);
-
-        const rayGroup = document.createElementNS(NS, 'g');
-        rayGroup.setAttribute('class', 'sa-rays');
-        const R1 = C * 0.44, R2 = C * 0.78;
-        for (let i = 0; i < 8; i++) {
-            const a   = (i * Math.PI / 4) - Math.PI / 2;
-            const r2i = (i % 2 === 0) ? R2 : R2 * 0.88;
-            const ray = document.createElementNS(NS, 'line');
-            ray.setAttribute('x1', (C + Math.cos(a) * R1).toFixed(2));
-            ray.setAttribute('y1', (C + Math.sin(a) * R1).toFixed(2));
-            ray.setAttribute('x2', (C + Math.cos(a) * r2i).toFixed(2));
-            ray.setAttribute('y2', (C + Math.sin(a) * r2i).toFixed(2));
-            ray.setAttribute('stroke-width', i % 2 === 0 ? '1.3' : '1.0');
-            ray.setAttribute('stroke-linecap', 'round');
-            rayGroup.appendChild(ray);
-        }
-        astroSvg.appendChild(rayGroup);
-
-        const astroEl = document.createElement('div');
-        astroEl.id = 'sun-arc';
-        astroEl.style.opacity = '0';
-        astroEl.appendChild(astroSvg);
-        document.documentElement.appendChild(astroEl);
-
-        // Atmospheric sky glow
-        const skyGlow = document.createElement('div');
-        skyGlow.style.cssText = 'position:fixed;pointer-events:none;z-index:596;border-radius:50%;transform:translate(-50%,-55%);transition:opacity 3s ease;opacity:0;';
-        document.documentElement.appendChild(skyGlow);
-
-        // Horizon glow
-        const horizGlow = document.createElement('div');
-        horizGlow.style.cssText = 'position:fixed;pointer-events:none;z-index:597;transform:translateX(-50%);transition:opacity 2.5s ease;opacity:0;';
-        document.documentElement.appendChild(horizGlow);
-
-        const starClipPath = document.querySelector('#star-clip path');
-
-        function updateAstroArc(animate) {
-            let start, end, type = 'sun';
-            const now = new Date();
-
-            if (window.allSunTimes) {
-                const todayRise = new Date(window.allSunTimes.sunrise[0]);
-                const todaySet  = new Date(window.allSunTimes.sunset[0]);
-                const tomRise   = new Date(window.allSunTimes.sunrise[1]);
-                
-                if (now >= todayRise && now <= todaySet) {
-                    start = todayRise; end = todaySet; type = 'sun';
-                } else {
-                    type = 'moon';
-                    if (now > todaySet) {
-                        start = todaySet; end = tomRise;
-                    } else {
-                        start = new Date(todayRise.getTime() - (todayRise - todaySet));
-                        if (isNaN(start.getTime())) start = new Date(todayRise.getTime() - 12 * 3600000);
-                        end = todayRise;
-                    }
-                }
-            } else if (window.todaySunTimes) {
-                const rise = new Date(window.todaySunTimes.rise);
-                const set  = new Date(window.todaySunTimes.set);
-                if (now >= rise && now <= set) {
-                    start = rise; end = set; type = 'sun';
-                } else {
-                    type = 'moon';
-                    // Approximations if we only have today's times
-                    if (now > set) {
-                        start = set; end = new Date(set.getTime() + 12 * 3600000);
-                    } else {
-                        start = new Date(rise.getTime() - 12 * 3600000); end = rise;
-                    }
-                }
-            } else {
-                return;
-            }
-
-            const dock = document.getElementById('dock');
-            if (!dock) return;
-            const dr = dock.getBoundingClientRect();
-
-            const INSET = 28, LIFT = 20, GAP = 0.028;
-            const effW  = dr.width - INSET * 2;
-            let H       = Math.min(effW * 0.38, 160);
-
-            // Squeeze the moon arc to be flatter
-            if (type === 'moon') H *= 0.7;
-
-            // Use transform instead of left/top for smoother resizing
-            bgSvg.style.transform = `translate(${dr.left + INSET}px, ${dr.top - H - 14}px)`;
-            bgSvg.setAttribute('width',  effW);
-            bgSvg.setAttribute('height', H + 8);
-
-            let t = (now - start) / (end - start);
-            t = Math.max(0, Math.min(1, t));
-            const arc = Math.sin(t * Math.PI);
-
-            // Re-populate stars if needed (or if dimensions changed significantly)
-            const lastH = parseFloat(starGroup.dataset.h || 0);
-            if (starGroup.children.length === 0 ||
-                Math.abs(parseFloat(starGroup.dataset.w || 0) - effW) > 10 ||
-                Math.abs(lastH - H) > 5) {
-                createStars(effW, H);
-                starGroup.dataset.w = effW;
-                starGroup.dataset.h = H;
-            }
-            starGroup.style.opacity = type === 'moon' ? (0.4 + arc * 0.5).toFixed(2) : '0';
-
-            const P0 = { x: 0,      y: H - LIFT },
-                  P1 = { x: effW/2, y: 0         },
-                  P2 = { x: effW,   y: H - LIFT  };
-
-            const DAY_COLORS   = { dawn: [255, 88, 28],   golden: [255, 150, 40],  peak: [255, 215, 65]  };
-            const NIGHT_COLORS = { dawn: [130, 155, 210], golden: [175, 195, 232], peak: [212, 226, 248] };
-
-            const C_set = type === 'sun' ? DAY_COLORS : NIGHT_COLORS;
-            const color = arc < 0.3 ? lerpColor(C_set.dawn, C_set.golden, arc / 0.3) : lerpColor(C_set.golden, C_set.peak, (arc - 0.3) / 0.7);
-            const colorStr = `rgb(${color})`;
-
-            // Curved wing arcs — follow bezier, gap at icon, taper from thick→thin at tip
-            const WING  = 0.32; // length of each wing in t-space
-            const GAP_T = 0.038; // break around the icon
-            const tA      = Math.max(0.001, t - WING - GAP_T);
-            const tB      = Math.min(0.999, t + WING + GAP_T);
-            const tInnerL = Math.max(0.001, t - GAP_T);
-            const tInnerR = Math.min(0.999, t + GAP_T);
-            const qd = seg => `M ${f(seg[0].x)},${f(seg[0].y)} Q ${f(seg[1].x)},${f(seg[1].y)} ${f(seg[2].x)},${f(seg[2].y)}`;
-            pastPath.setAttribute('d',   qd(bezierSeg(P0, P1, P2, tA, tInnerL)));
-            futurePath.setAttribute('d', qd(bezierSeg(P0, P1, P2, tInnerR, tB)));
-
-            // Gradients: transparent at tip → opaque at sun-facing end
-            const maxOp = type === 'moon' ? 0.45 : 0.62;
-            pastGrad.s0.setAttribute('stop-color', colorStr); pastGrad.s0.setAttribute('stop-opacity', '0');
-            pastGrad.s1.setAttribute('stop-color', colorStr); pastGrad.s1.setAttribute('stop-opacity', f(maxOp));
-            pastGrad.grad.setAttribute('x1', f(tA * effW));      pastGrad.grad.setAttribute('x2', f(tInnerL * effW));
-            futureGrad.s0.setAttribute('stop-color', colorStr); futureGrad.s0.setAttribute('stop-opacity', f(maxOp));
-            futureGrad.s1.setAttribute('stop-color', colorStr); futureGrad.s1.setAttribute('stop-opacity', '0');
-            futureGrad.grad.setAttribute('x1', f(tInnerR * effW)); futureGrad.grad.setAttribute('x2', f(tB * effW));
-
-            bgSvg.style.opacity = '1';
-            const domeBottom = H + 6;
-            domeGrad.setAttribute('y1', '0'); domeGrad.setAttribute('y2', f(H - LIFT));
-            domeS0.setAttribute('stop-color', colorStr);
-            // Night dome slightly more atmospheric; day keeps a soft amber wash
-            domeS0.setAttribute('stop-opacity', f(type === 'moon' ? 0.08 + arc * 0.05 : 0.1 + arc * 0.05));
-            const dPath = `M ${f(P0.x)},${f(P0.y)} Q ${f(P1.x)},${f(P1.y)} ${f(P2.x)},${f(P2.y)} L ${f(P2.x)},${domeBottom} L ${f(P0.x)},${domeBottom} Z`;
-            domePath.setAttribute('d', dPath);
-            if (starClipPath) starClipPath.setAttribute('d', dPath);
-
-            if (type === 'sun') {
-                rayGroup.style.display = 'block';
-                core.removeAttribute('mask');
-                halo.style.display = 'block';
-                halo.setAttribute('r', (SIZE/2) * 0.52);
-                halo.setAttribute('opacity', '0.12');
-            } else {
-                rayGroup.style.display = 'none';
-                core.setAttribute('mask', 'url(#moon-mask)');
-                // Soft silver-blue halo around the moon
-                halo.style.display = 'none';
-                halo.setAttribute('r', (SIZE/2) * 0.80);
-                halo.setAttribute('opacity', '0.18');
-            }
-
-            const x  = dr.left + INSET + t * effW;
-            const By = (H - LIFT) * (1 - 2 * t * (1 - t));
-            const y  = (dr.top - H - 14) + By;
-
-            skyGlow.style.opacity   = '0';
-            horizGlow.style.opacity = '0';
-
-            halo.setAttribute('fill', colorStr);
-            core.setAttribute('fill', colorStr);
-            astroSvg.querySelectorAll('line').forEach(l => l.setAttribute('stroke', colorStr));
-
-            const ga = (0.52 + arc * 0.3).toFixed(2);
-            const scale = (0.76 + 0.24 * arc).toFixed(3);
-            if (!animate) { astroEl.style.transition = 'none'; }
-            astroEl.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%,-50%) scale(${scale})`;
-            astroEl.style.filter    = `drop-shadow(0 0 ${(type === 'moon' ? 5 + arc * 8 : 6 + arc * 12).toFixed(1)}px rgba(${color},${ga}))`;
-            astroEl.style.opacity   = (0.6 + arc * 0.4).toFixed(2);
-            if (!animate) {
-                // Force reflow so Chrome commits the current position before
-                // transition is restored — prevents the fly-from-top-left glitch
-                void astroEl.getBoundingClientRect();
-                requestAnimationFrame(() => { astroEl.style.transition = ''; });
-            }
-        }
-
-        updateAstroArc(false);
-        setInterval(() => updateAstroArc(true), 60000);
-
-        let resizeTimer;
-        let resizePending = false;
-        window.addEventListener('resize', () => {
-            if (resizePending) return;
-            resizePending = true;
-            requestAnimationFrame(() => {
-                updateAstroArc(false);
-                resizePending = false;
-            });
-            
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                starGroup.innerHTML = '';
-                updateAstroArc(false);
-            }, 250);
-        });
-
-        const _orig = window.drawSunriseSunset;
-        window.drawSunriseSunset = function() {
-            if (_orig) _orig();
-            setTimeout(() => updateAstroArc(false), 50);
-            setTimeout(() => updateAstroArc(true),  150);
-        };
-    })(); }
-
-    // ── Time Capsule ──
-    (function() {
-        const STORE = 'aura_capsules';
-        const capsuleEl  = document.getElementById('capsule');
-        const pill       = document.getElementById('capsule-pill');
-        const textarea   = document.getElementById('capsule-textarea');
-        const sendBtn    = document.getElementById('capsule-send');
-        let selectedDays = 30;
-
-        function load() { try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch { return []; } }
-        function persist(arr) { localStorage.setItem(STORE, JSON.stringify(arr)); }
-
-        // Deliver due capsules as sticky notes
-        function deliver() {
-            const now = Date.now();
-            const all = load();
-            const due = all.filter(c => c.deliverAt <= now);
-            if (!due.length) return;
-            persist(all.filter(c => c.deliverAt > now));
-            due.forEach(c => {
-                const sent = new Date(c.sentAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-                const id = 'note-' + Date.now() + Math.random().toString(36).slice(2, 7);
-                const note = {
-                    id, archived: false, color: null,
-                    x: Math.round(window.innerWidth  * 0.3 + Math.random() * window.innerWidth  * 0.3),
-                    y: Math.round(window.innerHeight * 0.2 + Math.random() * window.innerHeight * 0.35),
-                    text: `from ${sent}:\n\n${c.text}`,
-                    page: currentPage
-                };
-                notes.push(note);
-                createNote(note);
-                save();
-            });
-        }
-
-        // Dot indicator when pending capsules exist
-        function refreshDot() {
-            capsuleEl.classList.toggle('has-pending', load().length > 0);
-        }
-
-        // Toggle
-        pill.addEventListener('click', () => {
-            capsuleEl.classList.toggle('open');
-            if (capsuleEl.classList.contains('open')) textarea.focus();
-        });
-
-        // Day selection
-        document.querySelectorAll('.capsule-day-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                selectedDays = parseInt(btn.dataset.days);
-                document.querySelectorAll('.capsule-day-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-
-        // Send
-        sendBtn.addEventListener('click', () => {
-            const text = textarea.value.trim();
-            if (!text) return;
-            const all = load();
-            all.push({ text, sentAt: Date.now(), deliverAt: Date.now() + selectedDays * 864e5 });
-            persist(all);
-            textarea.value = '';
-            capsuleEl.classList.remove('open');
-            refreshDot();
-            const label = pill.querySelector('.capsule-label');
-            label.textContent = 'sealed ✓';
-            setTimeout(() => label.textContent = 'capsule', 2000);
-        });
-
-        deliver();
-        refreshDot();
-    })();
 </script>
 </body>
 </html>
