@@ -1236,6 +1236,64 @@ video.note-image {
     transform: translate(-50%, -50%) scale(0.9);
 }
 
+/* ── Video upload progress indicator ── */
+.video-upload-indicator {
+    position: fixed;
+    z-index: 9000;
+    width: 180px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 8px 30px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    animation: vui-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes vui-in {
+    from { opacity: 0; transform: scale(0.85) translateY(6px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.video-upload-indicator.done {
+    animation: vui-out 0.22s ease forwards;
+}
+@keyframes vui-out {
+    to { opacity: 0; transform: scale(0.88) translateY(4px); }
+}
+.vui-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.vui-label svg {
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+.vui-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 99px;
+    overflow: hidden;
+}
+.vui-bar {
+    height: 100%;
+    width: 0%;
+    background: rgba(255,255,255,0.55);
+    border-radius: 99px;
+    transition: width 0.12s ease;
+}
+
 
 
 
@@ -4018,6 +4076,25 @@ function createNote(data, autoFocus = false) {
         return note;
     }
 
+    // ---- VIDEO FRAME RECOVERY ON TAB SWITCH ----
+    // Browsers flush decoded video frames when a tab is hidden to save memory.
+    // Paused videos have no frame to repaint when the tab comes back, appearing
+    // blank/transparent. Seeking to currentTime forces a re-decode + repaint.
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible') return;
+        document.querySelectorAll('.note video').forEach(vid => {
+            if (vid.paused && vid.readyState >= 2) {
+                // eslint-disable-next-line no-self-assign
+                vid.currentTime = vid.currentTime;
+            } else if (vid.paused) {
+                // Not enough data buffered yet — reload the source
+                const src = vid.src;
+                vid.src = '';
+                vid.src = src;
+            }
+        });
+    });
+
     // ---- IMAGE DROP FROM FILE SYSTEM ----
     window.addEventListener('dragover', (e) => {
         if (e.dataTransfer.types.includes('Files')) e.preventDefault();
@@ -4030,10 +4107,46 @@ function createNote(data, autoFocus = false) {
         e.preventDefault();
 
         const reader = new FileReader();
+
+        // Show upload progress indicator for videos
+        let uploadIndicator = null;
+        if (file.type.startsWith('video/')) {
+            uploadIndicator = document.createElement('div');
+            uploadIndicator.className = 'video-upload-indicator';
+            uploadIndicator.innerHTML = `
+                <div class="vui-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    Reading video…
+                </div>
+                <div class="vui-track"><div class="vui-bar" id="vui-bar-active"></div></div>`;
+            const indicatorW = 180;
+            const indicatorH = 60;
+            uploadIndicator.style.left = Math.min(e.clientX - indicatorW / 2, window.innerWidth - indicatorW - 16) + 'px';
+            uploadIndicator.style.top  = Math.min(e.clientY - indicatorH / 2, window.innerHeight - indicatorH - 16) + 'px';
+            document.body.appendChild(uploadIndicator);
+
+            reader.onprogress = (pe) => {
+                if (!pe.lengthComputable) return;
+                const bar = uploadIndicator.querySelector('.vui-bar');
+                if (bar) bar.style.width = Math.round((pe.loaded / pe.total) * 100) + '%';
+            };
+        }
+
+        const removeIndicator = () => {
+            if (!uploadIndicator) return;
+            const bar = uploadIndicator.querySelector('.vui-bar');
+            if (bar) bar.style.width = '100%';
+            uploadIndicator.classList.add('done');
+            uploadIndicator.addEventListener('animationend', () => uploadIndicator.remove(), { once: true });
+            uploadIndicator = null;
+        };
+
         reader.onload = (ev) => {
             if (file.type.startsWith('video/')) {
                 const vid = document.createElement('video');
+                vid.onerror = removeIndicator;
                 vid.onloadedmetadata = () => {
+                    removeIndicator();
                     const maxW = 320, maxH = 320;
                     let w = vid.videoWidth, h = vid.videoHeight;
                     if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
