@@ -1175,6 +1175,10 @@ body.note-font-sf-mono .note-edit-ta {
 .note.image-note {
     padding: 6px !important;
     overflow: visible;
+    /* backdrop-filter conflicts with video compositor layers causing blank frames
+       after tab switches — image/video covers the full note so this is safe to remove */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 
 .note.image-note .note-content,
@@ -4077,21 +4081,24 @@ function createNote(data, autoFocus = false) {
     }
 
     // ---- VIDEO FRAME RECOVERY ON TAB SWITCH ----
-    // Browsers flush decoded video frames when a tab is hidden to save memory.
-    // Paused videos have no frame to repaint when the tab comes back, appearing
-    // blank/transparent. Seeking to currentTime forces a re-decode + repaint.
+    // Primary fix: .note.image-note has backdrop-filter:none to avoid the
+    // Chromium/WebKit compositing bug where video layers go blank on tab resume.
+    // This handler is a secondary safety net for paused videos that still drop
+    // their frame — play()+pause() forces the browser to decode and paint a frame.
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState !== 'visible') return;
         document.querySelectorAll('.note video').forEach(vid => {
-            if (vid.paused && vid.readyState >= 2) {
-                // eslint-disable-next-line no-self-assign
-                vid.currentTime = vid.currentTime;
-            } else if (vid.paused) {
-                // Not enough data buffered yet — reload the source
-                const src = vid.src;
-                vid.src = '';
-                vid.src = src;
-            }
+            if (!vid.paused) return;
+            const t = vid.currentTime;
+            vid.play().then(() => {
+                requestAnimationFrame(() => {
+                    vid.pause();
+                    vid.currentTime = t;
+                });
+            }).catch(() => {
+                // play() blocked (e.g. no user gesture yet) — try a nudge seek
+                try { vid.currentTime = t + 0.001; vid.currentTime = t; } catch (_) {}
+            });
         });
     });
 
