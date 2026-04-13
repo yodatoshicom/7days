@@ -2716,11 +2716,11 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     </svg>
 </button>
 <div class="font-test-switch" id="font-test-switch">
-    <button class="ft-btn" data-font-family="'Caveat', cursive" data-font-weight="400" title="Caveat (current)" style="font-family:'Caveat',cursive;font-weight:400;">Aa</button>
-    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="300" title="Lexend Light" style="font-family:'Lexend',sans-serif;font-weight:300;font-size:10px;">Aa</button>
-    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="200" title="Lexend Extra Light" style="font-family:'Lexend',sans-serif;font-weight:200;font-size:10px;">Aa</button>
-    <button class="ft-btn" data-font-family="-apple-system, 'SF Pro', 'SF Pro Text', system-ui, sans-serif" data-font-weight="400" title="SF Pro" style="font-family:-apple-system,'SF Pro','SF Pro Text',system-ui,sans-serif;font-weight:400;font-size:10px;">Aa</button>
-    <button class="ft-btn" data-font-family="'Google Sans', sans-serif" data-font-weight="400" title="Google Sans" style="font-family:'Google Sans',sans-serif;font-weight:400;font-size:10px;">Aa</button>
+    <button class="ft-btn" data-font-family="'Caveat', cursive" data-font-weight="400" data-font-size="28px" title="Caveat (current)" style="font-family:'Caveat',cursive;font-weight:400;">Aa</button>
+    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="300" data-font-size="21px" title="Lexend Light" style="font-family:'Lexend',sans-serif;font-weight:300;font-size:10px;">Aa</button>
+    <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="200" data-font-size="21px" title="Lexend Extra Light" style="font-family:'Lexend',sans-serif;font-weight:200;font-size:10px;">Aa</button>
+    <button class="ft-btn" data-font-family="-apple-system, 'SF Pro', 'SF Pro Text', system-ui, sans-serif" data-font-weight="400" data-font-size="19px" title="SF Pro" style="font-family:-apple-system,'SF Pro','SF Pro Text',system-ui,sans-serif;font-weight:400;font-size:10px;">Aa</button>
+    <button class="ft-btn" data-font-family="'Google Sans', sans-serif" data-font-weight="400" data-font-size="19px" title="Google Sans" style="font-family:'Google Sans',sans-serif;font-weight:400;font-size:10px;">Aa</button>
     <div class="ft-popup" id="ft-popup"></div>
 </div>
 <button class="old-dock-toggle-btn" id="old-dock-toggle-btn" title="Show old dock (greeting + weather)">
@@ -2778,7 +2778,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     <div class="settings-divider"></div>
     <div>
         <div class="settings-section-label">Community</div>
-        <a class="settings-discord-link" href="#" target="_blank" rel="noopener">
+        <a class="settings-discord-link" href="https://discord.gg/pRgj8ZAR2t" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
             <span>Join our Discord</span>
         </a>
@@ -3061,9 +3061,10 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     // First time — seed hint notes
     if (notes.length === 0) {
         notes = [
-            { id: 'n1776098065375vhb9', x: 276, y: 60,  w: 271, text: 'add to your homepage 🏡',                                  page: 0, zIndex: 100 },
-            { id: 'n1776098095232',      x: 274, y: 133, w: 137, h: 125, manualResize: true, text: 'double click to create a note', page: 0, zIndex: 101 },
-            { id: 'n1776098589852',      x: 45,  y: 53,  w: 207, h: 128, manualResize: true, text: 'book flights\n↗ tokyo, april\nbefore prices jump', page: 0, zIndex: 102 },
+            { "id": "n1776098065375vhb9", "x": 276, "y": 60,  "w": 271, "text": "add to your homepage 🏡", "page": 0, "zIndex": 100 },
+            { "id": "n1776098095232",      "x": 274, "y": 133, "w": 176, "h": 96, "manualResize": true, "text": "double click to create a note", "page": 0, "zIndex": 101 },
+            { "id": "n1776098589852",      "x": 45,  "y": 53,  "w": 207, "h": 128, "manualResize": true, "text": "book flights\n↗ tokyo, april\nbefore prices jump", "page": 0, "zIndex": 102 },
+            { "id": "n1776100345016",      "x": 87,  "y": 194, "w": 162, "text": "weekdash.com", "page": 0, "zIndex": 103 }
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
@@ -4516,12 +4517,13 @@ function createNote(data, autoFocus = false) {
         const wrap = document.getElementById('font-test-switch');
         if (!wrap) return;
         const key = 'aura_font_test';
-        function apply(family, weight, btn, reflow = true) {
+        function apply(family, weight, size, btn, reflow = true) {
             document.documentElement.style.setProperty('--note-font', family);
             document.documentElement.style.setProperty('--note-weight', weight);
+            if (size) document.documentElement.style.setProperty('--note-size', size);
             wrap.querySelectorAll('.ft-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            localStorage.setItem(key, JSON.stringify({ family, weight }));
+            localStorage.setItem(key, JSON.stringify({ family, weight, size }));
             if (reflow && typeof reflowNotes === 'function') {
                 document.fonts.ready.then(() => reflowNotes());
             }
@@ -4538,15 +4540,15 @@ function createNote(data, autoFocus = false) {
         wrap.addEventListener('click', (e) => {
             const btn = e.target.closest('.ft-btn');
             if (!btn) return;
-            apply(btn.dataset.fontFamily, btn.dataset.fontWeight, btn);
+            apply(btn.dataset.fontFamily, btn.dataset.fontWeight, btn.dataset.fontSize, btn);
             showPopup(btn.getAttribute('title') || '');
         });
         const saved = localStorage.getItem(key);
         if (saved) {
             try {
-                const { family, weight } = JSON.parse(saved);
+                const { family, weight, size } = JSON.parse(saved);
                 const btn = Array.from(wrap.querySelectorAll('.ft-btn')).find(b => b.dataset.fontFamily === family && b.dataset.fontWeight === weight);
-                apply(family, weight, btn, false);
+                apply(family, weight, size, btn, false);
             } catch {}
         }
     })();
