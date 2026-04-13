@@ -4871,10 +4871,10 @@ function createNote(data, autoFocus = false) {
         const yr = new Date().getFullYear();
         const start = new Date(yr, 0, 1).getTime(), end = new Date(yr + 1, 0, 1).getTime(), span = end - start;
 
-        // Bar mode cycling: year → season → quarter
-        const MODES = ['year', 'season', 'quarter'];
-        let modeIdx = parseInt(localStorage.getItem('aura_year_bar_mode_idx') || '1', 10);
-        if (isNaN(modeIdx) || modeIdx < 0 || modeIdx >= MODES.length) modeIdx = 1;
+        // Bar mode cycling: season → year → quarter
+        const MODES = ['season', 'year', 'quarter'];
+        let modeIdx = parseInt(localStorage.getItem('aura_year_bar_mode_idx') || '0', 10);
+        if (isNaN(modeIdx) || modeIdx < 0 || modeIdx >= MODES.length) modeIdx = 0;
         function getModeRange() {
             const now = new Date();
             const mode = MODES[modeIdx];
@@ -5072,7 +5072,7 @@ function createNote(data, autoFocus = false) {
                 update();
             }
             ghostEl.addEventListener('click', cycleMode);
-            ghostEl.title = 'Click to cycle: year → season → quarter';
+            ghostEl.title = 'Click to cycle: season → year → quarter';
 
             // Also allow clicking season labels / brackets to cycle
             bar.addEventListener('click', (e) => {
