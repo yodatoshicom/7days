@@ -2951,7 +2951,8 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
             { "id": "n1776098065375vhb9", "x": 276, "y": 60,  "w": 271, "text": "add to your homepage 🏡", "page": 0, "zIndex": 100 },
             { "id": "n1776098095232",      "x": 274, "y": 133, "w": 176, "h": 96, "manualResize": true, "text": "double click to create a note", "page": 0, "zIndex": 101 },
             { "id": "n1776098589852",      "x": 45,  "y": 53,  "w": 207, "h": 128, "manualResize": true, "text": "book flights\n↗ tokyo, april\nbefore prices jump", "page": 0, "zIndex": 102 },
-            { "id": "n1776100345016",      "x": 87,  "y": 194, "w": 162, "text": "weekdash.com", "page": 0, "zIndex": 103 }
+            { "id": "n1776100345016",      "x": 87,  "y": 194, "w": 162, "text": "weekdash.com", "page": 0, "zIndex": 103 },
+            { "id": "n1776200000001",      "x": 570, "y": 55,  "w": 265, "h": 185, "manualResize": true, "imageData": "vid/preview.mov", "page": 0, "zIndex": 104 }
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
@@ -3682,7 +3683,8 @@ function createNote(data, autoFocus = false) {
 // ---- IMAGE NOTE ----
         if (data.imageData) {
             note.classList.add('image-note');
-            if (data.imageData.startsWith('data:video/')) {
+            const isVideoSrc = data.imageData.startsWith('data:video/') || /\.(mov|mp4|webm|ogv|ogg)(\?.*)?$/i.test(data.imageData);
+            if (isVideoSrc) {
                 const vid = document.createElement('video');
                 vid.className = 'note-image';
                 vid.src = data.imageData;
@@ -4412,7 +4414,7 @@ function createNote(data, autoFocus = false) {
     // Hydrate media from IndexedDB, then create notes
     (async function() {
         for (const n of notes.filter(n => !n.archived)) {
-            if (n.imageData && !n.imageData.startsWith('data:')) {
+            if (n.imageData && n.imageData.startsWith('media_')) {
                 const blob = await mediaDB.get(n.imageData);
                 if (blob) n.imageData = blob;
                 else n.imageData = null; // media lost
