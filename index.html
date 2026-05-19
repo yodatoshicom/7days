@@ -121,25 +121,32 @@
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png?v=2">
+<link rel="preload" as="image" href="img/wallpaper.jpg" fetchpriority="high">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lexend:wght@200;300;400;500&family=Caveat:wght@400;700&family=Lora:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=DM+Mono:wght@400;500&family=Nunito:wght@900" rel="stylesheet">
 
 <script>
-// Apply persisted font/size settings before first paint to prevent flash
+// Apply persisted size setting before first paint to prevent flash
 (function() {
-    var fonts = { 'caveat':"'Caveat', cursive", 'sf-mono':"'SF Mono', 'SFMono-Regular', ui-monospace, monospace", 'lora':"'Lora', serif", 'dm-mono':"'DM Mono', monospace", 'jetbrains-mono':"'JetBrains Mono', monospace", 'fraunces':"'Fraunces', serif" };
-    var sizes   = { 'S':'21px', 'M':'22px', 'L':'28px' };
-    var sizes1x = { 'S':'15px', 'M':'16px', 'L':'20px' };
+    var sizes = { 'S':'21px', 'M':'22px', 'L':'28px' };
     var r = document.documentElement;
     r.classList.add('theme-valley');
-    
-    var f = localStorage.getItem('aura_note_font');
-    if (f && fonts[f]) r.style.setProperty('--note-font', fonts[f]);
+
     var s = localStorage.getItem('aura_note_size');
-    if (s) r.style.setProperty('--note-size', (window.devicePixelRatio > 1 ? sizes : sizes1x)[s] || sizes[s]);
+    if (s && sizes[s]) r.style.setProperty('--note-size', sizes[s]);
+
+    // Custom background (image or video) lives in IndexedDB (loaded async after parse).
+    // This flag lets us hide the default wallpaper before that load completes,
+    // so we don't get a flash of the wrong image on reload.
+    if (localStorage.getItem('aura_has_custom_bg') === '1') {
+        r.style.backgroundImage = 'none';
+        if (localStorage.getItem('aura_custom_bg_kind') === 'video') {
+            r.classList.add('has-custom-bg-video');
+        }
+    }
 })();
 </script>
 <style>
@@ -153,13 +160,13 @@
     --card-bg: rgba(255, 255, 255, 0.08);
 
     --note-font: 'Caveat', cursive;
-    --note-size: 28px;
+    --note-size: 21px;
 }
 
 /* ── Valley theme ── */
 html.theme-valley {
     background-color: #1a1040;
-    background-image: url('img/wallpaper.webp');
+    background-image: url('img/wallpaper.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -169,6 +176,19 @@ html.theme-valley body {
     background-image: none !important;
     background-color: transparent;
 }
+/* Custom background video — sits behind everything, covers the viewport like the wallpaper */
+#custom-bg-video {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+    pointer-events: none;
+}
+html.has-custom-bg-video #custom-bg-video { display: block; }
+html.has-custom-bg-video { background-image: none !important; }
 /* Hide entire dock by default in valley; show-old-dock brings back the big legacy dock */
 html.theme-valley .dock-wrapper { display: none; }
 html.theme-valley.show-old-dock .dock-wrapper {
@@ -188,14 +208,25 @@ html.theme-valley.show-old-dock .day-card:last-child:hover,
 html.theme-valley.show-old-dock .day-card.active,
 html.theme-valley.show-old-dock .day-card.active:first-child,
 html.theme-valley.show-old-dock .day-card.active:last-child {
-    width: 64px;
-    height: 76px;
-    border-radius: 30px;
+    width: 58px;
+    height: 68px;
+    border-radius: 27px;
 }
-html.theme-valley.show-old-dock .day-card .day-name { font-size: 10px; margin-bottom: 2px; }
-html.theme-valley.show-old-dock .day-card .day-number { font-size: 28px; font-weight: 700; }
+html.theme-valley.show-old-dock .day-card .day-name { font-size: 9px; margin-bottom: 2px; }
+html.theme-valley.show-old-dock .day-card .day-number { font-size: 25px; font-weight: 700; }
+/* In the old dock, weekend cards should look identical to weekday cards */
+html.theme-valley.show-old-dock .day-card.weekend .day-number {
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.7);
+}
+html.theme-valley.show-old-dock .day-card.weekend.active .day-number {
+    -webkit-text-fill-color: #fff;
+    color: #fff;
+}
 html.theme-valley.show-old-dock .dock-nav { display: flex; }
 html.theme-valley.show-old-dock .weather-row { display: flex; }
+/* Old dock has its own weather row — hide the timebar's per-day weather emojis to avoid duplication */
+html.show-old-dock .timebar-day-weather { display: none; }
 html.theme-valley.show-old-dock .header-container {
     display: block;
     position: absolute;
@@ -205,28 +236,6 @@ html.theme-valley.show-old-dock .header-container {
     margin-bottom: 10px;
 }
 
-html.theme-valley .year-bar-fill {
-    background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
-    border-radius: 0;
-    box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
-}
-html.theme-valley #year-bar-marker {
-    bottom: 2px;
-}
-html.theme-valley .year-bar-label {
-    color: rgba(220, 180, 255, 0.9);
-    background: rgba(20, 10, 40, 0.55);
-    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
-    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
-    border: none;
-    outline: 0.5px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 4px 16px rgba(0, 0, 0, 0.3);
-}
-html.theme-valley .season-label {
-    color: rgba(200, 150, 255, 0.6);
-}
 html.theme-valley .weather-row { color: rgba(240, 238, 255, 0.8); }
 html.theme-valley .weather-day { color: rgba(240, 238, 255, 0.8); }
 html.theme-valley .weather-separator {
@@ -276,7 +285,7 @@ html.theme-valley #active-day-light {
 
 
 .greeting {
-    font-size: 68px;
+    font-size: 58px;
     font-weight: 700;
     letter-spacing: -0.05em;
     background: linear-gradient(to bottom, var(--text-color) 70%, transparent);
@@ -782,7 +791,7 @@ body.ready {
 }
 
 .weather-day {
-    width: 58px;
+    width: 52px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -791,15 +800,15 @@ body.ready {
     transition: 0.3s;
     pointer-events: auto;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
     color: var(--text-color);
 }
 
 .weather-day:hover { opacity: 1; transform: translateY(-1px); }
 
-.weather-day .weather-icon { font-size: 15px; margin-bottom: 0; margin-right: 4px; }
-.weather-day .weather-temp { font-size: 11px; font-weight: 700; opacity: 0.8; }
+.weather-day .weather-icon { font-size: 13px; margin-bottom: 0; margin-right: 4px; }
+.weather-day .weather-temp { font-size: 10px; font-weight: 700; opacity: 0.8; }
 
 .weather-separator {
     width: 1px;
@@ -862,6 +871,8 @@ body.ready {
 
 
 .note {
+    font-family: Caveat;
+    font-size: 12px;
     position: absolute;
     width: fit-content;
     min-width: 0;
@@ -869,10 +880,10 @@ body.ready {
     min-height: 40px;
     padding: 12px 16px;
     background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(3px)!important;
+    -webkit-backdrop-filter: blur(3px)!important;
     border: none;
-    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 30px;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -903,6 +914,9 @@ body.ready {
 .note[data-note-color="blue"] { color: #dbeafe; }
 .note[data-note-color="mint"] { color: #d1fae5; }
 .note[data-note-color="pink"] { color: #fce7f3; }
+
+/* Caveat handwriting reads cleanest in pure white — only on default-color notes */
+.note:not([data-note-color]) { color: #ffffff; }
 
 
 .note:active:not(:has(.note-resize-handle:active)) {
@@ -990,6 +1004,50 @@ body.ready {
     stroke: rgba(77, 0, 0, 0.9);
 }
 
+.note-alerts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+    pointer-events: auto;
+}
+.note-alert-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1;
+    font-weight: 800;
+    font-size: 1.05em;
+    letter-spacing: 0.01em;
+    background: linear-gradient(90deg, #c580fb, #6aa9ff, #34d399, #f5b942, #f472b6, #c580fb);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: alert-shine 6s linear infinite;
+    user-select: none;
+}
+.note-alert-icon,
+.note-alert-text {
+    display: inline-block;
+    line-height: 1;
+}
+@keyframes alert-shine {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+.note-alert-x {
+    border: none;
+    background: none;
+    color: rgba(0,0,0,0.45);
+    -webkit-text-fill-color: rgba(0,0,0,0.45);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    padding: 0 2px;
+}
+.note-alert-x:hover { color: rgba(0,0,0,0.85); -webkit-text-fill-color: rgba(0,0,0,0.85); }
 
 .note-content {
     font-family: var(--note-font);
@@ -1034,6 +1092,7 @@ body.ready {
 
 /* ── Page Navigation Dots ── */
 .page-dots {
+    display: none !important;
     position: fixed;
     right: 12px;
     top: 50%;
@@ -1081,6 +1140,7 @@ body.ready {
 }
 /* Shape toggle button */
 .page-shape-toggle {
+    display: none !important;
     position: fixed;
     bottom: 12px;
     right: 12px;
@@ -1133,15 +1193,6 @@ body.note-editing-mode .note.editing textarea {
     -webkit-user-select: text;
 }
 
-body.note-font-sf-mono .note-content {
-    font-size: calc(var(--note-size) * 0.72);
-    outline: none;
-    color: var(--text-color);
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    word-break: normal;
-}
-
 .note-edit-ta {
     display: block;
     width: 100%;
@@ -1160,11 +1211,6 @@ body.note-font-sf-mono .note-content {
     overflow: hidden;
     field-sizing: content;
 }
-body.note-font-sf-mono .note-edit-ta {
-    font-size: calc(var(--note-size) * 0.72);
-}
-
-
 .note-content a {
     color: var(--accent-color);
     text-decoration: none;
@@ -1419,43 +1465,6 @@ html.hide-ruler .dock-wrapper {
 
 
 
-.digit-scroll-container { 
-    display: flex; 
-    align-items: center; 
-    overflow: hidden;
-    height: 22px;
-    position: relative;
-}
-.week-label { display: none; white-space: nowrap; }
-
-/* SETTINGS — top right */
-.season-flip-btn {
-    position: fixed;
-    top: 24px;
-    right: 100px;
-    z-index: 10001;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    opacity: 0.3;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    padding: 0;
-}
-.season-flip-btn:hover { opacity: 0.8; }
-.season-flip-btn:active { transform: scale(0.9); }
-
-/* Hide bottom bar */
-html.year-bar-hidden .year-bar {
-    display: none;
-}
-
 .old-dock-toggle-btn {
     position: fixed;
     top: 24px;
@@ -1504,67 +1513,6 @@ html.year-bar-hidden .year-bar {
 .app-logo:active { transform: translateX(-50%) scale(0.94); }
 .app-logo svg { width: 28px; height: 28px; }
 
-
-.font-test-switch {
-    position: relative;
-    top: auto;
-    right: auto;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    padding: 0;
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: none;
-}
-.font-test-switch .ft-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 0.5px solid rgba(255, 255, 255, 0.15);
-    background: rgba(255, 255, 255, 0.05);
-    color: #f0eeff;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: all 0.2s ease;
-    padding: 0;
-}
-.font-test-switch .ft-btn:hover { opacity: 1; transform: scale(1.08); }
-.font-test-switch .ft-btn.active {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.35);
-}
-.font-test-switch .ft-popup {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%) translateY(-4px);
-    padding: 6px 10px;
-    border-radius: 10px;
-    background: rgba(20, 10, 40, 0.85);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border: 0.5px solid rgba(255, 255, 255, 0.15);
-    color: #f0eeff;
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s ease, transform 0.2s var(--spring-easing);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-.font-test-switch .ft-popup.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
 
 .settings-btn {
     position: fixed;
@@ -1870,7 +1818,42 @@ body.dev-mode .dev-only { display: block; }
     box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
-
+.settings-action-row {
+    display: flex;
+    gap: 6px;
+}
+.settings-action-btn {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.9);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+}
+.settings-action-btn:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.18);
+}
+.settings-action-btn:active { transform: scale(0.97); }
+.settings-action-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+.settings-action-btn:disabled:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.10);
+}
+.settings-action-btn svg { opacity: 0.8; }
 
 /* PAST DAY CARDS */
 .day-card.past {
@@ -1892,290 +1875,6 @@ body.dev-mode .dev-only { display: block; }
 
 
 
-
-/* ── Year Progress Bar — Optimized & Fixed ── */
-.year-bar {
-    position: fixed;
-    bottom: 0;
-    left: 2%;
-    width: 96%;
-    height: 6px;
-    z-index: 500;
-    background: transparent;
-    pointer-events: none;
-    overflow: visible;
-}
-.year-bar-ghost {
-    position: absolute;
-    top: -12px;
-    left: 0;
-    width: 100%;
-    height: calc(100% + 16px);
-    background: transparent;
-    pointer-events: auto;
-    cursor: pointer;
-}
-.year-bar-ghost::after {
-    content: '';
-    position: absolute;
-    bottom: 4px;
-    left: 0;
-    width: 100%;
-    height: 6px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    mix-blend-mode: multiply;
-}
-.year-bar-pct-tooltip {
-    display: none;
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    color: #c580fb;
-    white-space: nowrap;
-    padding: 3px 8px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    pointer-events: none;
-    z-index: 502;
-}
-.year-bar-ghost:hover ~ .year-bar-pct-tooltip {
-    display: block;
-}
-.year-bar-fill {
-    height: 100%;
-    background: #c580fb;
-    border-radius: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.year-bar-marker {
-    position: absolute;
-    bottom: 8px;
-    transform: translateX(-50%);
-    pointer-events: none;
-    z-index: 501;
-    transition: left 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.year-bar-label {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 900;
-    color: #c580fb;
-    white-space: nowrap;
-    background: #fff;
-    padding: 0 10px;
-    border-radius: 20px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    height: 22px;
-    overflow: hidden;
-    line-height: 22px;
-    font-variant-numeric: tabular-nums;
-    border: 0.5px solid rgba(197, 128, 251, 0.25);
-}
-
-/* Valley Year Bar Overrides */
-html.theme-valley .year-bar { left: 0; width: 100%; height: 4px; }
-html.theme-valley .season-bracket { height: 7px; }
-html.theme-valley .season-tick { width: 2px; }
-html.theme-valley .year-bar-ghost::after {
-    background: rgba(0, 0, 0, 0.3);
-    mix-blend-mode: multiply;
-}
-html.theme-valley .year-bar-pct-tooltip {
-    color: rgba(220, 180, 255, 0.9);
-    background: rgba(20, 10, 40, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
-    box-shadow: none;
-}
-html.theme-valley .year-bar-fill {
-    background: linear-gradient(to right, rgba(180, 120, 255, 0.6), rgba(220, 160, 255, 0.9));
-    border-radius: 0;
-    box-shadow: 0 0 12px rgba(180, 120, 255, 0.4);
-}
-html.theme-valley .year-bar-marker { bottom: 2px; pointer-events: auto; }
-.year-bar-date-tooltip {
-    display: none;
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 4px;
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    white-space: nowrap;
-    padding: 4px 10px;
-    border-radius: 12px;
-    pointer-events: none;
-    text-transform: lowercase;
-}
-html.theme-valley .year-bar-marker:hover .year-bar-date-tooltip {
-    display: block;
-    color: rgba(220, 180, 255, 0.9);
-    background: rgba(20, 10, 40, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
-}
-html.theme-valley .year-bar-label {
-    color: rgba(220, 180, 255, 0.9);
-    background: rgba(20, 10, 40, 0.55);
-    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
-    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
-    border: none;
-    outline: 0.5px solid rgba(255, 255, 255, 0.1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-
-
-.digit-scroll {
-    display: flex;
-    flex-direction: column;
-    align-self: flex-start;
-    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s ease, opacity 0.4s ease;
-    overflow: hidden;
-    position: relative;
-}
-.digit-scroll span {
-    height: 22px;
-    width: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-.pct-sign {
-    margin-left: 1px;
-    font-weight: 700;
-    font-size: 10px;
-    opacity: 0.8;
-}
-
-.month-name {
-    display: none !important;
-}
-.month-divider {
-    display: none !important;
-}
-
-.season-bracket {
-    position: absolute;
-    bottom: 100%;
-    height: 10px;
-    pointer-events: auto;
-    cursor: pointer;
-}
-.season-tick {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 3px;
-    height: 100%;
-    --tick-fill: 0%;
-    background: linear-gradient(to top, #c580fb var(--tick-fill), rgba(0, 0, 0, 0.2) var(--tick-fill));
-    opacity: 1;
-    z-index: 1;
-}
-.season-bracket.past .season-tick {
-    background: #c580fb;
-    opacity: 0.8;
-}
-html.theme-valley .season-tick {
-    background: linear-gradient(to top, #c580fb var(--tick-fill), rgba(0, 0, 0, 0.3) var(--tick-fill));
-    box-shadow: none;
-}
-html.theme-valley .season-bracket.past .season-tick {
-    background: #c580fb;
-    opacity: 1;
-    box-shadow: 0 0 10px rgba(197, 128, 251, 0.6);
-}.season-label {
-    position: absolute;
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Inter', sans-serif;
-    font-size: 8px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #c580fb;
-    opacity: 0.6;
-    white-space: nowrap;
-    transition: opacity 0.4s ease;
-}
-.season-bracket.past .season-label {
-    opacity: 1;
-}
-
-/* Bar mode labels & dividers — shared across all modes */
-.bar-mode-label {
-    position: absolute;
-    bottom: 100%;
-    transform: translateX(-50%);
-    font-family: 'Inter', sans-serif;
-    font-size: 8px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: rgba(197, 128, 251, 0.3);
-    white-space: nowrap;
-    pointer-events: auto;
-    cursor: pointer;
-    margin-bottom: 4px;
-    transition: opacity 0.4s ease;
-}
-.bar-mode-label.past { color: rgba(197, 128, 251, 0.6); }
-.bar-mode-label.current { color: rgba(197, 128, 251, 0.85); }
-
-.bar-mode-divider {
-    position: absolute;
-    bottom: 100%;
-    width: 2px;
-    height: 6px;
-    background: rgba(0, 0, 0, 0.2);
-    pointer-events: none;
-    z-index: 1;
-}
-.bar-mode-divider.past {
-    background: #c580fb;
-    opacity: 0.8;
-}
-
-html.theme-valley .bar-mode-divider {
-    background: rgba(0, 0, 0, 0.3);
-}
-html.theme-valley .bar-mode-divider.past {
-    background: #c580fb;
-    opacity: 0.8;
-}
-html.theme-valley .bar-mode-label {
-    color: rgba(255, 255, 255, 0.3);
-}
-html.theme-valley .bar-mode-label.past { color: rgba(255, 255, 255, 0.5); }
-html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
-
-
-.bar-sun-marker {
-    color: #f5a623 !important;
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0;
-    margin-bottom: 16px;
-    opacity: 0.8;
-}
 
 
 /* Bottom watermark — Alcove-style fading text */
@@ -2426,38 +2125,6 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
 
 
 
-/* ── Scale down on smaller desktop/laptop screens (< 1260px) ── */
-@media (max-width: 1260px) and (min-width: 431px) {
-    .day-card        { width: 52px; height: 54px; border-radius: 28px; }
-    .day-number      { font-size: 22px; }
-    .day-name        { font-size: 9px; }
-    .dock-container  { padding: 7px; gap: 3px; border-radius: 30px; }
-    .dock-wrapper    { gap: 0; }
-    .day-separator   { height: 28px; }
-    .time-ruler      { height: 35px; margin-bottom: -10px; }
-
-}
-
-/* ── 1x (non-retina) screens: thicken hairline borders + scale down fonts ── */
-@media (-webkit-max-device-pixel-ratio: 1), (max-resolution: 1dppx) {
-    .dock-container,
-    .note,
-    .settings-panel,
-    .note-arrow-bar,
-    .time-ruler-now-label,
-    .sun-tooltip-bubble {
-        border-width: 1px;
-    }
-    body            { justify-content: flex-end; }
-    .dock-wrapper   { padding-bottom: 32px; margin-top: 0; margin-bottom: 0; }
-    :root           { --note-size: 20px; }
-    .day-number     { font-size: 18px; }
-    .day-name       { font-size: 8px; }
-    .weather-tooltip { font-size: 24px; }
-    .sun-label      { font-size: 7px; }
-    .sun-tooltip-bubble { font-size: 9px; }
-}
-
 /* ── backdrop-filter unsupported fallback (Firefox, some Windows) ── */
 @supports not (backdrop-filter: blur(1px)) {
     .dock-container  { background: rgba(240, 240, 240, 0.92); }
@@ -2467,99 +2134,258 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     .note-edit-overlay { background: rgba(0,0,0,0.35); }
 }
 
-/* ── Dock to bottom + fluid width at ≤ 750px ── */
-@media (max-width: 750px) and (min-width: 431px) {
-    body           { justify-content: flex-end; }
-    .dock-wrapper  { width: calc(100% - 32px); padding-bottom: max(20px, env(safe-area-inset-bottom)); margin-top: 0; margin-bottom: 0; }
-    .dock-row      { width: 100%; }
-    .dock-container{ flex: 1; }
-    .day-card      { flex: 1; width: auto; min-width: 0; }
-    .dock-nav      { display: none; }
-    .time-ruler    { width: calc(100% - 32px); }
+/* ── Timebar — days of current month ── */
+.timebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 600;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+.timebar.ready { opacity: 1; }
+.timebar-inner {
+    display: flex;
+    align-items: flex-end;
+    gap: 0; /* days are flush so cursor never leaves the hit zone */
+    padding: 16px 10px 0; /* transparent top buffer keeps hover alive above */
+    max-width: 100vw;
+    box-sizing: border-box;
+    pointer-events: auto;
+}
+.timebar-day {
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    position: relative;
+    width: clamp(26px, 2.5vw, 36px);
+    height: 30px;
+    color: rgba(240, 238, 255, 0.6);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    line-height: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px;
+    padding-top: 10px;
+    transition: height 0.32s var(--spring-easing),
+                color 0.25s ease;
+    cursor: pointer;
+    overflow: visible;
+    user-select: none;
+    -webkit-user-select: none;
+    background: transparent;
+}
+.timebar-day-num { line-height: 1; }
+/* Visible day shape — drawn inside a transparent margin so days are flush in the DOM */
+.timebar-day::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    top: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.015);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 22px 22px 0 0;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.12);
+    transition: background 0.25s ease, border-top-color 0.25s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+/* .is-this-week is kept as a data flag for weather emoji attachment — no
+   visual styling. Only today stands out (rule below). */
+/* Today — brightest tint, stronger glow */
+.timebar-day.is-today {
+    color: #f0eeff;
+}
+.timebar-day.is-today::before {
+    background: rgba(197, 128, 251, 0.26);
+    border-top-color: rgba(197, 128, 251, 0.65);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+        0 6px 26px rgba(197, 128, 251, 0.32);
+}
+.timebar-day-wd {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(-3px);
+    transition: opacity 0.22s ease, transform 0.22s var(--spring-easing);
+    pointer-events: none;
+}
+/* Weather emoji — floats above the pill, outside the day shape */
+.timebar-day-weather {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 6px);
+    transform: translateX(-50%);
+    font-size: 15px;
+    line-height: 1;
+    user-select: none;
+    -webkit-user-select: none;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+    opacity: 0.95;
+    z-index: 2;
+    white-space: nowrap;
+    cursor: default;
+}
+.timebar-day.is-today .timebar-day-weather {
+    font-size: 17px;
+    opacity: 1;
+}
+.timebar-day:hover .timebar-day-wd,
+.timebar-day.is-today .timebar-day-wd {
+    opacity: 0.85;
+    transform: translateY(0);
 }
 
-/* ── Mobile layout — iPhone 13 → current (≤ 430px logical px) ── */
-@media (max-width: 430px) {
-    #desktop-only { display: none !important; }
+/* During active magnification, JS drives heights every frame — no transition */
+.timebar-inner.is-magnifying .timebar-day {
+    transition: color 0.25s ease;
+}
+.timebar-inner.is-magnifying .timebar-day:hover { color: #f0eeff; }
 
-    /* ── Body: dock at bottom ── */
-    body {
-        justify-content: flex-end;
-    }
+/* Range-select highlight while dragging across days */
+.timebar-day.is-selecting::before {
+    background: rgba(120, 200, 255, 0.18);
+    border-top-color: rgba(120, 200, 255, 0.65);
+}
+/* Saved event marker — tinted background on the day pill */
+.timebar-day.has-event {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.18);
+}
+.timebar-day.has-event::before {
+    background:
+        linear-gradient(180deg,
+            var(--event-bg, rgba(197, 128, 251, 0.34)) 0%,
+            var(--event-bg-fade, rgba(197, 128, 251, 0.12)) 100%);
+    border-top: 0.5px solid var(--event-border, rgba(197, 128, 251, 0.75));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.10),
+        0 4px 22px var(--event-glow, rgba(197, 128, 251, 0.32));
+}
+.timebar-day.has-event:hover .timebar-day-wd,
+.timebar-day.has-event.is-today .timebar-day-wd {
+    opacity: 0.95;
+}
 
-    /* ── Dock wrapper: safe-area bottom breathing room ── */
-    .dock-wrapper {
-        width: calc(100% - 24px);
-        gap: 10px;
-        padding-bottom: max(20px, env(safe-area-inset-bottom));
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-    .dock-row { width: 100%; }
-    .dock-container {
-        flex: 1;
-        padding: 8px 6px;
-        gap: 4px;
-        border-radius: 28px;
-    }
-    .dock-nav { display: none; }
+.timebar-event-popover {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    background: rgba(20, 10, 40, 0.92);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+.timebar-event-popover input {
+    border: none;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    outline: none;
+    min-width: 200px;
+}
+.timebar-event-popover input::placeholder { color: rgba(255,255,255,0.4); }
+.timebar-event-popover button {
+    background: none; border: none;
+    color: rgba(255,255,255,0.55);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.timebar-event-popover button:hover { color: rgba(255, 100, 100, 0.9); }
 
-    /* ── Day cards: full-width flex, tall enough for touch ── */
-    .day-card {
-        flex: 1;
-        width: auto;
-        min-width: 0;
-        height: 80px;
-        border-radius: 22px;
-    }
-    .day-card:hover  { transform: none; }
-    .day-card:active { transform: scale(0.96); }
-
-    /* ── Typography ── */
-    .day-name   { font-size: 10px; letter-spacing: 0; }
-    .day-number { font-size: 24px; }
-    .day-separator { display: none; }
-    .day-main-row  { gap: 3px; }
-
-    /* ── Hide desktop-only chrome ── */
-    .city-tooltip    { display: none; }
-
-    /* ── Year progress: above dock ── */
-    .year-progress-label {
-        top: auto;
-        bottom: calc(100% + 10px);
-    }
-    .year-progress-label .yp-bar { width: calc(100vw - 48px); }
-
-    /* ── Time ruler: collapse, hide all ruler elements ── */
-    .time-ruler { display: none; }
-
-
-    /* ── Settings button: respect Dynamic Island / notch ── */
-    .settings-btn {
-        top: max(16px, env(safe-area-inset-top, 16px));
-        right: 16px;
-    }
-
-    /* ── Settings panel: open below settings button ── */
-    .settings-panel {
-        right: 8px;
-        left: 8px;
-        width: auto;
-        top: max(66px, calc(env(safe-area-inset-top, 0px) + 60px));
-        max-height: calc(100dvh - max(66px, calc(env(safe-area-inset-top, 0px) + 60px)) - 20px);
-    }
-
-    /* ── Notes ── */
-    .weather-tooltip  { font-size: 20px; }
-    .note             { max-width: calc(100vw - 32px); }
-    .note-resize-handle { opacity: 1; }
-    .note-arrow-bar   { max-width: calc(100vw - 32px); }
+.timebar-event-tooltip {
+    position: fixed;
+    pointer-events: none;
+    padding: 7px 12px 7px 16px;
+    background: linear-gradient(180deg,
+        rgba(30, 18, 56, 0.94) 0%,
+        rgba(18, 10, 38, 0.94) 100%);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 0.5px solid rgba(255,255,255,0.18);
+    border-radius: 12px;
+    color: rgba(255,255,255,0.96);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+    white-space: nowrap;
+    max-width: min(320px, 80vw);
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.4),
+        0 2px 6px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.18s ease, transform 0.22s var(--spring-easing);
+}
+.timebar-event-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* Accent bar — tinted with the event color */
+.timebar-event-tooltip::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 7px;
+    bottom: 7px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--tt-accent, rgba(197, 128, 251, 0.95));
+    box-shadow: 0 0 8px var(--tt-accent, rgba(197, 128, 251, 0.6));
+}
+/* Caret — points down at the day pill, positioned via --caret-x */
+.timebar-event-tooltip::after {
+    content: '';
+    position: absolute;
+    left: var(--caret-x, 50%);
+    bottom: -4px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(18, 10, 38, 0.94);
 }
 
 </style>
 </head>
 <body id="surface">
+<video id="custom-bg-video" autoplay muted loop playsinline disablepictureinpicture preload="auto"></video>
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <clipPath id="squircle" clipPathUnits="objectBoundingBox">
@@ -2615,12 +2441,6 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
 <button class="app-logo" id="app-logo" title="weekDash" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7"/></svg>
 </button>
-<button class="season-flip-btn" id="season-flip-btn" title="Toggle bottom bar">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="7 3 12 8 17 3"/><polyline points="7 21 12 16 17 21"/>
-    </svg>
-</button>
-
 <button class="old-dock-toggle-btn" id="old-dock-toggle-btn" title="Show old dock (greeting + weather)">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 17h16M6 13l2-6h8l2 6M8 17v2M16 17v2"/>
@@ -2679,30 +2499,25 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     <div>
         <div class="settings-section-label">Text Size</div>
         <div class="settings-toggle" id="text-size-toggle">
-            <button class="settings-toggle-btn" data-size="XS" style="font-size:7px;">XS</button>
             <button class="settings-toggle-btn" data-size="S" style="font-size:8px;">S</button>
             <button class="settings-toggle-btn active" data-size="M" style="font-size:10px;">M</button>
             <button class="settings-toggle-btn" data-size="L" style="font-size:12px;">L</button>
         </div>
     </div>
     <div>
-        <div class="settings-section-label">Font</div>
-        <div class="font-test-switch" id="font-test-switch">
-            <button class="ft-btn" data-font-family="'Caveat', cursive" data-font-weight="400" data-font-size="28px" title="Caveat (current)" style="font-family:'Caveat',cursive;font-weight:400;">Aa</button>
-            <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="300" data-font-size="21px" title="Lexend Light" style="font-family:'Lexend',sans-serif;font-weight:300;font-size:10px;">Aa</button>
-            <button class="ft-btn" data-font-family="'Lexend', sans-serif" data-font-weight="200" data-font-size="21px" title="Lexend Extra Light" style="font-family:'Lexend',sans-serif;font-weight:200;font-size:10px;">Aa</button>
-            <button class="ft-btn" data-font-family="-apple-system, 'SF Pro', 'SF Pro Text', system-ui, sans-serif" data-font-weight="400" data-font-size="19px" title="SF Pro" style="font-family:-apple-system,'SF Pro','SF Pro Text',system-ui,sans-serif;font-weight:400;font-size:10px;">Aa</button>
-            <button class="ft-btn" data-font-family="'Google Sans', sans-serif" data-font-weight="400" data-font-size="19px" title="Google Sans" style="font-family:'Google Sans',sans-serif;font-weight:400;font-size:10px;">Aa</button>
-            <div class="ft-popup" id="ft-popup"></div>
+        <div class="settings-section-label">Background</div>
+        <div class="settings-action-row">
+            <button class="settings-action-btn" id="bg-import-btn" title="Choose an image from your computer">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 11V3"/>
+                    <path d="M4.5 6.5L8 3l3.5 3.5"/>
+                    <path d="M3 12.5v.5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-.5"/>
+                </svg>
+                Import
+            </button>
+            <button class="settings-action-btn" id="bg-reset-btn" title="Restore the default background">Reset</button>
+            <input type="file" id="bg-file-input" accept="image/*,video/*" style="display:none">
         </div>
-    </div>
-    <div class="settings-divider"></div>
-    <div>
-        <div class="settings-section-label">Community</div>
-        <a class="settings-discord-link" href="https://discord.gg/pRgj8ZAR2t" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
-            <span>Join our Discord</span>
-        </a>
     </div>
 </div>
 
@@ -3040,6 +2855,12 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     // ---- COPY / PASTE SELECTED NOTES ----
     let copiedNotes = null;
 
+    let arrowSaveTimer = null;
+    function scheduleArrowSave() {
+        if (arrowSaveTimer) clearTimeout(arrowSaveTimer);
+        arrowSaveTimer = setTimeout(() => { arrowSaveTimer = null; save(); }, 200);
+    }
+
     window.addEventListener('keydown', (e) => {
         if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.contentEditable === 'true') return;
 
@@ -3094,10 +2915,33 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
             return;
         }
 
-        // Delete / Backspace — delete selected notes (with confirm popup)
+        // Delete / Backspace — delete selected notes immediately
         if ((e.key === 'Delete' || e.key === 'Backspace') && selectedNoteIds.size > 0) {
             e.preventDefault();
-            showDeleteConfirm();
+            commitDeleteSelected();
+            return;
+        }
+
+        // Arrow keys — nudge selected notes (Shift = bigger step)
+        if (selectedNoteIds.size > 0 &&
+            (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+            e.preventDefault();
+            const step = e.shiftKey ? 10 : 1;
+            const dx = e.key === 'ArrowLeft' ? -step : e.key === 'ArrowRight' ? step : 0;
+            const dy = e.key === 'ArrowUp'   ? -step : e.key === 'ArrowDown'  ? step : 0;
+            const margin = 20;
+            selectedNoteIds.forEach(id => {
+                const data = notes.find(n => n.id === id);
+                const el = document.getElementById(id);
+                if (!data || !el) return;
+                const w = el.offsetWidth, h = el.offsetHeight;
+                const nx = Math.min(Math.max(data.x + dx, margin), window.innerWidth  - w - margin);
+                const ny = Math.min(Math.max(data.y + dy, margin), window.innerHeight - h - margin);
+                data.x = nx; data.y = ny;
+                el.style.left = nx + 'px';
+                el.style.top  = ny + 'px';
+            });
+            scheduleArrowSave();
             return;
         }
     });
@@ -3122,6 +2966,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
     function commitDeleteSelected() {
         selectedNoteIds.forEach(id => {
             const data = notes.find(n => n.id === id);
+            if (data) cancelAlertsFor(data);
             if (data && data.imageData) mediaDB.del('media_' + id);
             const el = document.getElementById(id);
             if (el) el.remove();
@@ -3552,7 +3397,9 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
 
 
     function updateWatermark() {
-        document.getElementById('bottom-watermark').textContent = 'weekdash';
+        const locale = lang === 'es' ? 'es-ES' : lang === 'pt' ? 'pt-BR' : 'en-US';
+        const monthName = new Date().toLocaleString(locale, { month: 'long' });
+        document.getElementById('bottom-watermark').textContent = monthName.toLowerCase();
     }
 
     function applyLang(newLang) {
@@ -3568,7 +3415,7 @@ html.theme-valley .bar-mode-label.current { color: rgba(255, 255, 255, 0.7); }
         updateHeader();
         initDock();
         updateWatermark();
-        if (window.updateYearBarLang) window.updateYearBarLang();
+        if (window.updateTimebarLang) window.updateTimebarLang();
     }
 
     document.getElementById('lang-picker').addEventListener('click', (e) => {
@@ -3680,6 +3527,9 @@ function createNote(data, autoFocus = false) {
         content.spellcheck = false;
         note.appendChild(content);
         renderNoteContent(content, data.text || '');
+        if (data.alerts && data.alerts.length) {
+            requestAnimationFrame(() => renderAlertChips(note, data));
+        }
 
 // ---- IMAGE NOTE ----
         if (data.imageData) {
@@ -3744,6 +3594,7 @@ function createNote(data, autoFocus = false) {
         closeBtn.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             e.preventDefault();
+            cancelAlertsFor(data);
             if (data.imageData) mediaDB.del('media_' + data.id);
             data._deleted = true;
             note.remove();
@@ -4058,9 +3909,12 @@ function createNote(data, autoFocus = false) {
                 document.body.classList.remove('note-editing-mode');
                 activeNoteRef = { note: null, data: null };
                 data.text = plainText;
-                renderNoteContent(content, plainText);
+                processAlerts(data);
+                renderNoteContent(content, data.text);
+                renderAlertChips(note, data);
                 document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
-                if (!plainText.trim()) {
+                if (!data.text.trim() && !(data.alerts && data.alerts.length)) {
+                    cancelAlertsFor(data);
                     note.remove();
                     notes = notes.filter(n => n.id !== data.id);
                     save();
@@ -4218,7 +4072,6 @@ function createNote(data, autoFocus = false) {
             !target.closest('.note-arrow-bar') &&
             !target.closest('.search-overlay') &&
             !target.closest('.dev-modal') &&
-            !target.closest('.year-bar') &&
             !target.closest('.page-dots') &&
             target.tagName !== 'BUTTON' &&
             target.tagName !== 'INPUT' &&
@@ -4309,6 +4162,245 @@ function createNote(data, autoFocus = false) {
         }
     });
 
+    /* ============================================================
+       NOTE ALERTS — slash-command reminders
+    ============================================================ */
+    const scheduledTimers = new Map();
+    const MAX_SETTIMEOUT = 24 * 24 * 60 * 60 * 1000;
+
+    let alertAudioCtx = null;
+    function playAlertChime() {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        if (!alertAudioCtx) alertAudioCtx = new Ctx();
+        if (alertAudioCtx.state === 'suspended') alertAudioCtx.resume().catch(() => {});
+        const ctx = alertAudioCtx;
+        const t0 = ctx.currentTime;
+        [880, 1320].forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'sine';
+            o.frequency.value = freq;
+            const start = t0 + i * 0.18;
+            g.gain.setValueAtTime(0, start);
+            g.gain.linearRampToValueAtTime(0.18, start + 0.02);
+            g.gain.exponentialRampToValueAtTime(0.0008, start + 0.55);
+            o.connect(g).connect(ctx.destination);
+            o.start(start);
+            o.stop(start + 0.6);
+        });
+    }
+
+    function makeAlertId() {
+        return 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    }
+
+    function parseHourSpec(h, ap) {
+        h = parseInt(h, 10);
+        if (!ap) return h;
+        const pm = ap.toLowerCase() === 'pm';
+        if (pm && h < 12) h += 12;
+        if (!pm && h === 12) h = 0;
+        return h;
+    }
+
+    function parseAlertsFromText(text) {
+        const alerts = [];
+
+        // /everyday at 6am [message...]  (recurring)
+        text = text.replace(
+            /(^|\s)\/everyday\s+at\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b([^\n]*)/gi,
+            (_, pre, h, mm, ap, rest) => {
+                alerts.push({
+                    id: makeAlertId(), kind: 'daily',
+                    hour: parseHourSpec(h, ap),
+                    minute: mm ? parseInt(mm, 10) : 0,
+                    text: rest.trim() || undefined
+                });
+                return pre;
+            }
+        );
+
+        // /6am, /6:30am, /6pm tomorrow
+        text = text.replace(
+            /(^|\s)\/(\d{1,2})(?::(\d{2}))?(am|pm)\b(\s+tomorrow\b)?/gi,
+            (_, pre, h, mm, ap, tom) => {
+                const hour = parseHourSpec(h, ap);
+                const minute = mm ? parseInt(mm, 10) : 0;
+                const d = new Date();
+                d.setHours(hour, minute, 0, 0);
+                if (tom || d.getTime() <= Date.now()) d.setDate(d.getDate() + 1);
+                alerts.push({ id: makeAlertId(), kind: 'once', at: d.getTime() });
+                return pre;
+            }
+        );
+
+        // /5s /5sec /6m /6min /2h /2hr
+        text = text.replace(
+            /(^|\s)\/(\d+)(sec|s|min|m|hr|h)\b/gi,
+            (whole, pre, n, u) => {
+                n = parseInt(n, 10);
+                u = u.toLowerCase();
+                const ms =
+                    (u === 'sec' || u === 's') ? n * 1000 :
+                    (u === 'min' || u === 'm') ? n * 60000 :
+                    (u === 'hr'  || u === 'h') ? n * 3600000 : 0;
+                if (!ms) return whole;
+                alerts.push({ id: makeAlertId(), kind: 'once', at: Date.now() + ms });
+                return pre;
+            }
+        );
+
+        // /5 (bare number → minutes)
+        text = text.replace(
+            /(^|\s)\/(\d+)\b/g,
+            (_, pre, n) => {
+                alerts.push({
+                    id: makeAlertId(), kind: 'once',
+                    at: Date.now() + parseInt(n, 10) * 60000
+                });
+                return pre;
+            }
+        );
+
+        text = text.replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/[ \t]{2,}/g, ' ').trim();
+        return { text, alerts };
+    }
+
+    function nextDailyAt(hour, minute) {
+        const d = new Date();
+        d.setHours(hour, minute || 0, 0, 0);
+        if (d.getTime() <= Date.now()) d.setDate(d.getDate() + 1);
+        return d.getTime();
+    }
+
+    function cancelAlertById(id) {
+        const tid = scheduledTimers.get(id);
+        if (tid) { clearTimeout(tid); scheduledTimers.delete(id); }
+    }
+
+    function cancelAlertsFor(noteData) {
+        (noteData.alerts || []).forEach(a => cancelAlertById(a.id));
+    }
+
+    function fireAlert(noteData, alert) {
+        const noteText = (noteData.text || '').trim();
+        const detail = (alert.text || noteText.split('\n')[0] || '').trim();
+        const body = detail ? detail : (noteText || 'Reminder');
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            try {
+                new Notification('Week Dash Reminder', {
+                    body,
+                    icon: 'img/favicon-192.png',
+                    badge: 'img/favicon-64.png',
+                    tag: 'wd-' + alert.id
+                });
+            } catch (_) {}
+        }
+        playAlertChime();
+        if (alert.kind === 'daily') {
+            scheduleAlert(noteData, alert);
+        } else {
+            noteData.alerts = (noteData.alerts || []).filter(a => a.id !== alert.id);
+            const el = document.getElementById(noteData.id);
+            if (el) renderAlertChips(el, noteData);
+            save();
+        }
+    }
+
+    function scheduleAlert(noteData, alert) {
+        cancelAlertById(alert.id);
+        const target = alert.kind === 'daily' ? nextDailyAt(alert.hour, alert.minute) : alert.at;
+        const delay = target - Date.now();
+        if (delay <= 0) {
+            fireAlert(noteData, alert);
+            return;
+        }
+        const safe = Math.min(delay, MAX_SETTIMEOUT);
+        const tid = setTimeout(() => {
+            scheduledTimers.delete(alert.id);
+            if (safe < delay) scheduleAlert(noteData, alert);
+            else              fireAlert(noteData, alert);
+        }, safe);
+        scheduledTimers.set(alert.id, tid);
+    }
+
+    function ensureNotifPermission() {
+        if (!('Notification' in window)) return;
+        if (Notification.permission === 'default') {
+            Notification.requestPermission().catch(() => {});
+        }
+    }
+
+    function processAlerts(noteData) {
+        const { text, alerts } = parseAlertsFromText(noteData.text || '');
+        if (!alerts.length) return;
+        noteData.text = text;
+        noteData.alerts = (noteData.alerts || []).concat(alerts);
+        ensureNotifPermission();
+        alerts.forEach(a => scheduleAlert(noteData, a));
+    }
+
+    function formatTime12(h, m) {
+        const ap = h >= 12 ? 'pm' : 'am';
+        let h12 = h % 12; if (h12 === 0) h12 = 12;
+        return h12 + ':' + String(m).padStart(2, '0') + ap;
+    }
+
+    function describeAlert(a) {
+        if (a.kind === 'daily') {
+            return 'daily ' + formatTime12(a.hour, a.minute || 0)
+                + (a.text ? ' • ' + a.text.slice(0, 24) : '');
+        }
+        const ms = a.at - Date.now();
+        if (ms <= 0)        return 'now';
+        if (ms < 60000)     return Math.round(ms / 1000) + 's';
+        if (ms < 3600000)   return Math.round(ms / 60000) + 'm';
+        if (ms < 86400000)  return new Date(a.at).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+        return new Date(a.at).toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+    }
+
+    function renderAlertChips(noteEl, noteData) {
+        let dock = noteEl.querySelector('.note-alerts');
+        const list = noteData.alerts || [];
+        if (!list.length) {
+            if (dock) dock.remove();
+            return;
+        }
+        if (!dock) {
+            dock = document.createElement('div');
+            dock.className = 'note-alerts';
+            noteEl.appendChild(dock);
+        }
+        dock.innerHTML = '';
+        list.forEach(a => {
+            const chip = document.createElement('span');
+            chip.className = 'note-alert-chip';
+            const icon = document.createElement('span');
+            icon.className = 'note-alert-icon';
+            icon.textContent = '⏰';
+            const lbl = document.createElement('span');
+            lbl.className = 'note-alert-text';
+            lbl.textContent = describeAlert(a);
+            chip.appendChild(icon);
+            chip.appendChild(lbl);
+            const x = document.createElement('button');
+            x.className = 'note-alert-x';
+            x.type = 'button';
+            x.textContent = '×';
+            x.title = 'Remove alert';
+            x.addEventListener('mousedown', e => e.stopPropagation());
+            x.addEventListener('click', e => {
+                e.stopPropagation();
+                cancelAlertById(a.id);
+                noteData.alerts = (noteData.alerts || []).filter(al => al.id !== a.id);
+                renderAlertChips(noteEl, noteData);
+                save();
+            });
+            chip.appendChild(x);
+            dock.appendChild(chip);
+        });
+    }
 
     function save() {
         document.querySelectorAll('.note').forEach(el => {
@@ -4421,6 +4513,9 @@ function createNote(data, autoFocus = false) {
                 else n.imageData = null; // media lost
             }
             createNote(n);
+            if (n.alerts && n.alerts.length) {
+                n.alerts.forEach(a => scheduleAlert(n, a));
+            }
             // Hide notes not on current page
             if (n.page !== currentPage) {
                 const el = document.getElementById(n.id);
@@ -4441,72 +4536,22 @@ function createNote(data, autoFocus = false) {
 /* ============================================================
        SETTINGS PANEL
     ============================================================ */
-    // Year bar hide toggle
-    (function() {
-        const btn = document.getElementById('season-flip-btn');
-        const key = 'aura_year_bar_hidden';
-        let hidden = localStorage.getItem(key) === 'true';
-        // If never set, default to shown (false)
-        if (localStorage.getItem(key) === null) hidden = false;
-        function apply() {
-            document.documentElement.classList.toggle('year-bar-hidden', hidden);
-        }
-        apply();
-        btn.addEventListener('click', () => {
-            hidden = !hidden;
-            localStorage.setItem(key, hidden);
-            apply();
-        });
-    })();
-
-    // App logo click (disabled)
+    // App logo click — spawn a new note at the viewport center
     (function() {
         const logo = document.getElementById('app-logo');
         if (!logo) return;
         logo.addEventListener('click', () => {
-            // week note disabled
+            const n = {
+                id: 'n' + Date.now(),
+                x: window.innerWidth / 2 - 40,
+                y: window.innerHeight / 2 - 30,
+                text: '',
+                zIndex: ++topZ,
+                page: currentPage
+            };
+            notes.push(n);
+            createNote(n, true);
         });
-    })();
-
-    // Font test switch (top-right quick-picker for testing note fonts)
-    (function() {
-        const wrap = document.getElementById('font-test-switch');
-        if (!wrap) return;
-        const key = 'aura_font_test';
-        function apply(family, weight, size, btn, reflow = true) {
-            document.documentElement.style.setProperty('--note-font', family);
-            document.documentElement.style.setProperty('--note-weight', weight);
-            if (size) document.documentElement.style.setProperty('--note-size', size);
-            wrap.querySelectorAll('.ft-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            localStorage.setItem(key, JSON.stringify({ family, weight, size }));
-            if (reflow && typeof reflowNotes === 'function') {
-                document.fonts.ready.then(() => reflowNotes());
-            }
-        }
-        const popup = document.getElementById('ft-popup');
-        let popupTimer;
-        function showPopup(text) {
-            if (!popup) return;
-            popup.textContent = text;
-            popup.classList.add('show');
-            clearTimeout(popupTimer);
-            popupTimer = setTimeout(() => popup.classList.remove('show'), 1400);
-        }
-        wrap.addEventListener('click', (e) => {
-            const btn = e.target.closest('.ft-btn');
-            if (!btn) return;
-            apply(btn.dataset.fontFamily, btn.dataset.fontWeight, btn.dataset.fontSize, btn);
-            showPopup(btn.getAttribute('title') || '');
-        });
-        const saved = localStorage.getItem(key);
-        if (saved) {
-            try {
-                const { family, weight, size } = JSON.parse(saved);
-                const btn = Array.from(wrap.querySelectorAll('.ft-btn')).find(b => b.dataset.fontFamily === family && b.dataset.fontWeight === weight);
-                apply(family, weight, size, btn, false);
-            } catch {}
-        }
     })();
 
     // Old dock toggle (shows greeting + weather row from legacy dock)
@@ -4570,6 +4615,155 @@ function createNote(data, autoFocus = false) {
         if (e.key === 'Escape') toggleSettings(false);
     });
 
+    // Custom background — import / reset (IndexedDB-backed)
+    const bgImportBtn = document.getElementById('bg-import-btn');
+    const bgResetBtn  = document.getElementById('bg-reset-btn');
+    const bgFileInput = document.getElementById('bg-file-input');
+
+    // Minimal IndexedDB helpers — single store keyed by string
+    const IDB_NAME = 'aura', IDB_STORE = 'prefs', IDB_KEY = 'customBg';
+    function openIdb() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(IDB_NAME, 1);
+            req.onupgradeneeded = () => {
+                const db = req.result;
+                if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+            };
+            req.onsuccess = () => resolve(req.result);
+            req.onerror   = () => reject(req.error);
+        });
+    }
+    function idbGet(key) {
+        return openIdb().then(db => new Promise((resolve, reject) => {
+            const tx = db.transaction(IDB_STORE, 'readonly');
+            const r  = tx.objectStore(IDB_STORE).get(key);
+            r.onsuccess = () => resolve(r.result);
+            r.onerror   = () => reject(r.error);
+        }));
+    }
+    function idbPut(key, value) {
+        return openIdb().then(db => new Promise((resolve, reject) => {
+            const tx = db.transaction(IDB_STORE, 'readwrite');
+            tx.objectStore(IDB_STORE).put(value, key);
+            tx.oncomplete = () => resolve();
+            tx.onerror    = () => reject(tx.error);
+        }));
+    }
+    function idbDel(key) {
+        return openIdb().then(db => new Promise((resolve, reject) => {
+            const tx = db.transaction(IDB_STORE, 'readwrite');
+            tx.objectStore(IDB_STORE).delete(key);
+            tx.oncomplete = () => resolve();
+            tx.onerror    = () => reject(tx.error);
+        }));
+    }
+
+    const bgVideoEl = document.getElementById('custom-bg-video');
+    let customBgUrl = null; // active object URL, kept for revocation
+    function applyCustomBgBlob(blob) {
+        const url = URL.createObjectURL(blob);
+        if (customBgUrl && customBgUrl !== url) URL.revokeObjectURL(customBgUrl);
+        customBgUrl = url;
+        const isVideo = (blob.type || '').startsWith('video/');
+        if (isVideo) {
+            document.documentElement.classList.add('has-custom-bg-video');
+            document.documentElement.style.backgroundImage = 'none';
+            bgVideoEl.src = url;
+            // Best-effort autoplay; muted+playsinline keep this allowed in modern browsers.
+            const p = bgVideoEl.play();
+            if (p && p.catch) p.catch(() => {});
+        } else {
+            document.documentElement.classList.remove('has-custom-bg-video');
+            bgVideoEl.removeAttribute('src');
+            bgVideoEl.load();
+            document.documentElement.style.backgroundImage = `url("${url}")`;
+        }
+        localStorage.setItem('aura_custom_bg_kind', isVideo ? 'video' : 'image');
+        bgResetBtn.disabled = false;
+    }
+    function clearCustomBgUrl() {
+        if (customBgUrl) { URL.revokeObjectURL(customBgUrl); customBgUrl = null; }
+        document.documentElement.classList.remove('has-custom-bg-video');
+        bgVideoEl.removeAttribute('src');
+        bgVideoEl.load();
+        document.documentElement.style.backgroundImage = ''; // restore default wallpaper
+        localStorage.removeItem('aura_custom_bg_kind');
+        bgResetBtn.disabled = true;
+    }
+
+    // One-time migration: old data URL in localStorage → Blob in IndexedDB
+    async function migrateLegacyCustomBg() {
+        const old = localStorage.getItem('aura_custom_bg');
+        if (!old) return;
+        try {
+            const comma = old.indexOf(',');
+            const meta  = old.slice(0, comma);
+            const b64   = old.slice(comma + 1);
+            const mime  = (meta.match(/data:([^;]+)/) || [])[1] || 'image/png';
+            const bin   = atob(b64);
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            await idbPut(IDB_KEY, new Blob([bytes], { type: mime }));
+            localStorage.setItem('aura_has_custom_bg', '1');
+        } catch (_) { /* malformed — drop it */ }
+        localStorage.removeItem('aura_custom_bg');
+    }
+
+    async function initCustomBg() {
+        await migrateLegacyCustomBg();
+        try {
+            const blob = await idbGet(IDB_KEY);
+            if (blob instanceof Blob) {
+                localStorage.setItem('aura_has_custom_bg', '1');
+                applyCustomBgBlob(blob);
+            } else {
+                // No saved bg — make sure the default wallpaper is visible
+                // (pre-paint may have hidden it via the flag from a stale state)
+                localStorage.removeItem('aura_has_custom_bg');
+                clearCustomBgUrl();
+            }
+        } catch (_) {
+            localStorage.removeItem('aura_has_custom_bg');
+            clearCustomBgUrl();
+        }
+    }
+    initCustomBg();
+
+    bgImportBtn.addEventListener('click', () => bgFileInput.click());
+
+    bgFileInput.addEventListener('change', async () => {
+        const file = bgFileInput.files && bgFileInput.files[0];
+        bgFileInput.value = ''; // allow re-picking the same file later
+        if (!file) return;
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+        if (!isImage && !isVideo) {
+            alert('Please choose an image or video file.');
+            return;
+        }
+        try {
+            // Drop the previous blob first so the browser can reclaim its disk
+            // space immediately rather than waiting for the put to overwrite.
+            try { await idbDel(IDB_KEY); } catch (_) {}
+            await idbPut(IDB_KEY, file); // File is a Blob, store as-is
+            localStorage.setItem('aura_has_custom_bg', '1');
+            applyCustomBgBlob(file);
+        } catch (err) {
+            console.error(err);
+            alert(isVideo ? 'Could not save that video.' : 'Could not save that image.');
+        }
+    });
+
+    bgResetBtn.addEventListener('click', async () => {
+        try {
+            await idbDel(IDB_KEY); // delete the blob from IndexedDB
+        } catch (err) {
+            console.error(err);
+        }
+        localStorage.removeItem('aura_has_custom_bg');
+        clearCustomBgUrl();
+    });
+
     // Temperature unit
     let tempUnit = localStorage.getItem('aura_temp_unit') || 'C';
 
@@ -4588,16 +4782,6 @@ function createNote(data, autoFocus = false) {
         applyTempUnit(btn.dataset.unit);
     });
 
-    // Note font
-    const noteFonts = {
-        'caveat':   "'Caveat', cursive",
-        'sf-mono': "'SF Mono', 'SFMono-Regular', ui-monospace, monospace",
-        'lora':     "'Lora', serif",
-        'dm-mono':  "'DM Mono', monospace",
-        'jetbrains-mono': "'JetBrains Mono', monospace",
-        'fraunces': "'Fraunces', serif",
-    };
-
     function reflowNotes() {
         document.querySelectorAll('.note').forEach(el => {
             const data = notes.find(n => n.id === el.id);
@@ -4613,23 +4797,12 @@ function createNote(data, autoFocus = false) {
         save();
     }
 
-    function applyNoteFont(key, noReflow = false) {
-        const font = noteFonts[key];
-        if (!font) return;
-        document.documentElement.style.setProperty('--note-font', font);
-        document.body.classList.toggle('note-font-sf-mono', key === 'sf-mono');
-        localStorage.setItem('aura_note_font', key);
-        if (!noReflow) reflowNotes();
-    }
-
 
     // Text size
-    const noteSizes   = { 'XS': '18px', 'S': '21px', 'M': '25px', 'L': '28px' };
-    const noteSizes1x = { 'XS': '13px', 'S': '15px', 'M': '16px', 'L': '20px' };
+    const noteSizes = { 'S': '21px', 'M': '25px', 'L': '28px' };
 
     function applyNoteSize(size, noReflow = false) {
-        const sizes = window.devicePixelRatio > 1 ? noteSizes : noteSizes1x;
-        const px = sizes[size];
+        const px = noteSizes[size];
         if (!px) return;
         document.documentElement.style.setProperty('--note-size', px);
         document.querySelectorAll('#text-size-toggle .settings-toggle-btn').forEach(b => {
@@ -4652,23 +4825,11 @@ function createNote(data, autoFocus = false) {
 
 
     // Restore saved settings
-    if (!localStorage.getItem('aura_font_reset_v1')) {
-        localStorage.setItem('aura_note_font', 'caveat');
-        localStorage.setItem('aura_note_size', 'M');
-        localStorage.setItem('aura_font_reset_v1', '1');
+    if (!localStorage.getItem('aura_font_reset_v2')) {
+        localStorage.setItem('aura_note_size', 'S');
+        localStorage.setItem('aura_font_reset_v2', '1');
     }
-    applyNoteFont(localStorage.getItem('aura_note_font') || 'caveat', true);
-    applyNoteSize(localStorage.getItem('aura_note_size') || 'M', true);
-    // Font-test switch wins over the main font picker if set
-    (function reapplyFontTest() {
-        const saved = localStorage.getItem('aura_font_test');
-        if (!saved) return;
-        try {
-            const { family, weight } = JSON.parse(saved);
-            document.documentElement.style.setProperty('--note-font', family);
-            document.documentElement.style.setProperty('--note-weight', weight);
-        } catch {}
-    })();
+    applyNoteSize(localStorage.getItem('aura_note_size') || 'S', true);
     applyTempUnit(tempUnit, false);
 
     // Reveal body — wait for fonts then show immediately
@@ -4688,306 +4849,455 @@ function createNote(data, autoFocus = false) {
         save();
     });
 
-    (function() {
+
+    (function setupTimebar() {
         const bar = document.createElement('div');
-        bar.className = 'year-bar';
-        bar.innerHTML = `
-            <div class="year-bar-ghost"></div>
-            <div class="year-bar-fill" id="year-bar-fill"></div>
-            <div class="year-bar-pct-tooltip" id="year-bar-pct-tooltip"></div>
-            <div class="year-bar-marker" id="year-bar-marker">
-                <div class="year-bar-label" id="year-bar-label">
-                    <div class="digit-scroll-container" id="digit-scroll-container">
-                        <div class="digit-scroll" id="digit-hundreds"><span>0</span><span>1</span></div>
-                        <div class="digit-scroll" id="digit-tens"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
-                        <div class="digit-scroll" id="digit-ones"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
-                        <span class="pct-sign">%</span>
-                    </div>
-                    <div class="week-label" id="week-label"></div>
-                </div>
-                <div class="year-bar-date-tooltip" id="year-bar-date-tooltip"></div>
-            </div>`;
+        bar.className = 'timebar';
+        const inner = document.createElement('div');
+        inner.className = 'timebar-inner';
+        bar.appendChild(inner);
         document.body.appendChild(bar);
 
-        // Populate date tooltip for year bar hover
-        (function updateDateTooltip() {
-            const tip = document.getElementById('year-bar-date-tooltip');
-            if (tip) {
-                const locale = (typeof lang !== 'undefined' && lang === 'es') ? 'es-ES' : (typeof lang !== 'undefined' && lang === 'pt') ? 'pt-BR' : 'en-US';
-                const now = new Date();
-                tip.textContent = now.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            }
-            setTimeout(updateDateTooltip, 60000);
-        })();
+        const BASE_H = 30;
+        const TODAY_H = 44;
+        const MAX_H = 56;
+        const RADIUS_DAYS = 2.6; // half-width of magnifier in day-widths
+        const EVENT_COLORS = ['#6aa9ff', '#7dd3fc', '#60a5fa', '#818cf8', '#a5b4fc'];
 
-        const setRollingNumber = (val) => {
-            const n = Math.floor(val);
-            const h = Math.floor(n / 100);
-            const t = Math.floor((n % 100) / 10);
-            const o = n % 10;
-            const hEl = document.getElementById('digit-hundreds'), tEl = document.getElementById('digit-tens'), oEl = document.getElementById('digit-ones');
-            const rowH = 22;
-            if (hEl) { hEl.style.width = h > 0 ? '9px' : '0'; hEl.style.opacity = h > 0 ? '1' : '0'; hEl.style.transform = `translateY(-${h * rowH}px)`; }
-            if (tEl) { const showT = (h > 0 || t > 0); tEl.style.width = showT ? '9px' : '0'; tEl.style.opacity = showT ? '1' : '0'; tEl.style.transform = `translateY(-${t * rowH}px)`; }
-            if (oEl) { oEl.style.transform = `translateY(-${o * rowH}px)`; }
+        let days = [];
+        let pointerX = 0;
+        let magnifying = false;
+        let raf = null;
+        let builtKey = '';
+
+        // Saved day-range events (vacations, etc.)
+        let timebarEvents = [];
+        try { timebarEvents = JSON.parse(localStorage.getItem('aura_timebar_events') || '[]'); } catch (_) {}
+        const saveEvents = () => localStorage.setItem('aura_timebar_events', JSON.stringify(timebarEvents));
+
+        const ymdFor = (y, m, d) => `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const eventsCovering = (ymd) => timebarEvents.filter(e => ymd >= e.start && ymd <= e.end);
+        const colorForEvent = (id) => {
+            let h = 0;
+            for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+            return EVENT_COLORS[h % EVENT_COLORS.length];
+        };
+        const hexToRgba = (hex, a) => {
+            const n = parseInt(hex.slice(1), 16);
+            return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
         };
 
-        const getWeekNumber = (d) => {
-            const target = new Date(d.valueOf());
-            const dayNr = (d.getDay() + 6) % 7;
-            target.setDate(target.getDate() - dayNr + 3);
-            const firstThursday = target.valueOf();
-            target.setMonth(0, 1);
-            if (target.getDay() !== 4) {
-                target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
-            }
-            return 1 + Math.ceil((firstThursday - target) / 604800000);
+        // Drag-select state
+        let selecting = false;
+        let selectAnchor = -1, selectCurrent = -1;
+        let selectStartX = 0, selectStartY = 0;
+
+        // Single shared popover + tooltip
+        let popover = null;
+        let tooltipEl = null;
+
+        const dayKey = () => {
+            const n = new Date();
+            return `${n.getFullYear()}-${n.getMonth()}-${n.getDate()}`;
         };
+        function rebuildIfDateChanged() {
+            if (dayKey() !== builtKey) build();
+        }
 
-        const yr = new Date().getFullYear();
-        const start = new Date(yr, 0, 1).getTime(), end = new Date(yr + 1, 0, 1).getTime(), span = end - start;
-
-        // Bar mode cycling: season → year → quarter
-        const MODES = ['season', 'year', 'quarter'];
-        let modeIdx = parseInt(localStorage.getItem('aura_year_bar_mode_idx') || '0', 10);
-        if (isNaN(modeIdx) || modeIdx < 0 || modeIdx >= MODES.length) modeIdx = 0;
-        function getModeRange() {
+        function build() {
             const now = new Date();
-            const mode = MODES[modeIdx];
-            if (mode === 'month') {
-                return {
-                    s: new Date(now.getFullYear(), now.getMonth(), 1).getTime(),
-                    e: new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime(),
-                };
+            const todayDate = now.getDate();
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const locale = (typeof lang !== 'undefined' && lang === 'es') ? 'es-ES' : (typeof lang !== 'undefined' && lang === 'pt') ? 'pt-BR' : 'en-US';
+            const fmtWd = (date) => date.toLocaleDateString(locale, { weekday: 'short' })
+                .replace(/\.$/, '').slice(0, 3).toUpperCase();
+            inner.innerHTML = '';
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(now.getFullYear(), now.getMonth(), d);
+                const wdShort = fmtWd(date);
+                const el = document.createElement('div');
+                el.className = 'timebar-day';
+                el.dataset.wd = wdShort;
+                const num = document.createElement('span');
+                num.className = 'timebar-day-num';
+                num.textContent = d;
+                const wd = document.createElement('span');
+                wd.className = 'timebar-day-wd';
+                wd.textContent = wdShort;
+                el.append(num, wd);
+                if (d === todayDate) el.classList.add('is-today');
+                // Current-week band — today + the next 6 days (clipped to month end).
+                // Each week day also gets a weather-emoji slot that floats above the
+                // pill; setupWeather() fills these in once the forecast lands.
+                const isThisWeek = (d >= todayDate && d < todayDate + 7);
+                if (isThisWeek) {
+                    el.classList.add('is-this-week');
+                    const wx = document.createElement('span');
+                    wx.className = 'timebar-day-weather';
+                    wx.dataset.ymd = ymdFor(now.getFullYear(), now.getMonth(), d);
+                    el.appendChild(wx);
+                }
+                inner.appendChild(el);
             }
-            if (mode === 'season') {
-                // Full year range — fill represents year progress, labels show season boundaries
-                return { s: start, e: end };
-            }
-            if (mode === 'quarter') {
-                const q = Math.floor(now.getMonth() / 3);
-                return {
-                    s: new Date(now.getFullYear(), q * 3, 1).getTime(),
-                    e: new Date(now.getFullYear(), q * 3 + 3, 1).getTime(),
-                };
-            }
-            if (mode === 'day') {
-                const sod = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-                return { s: sod, e: sod + 86400000 };
-            }
-            return { s: start, e: end };
+            days = Array.from(inner.querySelectorAll('.timebar-day'));
+            builtKey = dayKey();
+            applyEventStyles();
+            applyHeights();
+            if (window.applyTimebarWeather) window.applyTimebarWeather();
+            bar.classList.add('ready');
         }
+        window.updateTimebarLang = build;
 
-        // Render seasons
-        const sD = [new Date(yr, 2, 20).getTime(), new Date(yr, 5, 21).getTime(), new Date(yr, 8, 22).getTime(), new Date(yr, 11, 21).getTime()];
-        const seasons = [
-            { name: 'Winter', s: start, e: sD[0] }, { name: 'Spring', s: sD[0], e: sD[1] }, { name: 'Summer', s: sD[1], e: sD[2] }, { name: 'Fall', s: sD[2], e: sD[3] }, { name: 'Winter', s: sD[3], e: end }
-        ];
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-        function clearBarLabels() {
-            bar.querySelectorAll('.season-bracket, .month-name, .month-divider, .bar-mode-label, .bar-mode-divider').forEach(el => el.remove());
-        }
-
-        function renderBarLabels() {
-            clearBarLabels();
-            const mode = MODES[modeIdx];
+        function applyEventStyles() {
             const now = new Date();
-
-            if (mode === 'year') {
-                // 12 month labels + dividers
-                const curM = now.getMonth();
-                months.forEach((name, i) => {
-                    const mS = new Date(yr, i, 1).getTime(), mE = new Date(yr, i + 1, 1).getTime();
-                    const midPct = ((mS - start) + (mE - start)) / 2 / span * 100;
-                    const lbl = document.createElement('div');
-                    lbl.className = 'bar-mode-label' + (i === curM ? ' current' : (i < curM ? ' past' : ''));
-                    lbl.style.left = midPct + '%';
-                    lbl.textContent = name;
-                    bar.appendChild(lbl);
-                    if (i > 0) {
-                        const mStart = (mS - start) / span * 100;
-                        const div = document.createElement('div');
-                        div.className = 'bar-mode-divider' + (i <= curM ? ' past' : '');
-                        div.style.left = mStart + '%';
-                        bar.appendChild(div);
-                    }
-                });
-            } else if (mode === 'month') {
-                // All days in current month
-                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-                const curDay = now.getDate();
-                for (let d = 1; d <= daysInMonth; d++) {
-                    const pct = (d - 1) / daysInMonth * 100;
-                    const midPct = (d - 0.5) / daysInMonth * 100;
-                    if (d > 1) {
-                        const div = document.createElement('div');
-                        div.className = 'bar-mode-divider' + (d <= curDay ? ' past' : '');
-                        div.style.left = pct + '%';
-                        bar.appendChild(div);
-                    }
-                    const lbl = document.createElement('div');
-                    lbl.className = 'bar-mode-label' + (d < curDay ? ' past' : '') + (d === curDay ? ' current' : '');
-                    lbl.style.left = midPct + '%';
-                    lbl.textContent = d;
-                    bar.appendChild(lbl);
-                }
-            } else if (mode === 'season') {
-                // Season labels + dividers using shared bar-mode elements
-                const nowT = now.getTime();
-                const curSi = nowT < sD[0] ? 0 : nowT < sD[1] ? 1 : nowT < sD[2] ? 2 : nowT < sD[3] ? 3 : 4;
-                seasons.forEach((s, idx) => {
-                    const sP = (s.s - start) / span * 100, eP = (s.e - start) / span * 100;
-                    const midPct = (sP + eP) / 2;
-                    // Divider at season boundary (skip first)
-                    if (idx > 0) {
-                        const div = document.createElement('div');
-                        div.className = 'bar-mode-divider' + (idx <= curSi ? ' past' : '');
-                        div.style.left = sP + '%';
-                        bar.appendChild(div);
-                    }
-                    // Label (skip last Winter duplicate)
-                    if (idx < seasons.length - 1) {
-                        const lbl = document.createElement('div');
-                        lbl.className = 'bar-mode-label' + (idx === curSi ? ' current' : (idx < curSi ? ' past' : ''));
-                        lbl.style.left = midPct + '%';
-                        lbl.textContent = s.name;
-                        bar.appendChild(lbl);
-                    }
-                });
-            } else if (mode === 'quarter') {
-                // Q1–Q4 labels + dividers
-                const curQ = Math.floor(now.getMonth() / 3);
-                for (let q = 0; q < 4; q++) {
-                    const qS = new Date(yr, q * 3, 1).getTime();
-                    const qE = new Date(yr, q * 3 + 3, 1).getTime();
-                    const sPct = (qS - start) / span * 100;
-                    const ePct = (qE - start) / span * 100;
-                    const midPct = (sPct + ePct) / 2;
-                    if (q > 0) {
-                        const div = document.createElement('div');
-                        div.className = 'bar-mode-divider' + (q <= curQ ? ' past' : '');
-                        div.style.left = sPct + '%';
-                        bar.appendChild(div);
-                    }
-                    const lbl = document.createElement('div');
-                    lbl.className = 'bar-mode-label' + (q === curQ ? ' current' : (q < curQ ? ' past' : ''));
-                    lbl.style.left = midPct + '%';
-                    lbl.textContent = 'Q' + (q + 1);
-                    bar.appendChild(lbl);
-                }
-            } else if (mode === 'day') {
-                // All 24 hour labels + dividers
-                const curHour = now.getHours();
-                for (let h = 0; h < 24; h++) {
-                    const pct = h / 24 * 100;
-                    const midPct = (h + 0.5) / 24 * 100;
-                    // Divider at each hour (skip 0)
-                    if (h > 0) {
-                        const div = document.createElement('div');
-                        div.className = 'bar-mode-divider' + (h <= curHour ? ' past' : '');
-                        div.style.left = pct + '%';
-                        bar.appendChild(div);
-                    }
-                        const lbl = document.createElement('div');
-                    lbl.className = 'bar-mode-label' + (h < curHour ? ' past' : '') + (h === curHour ? ' current' : '');
-                    lbl.style.left = midPct + '%';
-                    lbl.textContent = h;
-                    bar.appendChild(lbl);
-                }
-                // Sunrise & sunset markers
-                if (window.allSunTimes) {
-                    const rise = new Date(window.allSunTimes.sunrise[0]);
-                    const set = new Date(window.allSunTimes.sunset[0]);
-                    const risePct = (rise.getHours() + rise.getMinutes() / 60) / 24 * 100;
-                    const setPct = (set.getHours() + set.getMinutes() / 60) / 24 * 100;
-                    [{ pct: risePct, label: '☀↑' }, { pct: setPct, label: '☀↓' }].forEach(m => {
-                        const marker = document.createElement('div');
-                        marker.className = 'bar-mode-label bar-sun-marker';
-                        marker.style.left = m.pct + '%';
-                        marker.textContent = m.label;
-                        bar.appendChild(marker);
-                    });
-                }
-            }
-        }
-
-        renderBarLabels();
-
-        function update(forceRolling = false) {
-            const now = Date.now();
-            const yearVal = Math.max(0, Math.min(100, ((now - start) / span) * 100));
-            const range = getModeRange();
-            const val = Math.max(0, Math.min(100, ((now - range.s) / (range.e - range.s)) * 100));
-            const fillEl = document.getElementById('year-bar-fill');
-            const markerEl = document.getElementById('year-bar-marker');
-            const isYear = MODES[modeIdx] === 'year';
-            if (fillEl) fillEl.style.width = val.toFixed(2) + '%';
-            if (markerEl) {
-                markerEl.style.left = val.toFixed(2) + '%';
-                markerEl.style.opacity = isYear ? '0' : '1';
-            }
-
-            setRollingNumber(val);
-
-            const pctTip = document.getElementById('year-bar-pct-tooltip');
-            if (pctTip) {
-                pctTip.textContent = val.toFixed(1) + '%';
-                pctTip.style.left = val.toFixed(2) + '%';
-            }
-        }
-
-        // Click to cycle mode: year → month → season → day → year
-        const ghostEl = bar.querySelector('.year-bar-ghost');
-        if (ghostEl) {
-            function cycleMode(e) {
-                e.stopPropagation();
-                modeIdx = (modeIdx + 1) % MODES.length;
-                localStorage.setItem('aura_year_bar_mode_idx', String(modeIdx));
-                renderBarLabels();
-                update();
-            }
-            ghostEl.addEventListener('click', cycleMode);
-            ghostEl.title = 'Click to cycle: season → year → quarter';
-
-            // Also allow clicking season labels / brackets to cycle
-            bar.addEventListener('click', (e) => {
-                if (e.target.closest('.season-bracket') || e.target.closest('.season-label') || e.target.closest('.bar-mode-label')) {
-                    cycleMode(e);
+            days.forEach((dayEl, idx) => {
+                const ymd = ymdFor(now.getFullYear(), now.getMonth(), idx + 1);
+                const evs = eventsCovering(ymd);
+                if (evs.length) {
+                    const hex = colorForEvent(evs[0].id);
+                    dayEl.classList.add('has-event');
+                    dayEl.style.setProperty('--event-bg',      hexToRgba(hex, 0.36));
+                    dayEl.style.setProperty('--event-bg-fade', hexToRgba(hex, 0.14));
+                    dayEl.style.setProperty('--event-border',  hexToRgba(hex, 0.75));
+                    dayEl.style.setProperty('--event-glow',    hexToRgba(hex, 0.32));
+                } else {
+                    dayEl.classList.remove('has-event');
+                    dayEl.style.removeProperty('--event-bg');
+                    dayEl.style.removeProperty('--event-bg-fade');
+                    dayEl.style.removeProperty('--event-border');
+                    dayEl.style.removeProperty('--event-glow');
                 }
             });
         }
 
-        // Initial animation — swift CSS scroll from 0% to actual value
-        const actualVal = Math.max(0, Math.min(100, ((Date.now() - start) / span) * 100));
-        const fillEl = document.getElementById('year-bar-fill');
-        const markerEl = document.getElementById('year-bar-marker');
-        const hEl = document.getElementById('digit-hundreds');
-        const tEl = document.getElementById('digit-tens');
-        const oEl = document.getElementById('digit-ones');
+        function clearSelectionMarks() {
+            days.forEach(d => d.classList.remove('is-selecting'));
+        }
+        function paintSelection() {
+            clearSelectionMarks();
+            const lo = Math.min(selectAnchor, selectCurrent);
+            const hi = Math.max(selectAnchor, selectCurrent);
+            for (let i = lo; i <= hi; i++) days[i]?.classList.add('is-selecting');
+        }
 
-        // Set start state at 0 with no transition
-        [hEl, tEl, oEl].forEach(el => el && (el.style.transition = 'none'));
-        fillEl.style.transition = 'none';
-        markerEl.style.transition = 'none';
-        setRollingNumber(0);
-        fillEl.style.width = '0%';
-        markerEl.style.left = '0%';
-        void (oEl && oEl.offsetWidth); // force reflow
+        function ensureTooltip() {
+            if (tooltipEl) return tooltipEl;
+            tooltipEl = document.createElement('div');
+            tooltipEl.className = 'timebar-event-tooltip';
+            document.body.appendChild(tooltipEl);
+            return tooltipEl;
+        }
+        function showTooltip(text, anchorEl, accentHex) {
+            const t = ensureTooltip();
+            t.textContent = text;
+            // Apply accent color before measuring so width is final
+            if (accentHex) {
+                t.style.setProperty('--tt-accent', hexToRgba(accentHex, 0.95));
+            } else {
+                t.style.removeProperty('--tt-accent');
+            }
+            t.classList.add('visible');
+            const r = anchorEl.getBoundingClientRect();
+            // Measure after content + styles set
+            const tw = t.offsetWidth;
+            const anchorCx = r.left + r.width / 2;
+            const left = Math.max(8, Math.min(window.innerWidth - tw - 8, anchorCx - tw / 2));
+            t.style.left = left + 'px';
+            t.style.bottom = (window.innerHeight - r.top + 8) + 'px';
+            // Keep caret pointed at the pill even when tooltip is clipped to viewport edge
+            const caretX = Math.max(10, Math.min(tw - 10, anchorCx - left));
+            t.style.setProperty('--caret-x', caretX + 'px');
+        }
+        function hideTooltip() {
+            if (tooltipEl) tooltipEl.classList.remove('visible');
+        }
 
-        // Apply swift transition then scroll to actual value
-        [hEl, tEl, oEl].forEach(el => el && (el.style.transition = 'transform 1.8s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease, opacity 0.3s ease'));
-        fillEl.style.transition = 'width 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
-        markerEl.style.transition = 'left 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
+        function closePopover() {
+            if (popover) { popover.remove(); popover = null; }
+        }
+        function openEventPopover(ev, anchorEl, isNew) {
+            closePopover();
+            hideTooltip();
+            popover = document.createElement('div');
+            popover.className = 'timebar-event-popover';
 
-        setTimeout(() => {
-            setRollingNumber(actualVal);
-            fillEl.style.width = actualVal.toFixed(2) + '%';
-            markerEl.style.left = actualVal.toFixed(2) + '%';
-            update(); // also mark past seasons
-        }, 500);
-        setInterval(update, 60000);
-        window.updateYearBarLang = function() {};
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Event title';
+            input.value = ev.text || '';
+            popover.appendChild(input);
+
+            const del = document.createElement('button');
+            del.type = 'button';
+            del.textContent = '×';
+            del.title = isNew ? 'Cancel' : 'Delete event';
+            popover.appendChild(del);
+
+            document.body.appendChild(popover);
+            const r = anchorEl.getBoundingClientRect();
+            const pw = popover.offsetWidth;
+            popover.style.left = Math.max(8, Math.min(window.innerWidth - pw - 8, r.left + r.width/2 - pw/2)) + 'px';
+            popover.style.bottom = (window.innerHeight - r.top + 8) + 'px';
+            requestAnimationFrame(() => input.focus());
+
+            let committed = false;
+            const commit = () => {
+                if (committed) return;
+                committed = true;
+                const text = input.value.trim();
+                if (!text) {
+                    timebarEvents = timebarEvents.filter(e => e.id !== ev.id);
+                } else {
+                    const existing = timebarEvents.find(e => e.id === ev.id);
+                    if (existing) existing.text = text;
+                    else { ev.text = text; timebarEvents.push(ev); }
+                }
+                saveEvents();
+                applyEventStyles();
+                clearSelectionMarks();
+                closePopover();
+            };
+            const cancel = () => {
+                if (committed) return;
+                committed = true;
+                if (isNew) timebarEvents = timebarEvents.filter(e => e.id !== ev.id);
+                clearSelectionMarks();
+                closePopover();
+            };
+            const remove = () => {
+                committed = true;
+                timebarEvents = timebarEvents.filter(e => e.id !== ev.id);
+                saveEvents();
+                applyEventStyles();
+                clearSelectionMarks();
+                closePopover();
+            };
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter')      { e.preventDefault(); commit(); }
+                else if (e.key === 'Escape'){ e.preventDefault(); cancel(); }
+            });
+            input.addEventListener('blur', () => {
+                // Defer so a click on the delete button can run first
+                setTimeout(() => { if (!committed) commit(); }, 0);
+            });
+            del.addEventListener('mousedown', (e) => e.preventDefault());
+            del.addEventListener('click', () => { isNew ? cancel() : remove(); });
+        }
+
+        function applyHeights() {
+            if (!days.length) return;
+            const refDay = days[0];
+            const dayW = refDay.getBoundingClientRect().width;
+            const radius = RADIUS_DAYS * dayW;
+            for (const day of days) {
+                const r = day.getBoundingClientRect();
+                const cx = r.left + r.width / 2;
+                const minH = day.classList.contains('is-today') ? TODAY_H : BASE_H;
+                let h = minH;
+                if (magnifying) {
+                    const d = Math.abs(cx - pointerX);
+                    if (d < radius) {
+                        const factor = (1 + Math.cos(Math.PI * d / radius)) / 2;
+                        h = Math.max(minH, BASE_H + (MAX_H - BASE_H) * factor);
+                    }
+                }
+                day.style.height = h + 'px';
+            }
+        }
+
+        function schedule() {
+            if (raf) return;
+            raf = requestAnimationFrame(() => {
+                raf = null;
+                applyHeights();
+            });
+        }
+
+        inner.addEventListener('pointermove', e => {
+            // Treat coarse pointers (touch) as taps — don't engage magnifier
+            if (e.pointerType === 'touch') return;
+            pointerX = e.clientX;
+            if (!selecting) {
+                if (!magnifying) {
+                    magnifying = true;
+                    inner.classList.add('is-magnifying');
+                }
+                schedule();
+
+                // Hover tooltip for event days (weekday is shown inside the pill itself)
+                const dayEl = e.target.closest && e.target.closest('.timebar-day');
+                if (dayEl && dayEl.classList.contains('has-event')) {
+                    const idx = days.indexOf(dayEl);
+                    if (idx !== -1) {
+                        const now = new Date();
+                        const ymd = ymdFor(now.getFullYear(), now.getMonth(), idx + 1);
+                        const evs = eventsCovering(ymd);
+                        if (evs.length) showTooltip(evs.map(ev => ev.text).join(' • '), dayEl, colorForEvent(evs[0].id));
+                        else hideTooltip();
+                    }
+                } else {
+                    hideTooltip();
+                }
+            }
+        });
+        inner.addEventListener('pointerleave', () => {
+            hideTooltip();
+            if (!magnifying) return;
+            magnifying = false;
+            inner.classList.remove('is-magnifying');
+            schedule();
+        });
+
+        // Drag-select to create/edit event
+        inner.addEventListener('pointerdown', (e) => {
+            if (e.button !== undefined && e.button !== 0) return;
+            const dayEl = e.target.closest && e.target.closest('.timebar-day');
+            if (!dayEl) return;
+            const idx = days.indexOf(dayEl);
+            if (idx === -1) return;
+            selecting = true;
+            selectAnchor = idx;
+            selectCurrent = idx;
+            selectStartX = e.clientX;
+            selectStartY = e.clientY;
+            magnifying = false;
+            inner.classList.remove('is-magnifying');
+            hideTooltip();
+            paintSelection();
+            try { inner.setPointerCapture(e.pointerId); } catch (_) {}
+        });
+        document.addEventListener('pointermove', (e) => {
+            if (!selecting) return;
+            for (let i = 0; i < days.length; i++) {
+                const r = days[i].getBoundingClientRect();
+                if (e.clientX >= r.left && e.clientX <= r.right) {
+                    if (i !== selectCurrent) {
+                        selectCurrent = i;
+                        paintSelection();
+                    }
+                    break;
+                }
+            }
+        });
+        document.addEventListener('pointerup', (e) => {
+            if (!selecting) return;
+            selecting = false;
+            const moved = Math.abs(e.clientX - selectStartX) > 4
+                       || Math.abs(e.clientY - selectStartY) > 4
+                       || selectCurrent !== selectAnchor;
+            const lo = Math.min(selectAnchor, selectCurrent);
+            const hi = Math.max(selectAnchor, selectCurrent);
+            const now = new Date();
+            const start = ymdFor(now.getFullYear(), now.getMonth(), lo + 1);
+            const end   = ymdFor(now.getFullYear(), now.getMonth(), hi + 1);
+
+            if (!moved) {
+                // Single click — edit existing event if any, else start a new 1-day event
+                const ymd = start;
+                const existing = eventsCovering(ymd)[0];
+                clearSelectionMarks();
+                if (existing) {
+                    openEventPopover(existing, days[lo], false);
+                } else {
+                    const ev = { id: 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), start, end, text: '' };
+                    days[lo].classList.add('is-selecting');
+                    openEventPopover(ev, days[lo], true);
+                }
+            } else {
+                // Range — if it covers an existing event entirely, edit it; else create new
+                const inRange = timebarEvents.find(ev => ev.start >= start && ev.end <= end);
+                if (inRange) {
+                    clearSelectionMarks();
+                    openEventPopover(inRange, days[lo], false);
+                } else {
+                    const ev = { id: 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), start, end, text: '' };
+                    openEventPopover(ev, days[lo], true);
+                }
+            }
+        });
+        window.addEventListener('resize', schedule);
+
+        build();
+        requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add('ready')));
+
+        // Refresh at midnight so today moves. setTimeout alone is unreliable
+        // (background-tab throttling, system sleep), so we also re-check on
+        // visibility/focus and via a low-frequency poll.
+        function scheduleMidnight() {
+            const now = new Date();
+            const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+            setTimeout(() => {
+                rebuildIfDateChanged();
+                scheduleMidnight();
+            }, next - now);
+        }
+        scheduleMidnight();
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) rebuildIfDateChanged();
+        });
+        window.addEventListener('focus', rebuildIfDateChanged);
+        setInterval(rebuildIfDateChanged, 60000);
+    })();
+
+
+    // ── Timebar weather — mirrors the dock's forecast (owned by js/weather.js).
+    // We don't fetch ourselves; we just read the shared cache and re-paint
+    // whenever populateDockWeather runs so the timebar emojis stay in sync.
+    (function setupTimebarWeather() {
+        // Match the icon set used by js/weather.js so dock + timebar agree
+        const ICON = (code) => {
+            if (code === 0)   return '☀️';
+            if (code <= 3)    return '🌤️';
+            if (code <= 48)   return '☁️';
+            if (code <= 67)   return '🌧️';
+            if (code <= 77)   return '🌨️';
+            if (code <= 82)   return '🌧️';
+            if (code <= 86)   return '🌨️';
+            return '⛈️';
+        };
+
+        function paint() {
+            const slots = document.querySelectorAll('.timebar-day-weather');
+            if (!slots.length) return;
+            let daily = null;
+            try {
+                const cached = JSON.parse(localStorage.getItem('aura_weather_cache') || 'null');
+                if (cached && cached.data) daily = cached.data;
+            } catch (_) {}
+            if (!daily || !daily.time) return;
+
+            const byDate = {};
+            for (let i = 0; i < daily.time.length; i++) {
+                byDate[daily.time[i]] = {
+                    code: daily.weathercode[i],
+                    tMax: daily.temperature_2m_max && daily.temperature_2m_max[i],
+                    tMin: daily.temperature_2m_min && daily.temperature_2m_min[i],
+                };
+            }
+            slots.forEach(el => {
+                const d = byDate[el.dataset.ymd];
+                if (d && d.code != null) {
+                    el.textContent = ICON(d.code);
+                    if (d.tMax != null && d.tMin != null) {
+                        el.title = `${Math.round(d.tMax)}° / ${Math.round(d.tMin)}°`;
+                    }
+                } else {
+                    el.textContent = '';
+                    el.removeAttribute('title');
+                }
+            });
+        }
+
+        window.applyTimebarWeather = paint;
+        paint();
+
+        // Wrap populateDockWeather so timebar repaints whenever fresh data lands
+        const orig = window.populateDockWeather;
+        window.populateDockWeather = function() {
+            if (orig) orig.apply(this, arguments);
+            paint();
+        };
     })();
 
 </script>
