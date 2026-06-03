@@ -370,6 +370,15 @@ body.ready {
 .note.editing > .note-more { display: none; }
 .note.editing.is-overflowing .note-content { max-height: none; -webkit-mask-image: none; mask-image: none; }
 
+/* ── Manually-resized notes clip text to the chosen box and end with an
+   ellipsis on the last visible line (line count computed in JS). ── */
+.note.clamped .note-content {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.note.editing.clamped .note-content { display: block; -webkit-line-clamp: none; }
+
 /* Blurred note content state */
 .note.blurred .note-content,
 .note.blurred .note-image {
@@ -2261,6 +2270,23 @@ body.dev-mode .dev-only { display: block; }
         }
     }
 
+    // For manually-resized notes: clip the text to the chosen box height and
+    // add an ellipsis on the last visible line. Auto-sized notes never clamp.
+    function applyResizeClamp(note, data) {
+        const content = note.querySelector('.note-content');
+        if (!content || !data.manualResize || data.imageData || note.classList.contains('editing')) {
+            note.classList.remove('clamped');
+            content && (content.style.webkitLineClamp = '');
+            return;
+        }
+        const lineH = parseFloat(getComputedStyle(content).lineHeight) || 1;
+        const bottomPad = parseFloat(getComputedStyle(note).paddingBottom) || 0;
+        const avail = note.clientHeight - content.offsetTop - bottomPad;
+        const lines = Math.max(1, Math.floor((avail + 0.5) / lineH));
+        content.style.webkitLineClamp = String(lines);
+        note.classList.add('clamped');
+    }
+
     const noteExpandOverlay = document.getElementById('note-expand-overlay');
     const noteExpandContent = document.getElementById('note-expand-content');
 
@@ -2505,7 +2531,7 @@ function createNote(data, autoFocus = false) {
         note.appendChild(resizeHandle);
 
         document.body.appendChild(note);
-        requestAnimationFrame(() => updateNoteOverflow(note, data));
+        requestAnimationFrame(() => { updateNoteOverflow(note, data); applyResizeClamp(note, data); });
 
         // ---- CLAMP NOTE TO VIEWPORT ----
         const clampNote = (x, y) => {
@@ -2642,6 +2668,8 @@ function createNote(data, autoFocus = false) {
                 const newH = Math.max(minH, startH + (me.clientY - startY));
                 note.style.width = newW + 'px';
                 note.style.height = newH + 'px';
+                data.manualResize = true;
+                applyResizeClamp(note, data);
             };
             const onTouchMove = (te) => {
                 te.preventDefault();
@@ -2650,12 +2678,15 @@ function createNote(data, autoFocus = false) {
                 const newH = Math.max(minH, startH + (t.clientY - startY));
                 note.style.width = newW + 'px';
                 note.style.height = newH + 'px';
+                data.manualResize = true;
+                applyResizeClamp(note, data);
             };
             const onUp = () => {
                 const endRect = note.getBoundingClientRect();
                 data.w = Math.ceil(endRect.width);
                 data.h = Math.ceil(endRect.height);
                 data.manualResize = true;
+                applyResizeClamp(note, data);
                 save();
                 window.removeEventListener('mousemove', onMove);
                 window.removeEventListener('mouseup', onUp);
@@ -2775,6 +2806,7 @@ function createNote(data, autoFocus = false) {
                 ta.remove();
                 content.style.display = '';
                 note.classList.remove('editing');
+                requestAnimationFrame(() => applyResizeClamp(note, data));
                 document.body.classList.remove('note-editing-mode');
                 activeNoteRef = { note: null, data: null };
                 data.text = plainText;
