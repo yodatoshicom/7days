@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>weekDash</title>
-<meta name="description" content="Day planning dashboard, plans, sticky notes, and 7 days weather forecast.">
+<meta name="description" content="A simple weekly planner with sticky notes. Free, runs in your browser.">
 <meta name="author" content="Year Progress Dashboard">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#ffffff">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://weekdash.com/">
 <meta property="og:title" content="Year Progress Dashboard">
-<meta property="og:description" content="Day planning dashboard, plans, sticky notes, and 7 days weather forecast.">
+<meta property="og:description" content="A simple weekly planner with sticky notes. Free, runs in your browser.">
 <meta property="og:image" content="https://weekdash.com/img/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -24,7 +24,7 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Year Progress Dashboard">
-<meta name="twitter:description" content="Day planning dashboard, plans, sticky notes, and 7 days weather forecast.">
+<meta name="twitter:description" content="A simple weekly planner with sticky notes. Free, runs in your browser.">
 <meta name="twitter:image" content="https://weekdash.com/img/og.png">
 
 <!-- FAQ structured data -->
@@ -35,50 +35,26 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is Year Progress Dashboard?",
+      "name": "What is it?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Year Progress Dashboard is a free, minimal weekly planner that runs entirely in the browser. It shows your current week as a calendar, fetches a 7-day weather forecast, and lets you create sticky notes. No account or install is required."
+        "text": "A simple weekly planner with sticky notes. It runs in your browser."
       }
     },
     {
       "@type": "Question",
-      "name": "Is Year Progress Dashboard free?",
+      "name": "Is it free?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Year Progress Dashboard is completely free. There is no account, no subscription, and no paid tier."
+        "text": "Yes. It is free, with no account or sign-up."
       }
     },
     {
       "@type": "Question",
-      "name": "Does Year Progress Dashboard store my data?",
+      "name": "Where is my data saved?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "All data — notes, settings, and weather cache — is stored locally in your browser's localStorage. Nothing is sent to a server."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How does Year Progress Dashboard get my location for weather?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Year Progress Dashboard detects your city automatically using IP geolocation (ipapi.co with ipwho.is as fallback). You can override the location manually by searching for a city in settings."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What languages does Year Progress Dashboard support?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Year Progress Dashboard supports English, Spanish, and Portuguese. The language can be changed in the settings panel."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does Year Progress Dashboard work offline?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Year Progress Dashboard works offline for notes and the calendar. Weather data is cached and shown until a fresh fetch is possible. An internet connection is needed to load the page initially and refresh weather."
+        "text": "On your device, in your browser. Nothing is sent to a server."
       }
     }
   ]
@@ -94,23 +70,10 @@
   "alternateName": "year-progress-dashboard",
   "url": "https://weekdash.com/",
   "sameAs": "https://yodatoshicom.github.io/7days/",
-  "description": "Year Progress Dashboard is a free, minimal weekly planner that runs entirely in the browser. It shows the current week as a calendar, fetches a 7-day weather forecast via Open-Meteo, and lets users create sticky notes and image notes that are saved in localStorage. No account, no install, and no backend required.",
+  "description": "A simple weekly planner with sticky notes. Free, and runs in your browser.",
   "applicationCategory": "ProductivityApplication",
   "applicationSubCategory": "Calendar",
   "operatingSystem": "Web",
-  "browserRequirements": "Requires a modern desktop browser with JavaScript enabled",
-  "featureList": [
-    "Weekly calendar view with today highlighted",
-    "7-day weather forecast with automatic location detection",
-    "Celsius and Fahrenheit temperature toggle",
-    "Sticky notes: create, drag, resize, and color",
-    "Image notes via drag-and-drop",
-    "Year progress bar with month and season labels",
-    "Sun and moon arc showing daylight position",
-    "Multiple visual themes and font options",
-    "Multi-language support: English, Spanish, Portuguese",
-    "All data stored locally in localStorage"
-  ],
   "inLanguage": ["en", "es", "pt"],
   "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
@@ -121,22 +84,20 @@
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png?v=2">
-<link rel="preload" as="image" href="img/wallpaper.jpg" fetchpriority="high">
+<link rel="preload" as="image" href="img/wall.webp" fetchpriority="high">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=DM+Mono:wght@400;500&family=Nunito:wght@900" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=DM+Mono:wght@400;500" rel="stylesheet">
 
 <script>
 // Apply persisted size setting before first paint to prevent flash
 (function() {
-    var sizes = { 'S':'21px', 'M':'22px', 'L':'28px' };
     var r = document.documentElement;
     r.classList.add('theme-valley');
 
     var s = localStorage.getItem('aura_note_size');
-    if (s && sizes[s]) r.style.setProperty('--note-size', sizes[s]);
+    if (s === 'S' || s === 'M' || s === 'L') r.style.setProperty('--note-size', 'var(--note-size-' + s + ')');
 
     // Custom background (image or video) lives in IndexedDB (loaded async after parse).
     // This flag lets us hide the default wallpaper before that load completes,
@@ -160,13 +121,18 @@
     --card-bg: rgba(255, 255, 255, 0.08);
 
     --note-font: 'Caveat', cursive;
-    --note-size: 21px;
+
+    /* ── Note font sizes — single source of truth. Edit these. ── */
+    --note-size-S: 21px;
+    --note-size-M: 25px;
+    --note-size-L: 28px;
+    --note-size: var(--note-size-S); /* default */
 }
 
 /* ── Valley theme ── */
 html.theme-valley {
-    background-color: #1a1040;
-    background-image: url('img/wallpaper.jpg');
+    background-color: #ededf0;
+    background-image: url('img/wall.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -189,73 +155,6 @@ html.theme-valley body {
 }
 html.has-custom-bg-video #custom-bg-video { display: block; }
 html.has-custom-bg-video { background-image: none !important; }
-/* Hide entire dock by default in valley; show-old-dock brings back the big legacy dock */
-html.theme-valley .dock-wrapper { display: none; }
-html.theme-valley.show-old-dock .dock-wrapper {
-    display: flex;
-    position: relative;
-    top: auto;
-    left: auto;
-    transform: none;
-    margin-top: auto;
-    margin-bottom: 60px;
-}
-html.theme-valley.show-old-dock .day-card,
-html.theme-valley.show-old-dock .day-card:first-child,
-html.theme-valley.show-old-dock .day-card:last-child,
-html.theme-valley.show-old-dock .day-card:first-child:hover,
-html.theme-valley.show-old-dock .day-card:last-child:hover,
-html.theme-valley.show-old-dock .day-card.active,
-html.theme-valley.show-old-dock .day-card.active:first-child,
-html.theme-valley.show-old-dock .day-card.active:last-child {
-    width: 58px;
-    height: 68px;
-    border-radius: 27px;
-}
-html.theme-valley.show-old-dock .day-card .day-name { font-size: 9px; margin-bottom: 2px; }
-html.theme-valley.show-old-dock .day-card .day-number { font-size: 25px; font-weight: 700; }
-/* In the old dock, weekend cards should look identical to weekday cards */
-html.theme-valley.show-old-dock .day-card.weekend .day-number {
-    -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
-    color: rgba(255, 255, 255, 0.7);
-}
-html.theme-valley.show-old-dock .day-card.weekend.active .day-number {
-    -webkit-text-fill-color: #fff;
-    color: #fff;
-}
-html.theme-valley.show-old-dock .dock-nav { display: flex; }
-html.theme-valley.show-old-dock .weather-row { display: flex; }
-/* Old dock has its own weather row — hide the timebar's per-day weather emojis to avoid duplication */
-html.show-old-dock .timebar-day-weather { display: none; }
-html.theme-valley.show-old-dock .header-container {
-    display: block;
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 10px;
-}
-
-html.theme-valley .weather-row { color: rgba(240, 238, 255, 0.8); }
-html.theme-valley .weather-day { color: rgba(240, 238, 255, 0.8); }
-html.theme-valley .weather-separator {
-    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15) 50%, transparent);
-}
-/* ---- active day backlight (behind glass pill) ---- */
-#active-day-light {
-    display: none;
-    position: fixed;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    z-index: 999;
-}
-html.theme-valley #active-day-light {
-    display: block;
-    background: radial-gradient(circle, rgba(190, 140, 255, 0.2) 0%, rgba(140, 80, 255, 0.08) 50%, transparent 75%);
-}
 
 
 /* Note color bar — shown below note in editing mode */
@@ -284,53 +183,6 @@ html.theme-valley #active-day-light {
 
 
 
-.greeting {
-    font-size: 58px;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    background: linear-gradient(to bottom, var(--text-color) 70%, transparent);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-    transition: opacity 0.2s ease, transform 0.3s var(--spring-easing);
-    display: inline-block;
-    position: relative;
-}
-
-.greeting:hover {
-    opacity: 0.8;
-    transform: scale(1.02);
-}
-
-.greeting:active {
-    transform: scale(0.97);
-}
-
-/* Lang flash animation on greeting */
-@keyframes greetingPulse {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.03); }
-    100% { transform: scale(1); }
-}
-
-.greeting.lang-switch {
-    animation: greetingPulse 0.4s var(--spring-easing);
-}
-
-.header-container {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 10px;
-    text-align: center;
-    white-space: nowrap;
-    z-index: 500;
-    user-select: none;
-    -webkit-user-select: none;
-}
 
 * {
     box-sizing: border-box;
@@ -340,26 +192,10 @@ html.theme-valley #active-day-light {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Background geometry modes */
-
 html {
-    background-color: #e3dde6;
-    background-image: url('bg2.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     overflow: hidden;
     height: 100%;
 }
-
-/* Background geometry modes */
-body.bg-geo-dots,
-body.bg-geo-web  { background-image: radial-gradient(circle, rgba(0,0,0,0.13) 1px, transparent 1px); background-size: 22px 22px; }
-body.bg-geo-off,
-body.bg-geo-stellar,
-body.bg-geo-tribon,
-body.bg-geo-mesh { background-image: none; }
 
 body {
     background: none;
@@ -378,32 +214,6 @@ body {
     transition: opacity 0.35s ease;
 }
 
-#dot-connections {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-}
-
-#mesh-iframe {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2;
-    border: none;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-}
-body.bg-geo-mesh #mesh-iframe {
-    opacity: 0.54;
-}
-
-
 body.ready {
     opacity: 1;
 }
@@ -411,485 +221,29 @@ body.ready {
 
 
 
-/* Sunrise / sunset markers on time ruler */
-.sun-label {
-    position: absolute;
-    bottom: 17px;
-    font-family: 'Inter', sans-serif;
-    font-size: 9px;
-    font-weight: 500;
-    color: #F59E0B;
-    opacity: 0.65;
-    white-space: nowrap;
-    transform: translateX(-50%);
-    pointer-events: auto;
-    letter-spacing: 0.02em;
-    cursor: default;
-}
-.sun-label:hover { opacity: 1; }
-.sun-tooltip {
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%) translateY(3px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease, transform 0.15s ease;
-    white-space: nowrap;
-}
-.sun-tooltip-icon { opacity: 0.5; display: flex; color: var(--text-color); }
-.sun-tooltip-bubble {
-    background: rgba(245,158,11,0.1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 0.5px solid rgba(245,158,11,0.25);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: #F59E0B;
-}
-.sun-label:hover .sun-tooltip {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
-
-/* Time ruler — absolute, sits on top edge of week bar */
-.time-ruler {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc((100% - 90px) * 0.8);
-    height: 44px;
-    margin-bottom: -3px;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-.time-ruler-track {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(to right, var(--text-color) 50%, transparent 100%);
-    opacity: 0.15;
-}
-
-.time-ruler-past {
-    position: relative;
-    height: 100%;
-    background: linear-gradient(to right, rgba(167,139,202,0.08), rgba(167,139,202,0.5));
-    border-radius: 1px;
-    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: visible;
-}
-.time-ruler-past::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 20%;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.5));
-    border-radius: 1px;
-    pointer-events: none;
-}
-.time-ruler-past::after {
-    content: '';
-    position: absolute;
-    right: -10px;
-    top: -5px;
-    width: 20px;
-    height: 11px;
-    background: rgba(167,139,202,0.55);
-    filter: blur(6px);
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-.time-ruler-tick {
-    position: absolute;
-    bottom: 1px;
-    width: 1px;
-    transform: translateX(-50%);
-    border-radius: 1px;
-}
-
-.time-ruler-tick.hour    { height: 14px; }
-.time-ruler-tick.half    { height: 7px; }
-.time-ruler-tick.quarter { height: 3px; }
-
-.time-ruler-now {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: none;
-    transform: translateX(-50%);
-    filter: drop-shadow(0 0 5px rgba(167,139,202,0.4));
-}
-
-.time-ruler-now-line {
-    flex: 1;
-    width: 1.5px;
-    position: relative;
-    background: linear-gradient(to bottom, rgba(167,139,202,0.0), rgba(167,139,202,0.95));
-    border-radius: 1px;
-    margin: 2px 0 2px;
-}
-
-.time-ruler-now-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #c580fb;
-    border: 1.5px solid rgba(255,255,255,0.65);
-    box-shadow: 0 0 0 3px rgba(167,139,202,0.25), 0 0 14px rgba(167,139,202,0.7);
-    animation: yearDotPulse 3s ease-in-out infinite;
-    flex-shrink: 0;
-}
-
-.time-ruler-hover-label {
-    position: absolute;
-    top: 0;
-    pointer-events: none;
-    transform: translateX(-50%);
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    font-variant-numeric: tabular-nums;
-    color: rgba(255,255,255,0.75);
-    white-space: nowrap;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 0.5px solid rgba(255,255,255,0.18);
-    border-radius: 20px;
-    padding: 3px 10px;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    z-index: 20;
-}
-.time-ruler-hover-label.visible { opacity: 1; }
-
-.time-ruler-now-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    margin-top: 10px;
-    letter-spacing: 0.04em;
-    font-variant-numeric: tabular-nums;
-    color: #7B52B0;
-    white-space: nowrap;
-    flex-shrink: 0;
-    background: rgba(167,139,202,0.1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 0.5px solid rgba(167,139,202,0.3);
-    border-radius: 20px;
-    padding: 3px 10px;
-    cursor: pointer;
-    user-select: none;
-    pointer-events: auto;
-}
-
-
-/* THE PRO STUDIO DOCK */
-.dock-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    margin-top: auto;
-    margin-bottom: 250px;
-}
-
-.dock-row {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    position: relative;
-}
-
-.dock-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    color: var(--text-color);
-    cursor: pointer;
-    opacity: 0.25;
-    transition: opacity 0.25s ease, transform 0.25s var(--sf-easing);
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.dock-nav:hover {
-    opacity: 0.6;
-}
-
-.dock-nav:active {
-    transform: scale(0.75);
-    opacity: 0.4;
-}
-
-.dock-container {
-    position: relative;
-    padding: 8px;
-    background: rgba(20, 10, 40, 0.55);
-    backdrop-filter: blur(40px) saturate(130%) contrast(110%);
-    -webkit-backdrop-filter: blur(40px) saturate(130%) contrast(110%);
-    border-radius: 40px;
-    border: none;
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-        0 12px 40px rgba(0, 0, 0, 0.25),
-        0 2px 8px rgba(0, 0, 0, 0.12);
-
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    user-select: none;
-    z-index: 1000;
-}
-
-
-.day-separator {
-    display: none;
-}
-
-.day-card {
-    width: 64px;
-    height: 76px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border-radius: 30px;
-    color: rgba(255, 255, 255, 0.6);
-    transition:
-        transform 0.5s var(--sf-easing),
-        background 0.3s var(--sf-easing),
-        box-shadow 0.3s var(--sf-easing);
-    cursor: default;
-    position: relative;
-}
-
-
-.day-card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: none;
-}
-
-.day-card:active {
-    transform: scale(0.92) translateY(0);
-    transition: transform 0.1s var(--sf-easing);
-}
-
-.day-card.active {
-    background: rgba(255, 255, 255, 0.06);
-    border: none;
-    filter: none;
-    z-index: 2;
-    box-shadow: none;
-}
-
-.day-card.active::after {
-    content: none;
-}
-
-.day-name {
-    color: rgba(255, 255, 255, 0.35);
-    font-size: 7px;
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 1px;
-    letter-spacing: 0.06em;
-}
-
-.day-card.active .day-name { color: rgba(220, 180, 255, 0.7); }
-
-.day-card.weekend .day-number {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: rgba(210, 185, 255, 0.75);
-    color: rgba(210, 185, 255, 0.75);
-}
-
-.day-card.weekend.active .day-number {
-    background: none;
-    -webkit-background-clip: unset;
-    -webkit-text-fill-color: unset;
-    background-clip: unset;
-}
-
-.day-number {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: rgba(255, 255, 255, 0.7);
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-    transition: font-weight 0.4s var(--sf-easing);
-}
-
-.day-card.active .day-number {
-    font-weight: 700;
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: #fff;
-    color: #fff;
-}
-
-.day-card.active:hover { background: rgba(255, 255, 255, 0.08); }
-
-/* Inline weather inside day cards */
-.day-main-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.weather-separator {
-    width: 1px;
-    height: 28px;
-    background: linear-gradient(to bottom, transparent, rgba(120,120,128,0.2) 50%, transparent);
-    flex-shrink: 0;
-}
-
-/* WEATHER ROW — below the dock */
-.weather-row {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 0 54px;
-    margin-top: 10px;
-    opacity: 0.7;
-}
-
-.weather-day {
-    width: 52px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    transition: 0.3s;
-    pointer-events: auto;
-    cursor: pointer;
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.weather-day:hover { opacity: 1; transform: translateY(-1px); }
-
-.weather-day .weather-icon { font-size: 13px; margin-bottom: 0; margin-right: 4px; }
-.weather-day .weather-temp { font-size: 10px; font-weight: 700; opacity: 0.8; }
-
-.weather-separator {
-    width: 1px;
-    height: 10px;
-    background: linear-gradient(to bottom, transparent, rgba(120,120,128,0.3) 50%, transparent);
-    flex-shrink: 0;
-}
-
-.weather-day.today {
-    filter: drop-shadow(0 0 6px rgba(0, 122, 255, 0.5));
-}
-
-.weather-icon { font-size: 14px; margin-bottom: 1px; }
-.weather-temp { font-size: 10px; font-weight: 700; }
-
-
-.weather-tooltip {
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Caveat', cursive;
-    font-size: 32px;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-    z-index: 9998;
-    color: var(--text-color);
-    text-align: center;
-    white-space: nowrap;
-}
-
-.weather-tooltip.show {
-    opacity: 0.4;
-}
-
-
-.city-tooltip {
-    display: none;
-    position: fixed;
-    bottom: max(16px, calc(16px + env(safe-area-inset-bottom)));
-    right: 30px;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    opacity: 0.2;
-    z-index: 9999;
-    pointer-events: auto;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.city-tooltip:hover {
-    opacity: 0.6;
-    transform: scale(1.05);
-}
-
-
 
 .note {
     font-family: Caveat;
+    -webkit-text-stroke: .3px currentColor; /* thickens the font; follows text color so it never washes out */
     font-size: 12px;
+    letter-spacing: 0.242px;
     position: absolute;
     width: fit-content;
-    min-width: 0;
+    min-width: 10;
     max-width: 600px;
     min-height: 40px;
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(3px)!important;
-    -webkit-backdrop-filter: blur(3px)!important;
+    background: rgba(255, 255, 255, 0.005);
+    backdrop-filter: blur(1px)!important;
+    -webkit-backdrop-filter: blur(2px)!important;
     border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1.2px solid rgba(255, 255, 255, 0.15);
     border-radius: 30px;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.08),
         inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-        0 4px 16px rgba(0, 0, 0, 0.12);
-    color: #f0eeff;
+        0 2px 6px rgba(0, 0, 0, 0.08);
+    color: #000;
     white-space: normal;
     z-index: 1100;
     cursor: grab;
@@ -900,8 +254,8 @@ body.ready {
     -webkit-user-select: none;
 }
 .note.selected {
-    outline: 2px solid rgba(197, 128, 251, 0.7);
-    outline-offset: 0px;
+    outline: 1.5px solid rgba(255, 255, 255, 0.3);
+    outline-offset: -2px;
 }
 .note .note-content {
     white-space: pre-wrap;
@@ -910,10 +264,10 @@ body.ready {
 }
 .note textarea { color: inherit; }
 
-.note[data-note-color="yellow"] { color: #fef3c7; }
-.note[data-note-color="blue"] { color: #dbeafe; }
-.note[data-note-color="mint"] { color: #d1fae5; }
-.note[data-note-color="pink"] { color: #fce7f3; }
+.note[data-note-color="yellow"] { color: #fef08a; }
+.note[data-note-color="blue"] { color: #bfdbfe; }
+.note[data-note-color="mint"] { color: #a7f3d0; }
+.note[data-note-color="pink"] { color: #fbcfe8; }
 
 /* Caveat handwriting reads cleanest in pure white — only on default-color notes */
 .note:not([data-note-color]) { color: #ffffff; }
@@ -930,79 +284,6 @@ body.ready {
                 border-radius 0.3s var(--sf-easing), opacity 0.25s ease;
 }
 
-.note.dragging.near-dock {
-    padding: 6px 14px;
-    border-radius: 30px;
-    opacity: 0.85;
-    pointer-events: none;
-    transform-origin: center center;
-    transition: transform 0.35s var(--spring-easing), padding 0.3s var(--sf-easing),
-                border-radius 0.3s var(--sf-easing), opacity 0.25s ease;
-}
-
-.note.dragging.near-dock .note-content {
-    transition: font-size 0.3s var(--sf-easing), max-height 0.3s var(--sf-easing);
-    font-size: 13px;
-    line-height: 1.1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    max-height: 1.1em;
-}
-
-.note.dragging.near-dock .note-resize-handle,
-.note.dragging.near-dock .note-close,
-.note.dragging.near-dock .note-color-bar {
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* Note close button — top right corner */
-.note-close {
-    position: absolute;
-    top: -2px;
-    right: -6px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #FF5F57;
-    border: 0.5px solid rgba(0, 0, 0, 0.12);
-    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0);
-    transition: transform 0.3s var(--spring-easing), opacity 0.2s ease, filter 0.15s ease;
-}
-
-.note:hover .note-close,
-.note.editing .note-close {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
-}
-
-.note-close:active {
-    filter: brightness(0.8);
-}
-
-.note-close svg {
-    width: 8px;
-    height: 8px;
-    stroke: rgba(255, 255, 255, 0.9);
-    stroke-width: 1.6;
-    fill: none;
-    transition: stroke 0.1s ease;
-}
-
-.note-close:hover svg {
-    stroke: rgba(77, 0, 0, 0.9);
-}
 
 .note-alerts {
     display: flex;
@@ -1062,11 +343,38 @@ body.ready {
     -webkit-user-select: none;
 }
 
+/* ── Long notes (over NOTE_COLLAPSE_CHARS in JS) collapse to this capped
+   height with a soft last-line fade and a "more…" affordance. ── */
+.note.is-overflowing .note-content {
+    max-height: 100px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+}
+.note-more {
+    display: none;
+    margin-top: 2px;
+    width: fit-content;
+    font-family: var(--note-font);
+    font-size: calc(var(--note-size) * 0.82);
+    line-height: 1;
+    color: inherit;
+    opacity: 0.65;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: opacity 0.15s ease;
+}
+.note-more:hover { opacity: 1; }
+.note.is-overflowing > .note-more { display: block; }
+.note.editing > .note-more { display: none; }
+.note.editing.is-overflowing .note-content { max-height: none; -webkit-mask-image: none; mask-image: none; }
+
 /* Blurred note content state */
 .note.blurred .note-content,
 .note.blurred .note-image {
-    filter: blur(4px);
-    opacity: 0.6;
+    filter: blur(8px);
+    opacity: 0.55;
     transition: filter 0.3s ease, opacity 0.3s ease;
     user-select: none;
     pointer-events: none;
@@ -1074,7 +382,7 @@ body.ready {
 
 .note.blurred:hover .note-content,
 .note.blurred:hover .note-image {
-    filter: blur(1.5px);
+    filter: blur(2.5px);
     opacity: 0.8;
 }
 
@@ -1178,8 +486,8 @@ body.is-selecting {
 
 /* Highlight notes that would be selected during rectangle draw */
 .note.potential-select {
-    outline: 2px solid rgba(197, 128, 251, 0.5);
-    outline-offset: 0px;
+    outline: 2px solid rgba(255, 255, 255, 0.2);
+    outline-offset: -2px;
 }
 
 body.note-editing-mode .note.editing {
@@ -1355,16 +663,87 @@ video.note-image {
 body.note-editing-mode .note-edit-overlay { display: none; }
 body.note-editing-mode .note.editing { z-index: 2000 !important; }
 
+/* ── Expanded note view — blurred page, centered dark "terminal" window ── */
+.note-expand-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 6000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: transparent;
+    -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+}
+.note-expand-overlay.open { display: flex; opacity: 1; }
+.note-expand-window {
+    position: relative;
+    width: 500px;
+    max-width: 92vw;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    background: #1b1b1d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    transform: scale(0.96);
+    transition: transform 0.28s var(--spring-easing);
+}
+.note-expand-overlay.open .note-expand-window { transform: scale(1); }
+.note-expand-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    z-index: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 16px;
+    line-height: 1;
+    padding: 4px 6px;
+    transition: color 0.15s ease;
+}
+.note-expand-close:hover { color: #fff; }
+.note-expand-content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 28px 30px 30px;
+    color: #f0eeff;
+    font-family: var(--note-font);
+    font-size: calc(var(--note-size) * 1.55);
+    line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+.note-expand-content a {
+    color: var(--accent-color);
+    text-decoration: none;
+    border-bottom: 2px solid rgba(0, 122, 255, 0.25);
+}
+
 .note-context-menu {
     position: fixed;
     z-index: 10000;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border: 0.5px solid rgba(255, 255, 255, 0.35);
+    /* Frosted glass — milky white veil over a moderate blur (not a heavy smear),
+       boosted saturation + brightness so it reads as frost, with a crisp lit edge. */
+    background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.11));
+    backdrop-filter: blur(34px) saturate(180%) brightness(1.1);
+    -webkit-backdrop-filter: blur(34px) saturate(180%) brightness(1.1);
+    border: 0.5px solid rgba(255, 255, 255, 0.45);
     border-radius: 18px;
     padding: 8px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+    box-shadow:
+        0 14px 44px rgba(0, 0, 0, 0.30),
+        0 3px 10px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -1395,6 +774,14 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
     background: rgba(255, 255, 255, 0.1);
     margin: 2px 4px;
 }
+/* Vertical divider — separates inline items within a section row */
+.ncm-divider-v {
+    width: 1px;
+    align-self: stretch;
+    margin: 4px 2px;
+    background: rgba(255, 255, 255, 0.12);
+    flex: 0 0 auto;
+}
 .ncm-btn {
     flex: 1;
     height: 32px;
@@ -1411,6 +798,96 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
 .ncm-btn:hover { background: rgba(255, 255, 255, 0.1); }
 .ncm-btn:active { transform: scale(0.95); }
 
+/* Delete button — destructive, refined red pill with trash icon */
+.ncm-delete {
+    flex: 1;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #ff6b6b;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.ncm-delete svg { width: 14px; height: 14px; opacity: 0.95; }
+.ncm-delete:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ff8585;
+}
+.ncm-delete:active { transform: scale(0.97); }
+
+/* Reaction picker row — iMessage-style tapbacks */
+.ncm-section.reactions { justify-content: space-between; gap: 2px; }
+.ncm-react {
+    flex: 1;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 17px;
+    line-height: 1;
+    transition: transform 0.15s var(--spring-easing), background 0.1s;
+    user-select: none;
+}
+.ncm-react:hover { background: rgba(255, 255, 255, 0.1); transform: scale(1.25); }
+.ncm-react:active { transform: scale(1.05); }
+.ncm-react.active { background: rgba(120, 170, 255, 0.28); }
+/* Inline reaction sitting beside the Blur button — fixed width, not stretched */
+.ncm-react-inline { flex: 0 0 auto; width: 36px; height: 32px; }
+
+/* Tapback badge — same frosted glass as the note bubble, top-right corner */
+.note-reaction {
+    position: absolute;
+    top: -12px;
+    right: -4px;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.005);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    border: none;
+    border-top: 1.2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 13px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+        0 2px 6px rgba(0, 0, 0, 0.08);
+    z-index: 21;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transform-origin: bottom right;
+    animation: reaction-pop 0.3s var(--spring-easing);
+}
+.note-reaction:hover { filter: brightness(1.15); }
+.note-reaction:active { transform: scale(0.88); }
+@keyframes reaction-pop {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.18); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 .ncm-color-dot {
     width: 20px;
     height: 20px;
@@ -1421,7 +898,9 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
 }
 .ncm-color-dot:hover { transform: scale(1.2); }
 .ncm-color-dot.active { border-color: #fff; }
-.ncm-color-dot[data-color="default"] { background: rgba(128,128,128,0.4); }
+.ncm-color-dot[data-color="default"] { background: #fff; }
+/* White dot needs a dark ring to show selection against itself */
+.ncm-color-dot[data-color="default"].active { border-color: rgba(0,0,0,0.55); }
 .ncm-color-dot[data-color="yellow"] { background: #fbbf24; }
 .ncm-color-dot[data-color="blue"] { background: #60a5fa; }
 .ncm-color-dot[data-color="mint"] { background: #34d399; }
@@ -1437,7 +916,7 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
     cursor: nwse-resize;
     z-index: 10;
     opacity: 0;
-    transition: opacity 0.3s var(--sf-easing);
+    transition: opacity 0.9s var(--sf-easing);
     pointer-events: none;
 }
 .note-resize-handle svg {
@@ -1448,27 +927,38 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
     cursor: nwse-resize;
 }
 
-.note:hover .note-resize-handle { opacity: 1; pointer-events: none; }
+.note:hover .note-resize-handle { opacity: 0.7; pointer-events: none; }
 .note:hover .note-resize-handle .rh-fill { pointer-events: stroke; }
 
 .note-resize-handle .rh-fill { }
 
 
 
-html.hide-ruler .time-ruler {
-    display: none !important;
-}
-html.hide-ruler .dock-wrapper {
-    margin-top: auto;
-}
 
 
 
 
+/* ── Top-right control bar ────────────────────────────────────────────────
+   Icons fill right-to-left, macOS menu-bar style. The settings gear is the
+   fixed anchor at the right edge (right: 20px, 40px wide). Every toggle is a
+   32px round button (.old-dock-toggle-btn) that stacks leftward in 36px steps:
+
+       slot 0 → right: 60px    (first toggle, nearest the gear — the class default)
+       slot 1 → right: 96px
+       slot 2 → right: 132px
+       slot n → right: 60 + n*36 px
+
+   Currently occupied:
+       slot 0 → #minidock-tone-btn (the class default, right: 60px)
+
+   TO ADD A NEW SWITCH: give the button class="old-dock-toggle-btn" and an id,
+   then assign it the next free slot's `right` value (slot 1 → right: 96px),
+   so the bar grows leftward and never overlaps the gear.
+─────────────────────────────────────────────────────────────────────────── */
 .old-dock-toggle-btn {
     position: fixed;
     top: 24px;
-    right: 60px;
+    right: 60px;                      /* slot 0 — default for the first toggle */
     z-index: 10001;
     width: 32px;
     height: 32px;
@@ -1489,29 +979,67 @@ html.hide-ruler .dock-wrapper {
 .old-dock-toggle-btn.active { opacity: 0.9; }
 
 
-.app-logo {
+/* ── Minidock — current week pill, top center ──
+   A white-outlined glass pill (no fill, just a soft tint for legibility).
+   Each cell: abbreviated weekday letter above a pronounced day number.
+   Today is lifted out in frosted glass. Week runs Mon → Sun. */
+.minidock {
     position: fixed;
-    top: 24px;
+    top: 16px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10001;
-    width: 32px;
-    height: 32px;
     display: flex;
+    align-items: stretch;
+    gap: 2px;
+    padding: 5px 8px;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 0.45s ease, transform 0.45s var(--spring-easing);
+    user-select: none;
+    -webkit-user-select: none;
+}
+.minidock.ready { opacity: 1; }
+
+.minidock-day {
+    box-sizing: border-box;
+    width: 30px;
+    min-height: 40px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
-    opacity: 0.9;
-    cursor: pointer;
-    user-select: none;
-    background: transparent;
-    border: none;
-    padding: 0;
-    transition: transform 0.3s var(--spring-easing), opacity 0.2s ease;
+    gap: 3px;
+    border-radius: 14px;
+    padding: 5px 0 6px;
+    color: rgba(255, 255, 255, 0.82);
+    font-family: 'Inter', sans-serif;
 }
-.app-logo:hover { opacity: 1; transform: translateX(-50%) scale(1.08); }
-.app-logo:active { transform: translateX(-50%) scale(0.94); }
-.app-logo svg { width: 28px; height: 28px; }
+.minidock-day-wd {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+    opacity: 0.55;
+}
+.minidock-day-num {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+/* Today — simple translucent fill with a soft blur, brightest text */
+.minidock-day.is-today {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+.minidock-day.is-today .minidock-day-wd { opacity: 0.88; }
+.minidock-day.is-today .minidock-day-num { font-weight: 700; }
 
 
 .settings-btn {
@@ -1767,28 +1295,6 @@ body.dev-mode .dev-only { display: block; }
 .settings-discord-link:hover { opacity: 1; text-decoration: none; }
 .settings-discord-link svg { flex-shrink: 0; }
 
-.settings-location-input {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: rgba(255,255,255,0.85);
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
-    padding: 8px 12px;
-    width: 100%;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.settings-location-input::placeholder { color: rgba(255,255,255,0.3); }
-
-.settings-location-input:focus {
-    border-color: rgba(255,255,255,0.25);
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
-}
-
 .settings-toggle {
     display: flex;
     gap: 2px;
@@ -1855,50 +1361,11 @@ body.dev-mode .dev-only { display: block; }
 }
 .settings-action-btn svg { opacity: 0.8; }
 
-/* PAST DAY CARDS */
-.day-card.past {
-    cursor: default !important;
-    opacity: 0.5;
-}
-
-.day-card.past:hover {
-    background: transparent;
-    transform: none;
-}
-
-/* DAY CARD DRAG-OVER HIGHLIGHT */
-.day-card.drag-over {
-    background: rgba(0, 122, 255, 0.08);
-    transform: translateY(-4px) scale(1.04);
-    transition: transform 0.2s var(--spring-easing), background 0.2s ease;
-}
 
 
 
 
 
-/* Bottom watermark — Alcove-style fading text */
-.bottom-watermark {
-    display: block;
-    position: fixed;
-    bottom: -0.18em;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(100px, 14vw, 220px);
-    font-family: 'Nunito', sans-serif;
-    font-weight: 900;
-    letter-spacing: 0.01em;
-    line-height: 0.85;
-    color: var(--text-color);
-    opacity: 0.1;
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
-    z-index: 0;
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.25) 55%, transparent 85%);
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.25) 55%, transparent 85%);
-    white-space: nowrap;
-}
 
 /* SEARCH OVERLAY — Minimal, White, Apple-style */
 .search-overlay {
@@ -2127,260 +1594,12 @@ body.dev-mode .dev-only { display: block; }
 
 /* ── backdrop-filter unsupported fallback (Firefox, some Windows) ── */
 @supports not (backdrop-filter: blur(1px)) {
-    .dock-container  { background: rgba(240, 240, 240, 0.92); }
     .note            { background: rgba(245, 245, 245, 0.96); }
     .settings-panel  { background: rgba(22, 22, 24, 0.95); }
     .note-arrow-bar  { background: rgba(240, 240, 240, 0.96); }
     .note-edit-overlay { background: rgba(0,0,0,0.35); }
 }
 
-/* ── Timebar — days of current month ── */
-.timebar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    z-index: 600;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.35s ease;
-}
-.timebar.ready { opacity: 1; }
-.timebar-inner {
-    display: flex;
-    align-items: flex-end;
-    gap: 0; /* days are flush so cursor never leaves the hit zone */
-    padding: 16px 10px 0; /* transparent top buffer keeps hover alive above */
-    max-width: 100vw;
-    box-sizing: border-box;
-    pointer-events: auto;
-}
-.timebar-day {
-    box-sizing: border-box;
-    flex: 0 0 auto;
-    position: relative;
-    width: clamp(26px, 2.5vw, 36px);
-    height: 30px;
-    color: rgba(240, 238, 255, 0.6);
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    font-size: 13px;
-    line-height: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 2px;
-    padding-top: 10px;
-    transition: height 0.32s var(--spring-easing),
-                color 0.25s ease;
-    cursor: pointer;
-    overflow: visible;
-    user-select: none;
-    -webkit-user-select: none;
-    background: transparent;
-}
-.timebar-day-num { line-height: 1; }
-/* Visible day shape — drawn inside a transparent margin so days are flush in the DOM */
-.timebar-day::before {
-    content: '';
-    position: absolute;
-    left: 3px;
-    right: 3px;
-    top: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: 0.5px solid rgba(255, 255, 255, 0.15);
-    border-radius: 22px 22px 0 0;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.08),
-        0 4px 16px rgba(0, 0, 0, 0.12);
-    transition: background 0.25s ease, border-top-color 0.25s ease;
-    pointer-events: none;
-    z-index: -1;
-}
-/* .is-this-week is kept as a data flag for weather emoji attachment — no
-   visual styling. Only today stands out (rule below). */
-/* Today — brightest tint, stronger glow */
-.timebar-day.is-today {
-    color: #f0eeff;
-}
-.timebar-day.is-today::before {
-    background: rgba(197, 128, 251, 0.26);
-    border-top-color: rgba(197, 128, 251, 0.65);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.18),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.10),
-        0 6px 26px rgba(197, 128, 251, 0.32);
-}
-.timebar-day-wd {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    line-height: 1;
-    opacity: 0;
-    transform: translateY(-3px);
-    transition: opacity 0.22s ease, transform 0.22s var(--spring-easing);
-    pointer-events: none;
-}
-/* Weather emoji — floats above the pill, outside the day shape */
-.timebar-day-weather {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 6px);
-    transform: translateX(-50%);
-    font-size: 15px;
-    line-height: 1;
-    user-select: none;
-    -webkit-user-select: none;
-    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
-    opacity: 0.95;
-    z-index: 2;
-    white-space: nowrap;
-    cursor: default;
-}
-.timebar-day.is-today .timebar-day-weather {
-    font-size: 17px;
-    opacity: 1;
-}
-.timebar-day:hover .timebar-day-wd,
-.timebar-day.is-today .timebar-day-wd {
-    opacity: 0.85;
-    transform: translateY(0);
-}
-
-/* During active magnification, JS drives heights every frame — no transition */
-.timebar-inner.is-magnifying .timebar-day {
-    transition: color 0.25s ease;
-}
-.timebar-inner.is-magnifying .timebar-day:hover { color: #f0eeff; }
-
-/* Range-select highlight while dragging across days */
-.timebar-day.is-selecting::before {
-    background: rgba(120, 200, 255, 0.18);
-    border-top-color: rgba(120, 200, 255, 0.65);
-}
-/* Saved event marker — tinted background on the day pill */
-.timebar-day.has-event {
-    color: rgba(255, 255, 255, 0.95);
-    text-shadow: 0 0 6px rgba(255, 255, 255, 0.18);
-}
-.timebar-day.has-event::before {
-    background:
-        linear-gradient(180deg,
-            var(--event-bg, rgba(197, 128, 251, 0.34)) 0%,
-            var(--event-bg-fade, rgba(197, 128, 251, 0.12)) 100%);
-    border-top: 0.5px solid var(--event-border, rgba(197, 128, 251, 0.75));
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.22),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.10),
-        0 4px 22px var(--event-glow, rgba(197, 128, 251, 0.32));
-}
-.timebar-day.has-event:hover .timebar-day-wd,
-.timebar-day.has-event.is-today .timebar-day-wd {
-    opacity: 0.95;
-}
-
-.timebar-event-popover {
-    position: fixed;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 10px;
-    background: rgba(20, 10, 40, 0.92);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border: 0.5px solid rgba(255,255,255,0.2);
-    border-radius: 14px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    z-index: 1000;
-}
-.timebar-event-popover input {
-    border: none;
-    background: rgba(255,255,255,0.08);
-    color: white;
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    outline: none;
-    min-width: 200px;
-}
-.timebar-event-popover input::placeholder { color: rgba(255,255,255,0.4); }
-.timebar-event-popover button {
-    background: none; border: none;
-    color: rgba(255,255,255,0.55);
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0 4px;
-}
-.timebar-event-popover button:hover { color: rgba(255, 100, 100, 0.9); }
-
-.timebar-event-tooltip {
-    position: fixed;
-    pointer-events: none;
-    padding: 7px 12px 7px 16px;
-    background: linear-gradient(180deg,
-        rgba(30, 18, 56, 0.94) 0%,
-        rgba(18, 10, 38, 0.94) 100%);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 0.5px solid rgba(255,255,255,0.18);
-    border-radius: 12px;
-    color: rgba(255,255,255,0.96);
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    line-height: 1.35;
-    white-space: nowrap;
-    max-width: min(320px, 80vw);
-    box-shadow:
-        0 8px 28px rgba(0, 0, 0, 0.4),
-        0 2px 6px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.07);
-    z-index: 999;
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity 0.18s ease, transform 0.22s var(--spring-easing);
-}
-.timebar-event-tooltip.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-/* Accent bar — tinted with the event color */
-.timebar-event-tooltip::before {
-    content: '';
-    position: absolute;
-    left: 6px;
-    top: 7px;
-    bottom: 7px;
-    width: 2px;
-    border-radius: 2px;
-    background: var(--tt-accent, rgba(197, 128, 251, 0.95));
-    box-shadow: 0 0 8px var(--tt-accent, rgba(197, 128, 251, 0.6));
-}
-/* Caret — points down at the day pill, positioned via --caret-x */
-.timebar-event-tooltip::after {
-    content: '';
-    position: absolute;
-    left: var(--caret-x, 50%);
-    bottom: -4px;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid rgba(18, 10, 38, 0.94);
-}
 
 </style>
 </head>
@@ -2396,26 +1615,21 @@ body.dev-mode .dev-only { display: block; }
 <noscript>
   <div style="font-family:sans-serif;max-width:600px;margin:40px auto;padding:0 20px;color:#333">
     <h1>Year Progress Dashboard</h1>
-    <p>Year Progress Dashboard is a free, minimal weekly planner that runs in your browser. It shows your current week, a 7-day weather forecast, and lets you create sticky notes — no account or install needed.</p>
-    <h2>Features</h2>
-    <ul>
-      <li>Weekly calendar with today highlighted and week navigation</li>
-      <li>7-day weather forecast via Open-Meteo (automatic location detection)</li>
-      <li>Sticky notes — create by double-clicking, drag, resize, color</li>
-      <li>Image notes — drag any image from your desktop onto the page</li>
-      <li>Year progress bar with month and season labels</li>
-      <li>Sun and moon arc showing daylight position</li>
-      <li>Themes, font picker, Celsius/Fahrenheit toggle</li>
-      <li>Multi-language: English, Spanish, Portuguese</li>
-      <li>All data stored locally — no server, no tracking</li>
-    </ul>
-    <p>JavaScript is required to run Year Progress Dashboard. Please enable JavaScript in your browser.</p>
+    <p>A simple weekly planner with sticky notes. Free, and runs in your browser.</p>
+    <p>Please turn on JavaScript to use it.</p>
   </div>
 </noscript>
 
 <div id="desktop-only" style="display:none">Desktop only</div>
 
 <div class="note-edit-overlay" id="note-edit-overlay"></div>
+
+<div class="note-expand-overlay" id="note-expand-overlay">
+  <div class="note-expand-window">
+    <button class="note-expand-close" id="note-expand-close" aria-label="Close">&#10005;</button>
+    <div class="note-expand-content" id="note-expand-content"></div>
+  </div>
+</div>
 <div class="selection-rect" id="selection-rect"></div>
 <div class="note-context-menu" id="note-context-menu">
     <div class="ncm-section colors">
@@ -2428,22 +1642,29 @@ body.dev-mode .dev-only { display: block; }
     <div class="ncm-sep"></div>
     <div class="ncm-section">
         <div class="ncm-btn" data-action="blur">Blur</div>
-        <div class="ncm-btn" data-insert="→">→</div>
-        <div class="ncm-btn" data-insert="↗">↗</div>
-        <div class="ncm-btn" data-insert="—">—</div>
-        <div class="ncm-btn" data-insert="·">·</div>
+        <div class="ncm-divider-v"></div>
+        <div class="ncm-react ncm-react-inline" data-react="‼️">‼️</div>
+    </div>
+    <div class="ncm-sep"></div>
+    <div class="ncm-section">
+        <button class="ncm-delete" data-action="delete" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 7h16"/><path d="M10 11v6M14 11v6"/>
+                <path d="M5 7l1 13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1l1-13"/>
+                <path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>
+            </svg>
+            <span>Delete</span>
+        </button>
     </div>
 </div>
 
 
 
 
-<button class="app-logo" id="app-logo" title="weekDash" type="button">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7"/></svg>
-</button>
-<button class="old-dock-toggle-btn" id="old-dock-toggle-btn" title="Show old dock (greeting + weather)">
+<!-- Minidock (current week pill) is built in JS and appended to <body> -->
+<button class="old-dock-toggle-btn" id="minidock-tone-btn" title="Minidock: toggle tone falloff (gradient / uniform)">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 17h16M6 13l2-6h8l2 6M8 17v2M16 17v2"/>
+        <circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/>
     </svg>
 </button>
 <button class="settings-btn" id="settings-btn">
@@ -2477,23 +1698,11 @@ body.dev-mode .dev-only { display: block; }
 </div>
 <div class="settings-panel" id="settings-panel">
     <div>
-        <div class="settings-section-label">Location <span style="opacity:0.4;font-weight:400;font-size:9px;">(for weather)</span></div>
-        <input class="settings-location-input" id="settings-location" type="text" placeholder="city or postal code...">
-        <div id="settings-location-status" style="font-size:9px;opacity:0.5;margin-top:4px;color:rgba(255,255,255,0.9)"></div>
-    </div>
-    <div>
         <div class="settings-section-label">Language</div>
         <div class="settings-toggle" id="lang-picker">
             <button class="settings-toggle-btn" data-lang="en">EN</button>
             <button class="settings-toggle-btn" data-lang="es">ES</button>
             <button class="settings-toggle-btn" data-lang="pt">PT</button>
-        </div>
-    </div>
-    <div>
-        <div class="settings-section-label">Temperature</div>
-        <div class="settings-toggle" id="temp-toggle">
-            <button class="settings-toggle-btn active" data-unit="C">°C</button>
-            <button class="settings-toggle-btn" data-unit="F">°F</button>
         </div>
     </div>
     <div>
@@ -2521,127 +1730,10 @@ body.dev-mode .dev-only { display: block; }
     </div>
 </div>
 
-<div class="bottom-watermark" id="bottom-watermark"></div>
 
-
-
-
-<div class="dock-wrapper">
-    <div class="dock-row">
-        <header class="header-container" id="header-area">
-            <h1 class="greeting" id="greeting" title="Click to switch language">Good morning.</h1>
-        </header>
-        <button class="dock-nav" id="dock-prev"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        <div id="active-day-light"></div>
-        <div class="dock-container" id="dock"></div>
-        <button class="dock-nav" id="dock-next"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M6 3L10.5 8L6 13" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    </div>
-    <div class="weather-row" id="weather"></div>
-</div>
-
-
-<div class="city-tooltip" id="city-display">Detecting...</div>
-
-<div class="weather-tooltip" id="weather-tooltip"></div>
 
 
 <script>
-    /* ============================================================
-       BACKGROUND GEOMETRY & MESH
-    ============================================================ */
-    const geoModes = ['off', 'dots', 'web', 'stellar', 'tribon', 'mesh'];
-    let currentGeo = localStorage.getItem('aura_bg_geo') || 'off';
-
-    function initMeshBg() {
-        const W = window.innerWidth, H = window.innerHeight;
-        const PAD = 200;
-        const TW = W + PAD * 2, TH = H + PAD * 2;
-        const balls = [
-            { x: W *  1.20 - 300 + PAD, y: H * -0.10 + 300 + PAD, r: 300, color: '#007AFF' },
-            { x: W * -0.18 + 275 + PAD, y: H *  1.12 - 275 + PAD, r: 275, color: '#FF3B30' },
-            { x: W *  0.93 - 250 + PAD, y: H *  0.83 - 250 + PAD, r: 250, color: '#5856D6' },
-        ];
-        const iframe = document.getElementById('mesh-iframe');
-        if (!iframe) return;
-        const circles = balls.map(b =>
-            `<div style="position:absolute;width:${b.r*2}px;height:${b.r*2}px;left:${b.x-b.r}px;top:${b.y-b.r}px;border-radius:50%;background:${b.color};"></div>`
-        ).join('');
-        const srcdoc = `<!DOCTYPE html><html><head><style>
-            *{margin:0;padding:0;box-sizing:border-box;}
-            body{width:${TW}px;height:${TH}px;overflow:hidden;background:transparent;filter:blur(120px);}
-        </style></head><body>${circles}</body></html>`;
-        iframe.srcdoc = srcdoc;
-        iframe.style.top = `-${PAD}px`;
-        iframe.style.left = `-${PAD}px`;
-        iframe.style.width = `${TW}px`;
-        iframe.style.height = `${TH}px`;
-    }
-
-    function drawBgGeo() {
-        const canvas = document.getElementById('dot-connections');
-        if (!canvas) return;
-        const W = window.innerWidth, H = window.innerHeight;
-        canvas.width = W; canvas.height = H;
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, W, H);
-
-        if (currentGeo === 'web') {
-            const STEP = 22, OFF = 11;
-            const cols = Math.ceil(W / STEP) + 1, rows = Math.ceil(H / STEP) + 1;
-            ctx.strokeStyle = 'rgba(0,0,0,0.13)';
-            ctx.lineWidth = 1;
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const x = c * STEP + OFF, y = r * STEP + OFF;
-                    if (c < cols - 1 && Math.random() < 0.14)
-                        { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + STEP, y); ctx.stroke(); }
-                    if (r < rows - 1 && Math.random() < 0.14)
-                        { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + STEP); ctx.stroke(); }
-                }
-            }
-        } else if (currentGeo === 'stellar') {
-            const N = Math.floor((W * H) / 14000);
-            const pts = Array.from({ length: N }, () => ({ x: Math.random() * W, y: Math.random() * H }));
-            const MAX_DIST = 160;
-            ctx.lineWidth = 0.8;
-            for (let i = 0; i < pts.length; i++) {
-                for (let j = i + 1; j < pts.length; j++) {
-                    const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
-                    const d = Math.sqrt(dx*dx + dy*dy);
-                    if (d < MAX_DIST) {
-                        const alpha = (1 - d / MAX_DIST) * 0.22;
-                        ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
-                        ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
-                    }
-                }
-            }
-            ctx.fillStyle = 'rgba(0,0,0,0.35)';
-            pts.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 1.3, 0, Math.PI * 2); ctx.fill(); });
-        } else if (currentGeo === 'tribon') {
-            const A1 = 0.5436890126920764, A2 = 0.2956120693571985;
-            const N = Math.floor((W * H) / 6500);
-            ctx.fillStyle = 'rgba(0,0,0,0.38)';
-            for (let i = 0; i < N; i++) {
-                const x = ((0.5 + i * A1) % 1) * W, y = ((0.5 + i * A2) % 1) * H;
-                ctx.beginPath(); ctx.arc(x, y, 1.2, 0, Math.PI * 2); ctx.fill();
-            }
-        }
-    }
-
-    function applyBgGeo(mode, noSave = false) {
-        geoModes.forEach(m => document.body.classList.remove('bg-geo-' + m));
-        document.body.classList.add('bg-geo-' + mode);
-        currentGeo = mode;
-        if (mode === 'mesh') initMeshBg();
-        drawBgGeo();
-        if (!noSave) localStorage.setItem('aura_bg_geo', mode);
-    }
-
-    window.addEventListener('resize', () => {
-        if (currentGeo === 'mesh') initMeshBg();
-        drawBgGeo();
-    });
-
     /* ============================================================
        LANGUAGE SYSTEM: EN / ES / PT (3-way cycle)
     ============================================================ */
@@ -2704,7 +1796,6 @@ body.dev-mode .dev-only { display: block; }
     const LANGS = ['en', 'es', 'pt'];
     const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
     let lang = LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en';
-    const dock = document.getElementById('dock');
     let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
     const PAGE_COUNT = 4;
     let currentPage = parseInt(localStorage.getItem('aura_current_page') || '0', 10);
@@ -2761,14 +1852,13 @@ body.dev-mode .dev-only { display: block; }
     let isSelecting = false;
     let selStart = { x: 0, y: 0 };
 
-    // First time — seed hint notes
+    // First time — seed a few simple hint notes
     if (notes.length === 0) {
         notes = [
-            { "id": "n1776098065375vhb9", "x": 276, "y": 60,  "w": 271, "text": "add to your homepage 🏡", "page": 0, "zIndex": 100 },
-            { "id": "n1776098095232",      "x": 274, "y": 133, "w": 176, "h": 96, "manualResize": true, "text": "double click to create a note", "page": 0, "zIndex": 101 },
-            { "id": "n1776098589852",      "x": 45,  "y": 53,  "w": 207, "h": 128, "manualResize": true, "text": "book flights\n↗ tokyo, april\nbefore prices jump", "page": 0, "zIndex": 102 },
-            { "id": "n1776100345016",      "x": 87,  "y": 194, "w": 162, "text": "weekdash.com", "page": 0, "zIndex": 103 },
-            { "id": "n1776200000001",      "x": 570, "y": 55,  "w": 265, "h": 185, "manualResize": true, "imageData": "vid/preview.mov", "page": 0, "zIndex": 104 }
+            { "id": "n1776098065375", "x": 110, "y": 92,  "w": 220, "text": "welcome to weekdash", "page": 0, "zIndex": 100 },
+            { "id": "n1776098095232", "x": 330, "y": 150, "w": 240, "text": "double-click anywhere to create a note", "page": 0, "zIndex": 101 },
+            { "id": "n1776098589852", "x": 140, "y": 235, "w": 200, "text": "drag a note to move it", "page": 0, "zIndex": 102 },
+            { "id": "n1776100345016", "x": 360, "y": 300, "w": 162, "text": "weekdash.com", "page": 0, "zIndex": 103 }
         ];
         localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
     }
@@ -2997,7 +2087,6 @@ body.dev-mode .dev-only { display: block; }
         if (
             e.button !== 0 ||
             e.target.closest('.note') ||
-            e.target.closest('.dock-wrapper') ||
             e.target.closest('.settings-btn') ||
             e.target.closest('.search-overlay') ||
             e.target.closest('.note-context-menu') ||
@@ -3072,51 +2161,10 @@ body.dev-mode .dev-only { display: block; }
         selRect.style.display = 'none';
     });
 
-    function getMainGreeting(lang, slot) {
-        const map = {
-            en: { morning: 'Good morning.', afternoon: 'Good afternoon.', evening: 'Good evening.', night: 'Good night.' },
-            es: { morning: 'Buenos días.', afternoon: 'Buenas tardes.', evening: 'Buenas noches.', night: 'Buenas noches.' },
-            pt: { morning: 'Bom dia.', afternoon: 'Boa tarde.', evening: 'Boa noite.', night: 'Boa noite.' },
-        };
-        return map[lang][slot] || map[lang].morning;
-    }
-
-    function getTimeSlot(hour) {
-        if (hour >= 5 && hour < 12)  return 'morning';
-        if (hour >= 12 && hour < 20) return 'afternoon';
-        return 'night';
-    }
-
-    function updateHeader() {
-        const now = new Date();
-        const slot = getTimeSlot(now.getHours());
-        const greetEl = document.getElementById('greeting');
-        if (!greetEl) return;
-        greetEl.textContent = getMainGreeting(lang, slot);
-    }
-
-    function cycleLang() {
-        const idx = LANGS.indexOf(lang);
-        const nextLang = LANGS[(idx + 1) % LANGS.length];
-        applyLang(nextLang);
-
-        const greetEl = document.getElementById('greeting');
-        if (greetEl) {
-            greetEl.classList.remove('lang-switch');
-            void greetEl.offsetWidth;
-            greetEl.classList.add('lang-switch');
-        }
-    }
-
-    document.getElementById('greeting').addEventListener('click', () => cycleLang());
 
     /* ============================================================
        LINKIFY
     ============================================================ */
-    function renderNoteContent(content, text) {
-        content.innerHTML = linkify(text);
-    }
-
     function wrapNote(note, data) {
         if (data.imageData) return;
         const content = note.querySelector('.note-content');
@@ -3136,6 +2184,7 @@ body.dev-mode .dev-only { display: block; }
         if (lines.length <= 1) {
             note.style.width = '';
             delete data.w;
+            updateNoteOverflow(note, data);
             return;
         }
 
@@ -3165,6 +2214,7 @@ body.dev-mode .dev-only { display: block; }
         const w = Math.max(Math.min(Math.ceil(maxW) + NOTE_PAD, NOTE_MAX + NOTE_PAD, edgeMax), NOTE_MIN);
         note.style.width = w + 'px';
         data.w = w;
+        updateNoteOverflow(note, data);
     }
 
     function linkify(text) {
@@ -3176,231 +2226,71 @@ body.dev-mode .dev-only { display: block; }
     }
 
 
-    /* ============================================================
-       DOCK
-    ============================================================ */
-    let dockOffset = 0; // days offset from current start
+    function renderNoteContent(content, text) {
+        content.innerHTML = linkify(text);
+    }
 
-    function initDock() {
-        const dayNames = {
-            en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-            pt: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-        };
-        const now = new Date();
-        const isMobile = window.innerWidth <= 430;
-        const numDays = isMobile ? 5 : 7;
-        const weekStart = new Date(now);
-        weekStart.setHours(0, 0, 0, 0);
-        weekStart.setDate(now.getDate() + dockOffset);
+    // Notes longer than this collapse on the canvas and open in a centered overlay.
+    const NOTE_COLLAPSE_CHARS = 300;
 
-        const dock = document.getElementById('dock');
-        dock.innerHTML = '';
-
-        for (let i = 0; i < numDays; i++) {
-            const date = new Date(weekStart);
-            date.setDate(weekStart.getDate() + i);
-            const dateStr = toISO(date);
-            const isToday = date.toDateString() === now.toDateString();
-            const isPast = date < new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-            // 1. Create Day Card
-            const card = document.createElement('div');
-            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-            card.className = `day-card${isToday ? ' active' : ''}${isPast ? ' past' : ''}${isWeekend ? ' weekend' : ''}`;
-            card.dataset.date = dateStr;
-            card.innerHTML = `
-                <span class="day-name">${(dayNames[lang] || dayNames['en'])[date.getDay()]}</span>
-                <div class="day-main-row">
-                    <span class="day-number">${date.getDate()}</span>
-                </div>
-            `;
-            dock.appendChild(card);
-            if (isToday) {
-                requestAnimationFrame(() => {
-                    const light = document.getElementById('active-day-light');
-                    if (!light) return;
-                    const cr = card.getBoundingClientRect();
-                    light.style.left = (cr.left + cr.width / 2) + 'px';
-                    light.style.top  = (cr.top  + cr.height / 2) + 'px';
+    function updateNoteOverflow(note, data) {
+        const content = note.querySelector('.note-content');
+        const existing = note.querySelector('.note-more');
+        // Image notes and user-resized notes keep their own size; never collapse them.
+        if (!content || data.imageData || data.manualResize || note.classList.contains('editing')) {
+            note.classList.remove('is-overflowing');
+            if (existing) existing.remove();
+            return;
+        }
+        note.classList.remove('is-overflowing');
+        if ((data.text || '').length > NOTE_COLLAPSE_CHARS) {
+            note.classList.add('is-overflowing');
+            if (!existing) {
+                const more = document.createElement('div');
+                more.className = 'note-more';
+                more.textContent = 'more…';
+                more.addEventListener('mousedown', (e) => e.stopPropagation());
+                more.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openNoteExpanded(data);
                 });
+                note.appendChild(more);
             }
-
-            // 2. Separators (dock only)
-            if (i < numDays - 1) {
-                const nextDate = new Date(weekStart);
-                nextDate.setDate(weekStart.getDate() + i + 1);
-                const nextIsToday = nextDate.toDateString() === now.toDateString();
-                if (!isToday && !nextIsToday) {
-                    const sep = document.createElement('div');
-                    sep.className = 'day-separator';
-                    dock.appendChild(sep);
-                }
-            }
+        } else if (existing) {
+            existing.remove();
         }
     }
 
-    function initWeatherRow() {
-        const weatherRow = document.getElementById('weather');
-        weatherRow.innerHTML = '';
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        for (let i = 0; i < 7; i++) {
-            const date = new Date(now);
-            date.setDate(now.getDate() + i);
-            const dateStr = toISO(date);
-            const wSlot = document.createElement('div');
-            wSlot.className = 'weather-day' + (i === 0 ? ' today' : '');
-            wSlot.id = 'dw-' + dateStr;
-            wSlot.innerHTML = `<span class="weather-icon" style="opacity:0.2">--</span>`;
-            weatherRow.appendChild(wSlot);
-            if (i < 6) {
-                const wSep = document.createElement('div');
-                wSep.className = 'weather-separator';
-                weatherRow.appendChild(wSep);
-            }
-        }
-        if (window.populateDockWeather) window.populateDockWeather();
+    const noteExpandOverlay = document.getElementById('note-expand-overlay');
+    const noteExpandContent = document.getElementById('note-expand-content');
+
+    function openNoteExpanded(data) {
+        noteExpandContent.innerHTML = linkify(data.text || '');
+        noteExpandContent.scrollTop = 0;
+        noteExpandOverlay.classList.add('open');
     }
-
-
-    document.getElementById('dock-prev').addEventListener('click', () => {
-        dockOffset -= 1;
-        initDock();
+    function closeNoteExpanded() {
+        noteExpandOverlay.classList.remove('open');
+        // The overlay's fullscreen backdrop-filter leaves collapsed notes in a
+        // stale composited state (clip/mask dropped) on Chromium/WebKit. A class
+        // re-toggle gets coalesced and never repaints; a display toggle forces a
+        // real reflow + fresh paint, which restores the clip.
+        document.querySelectorAll('.note.is-overflowing').forEach(el => {
+            el.style.display = 'none';
+            void el.offsetHeight;
+            el.style.display = '';
+        });
+    }
+    noteExpandOverlay.addEventListener('click', (e) => {
+        if (e.target === noteExpandOverlay) closeNoteExpanded();
     });
-    document.getElementById('dock-next').addEventListener('click', () => {
-        dockOffset += 1;
-        initDock();
+    document.getElementById('note-expand-close').addEventListener('click', closeNoteExpanded);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && noteExpandOverlay.classList.contains('open')) closeNoteExpanded();
     });
 
-    /* ============================================================
-       TIME RULER
-    ============================================================ */
-    const RULER_START = 0;   // midnight
-    const RULER_END   = 24;  // midnight
-    const RULER_SPAN  = RULER_END - RULER_START;
-
-    window.drawSunriseSunset = function() {
-        return; // Sun/moon arc removed
-        const ruler = document.getElementById('time-ruler');
-        ruler.querySelectorAll('.sun-label').forEach(el => el.remove());
-        const sun = window.todaySunTimes;
-        if (!sun) return;
-
-        const toH = iso => { const d = new Date(iso); return d.getHours() + d.getMinutes() / 60; };
-        const toPct = h => Math.max(0, Math.min(100, (h - RULER_START) / RULER_SPAN * 100));
-        const fmt = iso => {
-            const d = new Date(iso);
-            const h = d.getHours(), mm = String(d.getMinutes()).padStart(2,'0');
-            return `${h % 12 || 12}:${mm}${h >= 12 ? 'pm' : 'am'}`;
-        };
-
-        const riseH = toH(sun.rise), setH = toH(sun.set);
-        const risePct = toPct(riseH), setPct = toPct(setH);
 
 
-        const riseIcon = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
-            <circle cx="6" cy="5" r="2.2"/>
-            <line x1="6" y1="0.5" x2="6" y2="1.8"/>
-            <line x1="6" y1="8.2" x2="6" y2="9.5"/>
-            <line x1="9.5" y1="5" x2="10.8" y2="5"/>
-            <line x1="1.2" y1="5" x2="2.5" y2="5"/>
-            <line x1="8.5" y1="2.5" x2="9.4" y2="1.6"/>
-            <line x1="2.6" y1="8.4" x2="3.5" y2="7.5"/>
-            <line x1="8.5" y1="7.5" x2="9.4" y2="8.4"/>
-            <line x1="2.6" y1="1.6" x2="3.5" y2="2.5"/>
-            <line x1="0" y1="11" x2="12" y2="11"/>
-            <polyline points="4,9 6,7 8,9"/>
-        </svg>`;
-        const setIcon = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
-            <circle cx="6" cy="4" r="2.2"/>
-            <line x1="6" y1="0.5" x2="6" y2="1.8"/>
-            <line x1="9.5" y1="4" x2="10.8" y2="4"/>
-            <line x1="1.2" y1="4" x2="2.5" y2="4"/>
-            <line x1="8.5" y1="1.5" x2="9.4" y2="0.6"/>
-            <line x1="2.6" y1="0.6" x2="3.5" y2="1.5"/>
-            <line x1="0" y1="8" x2="12" y2="8"/>
-            <polyline points="4,9.5 6,11.5 8,9.5"/>
-        </svg>`;
-
-        const makeLabel = (iso, pct, icon) => {
-            const l = document.createElement('div');
-            l.className = 'sun-label'; l.style.left = pct + '%';
-            l.textContent = fmt(iso);
-            const tip = document.createElement('div');
-            tip.className = 'sun-tooltip';
-            tip.innerHTML = `<span class="sun-tooltip-icon">${icon}</span><div class="sun-tooltip-bubble">${fmt(iso)}</div>`;
-            l.appendChild(tip);
-            ruler.appendChild(l);
-        };
-
-        if (riseH >= RULER_START && riseH <= RULER_END) makeLabel(sun.rise, risePct, riseIcon);
-        if (setH  >= RULER_START && setH  <= RULER_END) makeLabel(sun.set,  setPct,  setIcon);
-    };
-
-    function buildTimeRuler() {
-        const ruler = document.getElementById('time-ruler');
-        ruler.querySelectorAll('.time-ruler-tick').forEach(el => el.remove());
-
-        const now = new Date();
-        const nowH = now.getHours() + now.getMinutes() / 60;
-
-        for (let h = RULER_START; h <= RULER_END; h++) {
-            const isPastH = h <= nowH;
-
-            // Hour tick
-            const pct = (h - RULER_START) / RULER_SPAN * 100;
-            const tick = document.createElement('div');
-            tick.className = 'time-ruler-tick hour';
-            tick.style.left = pct + '%';
-            tick.style.background = isPastH ? '#c580fb' : 'var(--text-color)';
-            tick.style.opacity = isPastH ? '0.55' : '0.25';
-            ruler.appendChild(tick);
-
-            if (h < RULER_END) {
-                // Half-hour tick
-                const halfPct = (h + 0.5 - RULER_START) / RULER_SPAN * 100;
-                const isPastHalf = (h + 0.5) <= nowH;
-                const half = document.createElement('div');
-                half.className = 'time-ruler-tick half';
-                half.style.left = halfPct + '%';
-                half.style.background = isPastHalf ? '#c580fb' : 'var(--text-color)';
-                half.style.opacity = isPastHalf ? '0.35' : '0.15';
-                ruler.appendChild(half);
-
-                // Quarter-hour ticks
-                [0.25, 0.75].forEach(q => {
-                    const qPct = (h + q - RULER_START) / RULER_SPAN * 100;
-                    const isPastQ = (h + q) <= nowH;
-                    const qt = document.createElement('div');
-                    qt.className = 'time-ruler-tick quarter';
-                    qt.style.left = qPct + '%';
-                    qt.style.background = isPastQ ? '#c580fb' : 'var(--text-color)';
-                    qt.style.opacity = isPastQ ? '0.2' : '0.08';
-                    ruler.appendChild(qt);
-                });
-            }
-        }
-    }
-
-    let timeFormatIdx = parseInt(localStorage.getItem('aura_time_format') || '0') % 2;
-
-    function formatTime(h, m) {
-        const mm = m.toString().padStart(2, '0');
-        if (timeFormatIdx === 0) {
-            const ampm = h >= 12 ? 'pm' : 'am';
-            const h12 = h % 12 || 12;
-            return h12 + ':' + mm + ampm;
-        }
-        return h.toString().padStart(2, '0') + ':' + mm;
-    }
-
-
-    function updateWatermark() {
-        const locale = lang === 'es' ? 'es-ES' : lang === 'pt' ? 'pt-BR' : 'en-US';
-        const monthName = new Date().toLocaleString(locale, { month: 'long' });
-        document.getElementById('bottom-watermark').textContent = monthName.toLowerCase();
-    }
 
     function applyLang(newLang) {
         lang = newLang;
@@ -3412,10 +2302,7 @@ body.dev-mode .dev-only { display: block; }
             b.classList.toggle('active', b.dataset.lang === lang);
         });
 
-        updateHeader();
-        initDock();
-        updateWatermark();
-        if (window.updateTimebarLang) window.updateTimebarLang();
+        if (window.updateMinidockLang) window.updateMinidockLang();
     }
 
     document.getElementById('lang-picker').addEventListener('click', (e) => {
@@ -3427,17 +2314,6 @@ body.dev-mode .dev-only { display: block; }
     /* ============================================================
        NOTES — drag + RESIZE (macOS bottom-right handle)
     ============================================================ */
-    function getDayCardAtPoint(x, y) {
-        const cards = document.querySelectorAll('[data-date]');
-        for (const card of cards) {
-            const rect = card.getBoundingClientRect();
-            if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-                return { card, dateStr: card.dataset.date };
-            }
-        }
-        return null;
-    }
-
     const contextMenu = document.getElementById('note-context-menu');
     function openContextMenu(x, y, noteEl, data) {
         activeNoteRef = { note: noteEl, data };
@@ -3454,6 +2330,10 @@ body.dev-mode .dev-only { display: block; }
         contextMenu.querySelectorAll('.ncm-color-dot').forEach(d =>
             d.classList.toggle('active', d.dataset.color === activeColor)
         );
+        const activeReaction = data.reaction || null;
+        contextMenu.querySelectorAll('.ncm-react').forEach(r =>
+            r.classList.toggle('active', r.dataset.react === activeReaction)
+        );
     }
     function closeContextMenu() {
         contextMenu.classList.remove('show');
@@ -3461,7 +2341,20 @@ body.dev-mode .dev-only { display: block; }
     contextMenu.addEventListener('mousedown', (e) => {
         e.preventDefault(); e.stopPropagation();
         const dot = e.target.closest('.ncm-color-dot');
-        const btn = e.target.closest('.ncm-btn');
+        const react = e.target.closest('.ncm-react');
+        const btn = e.target.closest('.ncm-btn, .ncm-delete');
+        if (react && activeNoteRef.note) {
+            const { note, data } = activeNoteRef;
+            const emoji = react.dataset.react;
+            data.reaction = (data.reaction === emoji) ? null : emoji; // tap again to clear
+            renderNoteReaction(note, data);
+            contextMenu.querySelectorAll('.ncm-react').forEach(r =>
+                r.classList.toggle('active', r.dataset.react === data.reaction)
+            );
+            save();
+            closeContextMenu();
+            return;
+        }
         if (dot && activeNoteRef.note) {
             const c = dot.dataset.color;
             const { note, data } = activeNoteRef;
@@ -3473,6 +2366,13 @@ body.dev-mode .dev-only { display: block; }
             );
             save();
         } else if (btn) {
+            // Handle delete action
+            if (btn.dataset.action === 'delete' && activeNoteRef.note) {
+                const { note, data } = activeNoteRef;
+                closeContextMenu();
+                deleteNote(note, data);
+                return;
+            }
             // Handle blur action
             if (btn.dataset.action === 'blur' && activeNoteRef.note) {
                 const { note, data } = activeNoteRef;
@@ -3482,27 +2382,44 @@ body.dev-mode .dev-only { display: block; }
                 closeContextMenu();
                 return;
             }
-            
-            const ta = document.querySelector('.note-edit-ta');
-            const char = btn.dataset.insert;
-            if (ta) {
-                const pos = ta.selectionStart;
-                ta.value = ta.value.slice(0, pos) + char + ta.value.slice(ta.selectionEnd);
-                ta.selectionStart = ta.selectionEnd = pos + char.length;
-                ta.focus();
-                ta.dispatchEvent(new Event('input'));
-            } else if (activeNoteRef.data) {
-                activeNoteRef.data.text = (activeNoteRef.data.text || '') + char;
-                const content = activeNoteRef.note.querySelector('.note-content');
-                renderNoteContent(content, activeNoteRef.data.text);
-                save();
-            }
             closeContextMenu();
         }
     });
     window.addEventListener('mousedown', (e) => {
         if (!e.target.closest('#note-context-menu')) closeContextMenu();
     });
+
+    // Remove a note entirely (shared by the close button and the menu's Delete row)
+    function deleteNote(note, data) {
+        cancelAlertsFor(data);
+        if (data.imageData) mediaDB.del('media_' + data.id);
+        data._deleted = true;
+        note.remove();
+        notes = notes.filter(n => n.id !== data.id);
+        document.body.classList.remove('note-editing-mode');
+        activeNoteRef = { note: null, data: null };
+        document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
+        save();
+    }
+
+    // Render (or clear) the iMessage-style tapback badge on a note's top-right corner
+    function renderNoteReaction(note, data) {
+        const existing = note.querySelector('.note-reaction');
+        if (existing) existing.remove();
+        if (!data.reaction) return;
+        const badge = document.createElement('div');
+        badge.className = 'note-reaction';
+        badge.textContent = data.reaction;
+        badge.title = 'Remove reaction';
+        badge.addEventListener('mousedown', (e) => e.stopPropagation());
+        badge.addEventListener('click', (e) => {
+            e.stopPropagation();
+            data.reaction = null;
+            renderNoteReaction(note, data);
+            save();
+        });
+        note.appendChild(badge);
+    }
 
 function createNote(data, autoFocus = false) {
         const note = document.createElement('div');
@@ -3521,12 +2438,14 @@ function createNote(data, autoFocus = false) {
         if (data.manualResize && data.h) note.style.height = data.h + 'px';
         note.style.zIndex = data.zIndex || topZ;
         if (data.color && data.color !== 'default') note.setAttribute('data-note-color', data.color);
+        if (data.blurred) note.classList.add('blurred');
 
         const content = document.createElement('div');
         content.className = 'note-content';
         content.spellcheck = false;
         note.appendChild(content);
         renderNoteContent(content, data.text || '');
+        if (data.reaction) renderNoteReaction(note, data);
         if (data.alerts && data.alerts.length) {
             requestAnimationFrame(() => renderAlertChips(note, data));
         }
@@ -3579,33 +2498,14 @@ function createNote(data, autoFocus = false) {
         resizeHandle.className = 'note-resize-handle';
         // SVG arc — quarter circle matching note's 30px border-radius, convex toward corner
         // Arc: center at (4,4), radius 30, from (34,4) to (4,34), sweep clockwise
-        resizeHandle.innerHTML = `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        resizeHandle.innerHTML = `<svg width="36" height="36" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M 33.0,11.8 A 30,30 0 0,1 11.8,33.0" stroke="transparent" stroke-width="20" stroke-linecap="round" style="pointer-events:stroke;cursor:nwse-resize"/>
-          <path class="rh-fill" d="M 33.0,11.8 A 30,30 0 0,1 11.8,33.0" stroke="rgba(255,255,255,0.92)" stroke-width="7" stroke-linecap="round" style="pointer-events:none"/>
+          <path class="rh-fill" d="M 33.0,15 A 30,30 0 0,1 15,33.0" stroke="rgba(255,255,255,1)" stroke-width="6" stroke-linecap="round" style="pointer-events:none"/>
         </svg>`;
         note.appendChild(resizeHandle);
 
-        // ---- CLOSE BUTTON (top-right) ----
-        const closeBtn = document.createElement('div');
-        closeBtn.className = 'note-close';
-        closeBtn.innerHTML = `<svg viewBox="0 0 6 6"><line x1="1" y1="1" x2="5" y2="5"/><line x1="5" y1="1" x2="1" y2="5"/></svg>`;
-        note.appendChild(closeBtn);
-
-        closeBtn.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            cancelAlertsFor(data);
-            if (data.imageData) mediaDB.del('media_' + data.id);
-            data._deleted = true;
-            note.remove();
-            notes = notes.filter(n => n.id !== data.id);
-            document.body.classList.remove('note-editing-mode');
-            activeNoteRef = { note: null, data: null };
-            document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
-            save();
-        });
-
         document.body.appendChild(note);
+        requestAnimationFrame(() => updateNoteOverflow(note, data));
 
         // ---- CLAMP NOTE TO VIEWPORT ----
         const clampNote = (x, y) => {
@@ -3624,9 +2524,6 @@ function createNote(data, autoFocus = false) {
             const origOy = clientY - note.offsetTop;
             note.style.zIndex = ++topZ;
             note.classList.add('dragging');
-            let isNearDock = false;
-            const dockEl = document.getElementById('dock');
-            const SCALE_MINI = 0.65;
 
             // Track offsets for all selected notes
             const selectedOffsets = [];
@@ -3645,36 +2542,20 @@ function createNote(data, autoFocus = false) {
             }
 
             const move = (cx, cy) => {
-                const dockRect = dockEl.getBoundingClientRect();
-                const pad = 40;
-                const nearDock = cx >= dockRect.left - pad && cx <= dockRect.right + pad &&
-                                 cy >= dockRect.top - pad && cy <= dockRect.bottom + pad;
-                if (nearDock && !isNearDock) { isNearDock = true; note.classList.add('near-dock'); }
-                else if (!nearDock && isNearDock) { isNearDock = false; note.classList.remove('near-dock'); }
-                if (isNearDock) {
-                    note.style.left = (cx - note.offsetWidth / 2) + 'px';
-                    note.style.top  = (cy - note.offsetHeight / 2) + 'px';
-                    note.style.transform = `scale(${SCALE_MINI})`;
-                } else {
-                    note.style.left = (cx - origOx) + 'px';
-                    note.style.top  = (cy - origOy) + 'px';
-                    note.style.transform = `scale(1.02)`;
-                    
-                    // Move all other selected notes together
-                    selectedOffsets.forEach(({ el, ox, oy }) => {
-                        el.style.left = (cx - ox) + 'px';
-                        el.style.top = (cy - oy) + 'px';
-                    });
-                }
-                document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
-                const hit = getDayCardAtPoint(cx, cy);
-                if (hit && !hit.card.classList.contains('past')) hit.card.classList.add('drag-over');
+                note.style.left = (cx - origOx) + 'px';
+                note.style.top  = (cy - origOy) + 'px';
+                note.style.transform = `scale(1.02)`;
+
+                // Move all other selected notes together
+                selectedOffsets.forEach(({ el, ox, oy }) => {
+                    el.style.left = (cx - ox) + 'px';
+                    el.style.top = (cy - oy) + 'px';
+                });
             };
 
             const stop = (cx, cy) => {
-                note.classList.remove('dragging', 'near-dock');
+                note.classList.remove('dragging');
                 note.style.transform = '';
-                document.querySelectorAll('.day-card.drag-over').forEach(c => c.classList.remove('drag-over'));
                 note.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease';
                 setTimeout(() => { note.style.transition = ''; }, 500);
                 
@@ -3695,7 +2576,7 @@ function createNote(data, autoFocus = false) {
         note.onmousedown = (e) => {
             if (e.button !== 0) return;
             if (e.target.closest('.note-resize-handle')) return;
-            if (e.target.closest('.note-close')) return;
+            if (e.target.closest('.note-reaction')) return;
             if (e.target.closest('.video-play-btn')) return;
             if (note.querySelector('.note-edit-ta')) return;
             if (e.target.tagName === 'A') return;
@@ -3722,7 +2603,7 @@ function createNote(data, autoFocus = false) {
 
         note.addEventListener('touchstart', (e) => {
             if (e.target.closest('.note-resize-handle')) return;
-            if (e.target.closest('.note-close')) return;
+            if (e.target.closest('.note-reaction')) return;
             if (e.target.closest('.video-play-btn')) return;
             if (note.querySelector('.note-edit-ta')) return;
             if (e.target.tagName === 'A') return;
@@ -3855,18 +2736,6 @@ function createNote(data, autoFocus = false) {
 
             ta.oninput = () => {
                 taResize();
-                const pos = ta.selectionStart;
-                const before = ta.value.slice(0, pos);
-                if (before.endsWith('- ')) {
-                    ta.value = ta.value.slice(0, pos - 2) + '→ ' + ta.value.slice(pos);
-                    ta.selectionStart = ta.selectionEnd = pos;
-                } else if (before.endsWith('/ ')) {
-                    ta.value = ta.value.slice(0, pos - 2) + '↗ ' + ta.value.slice(pos);
-                    ta.selectionStart = ta.selectionEnd = pos;
-                } else if (before.endsWith('->')) {
-                    ta.value = ta.value.slice(0, pos - 2) + '→' + ta.value.slice(pos);
-                    ta.selectionStart = ta.selectionEnd = pos - 1;
-                }
             };
 
             ta.onkeydown = (e) => {
@@ -3965,7 +2834,6 @@ function createNote(data, autoFocus = false) {
     });
 
     window.addEventListener('drop', (e) => {
-        if (e.target.closest('.dock-wrapper')) return;
         const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/') || f.type.startsWith('video/'));
         if (!file) return;
         e.preventDefault();
@@ -4064,11 +2932,8 @@ function createNote(data, autoFocus = false) {
     function spawnNote(x, y, target) {
         if (
             !target.closest('.note') &&
-            !target.closest('.dock-wrapper') &&
             !target.closest('.settings-panel') &&
             !target.closest('.settings-btn') &&
-            !target.closest('.city-tooltip') &&
-            !target.closest('.weather-tooltip') &&
             !target.closest('.note-arrow-bar') &&
             !target.closest('.search-overlay') &&
             !target.closest('.dev-modal') &&
@@ -4480,30 +3345,11 @@ function createNote(data, autoFocus = false) {
     devClose.addEventListener('click', () => devModal.classList.remove('open'));
     devModal.addEventListener('click', e => { if (e.target === devModal) devModal.classList.remove('open'); });
 
-    // City display click → open settings
-    document.getElementById('city-display').addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        toggleSettings(true);
-    });
-
-    function toISO(date) {
-        return date.getFullYear() + '-' +
-            String(date.getMonth() + 1).padStart(2, '0') + '-' +
-            String(date.getDate()).padStart(2, '0');
-    }
-
 
 </script>
-<script src="js/weather.js"></script>
 <script>
 // Init — paint UI immediately, defer network calls
-    initDock();
-    initWeatherRow();
-
-    updateHeader();
-    updateWatermark();
     applyLang(lang);
-    initWeatherPlaceholder();
     // Hydrate media from IndexedDB, then create notes
     (async function() {
         for (const n of notes.filter(n => !n.archived)) {
@@ -4523,51 +3369,19 @@ function createNote(data, autoFocus = false) {
             }
         }
     })();
-    setInterval(() => {
-        updateHeader();
-    }, 60000);
-
-
-    // Kick off location + weather after first frame so UI is visible first
-    requestAnimationFrame(() => {
-        setTimeout(startLocationProcess, 0);
-    });
 
 /* ============================================================
        SETTINGS PANEL
     ============================================================ */
-    // App logo click — spawn a new note at the viewport center
+    // Minidock tone toggle (gradient falloff vs. uniform tone for non-today days)
     (function() {
-        const logo = document.getElementById('app-logo');
-        if (!logo) return;
-        logo.addEventListener('click', () => {
-            const n = {
-                id: 'n' + Date.now(),
-                x: window.innerWidth / 2 - 40,
-                y: window.innerHeight / 2 - 30,
-                text: '',
-                zIndex: ++topZ,
-                page: currentPage
-            };
-            notes.push(n);
-            createNote(n, true);
-        });
-    })();
-
-    // Old dock toggle (shows greeting + weather row from legacy dock)
-    (function() {
-        const btn = document.getElementById('old-dock-toggle-btn');
-        const key = 'aura_show_old_dock';
-        let on = localStorage.getItem(key) !== 'false'; // Default to true if not explicitly disabled
-        function apply() {
-            document.documentElement.classList.toggle('show-old-dock', on);
-            if (btn) btn.classList.toggle('active', on);
-        }
-        apply();
+        const btn = document.getElementById('minidock-tone-btn');
+        if (!btn) return;
+        const sync = () => btn.classList.toggle('active', localStorage.getItem('minidock_tone_mode') === 'uniform');
+        sync();
         btn.addEventListener('click', () => {
-            on = !on;
-            localStorage.setItem(key, on);
-            apply();
+            if (window.toggleMinidockTone) window.toggleMinidockTone();
+            sync();
         });
     })();
 
@@ -4576,19 +3390,11 @@ function createNote(data, autoFocus = false) {
 
     const settingsBtn = document.getElementById('settings-btn');
     const settingsPanel = document.getElementById('settings-panel');
-    const settingsLocation = document.getElementById('settings-location');
-    const settingsLocationStatus = document.getElementById('settings-location-status');
 
     function toggleSettings(forceOpen) {
         const willOpen = forceOpen !== undefined ? forceOpen : !settingsPanel.classList.contains('show');
         settingsPanel.classList.toggle('show', willOpen);
         settingsBtn.classList.toggle('open', willOpen);
-        if (willOpen) {
-            // Show current city in the input
-            const cache = getLocationCache();
-            settingsLocation.value = cache ? cache.city : '';
-            settingsLocationStatus.textContent = cache ? cache.city : '';
-        }
     }
 
     settingsBtn.addEventListener('click', () => toggleSettings());
@@ -4597,22 +3403,9 @@ function createNote(data, autoFocus = false) {
     document.addEventListener('mousedown', (e) => {
         if (settingsPanel.classList.contains('show') &&
             !settingsPanel.contains(e.target) &&
-            !settingsBtn.contains(e.target) &&
-            e.target.id !== 'city-display') {
+            !settingsBtn.contains(e.target)) {
             toggleSettings(false);
         }
-    });
-
-    // Location search
-    settingsLocation.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const query = settingsLocation.value.trim();
-            if (query) {
-                settingsLocationStatus.textContent = 'Searching...';
-                searchCity(query);
-            }
-        }
-        if (e.key === 'Escape') toggleSettings(false);
     });
 
     // Custom background — import / reset (IndexedDB-backed)
@@ -4764,24 +3557,6 @@ function createNote(data, autoFocus = false) {
         clearCustomBgUrl();
     });
 
-    // Temperature unit
-    let tempUnit = localStorage.getItem('aura_temp_unit') || 'C';
-
-    function applyTempUnit(unit, refetch = true) {
-        tempUnit = unit;
-        localStorage.setItem('aura_temp_unit', unit);
-        document.querySelectorAll('#temp-toggle .settings-toggle-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.unit === unit);
-        });
-        if (refetch && currentLat && currentLon) fetchWeather(currentLat, currentLon, true);
-    }
-
-    document.getElementById('temp-toggle').addEventListener('click', (e) => {
-        const btn = e.target.closest('.settings-toggle-btn');
-        if (!btn) return;
-        applyTempUnit(btn.dataset.unit);
-    });
-
     function reflowNotes() {
         document.querySelectorAll('.note').forEach(el => {
             const data = notes.find(n => n.id === el.id);
@@ -4799,12 +3574,9 @@ function createNote(data, autoFocus = false) {
 
 
     // Text size
-    const noteSizes = { 'S': '21px', 'M': '25px', 'L': '28px' };
-
     function applyNoteSize(size, noReflow = false) {
-        const px = noteSizes[size];
-        if (!px) return;
-        document.documentElement.style.setProperty('--note-size', px);
+        if (size !== 'S' && size !== 'M' && size !== 'L') return;
+        document.documentElement.style.setProperty('--note-size', `var(--note-size-${size})`);
         document.querySelectorAll('#text-size-toggle .settings-toggle-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.size === size);
         });
@@ -4821,16 +3593,12 @@ function createNote(data, autoFocus = false) {
     // Always apply valley theme
     document.documentElement.classList.add('theme-valley');
 
-    applyBgGeo(currentGeo, true);
-
-
     // Restore saved settings
     if (!localStorage.getItem('aura_font_reset_v2')) {
         localStorage.setItem('aura_note_size', 'S');
         localStorage.setItem('aura_font_reset_v2', '1');
     }
     applyNoteSize(localStorage.getItem('aura_note_size') || 'S', true);
-    applyTempUnit(tempUnit, false);
 
     // Reveal body — wait for fonts then show immediately
     (function revealWhenReady() {
@@ -4850,455 +3618,89 @@ function createNote(data, autoFocus = false) {
     });
 
 
-    (function setupTimebar() {
-        const bar = document.createElement('div');
-        bar.className = 'timebar';
-        const inner = document.createElement('div');
-        inner.className = 'timebar-inner';
-        bar.appendChild(inner);
-        document.body.appendChild(bar);
+    /* ── Minidock — current week pill (Mon → Sun), top center ── */
+    (function setupMinidock() {
+        const dock = document.createElement('div');
+        dock.className = 'minidock';
+        dock.setAttribute('aria-label', 'Current week');
+        document.body.appendChild(dock);
 
-        const BASE_H = 30;
-        const TODAY_H = 44;
-        const MAX_H = 56;
-        const RADIUS_DAYS = 2.6; // half-width of magnifier in day-widths
-        const EVENT_COLORS = ['#6aa9ff', '#7dd3fc', '#60a5fa', '#818cf8', '#a5b4fc'];
-
-        let days = [];
-        let pointerX = 0;
-        let magnifying = false;
-        let raf = null;
         let builtKey = '';
-
-        // Saved day-range events (vacations, etc.)
-        let timebarEvents = [];
-        try { timebarEvents = JSON.parse(localStorage.getItem('aura_timebar_events') || '[]'); } catch (_) {}
-        const saveEvents = () => localStorage.setItem('aura_timebar_events', JSON.stringify(timebarEvents));
-
-        const ymdFor = (y, m, d) => `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const eventsCovering = (ymd) => timebarEvents.filter(e => ymd >= e.start && ymd <= e.end);
-        const colorForEvent = (id) => {
-            let h = 0;
-            for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-            return EVENT_COLORS[h % EVENT_COLORS.length];
-        };
-        const hexToRgba = (hex, a) => {
-            const n = parseInt(hex.slice(1), 16);
-            return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
-        };
-
-        // Drag-select state
-        let selecting = false;
-        let selectAnchor = -1, selectCurrent = -1;
-        let selectStartX = 0, selectStartY = 0;
-
-        // Single shared popover + tooltip
-        let popover = null;
-        let tooltipEl = null;
-
+        const TONE_KEY = 'minidock_tone_mode';   // 'gradient' (default) | 'uniform'
         const dayKey = () => {
             const n = new Date();
             return `${n.getFullYear()}-${n.getMonth()}-${n.getDate()}`;
         };
+
+        // Toggle tone falloff, persist, rebuild. Exposed for the corner button.
+        window.toggleMinidockTone = () => {
+            const next = localStorage.getItem(TONE_KEY) === 'uniform' ? 'gradient' : 'uniform';
+            localStorage.setItem(TONE_KEY, next);
+            build();
+            return next;
+        };
+
+        function build() {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const uniform = localStorage.getItem(TONE_KEY) === 'uniform';
+            const locale = (typeof lang !== 'undefined' && lang === 'es') ? 'es-ES'
+                         : (typeof lang !== 'undefined' && lang === 'pt') ? 'pt-BR' : 'en-US';
+            // Single-letter weekday — minimal, since the pill is tight.
+            const fmtWd = (date) => date.toLocaleDateString(locale, { weekday: 'narrow' }).toUpperCase();
+
+            dock.innerHTML = '';
+            const dow = today.getDay();                      // 0=Sun … 6=Sat
+            const startOffset = -(dow === 0 ? 6 : dow - 1);  // step back to Monday
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() + startOffset + i);
+                const el = document.createElement('div');
+                el.className = 'minidock-day';
+                const wd = document.createElement('span');
+                wd.className = 'minidock-day-wd';
+                wd.textContent = fmtWd(date);
+                const num = document.createElement('span');
+                num.className = 'minidock-day-num';
+                num.textContent = date.getDate();
+                el.append(wd, num);
+                if (date.getTime() === today.getTime()) {
+                    el.classList.add('is-today');
+                } else if (uniform) {
+                    // Same tone for every day outside today.
+                    el.style.color = 'rgba(255, 255, 255, 0.55)';
+                } else {
+                    // Softer tone the further a day sits from today (offset 0 = today).
+                    const dist = Math.abs(startOffset + i);
+                    const tone = Math.max(0.24, 0.82 - (dist - 1) * 0.12);
+                    el.style.color = `rgba(255, 255, 255, ${tone.toFixed(3)})`;
+                }
+                dock.appendChild(el);
+            }
+            builtKey = dayKey();
+            requestAnimationFrame(() => dock.classList.add('ready'));
+        }
+        window.updateMinidockLang = build;
+
         function rebuildIfDateChanged() {
             if (dayKey() !== builtKey) build();
         }
 
-        function build() {
-            const now = new Date();
-            const todayDate = now.getDate();
-            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-            const locale = (typeof lang !== 'undefined' && lang === 'es') ? 'es-ES' : (typeof lang !== 'undefined' && lang === 'pt') ? 'pt-BR' : 'en-US';
-            const fmtWd = (date) => date.toLocaleDateString(locale, { weekday: 'short' })
-                .replace(/\.$/, '').slice(0, 3).toUpperCase();
-            inner.innerHTML = '';
-            for (let d = 1; d <= daysInMonth; d++) {
-                const date = new Date(now.getFullYear(), now.getMonth(), d);
-                const wdShort = fmtWd(date);
-                const el = document.createElement('div');
-                el.className = 'timebar-day';
-                el.dataset.wd = wdShort;
-                const num = document.createElement('span');
-                num.className = 'timebar-day-num';
-                num.textContent = d;
-                const wd = document.createElement('span');
-                wd.className = 'timebar-day-wd';
-                wd.textContent = wdShort;
-                el.append(num, wd);
-                if (d === todayDate) el.classList.add('is-today');
-                // Current-week band — today + the next 6 days (clipped to month end).
-                // Each week day also gets a weather-emoji slot that floats above the
-                // pill; setupWeather() fills these in once the forecast lands.
-                const isThisWeek = (d >= todayDate && d < todayDate + 7);
-                if (isThisWeek) {
-                    el.classList.add('is-this-week');
-                    const wx = document.createElement('span');
-                    wx.className = 'timebar-day-weather';
-                    wx.dataset.ymd = ymdFor(now.getFullYear(), now.getMonth(), d);
-                    el.appendChild(wx);
-                }
-                inner.appendChild(el);
-            }
-            days = Array.from(inner.querySelectorAll('.timebar-day'));
-            builtKey = dayKey();
-            applyEventStyles();
-            applyHeights();
-            if (window.applyTimebarWeather) window.applyTimebarWeather();
-            bar.classList.add('ready');
-        }
-        window.updateTimebarLang = build;
-
-        function applyEventStyles() {
-            const now = new Date();
-            days.forEach((dayEl, idx) => {
-                const ymd = ymdFor(now.getFullYear(), now.getMonth(), idx + 1);
-                const evs = eventsCovering(ymd);
-                if (evs.length) {
-                    const hex = colorForEvent(evs[0].id);
-                    dayEl.classList.add('has-event');
-                    dayEl.style.setProperty('--event-bg',      hexToRgba(hex, 0.36));
-                    dayEl.style.setProperty('--event-bg-fade', hexToRgba(hex, 0.14));
-                    dayEl.style.setProperty('--event-border',  hexToRgba(hex, 0.75));
-                    dayEl.style.setProperty('--event-glow',    hexToRgba(hex, 0.32));
-                } else {
-                    dayEl.classList.remove('has-event');
-                    dayEl.style.removeProperty('--event-bg');
-                    dayEl.style.removeProperty('--event-bg-fade');
-                    dayEl.style.removeProperty('--event-border');
-                    dayEl.style.removeProperty('--event-glow');
-                }
-            });
-        }
-
-        function clearSelectionMarks() {
-            days.forEach(d => d.classList.remove('is-selecting'));
-        }
-        function paintSelection() {
-            clearSelectionMarks();
-            const lo = Math.min(selectAnchor, selectCurrent);
-            const hi = Math.max(selectAnchor, selectCurrent);
-            for (let i = lo; i <= hi; i++) days[i]?.classList.add('is-selecting');
-        }
-
-        function ensureTooltip() {
-            if (tooltipEl) return tooltipEl;
-            tooltipEl = document.createElement('div');
-            tooltipEl.className = 'timebar-event-tooltip';
-            document.body.appendChild(tooltipEl);
-            return tooltipEl;
-        }
-        function showTooltip(text, anchorEl, accentHex) {
-            const t = ensureTooltip();
-            t.textContent = text;
-            // Apply accent color before measuring so width is final
-            if (accentHex) {
-                t.style.setProperty('--tt-accent', hexToRgba(accentHex, 0.95));
-            } else {
-                t.style.removeProperty('--tt-accent');
-            }
-            t.classList.add('visible');
-            const r = anchorEl.getBoundingClientRect();
-            // Measure after content + styles set
-            const tw = t.offsetWidth;
-            const anchorCx = r.left + r.width / 2;
-            const left = Math.max(8, Math.min(window.innerWidth - tw - 8, anchorCx - tw / 2));
-            t.style.left = left + 'px';
-            t.style.bottom = (window.innerHeight - r.top + 8) + 'px';
-            // Keep caret pointed at the pill even when tooltip is clipped to viewport edge
-            const caretX = Math.max(10, Math.min(tw - 10, anchorCx - left));
-            t.style.setProperty('--caret-x', caretX + 'px');
-        }
-        function hideTooltip() {
-            if (tooltipEl) tooltipEl.classList.remove('visible');
-        }
-
-        function closePopover() {
-            if (popover) { popover.remove(); popover = null; }
-        }
-        function openEventPopover(ev, anchorEl, isNew) {
-            closePopover();
-            hideTooltip();
-            popover = document.createElement('div');
-            popover.className = 'timebar-event-popover';
-
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.placeholder = 'Event title';
-            input.value = ev.text || '';
-            popover.appendChild(input);
-
-            const del = document.createElement('button');
-            del.type = 'button';
-            del.textContent = '×';
-            del.title = isNew ? 'Cancel' : 'Delete event';
-            popover.appendChild(del);
-
-            document.body.appendChild(popover);
-            const r = anchorEl.getBoundingClientRect();
-            const pw = popover.offsetWidth;
-            popover.style.left = Math.max(8, Math.min(window.innerWidth - pw - 8, r.left + r.width/2 - pw/2)) + 'px';
-            popover.style.bottom = (window.innerHeight - r.top + 8) + 'px';
-            requestAnimationFrame(() => input.focus());
-
-            let committed = false;
-            const commit = () => {
-                if (committed) return;
-                committed = true;
-                const text = input.value.trim();
-                if (!text) {
-                    timebarEvents = timebarEvents.filter(e => e.id !== ev.id);
-                } else {
-                    const existing = timebarEvents.find(e => e.id === ev.id);
-                    if (existing) existing.text = text;
-                    else { ev.text = text; timebarEvents.push(ev); }
-                }
-                saveEvents();
-                applyEventStyles();
-                clearSelectionMarks();
-                closePopover();
-            };
-            const cancel = () => {
-                if (committed) return;
-                committed = true;
-                if (isNew) timebarEvents = timebarEvents.filter(e => e.id !== ev.id);
-                clearSelectionMarks();
-                closePopover();
-            };
-            const remove = () => {
-                committed = true;
-                timebarEvents = timebarEvents.filter(e => e.id !== ev.id);
-                saveEvents();
-                applyEventStyles();
-                clearSelectionMarks();
-                closePopover();
-            };
-
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter')      { e.preventDefault(); commit(); }
-                else if (e.key === 'Escape'){ e.preventDefault(); cancel(); }
-            });
-            input.addEventListener('blur', () => {
-                // Defer so a click on the delete button can run first
-                setTimeout(() => { if (!committed) commit(); }, 0);
-            });
-            del.addEventListener('mousedown', (e) => e.preventDefault());
-            del.addEventListener('click', () => { isNew ? cancel() : remove(); });
-        }
-
-        function applyHeights() {
-            if (!days.length) return;
-            const refDay = days[0];
-            const dayW = refDay.getBoundingClientRect().width;
-            const radius = RADIUS_DAYS * dayW;
-            for (const day of days) {
-                const r = day.getBoundingClientRect();
-                const cx = r.left + r.width / 2;
-                const minH = day.classList.contains('is-today') ? TODAY_H : BASE_H;
-                let h = minH;
-                if (magnifying) {
-                    const d = Math.abs(cx - pointerX);
-                    if (d < radius) {
-                        const factor = (1 + Math.cos(Math.PI * d / radius)) / 2;
-                        h = Math.max(minH, BASE_H + (MAX_H - BASE_H) * factor);
-                    }
-                }
-                day.style.height = h + 'px';
-            }
-        }
-
-        function schedule() {
-            if (raf) return;
-            raf = requestAnimationFrame(() => {
-                raf = null;
-                applyHeights();
-            });
-        }
-
-        inner.addEventListener('pointermove', e => {
-            // Treat coarse pointers (touch) as taps — don't engage magnifier
-            if (e.pointerType === 'touch') return;
-            pointerX = e.clientX;
-            if (!selecting) {
-                if (!magnifying) {
-                    magnifying = true;
-                    inner.classList.add('is-magnifying');
-                }
-                schedule();
-
-                // Hover tooltip for event days (weekday is shown inside the pill itself)
-                const dayEl = e.target.closest && e.target.closest('.timebar-day');
-                if (dayEl && dayEl.classList.contains('has-event')) {
-                    const idx = days.indexOf(dayEl);
-                    if (idx !== -1) {
-                        const now = new Date();
-                        const ymd = ymdFor(now.getFullYear(), now.getMonth(), idx + 1);
-                        const evs = eventsCovering(ymd);
-                        if (evs.length) showTooltip(evs.map(ev => ev.text).join(' • '), dayEl, colorForEvent(evs[0].id));
-                        else hideTooltip();
-                    }
-                } else {
-                    hideTooltip();
-                }
-            }
-        });
-        inner.addEventListener('pointerleave', () => {
-            hideTooltip();
-            if (!magnifying) return;
-            magnifying = false;
-            inner.classList.remove('is-magnifying');
-            schedule();
-        });
-
-        // Drag-select to create/edit event
-        inner.addEventListener('pointerdown', (e) => {
-            if (e.button !== undefined && e.button !== 0) return;
-            const dayEl = e.target.closest && e.target.closest('.timebar-day');
-            if (!dayEl) return;
-            const idx = days.indexOf(dayEl);
-            if (idx === -1) return;
-            selecting = true;
-            selectAnchor = idx;
-            selectCurrent = idx;
-            selectStartX = e.clientX;
-            selectStartY = e.clientY;
-            magnifying = false;
-            inner.classList.remove('is-magnifying');
-            hideTooltip();
-            paintSelection();
-            try { inner.setPointerCapture(e.pointerId); } catch (_) {}
-        });
-        document.addEventListener('pointermove', (e) => {
-            if (!selecting) return;
-            for (let i = 0; i < days.length; i++) {
-                const r = days[i].getBoundingClientRect();
-                if (e.clientX >= r.left && e.clientX <= r.right) {
-                    if (i !== selectCurrent) {
-                        selectCurrent = i;
-                        paintSelection();
-                    }
-                    break;
-                }
-            }
-        });
-        document.addEventListener('pointerup', (e) => {
-            if (!selecting) return;
-            selecting = false;
-            const moved = Math.abs(e.clientX - selectStartX) > 4
-                       || Math.abs(e.clientY - selectStartY) > 4
-                       || selectCurrent !== selectAnchor;
-            const lo = Math.min(selectAnchor, selectCurrent);
-            const hi = Math.max(selectAnchor, selectCurrent);
-            const now = new Date();
-            const start = ymdFor(now.getFullYear(), now.getMonth(), lo + 1);
-            const end   = ymdFor(now.getFullYear(), now.getMonth(), hi + 1);
-
-            if (!moved) {
-                // Single click — edit existing event if any, else start a new 1-day event
-                const ymd = start;
-                const existing = eventsCovering(ymd)[0];
-                clearSelectionMarks();
-                if (existing) {
-                    openEventPopover(existing, days[lo], false);
-                } else {
-                    const ev = { id: 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), start, end, text: '' };
-                    days[lo].classList.add('is-selecting');
-                    openEventPopover(ev, days[lo], true);
-                }
-            } else {
-                // Range — if it covers an existing event entirely, edit it; else create new
-                const inRange = timebarEvents.find(ev => ev.start >= start && ev.end <= end);
-                if (inRange) {
-                    clearSelectionMarks();
-                    openEventPopover(inRange, days[lo], false);
-                } else {
-                    const ev = { id: 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), start, end, text: '' };
-                    openEventPopover(ev, days[lo], true);
-                }
-            }
-        });
-        window.addEventListener('resize', schedule);
-
         build();
-        requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add('ready')));
 
-        // Refresh at midnight so today moves. setTimeout alone is unreliable
-        // (background-tab throttling, system sleep), so we also re-check on
-        // visibility/focus and via a low-frequency poll.
+        // Refresh at midnight so "today" advances; back it up with focus/visibility/poll
+        // since setTimeout alone is unreliable across tab throttling and system sleep.
         function scheduleMidnight() {
             const now = new Date();
             const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
-            setTimeout(() => {
-                rebuildIfDateChanged();
-                scheduleMidnight();
-            }, next - now);
+            setTimeout(() => { rebuildIfDateChanged(); scheduleMidnight(); }, next - now);
         }
         scheduleMidnight();
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) rebuildIfDateChanged();
-        });
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) rebuildIfDateChanged(); });
         window.addEventListener('focus', rebuildIfDateChanged);
         setInterval(rebuildIfDateChanged, 60000);
     })();
 
-
-    // ── Timebar weather — mirrors the dock's forecast (owned by js/weather.js).
-    // We don't fetch ourselves; we just read the shared cache and re-paint
-    // whenever populateDockWeather runs so the timebar emojis stay in sync.
-    (function setupTimebarWeather() {
-        // Match the icon set used by js/weather.js so dock + timebar agree
-        const ICON = (code) => {
-            if (code === 0)   return '☀️';
-            if (code <= 3)    return '🌤️';
-            if (code <= 48)   return '☁️';
-            if (code <= 67)   return '🌧️';
-            if (code <= 77)   return '🌨️';
-            if (code <= 82)   return '🌧️';
-            if (code <= 86)   return '🌨️';
-            return '⛈️';
-        };
-
-        function paint() {
-            const slots = document.querySelectorAll('.timebar-day-weather');
-            if (!slots.length) return;
-            let daily = null;
-            try {
-                const cached = JSON.parse(localStorage.getItem('aura_weather_cache') || 'null');
-                if (cached && cached.data) daily = cached.data;
-            } catch (_) {}
-            if (!daily || !daily.time) return;
-
-            const byDate = {};
-            for (let i = 0; i < daily.time.length; i++) {
-                byDate[daily.time[i]] = {
-                    code: daily.weathercode[i],
-                    tMax: daily.temperature_2m_max && daily.temperature_2m_max[i],
-                    tMin: daily.temperature_2m_min && daily.temperature_2m_min[i],
-                };
-            }
-            slots.forEach(el => {
-                const d = byDate[el.dataset.ymd];
-                if (d && d.code != null) {
-                    el.textContent = ICON(d.code);
-                    if (d.tMax != null && d.tMin != null) {
-                        el.title = `${Math.round(d.tMax)}° / ${Math.round(d.tMin)}°`;
-                    }
-                } else {
-                    el.textContent = '';
-                    el.removeAttribute('title');
-                }
-            });
-        }
-
-        window.applyTimebarWeather = paint;
-        paint();
-
-        // Wrap populateDockWeather so timebar repaints whenever fresh data lands
-        const orig = window.populateDockWeather;
-        window.populateDockWeather = function() {
-            if (orig) orig.apply(this, arguments);
-            paint();
-        };
-    })();
 
 </script>
 </body>
