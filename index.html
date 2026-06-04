@@ -257,6 +257,36 @@ body.ready {
     outline: 1.5px solid rgba(255, 255, 255, 0.3);
     outline-offset: -2px;
 }
+/* Per-note delete button — grayscale only (no red): gray translucent disc, white glyph */
+.note-delete {
+    position: absolute;
+    top: -2px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(38, 38, 42, 0.5);
+    color: rgba(255, 255, 255, 0.92);
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.14s ease, transform 0.14s ease, background 0.14s ease;
+    z-index: 30;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+.note-delete svg { width: 10px; height: 10px; display: block; }
+.note:hover .note-delete,
+.note.editing .note-delete { opacity: 1; transform: scale(1); }
+.note-delete:hover { background: #1b2a3c; }
+.note-delete:active { transform: scale(0.9); }
 .note .note-content {
     white-space: pre-wrap;
     overflow-wrap: break-word;
@@ -329,6 +359,28 @@ body.ready {
     padding: 0 2px;
 }
 .note-alert-x:hover { color: rgba(0,0,0,0.85); -webkit-text-fill-color: rgba(0,0,0,0.85); }
+
+/* Inline live timers — /10m countdowns rendered in the note's own type */
+.note-timer {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.16em;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    font-family: 'Caveat', cursive;
+    font-size: 1.2em;
+}
+.note-timer-glyph {
+    align-self: center;
+    display: inline-flex;
+    opacity: 0.7;
+    transition: opacity 0.12s ease;
+}
+.note-timer-glyph svg { width: 0.74em; height: 0.74em; display: block; }
+.note-timer:hover .note-timer-glyph { opacity: 1; }
+.note-timer-time { font-family: 'Caveat', cursive; font-variant-numeric: normal; }
+.note-timer.done { opacity: 0.55; }
 
 .note-content {
     font-family: var(--note-font);
@@ -2235,8 +2287,25 @@ body.dev-mode .dev-only { display: block; }
     }
 
 
-    function renderNoteContent(content, text) {
-        content.innerHTML = linkify(text);
+    function renderNoteContent(content, text, data) {
+        const timers = (data && data.timers) || [];
+        content.innerHTML = '';
+        const appendText = (seg) => {
+            if (!seg) return;
+            const tmp = document.createElement('span');
+            tmp.innerHTML = linkify(seg);
+            while (tmp.firstChild) content.appendChild(tmp.firstChild);
+        };
+        const re = timerTokenRe();
+        let m, last = 0, ti = 0;
+        while ((m = re.exec(text))) {
+            appendText(text.slice(last, m.index));
+            const t = timers[ti++];
+            if (t) content.appendChild(makeTimerEl(t));
+            else   appendText(m[0]);
+            last = m.index + m[0].length;
+        }
+        appendText(text.slice(last));
     }
 
     // Notes longer than this collapse on the canvas and open in a centered overlay.
@@ -2291,7 +2360,7 @@ body.dev-mode .dev-only { display: block; }
     const noteExpandContent = document.getElementById('note-expand-content');
 
     function openNoteExpanded(data) {
-        noteExpandContent.innerHTML = linkify(data.text || '');
+        renderNoteContent(noteExpandContent, data.text || '', data);
         noteExpandContent.scrollTop = 0;
         noteExpandOverlay.classList.add('open');
     }
@@ -2470,7 +2539,8 @@ function createNote(data, autoFocus = false) {
         content.className = 'note-content';
         content.spellcheck = false;
         note.appendChild(content);
-        renderNoteContent(content, data.text || '');
+        reconcileTimers(data);
+        renderNoteContent(content, data.text || '', data);
         if (data.reaction) renderNoteReaction(note, data);
         if (data.alerts && data.alerts.length) {
             requestAnimationFrame(() => renderAlertChips(note, data));
@@ -2518,6 +2588,16 @@ function createNote(data, autoFocus = false) {
             }
         }
 
+
+        // ---- DELETE BUTTON (top-right, grayscale) ----
+        const delBtn = document.createElement('button');
+        delBtn.className = 'note-delete';
+        delBtn.type = 'button';
+        delBtn.title = 'Delete note';
+        delBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>`;
+        delBtn.addEventListener('mousedown', (e) => e.stopPropagation());
+        delBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); deleteNote(note, data); });
+        note.appendChild(delBtn);
 
         // ---- RESIZE HANDLE (bottom-right, iOS style) ----
         const resizeHandle = document.createElement('div');
@@ -2719,6 +2799,7 @@ function createNote(data, autoFocus = false) {
         note.ondblclick = (e) => {
             if (e.target.closest('.note-resize-handle')) return;
             if (e.target.closest('.note-delete')) return;
+            if (e.target.closest('.note-timer')) return;
             if (data.imageData) { e.stopPropagation(); return; }
             if (note.classList.contains('editing')) return;
             e.stopPropagation();
@@ -2802,7 +2883,7 @@ function createNote(data, autoFocus = false) {
                     document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
                     return;
                 }
-                const plainText = ta.value.trimEnd();
+                const plainText = ta.value.trim();
                 ta.remove();
                 content.style.display = '';
                 note.classList.remove('editing');
@@ -2811,7 +2892,8 @@ function createNote(data, autoFocus = false) {
                 activeNoteRef = { note: null, data: null };
                 data.text = plainText;
                 processAlerts(data);
-                renderNoteContent(content, data.text);
+                reconcileTimers(data);
+                renderNoteContent(content, data.text, data);
                 renderAlertChips(note, data);
                 document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
                 if (!data.text.trim() && !(data.alerts && data.alerts.length)) {
@@ -3132,33 +3214,8 @@ function createNote(data, autoFocus = false) {
             }
         );
 
-        // /5s /5sec /6m /6min /2h /2hr
-        text = text.replace(
-            /(^|\s)\/(\d+)(sec|s|min|m|hr|h)\b/gi,
-            (whole, pre, n, u) => {
-                n = parseInt(n, 10);
-                u = u.toLowerCase();
-                const ms =
-                    (u === 'sec' || u === 's') ? n * 1000 :
-                    (u === 'min' || u === 'm') ? n * 60000 :
-                    (u === 'hr'  || u === 'h') ? n * 3600000 : 0;
-                if (!ms) return whole;
-                alerts.push({ id: makeAlertId(), kind: 'once', at: Date.now() + ms });
-                return pre;
-            }
-        );
-
-        // /5 (bare number → minutes)
-        text = text.replace(
-            /(^|\s)\/(\d+)\b/g,
-            (_, pre, n) => {
-                alerts.push({
-                    id: makeAlertId(), kind: 'once',
-                    at: Date.now() + parseInt(n, 10) * 60000
-                });
-                return pre;
-            }
-        );
+        // Note: bare durations (/5, /10m, /45s, /2h) are handled separately as
+        // live inline timers (see reconcileTimers) and are NOT stripped here.
 
         text = text.replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/[ \t]{2,}/g, ' ').trim();
         return { text, alerts };
@@ -3178,6 +3235,7 @@ function createNote(data, autoFocus = false) {
 
     function cancelAlertsFor(noteData) {
         (noteData.alerts || []).forEach(a => cancelAlertById(a.id));
+        (noteData.timers || []).forEach(t => cancelAlertById(t.id));
     }
 
     function fireAlert(noteData, alert) {
@@ -3297,6 +3355,161 @@ function createNote(data, autoFocus = false) {
             chip.appendChild(x);
             dock.appendChild(chip);
         });
+    }
+
+    /* ============================================================
+       LIVE TIMERS — inline /10m countdowns with play/pause
+    ============================================================ */
+    // A /duration token stays literally in the note text; its runtime state
+    // (running/paused/done + endAt) lives in noteData.timers, aligned by order.
+    function timerTokenRe() {
+        return /(?<=^|\s)\/(\d+)(sec|s|min|m|hr|h)?(?=\s|$)/gi;
+    }
+    function durFromMatch(n, u) {
+        n = parseInt(n, 10);
+        u = (u || '').toLowerCase();
+        if (u === 'sec' || u === 's') return n * 1000;
+        if (u === 'hr'  || u === 'h') return n * 3600000;
+        return n * 60000; // m, min, or bare number → minutes
+    }
+    function parseTimerDurs(text) {
+        const out = [], re = timerTokenRe();
+        let m;
+        while ((m = re.exec(text))) out.push(durFromMatch(m[1], m[2]));
+        return out;
+    }
+    function fmtClock(ms) {
+        const s = Math.max(0, Math.ceil(ms / 1000));
+        const h = Math.floor(s / 3600);
+        const mm = Math.floor((s % 3600) / 60);
+        return h + ':' + String(mm).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    }
+
+    const TIMER_PAUSE  = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`;
+    const TIMER_PLAY   = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+    const TIMER_REPLAY = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V2L7 7l5 5V8a4 4 0 1 1-4 4H6a6 6 0 1 0 6-7z"/></svg>`;
+
+    let timerTick = null;
+    function ensureTimerTick() {
+        if (timerTick) return;
+        timerTick = setInterval(() => {
+            document.querySelectorAll('.note-timer[data-running="1"]').forEach(el => {
+                const time = el.querySelector('.note-timer-time');
+                if (time) time.textContent = fmtClock((+el.dataset.end) - Date.now());
+            });
+        }, 1000);
+    }
+
+    function applyTimerState(span, t) {
+        const glyph = span.querySelector('.note-timer-glyph');
+        const time  = span.querySelector('.note-timer-time');
+        if (t.done) {
+            glyph.innerHTML = TIMER_REPLAY;
+            time.textContent = '0:00:00';
+            delete span.dataset.running;
+            span.classList.add('done');
+            span.title = 'Restart timer';
+        } else if (t.running) {
+            glyph.innerHTML = TIMER_PAUSE;
+            span.dataset.running = '1';
+            span.dataset.end = t.endAt;
+            time.textContent = fmtClock(t.endAt - Date.now());
+            span.classList.remove('done');
+            span.title = 'Pause timer';
+        } else {
+            glyph.innerHTML = TIMER_PLAY;
+            delete span.dataset.running;
+            time.textContent = fmtClock(t.remaining || 0);
+            span.classList.remove('done');
+            span.title = 'Resume timer';
+        }
+    }
+
+    function makeTimerEl(t) {
+        const span = document.createElement('span');
+        span.className = 'note-timer';
+        span.dataset.tid = t.id;
+        span.appendChild(Object.assign(document.createElement('span'), { className: 'note-timer-glyph' }));
+        span.appendChild(Object.assign(document.createElement('span'), { className: 'note-timer-time' }));
+        applyTimerState(span, t);
+        span.addEventListener('mousedown', e => e.stopPropagation());
+        span.addEventListener('click', e => { e.stopPropagation(); e.preventDefault(); onTimerClick(t.id); });
+        return span;
+    }
+
+    function refreshTimerEls(t) {
+        document.querySelectorAll('.note-timer[data-tid="' + CSS.escape(t.id) + '"]')
+            .forEach(el => applyTimerState(el, t));
+    }
+
+    function fireTimer(noteData, t) {
+        t.running = false; t.done = true; t.remaining = 0; delete t.endAt;
+        const body = (noteData.text || '').replace(timerTokenRe(), '').replace(/\s+/g, ' ').trim() || 'Timer done';
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            try {
+                new Notification('Week Dash Reminder', {
+                    body, icon: 'img/favicon-192.png', badge: 'img/favicon-64.png', tag: 'wd-' + t.id
+                });
+            } catch (_) {}
+        }
+        playAlertChime();
+        refreshTimerEls(t);
+        save();
+    }
+
+    function scheduleTimer(noteData, t) {
+        cancelAlertById(t.id);
+        if (!t.running || t.done) return;
+        const delay = t.endAt - Date.now();
+        if (delay <= 0) { fireTimer(noteData, t); return; }
+        const safe = Math.min(delay, MAX_SETTIMEOUT);
+        const tid = setTimeout(() => {
+            scheduledTimers.delete(t.id);
+            if (safe < delay) scheduleTimer(noteData, t);
+            else              fireTimer(noteData, t);
+        }, safe);
+        scheduledTimers.set(t.id, tid);
+    }
+
+    function onTimerClick(id) {
+        let noteData = null, t = null;
+        for (const n of notes) {
+            const f = (n.timers || []).find(x => x.id === id);
+            if (f) { noteData = n; t = f; break; }
+        }
+        if (!t) return;
+        if (t.done) {                              // replay
+            t.done = false; t.running = true; t.endAt = Date.now() + t.durMs; delete t.remaining;
+            ensureNotifPermission(); scheduleTimer(noteData, t);
+        } else if (t.running) {                    // pause
+            t.remaining = Math.max(0, t.endAt - Date.now()); t.running = false; delete t.endAt;
+            cancelAlertById(t.id);
+        } else {                                   // resume
+            t.running = true; t.endAt = Date.now() + (t.remaining || 0); delete t.remaining;
+            scheduleTimer(noteData, t);
+        }
+        refreshTimerEls(t);
+        ensureTimerTick();
+        save();
+    }
+
+    // Keep noteData.timers aligned (by order) with the /duration tokens in the text.
+    // Unchanged tokens keep their running state; new ones auto-start.
+    function reconcileTimers(noteData) {
+        const durs = parseTimerDurs(noteData.text || '');
+        const old = noteData.timers || [];
+        const next = [];
+        for (let i = 0; i < durs.length; i++) {
+            const prev = old[i];
+            if (prev && prev.durMs === durs[i]) next.push(prev);
+            else next.push({ id: makeAlertId(), durMs: durs[i], running: true, endAt: Date.now() + durs[i] });
+        }
+        old.forEach(o => { if (next.indexOf(o) === -1) cancelAlertById(o.id); });
+        if (next.length) noteData.timers = next;
+        else delete noteData.timers;
+        let anyRunning = false;
+        next.forEach(t => { if (t.running && !t.done) { anyRunning = true; scheduleTimer(noteData, t); } });
+        if (anyRunning) { ensureNotifPermission(); ensureTimerTick(); }
     }
 
     function save() {
