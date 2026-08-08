@@ -84,7 +84,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png?v=2">
-<link rel="preload" as="image" href="img/wall.webp" fetchpriority="high">
+<link rel="preload" as="image" href="img/bg.avif" fetchpriority="high">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -132,7 +132,7 @@
 /* ── Valley theme ── */
 html.theme-valley {
     background-color: #ededf0;
-    background-image: url('img/wall.webp');
+    background-image: url('img/bg.avif');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -224,7 +224,7 @@ body.ready {
 
 .note {
     font-family: Caveat;
-    -webkit-text-stroke: .3px currentColor; /* thickens the font; follows text color so it never washes out */
+    -webkit-text-stroke: .4px currentColor; /* thickens the font; follows text color so it never washes out */
     font-size: 12px;
     letter-spacing: 0.242px;
     position: absolute;
@@ -294,10 +294,10 @@ body.ready {
 }
 .note textarea { color: inherit; }
 
-.note[data-note-color="yellow"] { color: #fef08a; }
-.note[data-note-color="blue"] { color: #bfdbfe; }
-.note[data-note-color="mint"] { color: #a7f3d0; }
-.note[data-note-color="pink"] { color: #fbcfe8; }
+.note[data-note-color="yellow"], .note-expand-content[data-note-color="yellow"] { color: #fef08a; }
+.note[data-note-color="blue"], .note-expand-content[data-note-color="blue"] { color: #bfdbfe; }
+.note[data-note-color="mint"], .note-expand-content[data-note-color="mint"] { color: #a7f3d0; }
+.note[data-note-color="pink"], .note-expand-content[data-note-color="pink"] { color: #fbcfe8; }
 
 /* Caveat handwriting reads cleanest in pure white — only on default-color notes */
 .note:not([data-note-color]) { color: #ffffff; }
@@ -385,7 +385,7 @@ body.ready {
 .note-content {
     font-family: var(--note-font);
     font-weight: var(--note-weight, 400);
-    font-size: var(--note-size);
+    font-size: var(--this-note-font-size, var(--note-size));
     line-height: 1.1;
     outline: none;
     white-space: pre-wrap;
@@ -408,7 +408,7 @@ body.ready {
     margin-top: 2px;
     width: fit-content;
     font-family: var(--note-font);
-    font-size: calc(var(--note-size) * 0.82);
+    font-size: calc(var(--this-note-font-size, var(--note-size)) * 0.82);
     line-height: 1;
     color: inherit;
     opacity: 0.65;
@@ -450,8 +450,8 @@ body.ready {
 /* Selection rectangle overlay */
 .selection-rect {
     position: fixed;
-    border: 1px solid rgba(0, 122, 255, 0.5);
-    background: rgba(0, 122, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.08);
     pointer-events: none;
     z-index: 999;
     border-radius: 4px;
@@ -571,7 +571,7 @@ body.note-editing-mode .note.editing textarea {
     resize: none;
     font-family: var(--note-font);
     font-weight: var(--note-weight, 400);
-    font-size: var(--note-size);
+    font-size: var(--this-note-font-size, var(--note-size));
     line-height: 1.1;
     color: inherit;
     padding: 0;
@@ -581,9 +581,9 @@ body.note-editing-mode .note.editing textarea {
     field-sizing: content;
 }
 .note-content a {
-    color: var(--accent-color);
+    color: inherit;
     text-decoration: none;
-    border-bottom: 2px solid rgba(0, 122, 255, 0.2);
+    border-bottom: 2px solid color-mix(in srgb, currentColor 45%, transparent);
     font-family: inherit !important;
 }
 
@@ -773,20 +773,19 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
 .note-expand-close:hover { color: #fff; }
 .note-expand-content {
     flex: 1 1 auto;
-    overflow-y: auto;
     padding: 28px 30px 30px;
     color: #f0eeff;
     font-family: var(--note-font);
-    font-size: calc(var(--note-size) * 1.55);
+    font-size: calc(var(--this-note-font-size, var(--note-size)) * 1.55);
     line-height: 1.4;
     white-space: pre-wrap;
     overflow-wrap: break-word;
     word-break: break-word;
 }
 .note-expand-content a {
-    color: var(--accent-color);
+    color: inherit;
     text-decoration: none;
-    border-bottom: 2px solid rgba(0, 122, 255, 0.25);
+    border-bottom: 2px solid color-mix(in srgb, currentColor 45%, transparent);
 }
 
 .note-context-menu {
@@ -1010,7 +1009,7 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
        slot n → right: 60 + n*36 px
 
    Currently occupied:
-       slot 0 → #minidock-tone-btn (the class default, right: 60px)
+      slot 0 → (Empty)
 
    TO ADD A NEW SWITCH: give the button class="old-dock-toggle-btn" and an id,
    then assign it the next free slot's `right` value (slot 1 → right: 96px),
@@ -1077,6 +1076,7 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
     padding: 5px 0 6px;
     color: rgba(255, 255, 255, 0.82);
     font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
 }
 .minidock-day-wd {
     font-size: 9px;
@@ -1101,6 +1101,138 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
 }
 .minidock-day.is-today .minidock-day-wd { opacity: 0.88; }
 .minidock-day.is-today .minidock-day-num { font-weight: 700; }
+
+/* ── Event dot indicator under date number ── */
+.minidock-day-dot {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 3px;
+    border-radius: 99px;
+    pointer-events: none;
+}
+.minidock-day-num-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+/* ── Minidock tooltip ── */
+.minidock-tooltip {
+    position: fixed;
+    z-index: 10002;
+    padding: 5px 10px;
+    background: rgba(20, 20, 24, 0.90);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0.5px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.95);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    text-align: center;
+    max-width: 180px;
+    white-space: normal;
+    word-break: break-word;
+}
+.minidock-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+.minidock-tooltip-date {
+    font-size: 9px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+
+/* Current day label — tiny caps, centered right below the dock */
+.minidock-day-label {
+    position: fixed;
+    top: 68px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10001;
+    font-family: 'Inter', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    white-space: nowrap;
+}
+.minidock-day-label.ready { opacity: 1; }
+
+/* ── Year progress — same chip style as event chips ── */
+.year-bar {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.year-bar.ready { opacity: 1; }
+.year-bar-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 0.5px solid rgba(255,255,255,0.18);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.year-bar-label {
+    position: relative;
+    z-index: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.02em;
+}
+.year-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.20);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: width 0.9s var(--sf-easing);
+    min-width: 2px;
+}
 
 
 .settings-btn {
@@ -1653,6 +1785,23 @@ body.dev-mode .dev-only { display: block; }
 
 
 
+/* ── Wallpaper credit ── */
+.wallpaper-credit {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 10001;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.35);
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
 /* ── backdrop-filter unsupported fallback (Firefox, some Windows) ── */
 @supports not (backdrop-filter: blur(1px)) {
     .note            { background: rgba(245, 245, 245, 0.96); }
@@ -1692,21 +1841,29 @@ body.dev-mode .dev-only { display: block; }
   </div>
 </div>
 <div class="selection-rect" id="selection-rect"></div>
-<div class="note-context-menu" id="note-context-menu">
-    <div class="ncm-section colors">
-        <div class="ncm-color-dot" data-color="default"></div>
-        <div class="ncm-color-dot" data-color="yellow"></div>
-        <div class="ncm-color-dot" data-color="blue"></div>
-        <div class="ncm-color-dot" data-color="mint"></div>
-        <div class="ncm-color-dot" data-color="pink"></div>
-    </div>
-    <div class="ncm-sep"></div>
-    <div class="ncm-section">
-        <div class="ncm-btn" data-action="blur">Blur</div>
-        <div class="ncm-divider-v"></div>
-        <div class="ncm-react ncm-react-inline" data-react="‼️">‼️</div>
-    </div>
-    <div class="ncm-sep"></div>
+    <div class="note-context-menu" id="note-context-menu">
+        <div class="ncm-section colors">
+            <div class="ncm-color-dot" data-color="default"></div>
+            <div class="ncm-color-dot" data-color="yellow"></div>
+            <div class="ncm-color-dot" data-color="blue"></div>
+            <div class="ncm-color-dot" data-color="mint"></div>
+            <div class="ncm-color-dot" data-color="pink"></div>
+        </div>
+        <div class="ncm-sep"></div>
+        <div class="ncm-section">
+            <div class="ncm-btn" data-action="font-minus" title="Decrease font size">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="ncm-divider-v"></div>
+            <div class="ncm-btn" data-action="font-plus" title="Increase font size">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div class="ncm-divider-v"></div>
+            <div class="ncm-btn" data-action="blur">Blur</div>
+            <div class="ncm-divider-v"></div>
+            <div class="ncm-react ncm-react-inline" data-react="‼️">‼️</div>
+        </div>
+        <div class="ncm-sep"></div>
     <div class="ncm-section">
         <button class="ncm-delete" data-action="delete" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1723,11 +1880,6 @@ body.dev-mode .dev-only { display: block; }
 
 
 <!-- Minidock (current week pill) is built in JS and appended to <body> -->
-<button class="old-dock-toggle-btn" id="minidock-tone-btn" title="Minidock: toggle tone falloff (gradient / uniform)">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/>
-    </svg>
-</button>
 <button class="settings-btn" id="settings-btn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
@@ -1802,74 +1954,168 @@ body.dev-mode .dev-only { display: block; }
     const mediaDB = (function() {
         const DB_NAME = 'aura_media';
         const STORE = 'blobs';
-        let dbPromise;
+        let dbPromise = null;
         function open() {
             if (!dbPromise) {
                 dbPromise = new Promise((resolve, reject) => {
                     const req = indexedDB.open(DB_NAME, 1);
                     req.onupgradeneeded = () => req.result.createObjectStore(STORE);
                     req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => reject(req.error);
+                    req.onerror = () => {
+                        dbPromise = null;
+                        reject(req.error);
+                    };
                 });
             }
             return dbPromise;
         }
         return {
             async put(key, data) {
-                const db = await open();
-                return new Promise((resolve, reject) => {
-                    const tx = db.transaction(STORE, 'readwrite');
-                    tx.objectStore(STORE).put(data, key);
-                    tx.oncomplete = () => resolve();
-                    tx.onerror = () => reject(tx.error);
-                });
+                try {
+                    const db = await open();
+                    return new Promise((resolve) => {
+                        const tx = db.transaction(STORE, 'readwrite');
+                        tx.objectStore(STORE).put(data, key);
+                        tx.oncomplete = () => resolve(true);
+                        tx.onerror = () => {
+                            console.error('mediaDB put failed:', tx.error);
+                            resolve(false);
+                        };
+                    });
+                } catch (e) {
+                    console.error('mediaDB put failed:', e);
+                    return false;
+                }
             },
             async get(key) {
-                const db = await open();
-                return new Promise((resolve, reject) => {
-                    const tx = db.transaction(STORE, 'readonly');
-                    const req = tx.objectStore(STORE).get(key);
-                    req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => reject(req.error);
-                });
+                try {
+                    const db = await open();
+                    return new Promise((resolve, reject) => {
+                        const tx = db.transaction(STORE, 'readonly');
+                        const req = tx.objectStore(STORE).get(key);
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    });
+                } catch (e) {
+                    console.error('mediaDB get failed:', e);
+                    return null;
+                }
             },
             async del(key) {
-                const db = await open();
-                return new Promise((resolve, reject) => {
-                    const tx = db.transaction(STORE, 'readwrite');
-                    tx.objectStore(STORE).delete(key);
-                    tx.oncomplete = () => resolve();
-                    tx.onerror = () => reject(tx.error);
-                });
+                try {
+                    const db = await open();
+                    return new Promise((resolve, reject) => {
+                        const tx = db.transaction(STORE, 'readwrite');
+                        tx.objectStore(STORE).delete(key);
+                        tx.oncomplete = () => resolve();
+                        tx.onerror = () => reject(tx.error);
+                    });
+                } catch (e) {
+                    console.error('mediaDB del failed:', e);
+                }
             },
             async keys() {
-                const db = await open();
-                return new Promise((resolve, reject) => {
-                    const tx = db.transaction(STORE, 'readonly');
-                    const req = tx.objectStore(STORE).getAllKeys();
-                    req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => reject(req.error);
-                });
+                try {
+                    const db = await open();
+                    return new Promise((resolve, reject) => {
+                        const tx = db.transaction(STORE, 'readonly');
+                        const req = tx.objectStore(STORE).getAllKeys();
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    });
+                } catch (e) {
+                    console.error('mediaDB keys failed:', e);
+                    return [];
+                }
             }
         };
     })();
 
     const LANGS = ['en', 'es', 'pt'];
     const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
-    let lang = LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en';
-    let notes = JSON.parse(localStorage.getItem('aura_notes_v3')) || [];
     const PAGE_COUNT = 4;
-    let currentPage = parseInt(localStorage.getItem('aura_current_page') || '0', 10);
-    if (isNaN(currentPage) || currentPage < 0 || currentPage >= PAGE_COUNT) currentPage = 0;
 
-    // Ensure all notes have a page property
-    notes.forEach(n => { if (n.page == null) n.page = 0; });
+    // ---- Everything is saved in IndexedDB (notes, media, settings). ----
+    // localStorage is only a tiny cache mirror used by the pre-paint script
+    // (note size + custom-bg flag) so the first frame has no flash.
+    function cacheWrite(name, value) {
+        try { localStorage.setItem('aura_' + name, String(value)); } catch (_) {}
+    }
+    function cacheRemove(name) {
+        try { localStorage.removeItem('aura_' + name); } catch (_) {}
+    }
+    async function getSetting(name) {
+        return await mediaDB.get('settings_' + name);
+    }
+    async function setSetting(name, value) {
+        const ok = await mediaDB.put('settings_' + name, value);
+        if (ok) cacheWrite(name, value);
+        return ok;
+    }
+
+    let lang = 'en';
+    let notes = [];
+    let currentPage = 0;
+    let topZ = 1100;
+    let noteSize = 'S';
+
+    // Async boot: hydrate notes + settings from IndexedDB before first render.
+    const appReady = (async () => {
+        let stored = await mediaDB.get('notes');
+        if (!Array.isArray(stored) || !stored.length) {
+            // One-time migration from legacy localStorage storage
+            let legacy = null;
+            try { legacy = JSON.parse(localStorage.getItem('aura_notes_v3') || 'null'); } catch (_) {}
+            if (Array.isArray(legacy) && legacy.length) stored = legacy;
+        }
+        notes = stored || [];
+
+        // Migration: ensure all notes have createdAt + page properties
+        notes.forEach(n => { if (!n.createdAt) n.createdAt = Date.now(); });
+        notes.forEach(n => { if (n.page == null) n.page = 0; });
+
+        // First time — seed a few simple hint notes
+        if (notes.length === 0) {
+            notes = [
+                { "id": "n1776098065375", "x": 110, "y": 92,  "w": 220, "text": "welcome to weekdash", "page": 0, "zIndex": 100, "createdAt": Date.now() },
+                { "id": "n1776098095232", "x": 330, "y": 150, "w": 240, "text": "double-click anywhere to create a note", "page": 0, "zIndex": 101, "createdAt": Date.now() },
+                { "id": "n1776098589852", "x": 140, "y": 235, "w": 200, "text": "drag a note to move it", "page": 0, "zIndex": 102, "createdAt": Date.now() },
+                { "id": "n1776100345016", "x": 360, "y": 300, "w": 162, "text": "weekdash.com", "page": 0, "zIndex": 103, "createdAt": Date.now() }
+            ];
+            await mediaDB.put('notes', notes);
+        } else {
+            // Legacy localStorage copy no longer needed once IDB has the data
+            try { localStorage.removeItem('aura_notes_v3'); } catch (_) {}
+        }
+
+        // Settings — prefer IndexedDB, fall back to the old localStorage cache
+        const storedLang = await getSetting('lang');
+        lang = LANGS.includes(storedLang) ? storedLang
+             : (LANGS.includes(localStorage.getItem('aura_lang')) ? localStorage.getItem('aura_lang') : 'en');
+        let cp = await getSetting('current_page');
+        if (cp == null) cp = localStorage.getItem('aura_current_page');
+        cp = parseInt(cp, 10);
+        currentPage = (isNaN(cp) || cp < 0 || cp >= PAGE_COUNT) ? 0 : cp;
+        let sz = await getSetting('note_size');
+        if (sz !== 'S' && sz !== 'M' && sz !== 'L') sz = localStorage.getItem('aura_note_size');
+        noteSize = (sz === 'S' || sz === 'M' || sz === 'L') ? sz : 'S';
+
+        // One-time font reset migration (was localStorage aura_font_reset_v2)
+        if (!(await getSetting('font_reset_v2'))) {
+            noteSize = 'S';
+            await setSetting('note_size', noteSize);
+            await setSetting('font_reset_v2', '1');
+        }
+
+        topZ = Math.max(1100, ...notes.map(n => n.zIndex || 0));
+        renderPageDots();
+    })();
 
     function switchPage(page) {
         if (page === currentPage) return;
         clearSelection();
         currentPage = page;
-        localStorage.setItem('aura_current_page', String(page));
+        setSetting('current_page', String(page));
         // Hide/show notes based on page
         document.querySelectorAll('.note').forEach(el => {
             const d = notes.find(n => n.id === el.id);
@@ -1904,7 +2150,7 @@ body.dev-mode .dev-only { display: block; }
             container.appendChild(dot);
         }
     }
-    renderPageDots();
+    renderPageDots(); // pre-render so the page-dots container exists early
 
     // Shape toggle button removed
 
@@ -1912,18 +2158,6 @@ body.dev-mode .dev-only { display: block; }
     const selRect = document.getElementById('selection-rect');
     let isSelecting = false;
     let selStart = { x: 0, y: 0 };
-
-    // First time — seed a few simple hint notes
-    if (notes.length === 0) {
-        notes = [
-            { "id": "n1776098065375", "x": 110, "y": 92,  "w": 220, "text": "welcome to weekdash", "page": 0, "zIndex": 100 },
-            { "id": "n1776098095232", "x": 330, "y": 150, "w": 240, "text": "double-click anywhere to create a note", "page": 0, "zIndex": 101 },
-            { "id": "n1776098589852", "x": 140, "y": 235, "w": 200, "text": "drag a note to move it", "page": 0, "zIndex": 102 },
-            { "id": "n1776100345016", "x": 360, "y": 300, "w": 162, "text": "weekdash.com", "page": 0, "zIndex": 103 }
-        ];
-        localStorage.setItem('aura_notes_v3', JSON.stringify(notes));
-    }
-    let topZ = Math.max(1100, ...notes.map(n => n.zIndex || 0));
 
     // Track mouse for paste-to-note
     let mousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -1953,7 +2187,8 @@ body.dev-mode .dev-only { display: block; }
                 text: text,
                 displayTitle: domain,
                 zIndex: ++topZ,
-                page: currentPage
+                page: currentPage,
+                createdAt: Date.now()
             };
             // Actually, user wants trimmed text in the note.
             newNote.text = domain; 
@@ -2012,8 +2247,49 @@ body.dev-mode .dev-only { display: block; }
         arrowSaveTimer = setTimeout(() => { arrowSaveTimer = null; save(); }, 200);
     }
 
+    // ---- UNDO FOR DELETED NOTES ----
+    // Stack of deletion batches; each batch is a deep copy of the removed notes
+    // so later media eviction / mutation can't corrupt the snapshot.
+    const deletedNotesStack = [];
+    const MAX_UNDO = 25;
+
+    function pushDeletedUndo(dataArr) {
+        if (!dataArr || !dataArr.length) return;
+        deletedNotesStack.push(dataArr.map(d => JSON.parse(JSON.stringify(d))));
+        if (deletedNotesStack.length > MAX_UNDO) deletedNotesStack.shift();
+    }
+
+    function restoreLastDeleted() {
+        const batch = deletedNotesStack.pop();
+        if (!batch) return;
+        clearSelection();
+        batch.forEach(d => {
+            delete d._deleted;
+            d.zIndex = ++topZ;
+            notes.push(d);
+            createNote(d);
+            const el = document.getElementById(d.id);
+            if ((d.page || 0) === currentPage) {
+                selectedNoteIds.add(d.id);
+                if (el) el.classList.add('selected');
+            } else if (el) {
+                el.style.display = 'none';
+            }
+            if (d.alerts && d.alerts.length) d.alerts.forEach(a => scheduleAlert(d, a));
+        });
+        save();
+    }
+
     window.addEventListener('keydown', (e) => {
         if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) || document.activeElement.contentEditable === 'true') return;
+
+        // Cmd/Ctrl+Z — undo the last note deletion. Guarded by the text-field
+        // check above, so native undo still works while editing a note's text.
+        if ((e.metaKey || e.ctrlKey) && !e.shiftKey && (e.key === 'z' || e.key === 'Z') && deletedNotesStack.length) {
+            e.preventDefault();
+            restoreLastDeleted();
+            return;
+        }
 
         // Cmd/Ctrl+C — copy selected notes
         if ((e.metaKey || e.ctrlKey) && e.key === 'c' && selectedNoteIds.size > 0) {
@@ -2055,6 +2331,7 @@ body.dev-mode .dev-only { display: block; }
                     imageData: src.imageData,
                     zIndex: ++topZ,
                     page: currentPage,
+                    createdAt: Date.now()
                 };
                 notes.push(n);
                 createNote(n);
@@ -2115,6 +2392,7 @@ body.dev-mode .dev-only { display: block; }
     }
 
     function commitDeleteSelected() {
+        pushDeletedUndo(notes.filter(n => selectedNoteIds.has(n.id)));
         selectedNoteIds.forEach(id => {
             const data = notes.find(n => n.id === id);
             if (data) cancelAlertsFor(data);
@@ -2360,6 +2638,12 @@ body.dev-mode .dev-only { display: block; }
     const noteExpandContent = document.getElementById('note-expand-content');
 
     function openNoteExpanded(data) {
+        if (data.color && data.color !== 'default') noteExpandContent.setAttribute('data-note-color', data.color);
+        else noteExpandContent.removeAttribute('data-note-color');
+
+        if (data.fontSize) noteExpandContent.style.setProperty('--this-note-font-size', data.fontSize + 'px');
+        else noteExpandContent.style.removeProperty('--this-note-font-size');
+
         renderNoteContent(noteExpandContent, data.text || '', data);
         noteExpandContent.scrollTop = 0;
         noteExpandOverlay.classList.add('open');
@@ -2389,7 +2673,7 @@ body.dev-mode .dev-only { display: block; }
 
     function applyLang(newLang) {
         lang = newLang;
-        localStorage.setItem('aura_lang', lang);
+        setSetting('lang', lang);
         document.documentElement.lang = lang;
 
         // Update picker buttons
@@ -2461,6 +2745,22 @@ body.dev-mode .dev-only { display: block; }
             );
             save();
         } else if (btn) {
+            // Handle font size actions
+            if ((btn.dataset.action === 'font-plus' || btn.dataset.action === 'font-minus') && activeNoteRef.note) {
+                const { note, data } = activeNoteRef;
+                let current = data.fontSize;
+                if (!current) {
+                    const s = noteSize || 'S';
+                    current = (s === 'M') ? 25 : (s === 'L' ? 28 : 21);
+                }
+                if (btn.dataset.action === 'font-plus') current += 2;
+                else current = Math.max(10, current - 2);
+                data.fontSize = current;
+                note.style.setProperty('--this-note-font-size', current + 'px');
+                applyResizeClamp(note, data);
+                save();
+                return; // keep menu open for rapid clicks
+            }
             // Handle delete action
             if (btn.dataset.action === 'delete' && activeNoteRef.note) {
                 const { note, data } = activeNoteRef;
@@ -2480,12 +2780,16 @@ body.dev-mode .dev-only { display: block; }
             closeContextMenu();
         }
     });
+    contextMenu.addEventListener('dblclick', (e) => {
+        e.preventDefault(); e.stopPropagation();
+    });
     window.addEventListener('mousedown', (e) => {
         if (!e.target.closest('#note-context-menu')) closeContextMenu();
     });
 
     // Remove a note entirely (shared by the close button and the menu's Delete row)
     function deleteNote(note, data) {
+        pushDeletedUndo([data]);
         cancelAlertsFor(data);
         if (data.imageData) mediaDB.del('media_' + data.id);
         data._deleted = true;
@@ -2534,6 +2838,7 @@ function createNote(data, autoFocus = false) {
         note.style.zIndex = data.zIndex || topZ;
         if (data.color && data.color !== 'default') note.setAttribute('data-note-color', data.color);
         if (data.blurred) note.classList.add('blurred');
+        if (data.fontSize) note.style.setProperty('--this-note-font-size', data.fontSize + 'px');
 
         const content = document.createElement('div');
         content.className = 'note-content';
@@ -2549,11 +2854,12 @@ function createNote(data, autoFocus = false) {
 // ---- IMAGE NOTE ----
         if (data.imageData) {
             note.classList.add('image-note');
-            const isVideoSrc = data.imageData.startsWith('data:video/') || /\.(mov|mp4|webm|ogv|ogg)(\?.*)?$/i.test(data.imageData);
+            const srcStr = typeof data.imageData === 'string' ? data.imageData : '';
+            const isVideoSrc = srcStr.startsWith('data:video/') || /\.(mov|mp4|webm|ogv|ogg|av1)(\?.*)?$/i.test(srcStr);
             if (isVideoSrc) {
                 const vid = document.createElement('video');
                 vid.className = 'note-image';
-                vid.src = data.imageData;
+                vid.src = srcStr;
                 vid.loop = true;
                 vid.muted = true;
                 vid.playsInline = true;
@@ -2581,7 +2887,7 @@ function createNote(data, autoFocus = false) {
             } else {
                 const img = document.createElement('img');
                 img.className = 'note-image';
-                img.src = data.imageData;
+                img.src = srcStr;
                 img.draggable = false;
                 img.ondragstart = () => false;
                 note.insertBefore(img, content);
@@ -2628,6 +2934,7 @@ function createNote(data, autoFocus = false) {
         const startDrag = (clientX, clientY) => {
             const origOx = clientX - note.offsetLeft;
             const origOy = clientY - note.offsetTop;
+            const dragOrigins = [{ data, x: note.offsetLeft, y: note.offsetTop, z: note.style.zIndex }];
             note.style.zIndex = ++topZ;
             note.classList.add('dragging');
 
@@ -2643,9 +2950,54 @@ function createNote(data, autoFocus = false) {
                             ox: clientX - el.offsetLeft,
                             oy: clientY - el.offsetTop
                         });
+                        const d = notes.find(n => n.id === id);
+                        if (d) dragOrigins.push({ data: d, x: el.offsetLeft, y: el.offsetTop, z: el.style.zIndex });
                     }
                 });
             }
+
+            // Opt/Alt during the drag duplicates (Finder/Figma-style): clones of
+            // the dragged notes stay behind at their origin while the originals
+            // follow the cursor; releasing Opt before drop removes the clones.
+            let altClones = null;
+            const setAltDup = (on) => {
+                if (on === !!altClones) return;
+
+                // Apply transparency to the notes being dragged to signal duplication
+                note.style.opacity = on ? '0.6' : '';
+                selectedOffsets.forEach(({ el }) => {
+                    el.style.opacity = on ? '0.6' : '';
+                });
+
+                if (on) {
+                    altClones = dragOrigins.map(o => {
+                        const dup = JSON.parse(JSON.stringify(o.data));
+                        dup.id = 'n' + Date.now() + Math.random().toString(36).slice(2, 6);
+                        // Alert/timer ids are tracked globally — strip them so the
+                        // copy gets fresh ones instead of hijacking the original's.
+                        delete dup.alerts;
+                        delete dup.timers;
+                        dup.x = o.x;
+                        dup.y = o.y;
+                        dup.zIndex = o.z;
+                        dup.page = currentPage;
+                        dup.createdAt = Date.now();
+                        notes.push(dup);
+                        createNote(dup);
+                        return dup;
+                    });
+                } else {
+                    altClones.forEach(dup => {
+                        (dup.timers || []).forEach(t => cancelAlertById(t.id));
+                        if (dup.imageData) mediaDB.del('media_' + dup.id);
+                        const el = document.getElementById(dup.id);
+                        if (el) el.remove();
+                        const i = notes.indexOf(dup);
+                        if (i !== -1) notes.splice(i, 1);
+                    });
+                    altClones = null;
+                }
+            };
 
             const move = (cx, cy) => {
                 note.style.left = (cx - origOx) + 'px';
@@ -2676,7 +3028,7 @@ function createNote(data, autoFocus = false) {
                 });
                 save();
             };
-            return { move, stop };
+            return { move, stop, setAltDup };
         };
 
         note.onmousedown = (e) => {
@@ -2688,7 +3040,7 @@ function createNote(data, autoFocus = false) {
             if (e.target.tagName === 'A') return;
             if (window._lastFileDrop && Date.now() - window._lastFileDrop < 400) return;
             e.preventDefault();
-            
+
             // Shift+click to toggle selection
             if (e.shiftKey) {
                 toggleNoteSelection(data.id);
@@ -2699,12 +3051,16 @@ function createNote(data, autoFocus = false) {
                 note.classList.add('selected');
             }
             
-            const { move, stop } = startDrag(e.clientX, e.clientY);
-            const cleanup = (cx, cy) => { stop(cx, cy); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-            const onMove  = (me) => { if (me.buttons === 0) { cleanup(me.clientX, me.clientY); return; } me.preventDefault(); move(me.clientX, me.clientY); };
+            const { move, stop, setAltDup } = startDrag(e.clientX, e.clientY);
+            const cleanup = (cx, cy) => { stop(cx, cy); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onKey); };
+            const onMove  = (me) => { if (me.buttons === 0) { cleanup(me.clientX, me.clientY); return; } me.preventDefault(); setAltDup(me.altKey); move(me.clientX, me.clientY); };
             const onUp    = (me) => cleanup(me.clientX, me.clientY);
+            // Pressing/releasing Opt alone fires no mousemove — track it directly
+            const onKey   = (ke) => { if (ke.key === 'Alt') setAltDup(ke.type === 'keydown'); };
             window.addEventListener('mousemove', onMove);
             window.addEventListener('mouseup', onUp);
+            window.addEventListener('keydown', onKey);
+            window.addEventListener('keyup', onKey);
         };
 
         note.addEventListener('touchstart', (e) => {
@@ -2916,6 +3272,8 @@ function createNote(data, autoFocus = false) {
             // Append to DOM first so getBoundingClientRect works, then open editor
             requestAnimationFrame(() => note.ondblclick({ target: note, stopPropagation: () => {}, closest: () => null }));
         }
+
+
         
         return note;
     }
@@ -3006,7 +3364,8 @@ function createNote(data, autoFocus = false) {
                         w, h,
                         manualResize: true,
                         zIndex: ++topZ,
-                        page: currentPage
+                        page: currentPage,
+                        createdAt: Date.now()
                     };
                     notes.push(data);
                     window._lastFileDrop = Date.now();
@@ -3030,7 +3389,8 @@ function createNote(data, autoFocus = false) {
                         w, h,
                         manualResize: true,
                         zIndex: ++topZ,
-                        page: currentPage
+                        page: currentPage,
+                        createdAt: Date.now()
                     };
                     notes.push(data);
                     window._lastFileDrop = Date.now();
@@ -3046,6 +3406,7 @@ function createNote(data, autoFocus = false) {
     function spawnNote(x, y, target) {
         if (
             !target.closest('.note') &&
+            !target.closest('.note-context-menu') &&
             !target.closest('.settings-panel') &&
             !target.closest('.settings-btn') &&
             !target.closest('.note-arrow-bar') &&
@@ -3062,7 +3423,8 @@ function createNote(data, autoFocus = false) {
                 y: y - 30,
                 text: '',
                 zIndex: ++topZ,
-                page: currentPage
+                page: currentPage,
+                createdAt: Date.now()
             };
             notes.push(n);
             createNote(n, true);
@@ -3112,7 +3474,10 @@ function createNote(data, autoFocus = false) {
             !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName) &&
             document.activeElement.contentEditable !== 'true' &&
             !document.body.classList.contains('screenshot-mode') &&
-            !document.getElementById('search-overlay').classList.contains('show')
+            !document.getElementById('settings-panel')?.classList.contains('show') &&
+            !document.getElementById('dev-modal')?.classList.contains('open') &&
+            !document.getElementById('delete-confirm-modal')?.classList.contains('open') &&
+            !document.getElementById('search-overlay')?.classList.contains('show')
         ) {
             e.preventDefault();
             const cx = mousePos.x || window.innerWidth / 2;
@@ -3123,7 +3488,8 @@ function createNote(data, autoFocus = false) {
                 y: cy - 30,
                 text: '',
                 zIndex: ++topZ,
-                page: currentPage
+                page: currentPage,
+                createdAt: Date.now()
             };
             notes.push(n);
             const noteEl = createNote(n, true);
@@ -3512,7 +3878,14 @@ function createNote(data, autoFocus = false) {
         if (anyRunning) { ensureNotifPermission(); ensureTimerTick(); }
     }
 
+    // Serialized saves: each write runs after the previous one, so concurrent
+    // edits can never clobber each other or lose the last state.
+    let saveQueue = Promise.resolve();
     function save() {
+        saveQueue = saveQueue.then(doSave).catch(err => console.error('save failed:', err));
+        return saveQueue;
+    }
+    async function doSave() {
         document.querySelectorAll('.note').forEach(el => {
             const d = notes.find(x => x.id === el.id);
             if (d) {
@@ -3528,16 +3901,22 @@ function createNote(data, autoFocus = false) {
                 d.zIndex = el.style.zIndex;
             }
         });
-        // Store media blobs in IndexedDB, keep only ref key in localStorage
-        const toSave = notes.map(n => {
-            if (n.imageData && n.imageData.startsWith('data:')) {
+        // Store media blobs in IndexedDB, keep only the ref key in memory.
+        // If the blob write fails, keep the data URL in the note so the media
+        // isn't lost — only swap to the ref key once it's actually stored.
+        const toSave = await Promise.all(notes.map(async n => {
+            if (n.imageData && typeof n.imageData === 'string' && n.imageData.startsWith('data:')) {
                 const key = 'media_' + n.id;
-                mediaDB.put(key, n.imageData);
-                return { ...n, imageData: key };
+                const ok = await mediaDB.put(key, n.imageData);
+                if (ok) {
+                    n.imageData = key;
+                    return { ...n, imageData: key };
+                }
+                return n;
             }
             return n;
-        });
-        localStorage.setItem('aura_notes_v3', JSON.stringify(toSave));
+        }));
+        await mediaDB.put('notes', toSave);
     }
 
     /* ============================================================
@@ -3547,7 +3926,7 @@ function createNote(data, autoFocus = false) {
         notes.forEach(n => { if (n.imageData) mediaDB.del('media_' + n.id); });
         document.querySelectorAll('.note').forEach(n => n.remove());
         notes = [];
-        localStorage.removeItem('aura_notes_v3');
+        mediaDB.del('notes');
     }
 
     // Track which note is being edited for the color bar
@@ -3591,17 +3970,22 @@ function createNote(data, autoFocus = false) {
     devModal.addEventListener('click', e => { if (e.target === devModal) devModal.classList.remove('open'); });
 
 
+
+
+
 </script>
 <script>
 // Init — paint UI immediately, defer network calls
+    appReady.then(() => {
     applyLang(lang);
     // Hydrate media from IndexedDB, then create notes
     (async function() {
         for (const n of notes.filter(n => !n.archived)) {
-            if (n.imageData && n.imageData.startsWith('media_')) {
+            if (n.imageData && typeof n.imageData === 'string' && n.imageData.startsWith('media_')) {
                 const blob = await mediaDB.get(n.imageData);
-                if (blob) n.imageData = blob;
-                else n.imageData = null; // media lost
+                if (blob) {
+                    n.imageData = blob;
+                }
             }
             createNote(n);
             if (n.alerts && n.alerts.length) {
@@ -3618,21 +4002,6 @@ function createNote(data, autoFocus = false) {
 /* ============================================================
        SETTINGS PANEL
     ============================================================ */
-    // Minidock tone toggle (gradient falloff vs. uniform tone for non-today days)
-    (function() {
-        const btn = document.getElementById('minidock-tone-btn');
-        if (!btn) return;
-        const sync = () => btn.classList.toggle('active', localStorage.getItem('minidock_tone_mode') === 'uniform');
-        sync();
-        btn.addEventListener('click', () => {
-            if (window.toggleMinidockTone) window.toggleMinidockTone();
-            sync();
-        });
-    })();
-
-    // Clear legacy week-hidden state that could leave dock hidden
-    localStorage.removeItem('aura_week_visible');
-
     const settingsBtn = document.getElementById('settings-btn');
     const settingsPanel = document.getElementById('settings-panel');
 
@@ -3716,7 +4085,7 @@ function createNote(data, autoFocus = false) {
             bgVideoEl.load();
             document.documentElement.style.backgroundImage = `url("${url}")`;
         }
-        localStorage.setItem('aura_custom_bg_kind', isVideo ? 'video' : 'image');
+        setSetting('custom_bg_kind', isVideo ? 'video' : 'image');
         bgResetBtn.disabled = false;
     }
     function clearCustomBgUrl() {
@@ -3725,7 +4094,8 @@ function createNote(data, autoFocus = false) {
         bgVideoEl.removeAttribute('src');
         bgVideoEl.load();
         document.documentElement.style.backgroundImage = ''; // restore default wallpaper
-        localStorage.removeItem('aura_custom_bg_kind');
+        mediaDB.del('settings_custom_bg_kind');
+        cacheRemove('custom_bg_kind');
         bgResetBtn.disabled = true;
     }
 
@@ -3742,7 +4112,7 @@ function createNote(data, autoFocus = false) {
             const bytes = new Uint8Array(bin.length);
             for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
             await idbPut(IDB_KEY, new Blob([bytes], { type: mime }));
-            localStorage.setItem('aura_has_custom_bg', '1');
+            setSetting('has_custom_bg', '1');
         } catch (_) { /* malformed — drop it */ }
         localStorage.removeItem('aura_custom_bg');
     }
@@ -3752,16 +4122,18 @@ function createNote(data, autoFocus = false) {
         try {
             const blob = await idbGet(IDB_KEY);
             if (blob instanceof Blob) {
-                localStorage.setItem('aura_has_custom_bg', '1');
+                setSetting('has_custom_bg', '1');
                 applyCustomBgBlob(blob);
             } else {
                 // No saved bg — make sure the default wallpaper is visible
                 // (pre-paint may have hidden it via the flag from a stale state)
-                localStorage.removeItem('aura_has_custom_bg');
+                mediaDB.del('settings_has_custom_bg');
+                cacheRemove('has_custom_bg');
                 clearCustomBgUrl();
             }
         } catch (_) {
-            localStorage.removeItem('aura_has_custom_bg');
+            mediaDB.del('settings_has_custom_bg');
+            cacheRemove('has_custom_bg');
             clearCustomBgUrl();
         }
     }
@@ -3784,7 +4156,7 @@ function createNote(data, autoFocus = false) {
             // space immediately rather than waiting for the put to overwrite.
             try { await idbDel(IDB_KEY); } catch (_) {}
             await idbPut(IDB_KEY, file); // File is a Blob, store as-is
-            localStorage.setItem('aura_has_custom_bg', '1');
+            setSetting('has_custom_bg', '1');
             applyCustomBgBlob(file);
         } catch (err) {
             console.error(err);
@@ -3798,7 +4170,8 @@ function createNote(data, autoFocus = false) {
         } catch (err) {
             console.error(err);
         }
-        localStorage.removeItem('aura_has_custom_bg');
+        mediaDB.del('settings_has_custom_bg');
+        cacheRemove('has_custom_bg');
         clearCustomBgUrl();
     });
 
@@ -3821,11 +4194,12 @@ function createNote(data, autoFocus = false) {
     // Text size
     function applyNoteSize(size, noReflow = false) {
         if (size !== 'S' && size !== 'M' && size !== 'L') return;
+        noteSize = size;
         document.documentElement.style.setProperty('--note-size', `var(--note-size-${size})`);
         document.querySelectorAll('#text-size-toggle .settings-toggle-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.size === size);
         });
-        localStorage.setItem('aura_note_size', size);
+        setSetting('note_size', size);
         if (!noReflow) reflowNotes();
     }
 
@@ -3838,12 +4212,8 @@ function createNote(data, autoFocus = false) {
     // Always apply valley theme
     document.documentElement.classList.add('theme-valley');
 
-    // Restore saved settings
-    if (!localStorage.getItem('aura_font_reset_v2')) {
-        localStorage.setItem('aura_note_size', 'S');
-        localStorage.setItem('aura_font_reset_v2', '1');
-    }
-    applyNoteSize(localStorage.getItem('aura_note_size') || 'S', true);
+    // Restore saved settings (loaded from IndexedDB during boot)
+    applyNoteSize(noteSize, true);
 
     // Reveal body — wait for fonts then show immediately
     (function revealWhenReady() {
@@ -3863,67 +4233,184 @@ function createNote(data, autoFocus = false) {
     });
 
 
-    /* ── Minidock — current week pill (Mon → Sun), top center ── */
+    /* ── Portugal holidays & events (date key: 'YYYY-MM-DD') ── */
+    const PT_EVENTS = {
+        // Fixed holidays
+        '01-01': { label: 'Ano Novo',         color: '#ff6b6b' },
+        '01-06': { label: 'Dia de Reis',       color: '#f472b6' },
+        '04-25': { label: 'Dia da Liberdade',  color: '#34d399' },
+        '05-01': { label: 'Dia do Trabalhador', color: '#f472b6' },
+        '06-10': { label: 'Dia de Portugal',   color: '#34d399' },
+        '08-15': { label: 'Assunção',          color: '#fbbf24' },
+        '10-05': { label: 'Implantação Rep.',  color: '#34d399' },
+        '11-01': { label: 'Todos os Santos',   color: '#60a5fa' },
+        '12-08': { label: 'Imaculada Conc.',   color: '#f472b6' },
+        '12-24': { label: 'Noite de Natal',    color: '#fbbf24' },
+        '12-25': { label: 'Natal',             color: '#ff6b6b' },
+        '12-31': { label: 'Véspera de Ano Novo', color: '#f472b6' },
+        // Variable — added dynamically by computePTEvent()
+    };
+
+    /* Compute movable Portuguese holidays for a given year */
+    function getPTHolidays(year) {
+        const holidays = {};
+
+        // Easter (Computus)
+        const easter = computeEaster(year);
+        const addDays = (d, n) => { const r = new Date(d); r.setDate(r.getDate() + n); return r; };
+        const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+        holidays[fmt(easter)]                    = { label: 'Páscoa',         color: '#f5b942' };
+        holidays[fmt(addDays(easter, -2))]        = { label: 'Sexta-feira Santa', color: '#fbbf24' };
+        holidays[fmt(addDays(easter, -47))]       = { label: 'Carnaval',         color: '#f472b6' };
+        holidays[fmt(addDays(easter, -46))]       = { label: 'Carnaval',         color: '#f472b6' };
+        holidays[fmt(addDays(easter, 60))]        = { label: 'Corpo de Deus',   color: '#f5b942' };
+
+        return holidays;
+    }
+
+    /* Computus — calculate Easter Sunday for a given year (valid 1582–4099) */
+    function computeEaster(year) {
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const month = Math.floor((h + l - 7 * m + 114) / 31);
+        const day = ((h + l - 7 * m + 114) % 31) + 1;
+        return new Date(year, month - 1, day);
+    }
+
+    /* Get event for a Date object (checks year-specific + fixed) */
+    function getEventForDate(date) {
+        const year = date.getFullYear();
+        const fixed = PT_EVENTS;
+        const fixedKey = `${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+        if (fixed[fixedKey]) return fixed[fixedKey];
+        // Cache per-year holidays
+        if (!window._ptHolidays) window._ptHolidays = {};
+        if (!window._ptHolidays[year]) window._ptHolidays[year] = getPTHolidays(year);
+        const key = `${year}-${fixedKey}`;
+        return window._ptHolidays[year][key] || null;
+    }
+
+    /* ── Minidock — 7-day week (Mon → Sun) + upcoming events, top center ── */
     (function setupMinidock() {
         const dock = document.createElement('div');
         dock.className = 'minidock';
         dock.setAttribute('aria-label', 'Current week');
         document.body.appendChild(dock);
 
+        const dayLabel = document.createElement('div');
+        dayLabel.className = 'minidock-day-label';
+        document.body.appendChild(dayLabel);
+
+        // Tooltip element
+        const tooltip = document.createElement('div');
+        tooltip.className = 'minidock-tooltip';
+        tooltip.setAttribute('role', 'tooltip');
+        tooltip.setAttribute('aria-live', 'polite');
+        document.body.appendChild(tooltip);
+
         let builtKey = '';
-        const TONE_KEY = 'minidock_tone_mode';   // 'gradient' (default) | 'uniform'
         const dayKey = () => {
             const n = new Date();
             return `${n.getFullYear()}-${n.getMonth()}-${n.getDate()}`;
         };
 
-        // Toggle tone falloff, persist, rebuild. Exposed for the corner button.
-        window.toggleMinidockTone = () => {
-            const next = localStorage.getItem(TONE_KEY) === 'uniform' ? 'gradient' : 'uniform';
-            localStorage.setItem(TONE_KEY, next);
-            build();
-            return next;
-        };
-
         function build() {
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const uniform = localStorage.getItem(TONE_KEY) === 'uniform';
             const locale = (typeof lang !== 'undefined' && lang === 'es') ? 'es-ES'
                          : (typeof lang !== 'undefined' && lang === 'pt') ? 'pt-BR' : 'en-US';
-            // Single-letter weekday — minimal, since the pill is tight.
             const fmtWd = (date) => date.toLocaleDateString(locale, { weekday: 'narrow' }).toUpperCase();
 
+            dayLabel.textContent = now.toLocaleDateString(locale, { weekday: 'long' });
+
             dock.innerHTML = '';
-            const dow = today.getDay();                      // 0=Sun … 6=Sat
-            const startOffset = -(dow === 0 ? 6 : dow - 1);  // step back to Monday
+            const dow = today.getDay();
+            const startOffset = -(dow === 0 ? 6 : dow - 1);
+
+            // ── Main week: 7 days ──
             for (let i = 0; i < 7; i++) {
                 const date = new Date(today);
                 date.setDate(date.getDate() + startOffset + i);
                 const el = document.createElement('div');
                 el.className = 'minidock-day';
+
+                const numWrap = document.createElement('div');
+                numWrap.className = 'minidock-day-num-wrap';
+
                 const wd = document.createElement('span');
                 wd.className = 'minidock-day-wd';
                 wd.textContent = fmtWd(date);
+
                 const num = document.createElement('span');
                 num.className = 'minidock-day-num';
                 num.textContent = date.getDate();
-                el.append(wd, num);
+
+                numWrap.appendChild(num);
+                el.appendChild(wd);
+                el.appendChild(numWrap);
+
+                // Event dot
+                const ev = getEventForDate(date);
+                if (ev) {
+                    const dot = document.createElement('span');
+                    dot.className = 'minidock-day-dot';
+                    dot.style.background = ev.color;
+                    numWrap.appendChild(dot);
+
+                    el.addEventListener('mouseenter', () => {
+                        const rect = el.getBoundingClientRect();
+                        tooltip.textContent = '';
+                        const dateLine = document.createElement('div');
+                        dateLine.className = 'minidock-tooltip-date';
+                        dateLine.textContent = date.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
+                        const labelLine = document.createElement('div');
+                        labelLine.textContent = ev.label;
+                        tooltip.appendChild(dateLine);
+                        tooltip.appendChild(labelLine);
+
+                        let top = rect.bottom + 6;
+                        let left = rect.left + rect.width / 2;
+                        const tw = 180;
+                        left = Math.min(Math.max(left - tw/2, 8), window.innerWidth - tw - 8);
+                        if (top + 60 > window.innerHeight) top = rect.top - 66;
+                        tooltip.style.top = top + 'px';
+                        tooltip.style.left = left + 'px';
+                        tooltip.style.transform = 'translateY(0) scale(1)';
+                        tooltip.classList.add('visible');
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        tooltip.classList.remove('visible');
+                    });
+                }
+
                 if (date.getTime() === today.getTime()) {
                     el.classList.add('is-today');
-                } else if (uniform) {
-                    // Same tone for every day outside today.
-                    el.style.color = 'rgba(255, 255, 255, 0.55)';
                 } else {
-                    // Softer tone the further a day sits from today (offset 0 = today).
                     const dist = Math.abs(startOffset + i);
                     const tone = Math.max(0.24, 0.82 - (dist - 1) * 0.12);
                     el.style.color = `rgba(255, 255, 255, ${tone.toFixed(3)})`;
                 }
                 dock.appendChild(el);
             }
+
+
+
             builtKey = dayKey();
-            requestAnimationFrame(() => dock.classList.add('ready'));
+            requestAnimationFrame(() => {
+                dock.classList.add('ready');
+                dayLabel.classList.add('ready');
+            });
         }
         window.updateMinidockLang = build;
 
@@ -3933,8 +4420,6 @@ function createNote(data, autoFocus = false) {
 
         build();
 
-        // Refresh at midnight so "today" advances; back it up with focus/visibility/poll
-        // since setTimeout alone is unreliable across tab throttling and system sleep.
         function scheduleMidnight() {
             const now = new Date();
             const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
@@ -3946,7 +4431,57 @@ function createNote(data, autoFocus = false) {
         setInterval(rebuildIfDateChanged, 60000);
     })();
 
+    /* ── Year progress — frosted chips per month ── */
+    (function setupYearBar() {
+        const bar = document.createElement('div');
+        bar.className = 'year-bar';
+        bar.setAttribute('aria-label', 'Year progress');
+        document.body.appendChild(bar);
 
+        const MONTH_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+        function build() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const startOfYear = new Date(year, 0, 1);
+            const endOfYear   = new Date(year, 11, 31);
+            const totalDays   = (endOfYear - startOfYear) / 86400000 + 1;
+            const dayOfYear   = (now - startOfYear) / 86400000 + 1;
+
+            bar.innerHTML = '';
+            MONTH_NAMES.forEach((name, i) => {
+                const monthEnd   = new Date(year, i + 1, 0);
+                const monthLen   = monthEnd.getDate();
+                const daysToMonthEnd = (monthEnd - startOfYear) / 86400000 + 1;
+                const monthPct = Math.min(1, Math.max(0, (dayOfYear - daysToMonthEnd + monthLen) / monthLen));
+
+                const chip = document.createElement('div');
+                chip.className = 'year-bar-chip';
+
+                const lbl = document.createElement('div');
+                lbl.className = 'year-bar-label';
+                lbl.textContent = name;
+                chip.appendChild(lbl);
+
+                if (monthPct > 0) {
+                    const fill = document.createElement('div');
+                    fill.className = 'year-bar-fill';
+                    fill.style.width = (monthPct * 100).toFixed(1) + '%';
+                    chip.appendChild(fill);
+                }
+
+                bar.appendChild(chip);
+            });
+
+            requestAnimationFrame(() => bar.classList.add('ready'));
+        }
+
+        build();
+        setInterval(build, 60000);
+    })();
+
+    });
 </script>
+<div class="wallpaper-credit"></div>
 </body>
 </html>
