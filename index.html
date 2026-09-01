@@ -86,6 +86,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png?v=2">
 <link rel="preload" as="image" href="img/bg.avif" fetchpriority="high">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="aa50939f-dfdf-4799-9845-9a05710ba406"></script>
+<script defer src="static/track.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Caveat:wght@400;700&family=DM+Mono:wght@400;500" rel="stylesheet">
@@ -1160,79 +1161,85 @@ body.note-editing-mode .note.editing { z-index: 2000 !important; }
 }
 
 
-/* Current day label — tiny caps, centered right below the dock */
+/* Day + month label below dock — day number, month with loading fill, weekday */
 .minidock-day-label {
     position: fixed;
     top: 68px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10001;
-    font-family: 'Inter', sans-serif;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.45);
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
     opacity: 0;
     transition: opacity 0.45s ease;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
     white-space: nowrap;
+    cursor: default;
 }
 .minidock-day-label.ready { opacity: 1; }
 
-/* ── Year progress — same chip style as event chips ── */
-.year-bar {
+/* Empty board state — soft centered hint (Apple style) */
+.empty-state {
     position: fixed;
-    bottom: 16px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 10001;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    text-align: center;
     opacity: 0;
-    transition: opacity 0.45s ease;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
 }
-.year-bar.ready { opacity: 1; }
-.year-bar-chip {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 9px;
-    border-radius: 99px;
-    background: rgba(255,255,255,0.10);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 0.5px solid rgba(255,255,255,0.18);
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
+.empty-state.visible { opacity: 1; }
+.empty-state-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.4;
 }
-.year-bar-label {
-    position: relative;
-    z-index: 1;
+
+.dl-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.dl-month {
+    display: inline-flex;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1;
+}
+.dl-month-char {
+    color: rgba(255, 255, 255, 0.2);
+    transition: color 0.6s var(--sf-easing);
+}
+.dl-month-char.filled {
+    color: rgba(255, 255, 255, 0.92);
+}
+.dl-wd {
     font-family: 'Inter', sans-serif;
     font-size: 10px;
     font-weight: 600;
-    color: rgba(255,255,255,0.85);
-    letter-spacing: 0.02em;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    line-height: 1;
 }
-.year-bar-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    border-radius: 99px;
-    background: rgba(255,255,255,0.20);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    transition: width 0.9s var(--sf-easing);
-    min-width: 2px;
-}
+
+/* (year bar removed — month progress now shown in day label) */
 
 
 .settings-btn {
@@ -2035,6 +2042,26 @@ body.dev-mode .dev-only { display: block; }
     const LANG_LABELS = { en: 'EN', es: 'ES', pt: 'PT' };
     const PAGE_COUNT = 4;
 
+    /* ── Empty board state — soft centered hint ── */
+    let emptyState = null;
+    function ensureEmptyState() {
+        if (emptyState) return emptyState;
+        emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        const lbl = document.createElement('div');
+        lbl.className = 'empty-state-label';
+        lbl.innerHTML = 'Double-click anywhere to create your first note';
+        emptyState.appendChild(lbl);
+        document.body.appendChild(emptyState);
+        return emptyState;
+    }
+    function updateEmptyState() {
+        const el = ensureEmptyState();
+        requestAnimationFrame(() => {
+            el.classList.toggle('visible', notes.length === 0);
+        });
+    }
+
     // ---- Everything is saved in IndexedDB (notes, media, settings). ----
     // localStorage is only a tiny cache mirror used by the pre-paint script
     // (note size + custom-bg flag) so the first frame has no flash.
@@ -2074,15 +2101,9 @@ body.dev-mode .dev-only { display: block; }
         notes.forEach(n => { if (!n.createdAt) n.createdAt = Date.now(); });
         notes.forEach(n => { if (n.page == null) n.page = 0; });
 
-        // First time — seed a few simple hint notes
+        // First time / empty board — show soft centered hint instead of seeded notes
         if (notes.length === 0) {
-            notes = [
-                { "id": "n1776098065375", "x": 110, "y": 92,  "w": 220, "text": "welcome to weekdash", "page": 0, "zIndex": 100, "createdAt": Date.now() },
-                { "id": "n1776098095232", "x": 330, "y": 150, "w": 240, "text": "double-click anywhere to create a note", "page": 0, "zIndex": 101, "createdAt": Date.now() },
-                { "id": "n1776098589852", "x": 140, "y": 235, "w": 200, "text": "drag a note to move it", "page": 0, "zIndex": 102, "createdAt": Date.now() },
-                { "id": "n1776100345016", "x": 360, "y": 300, "w": 162, "text": "weekdash.com", "page": 0, "zIndex": 103, "createdAt": Date.now() }
-            ];
-            await mediaDB.put('notes', notes);
+            updateEmptyState();
         } else {
             // Legacy localStorage copy no longer needed once IDB has the data
             try { localStorage.removeItem('aura_notes_v3'); } catch (_) {}
@@ -2799,6 +2820,7 @@ body.dev-mode .dev-only { display: block; }
         activeNoteRef = { note: null, data: null };
         document.querySelectorAll('.note').forEach(n => n.style.opacity = '');
         save();
+        updateEmptyState();
     }
 
     // Render (or clear) the iMessage-style tapback badge on a note's top-right corner
@@ -2821,6 +2843,7 @@ body.dev-mode .dev-only { display: block; }
     }
 
 function createNote(data, autoFocus = false) {
+        window._track && window._track('note_create');
         const note = document.createElement('div');
         note.className = 'note';
         note.id = data.id;
@@ -2917,6 +2940,7 @@ function createNote(data, autoFocus = false) {
         note.appendChild(resizeHandle);
 
         document.body.appendChild(note);
+        updateEmptyState();
         requestAnimationFrame(() => { updateNoteOverflow(note, data); applyResizeClamp(note, data); });
 
         // ---- CLAMP NOTE TO VIEWPORT ----
@@ -4332,7 +4356,33 @@ function createNote(data, autoFocus = false) {
                          : (typeof lang !== 'undefined' && lang === 'pt') ? 'pt-BR' : 'en-US';
             const fmtWd = (date) => date.toLocaleDateString(locale, { weekday: 'narrow' }).toUpperCase();
 
-            dayLabel.textContent = now.toLocaleDateString(locale, { weekday: 'long' });
+            dayLabel.innerHTML = '';
+            const wd = document.createElement('span');
+            wd.className = 'dl-wd';
+            wd.textContent = now.toLocaleDateString(locale, { weekday: 'long' });
+            dayLabel.appendChild(wd);
+
+            const num = document.createElement('span');
+            num.className = 'dl-num';
+            num.textContent = now.getDate();
+            dayLabel.appendChild(num);
+
+            const monthEl = document.createElement('span');
+            monthEl.className = 'dl-month';
+            monthEl.setAttribute('aria-label', now.toLocaleDateString(locale, { month: 'long' }));
+            const monthName = now.toLocaleDateString(locale, { month: 'long' });
+            const mday = now.getDate();
+            const mLen = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const pct = Math.min(1, Math.max(0, mday / mLen));
+            let filled = Math.round(monthName.length * pct);
+            for (let c = 0; c < monthName.length; c++) {
+                const ch = document.createElement('span');
+                ch.className = 'dl-month-char';
+                ch.textContent = monthName[c];
+                if (c < filled) ch.classList.add('filled');
+                monthEl.appendChild(ch);
+            }
+            dayLabel.appendChild(monthEl);
 
             dock.innerHTML = '';
             const dow = today.getDay();
@@ -4429,55 +4479,6 @@ function createNote(data, autoFocus = false) {
         document.addEventListener('visibilitychange', () => { if (!document.hidden) rebuildIfDateChanged(); });
         window.addEventListener('focus', rebuildIfDateChanged);
         setInterval(rebuildIfDateChanged, 60000);
-    })();
-
-    /* ── Year progress — frosted chips per month ── */
-    (function setupYearBar() {
-        const bar = document.createElement('div');
-        bar.className = 'year-bar';
-        bar.setAttribute('aria-label', 'Year progress');
-        document.body.appendChild(bar);
-
-        const MONTH_NAMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-
-        function build() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const startOfYear = new Date(year, 0, 1);
-            const endOfYear   = new Date(year, 11, 31);
-            const totalDays   = (endOfYear - startOfYear) / 86400000 + 1;
-            const dayOfYear   = (now - startOfYear) / 86400000 + 1;
-
-            bar.innerHTML = '';
-            MONTH_NAMES.forEach((name, i) => {
-                const monthEnd   = new Date(year, i + 1, 0);
-                const monthLen   = monthEnd.getDate();
-                const daysToMonthEnd = (monthEnd - startOfYear) / 86400000 + 1;
-                const monthPct = Math.min(1, Math.max(0, (dayOfYear - daysToMonthEnd + monthLen) / monthLen));
-
-                const chip = document.createElement('div');
-                chip.className = 'year-bar-chip';
-
-                const lbl = document.createElement('div');
-                lbl.className = 'year-bar-label';
-                lbl.textContent = name;
-                chip.appendChild(lbl);
-
-                if (monthPct > 0) {
-                    const fill = document.createElement('div');
-                    fill.className = 'year-bar-fill';
-                    fill.style.width = (monthPct * 100).toFixed(1) + '%';
-                    chip.appendChild(fill);
-                }
-
-                bar.appendChild(chip);
-            });
-
-            requestAnimationFrame(() => bar.classList.add('ready'));
-        }
-
-        build();
-        setInterval(build, 60000);
     })();
 
     });
